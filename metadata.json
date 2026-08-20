@@ -1,0 +1,6 @@
+{
+  "name": "MELY - Pasaporte de Conexiones",
+  "description": "Aplicación de citas y conexiones intencionales con estética de cuaderno de viaje, pasaporte de sellos físicos y bóveda personal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

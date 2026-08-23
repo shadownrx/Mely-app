@@ -528,7 +528,11 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
           <div className="p-2 space-y-1">
             {filteredMatches.length === 0 ? (
-              <div className={`p-8 text-center font-body-sm text-[13px] ${isLight ? 'text-gray-400' : 'text-[#fda4af]/60'}`}>No se encontraron conversaciones.</div>
+              <div className={`p-8 text-center font-body-sm text-[13px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                {matches.length === 0
+                  ? 'Todavía no tenés matches. Andá a Descubrir para empezar a conectar.'
+                  : 'No se encontraron conversaciones con ese filtro.'}
+              </div>
             ) : (
               filteredMatches.map((match) => (
                 <button
@@ -617,7 +621,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           {onOpenProposeModal && (
             <Button size="sm" onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }} className="h-8 px-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full font-label-caps text-[10px] font-bold uppercase flex items-center gap-1 shadow-sm shrink-0">
               <span className="material-symbols-outlined text-[15px]">local_cafe</span>
-              <span className="hidden xs:inline">Cita</span>
+              <span>Cita</span>
             </Button>
           )}
           {onOpenIcebreaker && (
@@ -814,12 +818,13 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   </div>
                 )}
 
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                  <button type="button" onClick={() => setActiveReactionMenuMsgId(activeReactionMenuMsgId === msg.id ? null : msg.id)} className="p-1 rounded-full bg-white dark:bg-[#160a10] border border-[#e11d48]/30 text-[#e11d48] shadow-sm" title="Reaccionar">
-                    <span className="material-symbols-outlined text-[13px] block">add_reaction</span>
+                {/* Visibles siempre a media opacidad (no solo con hover, que en touch no existe) */}
+                <div className="opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                  <button type="button" onClick={() => setActiveReactionMenuMsgId(activeReactionMenuMsgId === msg.id ? null : msg.id)} className="h-8 w-8 flex items-center justify-center rounded-full bg-white dark:bg-[#160a10] border border-[#e11d48]/30 text-[#e11d48] shadow-sm" aria-label="Reaccionar" title="Reaccionar">
+                    <span className="material-symbols-outlined text-[13px] block" aria-hidden="true">add_reaction</span>
                   </button>
-                  <button type="button" onClick={() => setActiveOptionsMenuMsgId(activeOptionsMenuMsgId === msg.id ? null : msg.id)} className="p-1 rounded-full bg-white dark:bg-[#160a10] border border-gray-200 dark:border-white/10 text-gray-500" title="Opciones">
-                    <span className="material-symbols-outlined text-[13px] block">expand_more</span>
+                  <button type="button" onClick={() => setActiveOptionsMenuMsgId(activeOptionsMenuMsgId === msg.id ? null : msg.id)} className="h-8 w-8 flex items-center justify-center rounded-full bg-white dark:bg-[#160a10] border border-gray-200 dark:border-white/10 text-gray-500" aria-label="Más opciones" title="Opciones">
+                    <span className="material-symbols-outlined text-[13px] block" aria-hidden="true">expand_more</span>
                   </button>
                 </div>
               </div>
@@ -934,8 +939,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 </Button>
               ))}
             </div>
-            <Button variant="ghost" size="icon" onClick={() => setActiveMediaTray(null)} className="h-7 w-7 rounded-full text-gray-400">
-              <span className="material-symbols-outlined text-[18px]">close</span>
+            <Button variant="ghost" size="icon" onClick={() => setActiveMediaTray(null)} className="h-8 w-8 rounded-full text-gray-400" aria-label="Cerrar">
+              <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
             </Button>
           </div>
 
@@ -1082,8 +1087,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-headline-md text-[16px] font-bold">Info. del contacto</h3>
-                <Button variant="ghost" size="icon" onClick={() => setShowContactInfoDrawer(false)} className="rounded-full">
-                  <span className="material-symbols-outlined text-[20px]">close</span>
+                <Button variant="ghost" size="icon" onClick={() => setShowContactInfoDrawer(false)} className="rounded-full" aria-label="Cerrar">
+                  <span className="material-symbols-outlined text-[20px]" aria-hidden="true">close</span>
                 </Button>
               </div>
               <div className="flex flex-col items-center text-center mb-6">
@@ -1126,8 +1131,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             <div>
               <div className="flex items-center justify-between pb-3 border-b border-black/10 dark:border-white/10 mb-4">
                 <h3 className="font-headline-md text-[16px] font-bold">Personalizar Chat</h3>
-                <Button variant="ghost" size="icon" onClick={() => setShowThemeCustomizer(false)} className="rounded-full h-8 w-8">
-                  <span className="material-symbols-outlined text-[20px]">close</span>
+                <Button variant="ghost" size="icon" onClick={() => setShowThemeCustomizer(false)} className="rounded-full h-8 w-8" aria-label="Cerrar">
+                  <span className="material-symbols-outlined text-[20px]" aria-hidden="true">close</span>
                 </Button>
               </div>
 

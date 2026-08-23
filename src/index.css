@@ -12,6 +12,15 @@
     --font-sans: 'DM Sans', system-ui, sans-serif;
   }
 
+  /* Safari hace zoom automático (y no vuelve a des-zoomear) al enfocar un campo
+     con font-size menor a 16px. Se fuerza acá porque hay inputs con tamaños
+     puntuales (10-14px) por todos lados vía className. */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
   body {
     font-family: var(--font-sans);
     background-color: #0b090a;

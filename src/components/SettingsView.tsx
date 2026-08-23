@@ -126,6 +126,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
         minAge,
         maxAge,
       });
+      // Guarda también los prompts acá: son parte de la misma pantalla y este es el
+      // botón que la gente más toca, no debería perder ediciones de prompts sin avisar.
+      await replacePrompts.mutateAsync(prompts.map((p) => ({ question: p.question, answer: p.answer })));
       await refreshUser();
       sounds.playStamp();
       toast.success('Perfil actualizado correctamente.');
@@ -184,8 +187,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
             Ajustes del Pasaporte
           </h2>
           {onClose && (
-            <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); onClose(); }}>
-              <span className="material-symbols-outlined text-[22px]">close</span>
+            <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); onClose(); }} aria-label="Cerrar">
+              <span className="material-symbols-outlined text-[22px]" aria-hidden="true">close</span>
             </Button>
           )}
         </div>
@@ -347,7 +350,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
             </div>
           </div>
 
-          <Button type="button" variant="cherry" onClick={saveProfile} disabled={updateProfile.isPending} className="w-full gap-2">
+          <Button type="button" variant="cherry" onClick={saveProfile} disabled={updateProfile.isPending || replacePrompts.isPending} className="w-full gap-2">
             <span className="material-symbols-outlined text-[16px]">save</span>
             <span>GUARDAR PERFIL</span>
           </Button>
@@ -381,12 +384,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
                     placeholder="Pregunta"
                     className="flex-1 text-[12px] font-bold text-[#e11d48] dark:text-[#fb7185]"
                   />
-                  <Button type="button" variant="ghost" size="icon" onClick={() => setPrompts((prev) => prev.filter((_, idx) => idx !== i))} className="text-[#e11d48] shrink-0">
-                    <span className="material-symbols-outlined text-[18px]">close</span>
+                  <Button type="button" variant="ghost" size="icon" onClick={() => setPrompts((prev) => prev.filter((_, idx) => idx !== i))} className="text-[#e11d48] shrink-0" aria-label="Borrar prompt">
+                    <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
                   </Button>
                 </div>
-                <Input
-                  type="text"
+                <Textarea
+                  rows={2}
                   value={p.answer}
                   onChange={(e) => setPrompts((prev) => prev.map((x, idx) => (idx === i ? { ...x, answer: e.target.value } : x)))}
                   maxLength={300}

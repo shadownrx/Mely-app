@@ -80,7 +80,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   sounds.playClick();
                   setLayoutMode('grid');
                 }}
-                className={`p-1 rounded-md transition-all ${
+                className={`p-2.5 rounded-md transition-all ${
                   layoutMode === 'grid'
                     ? isLight
                       ? 'bg-white text-[#e11d48] shadow-xs'
@@ -89,16 +89,17 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     ? 'text-gray-400 hover:text-gray-700'
                     : 'text-gray-400 hover:text-white'
                 }`}
+                aria-label="Vista cuadrícula"
                 title="Vista Cuadrícula"
               >
-                <span className="material-symbols-outlined text-[16px] block">grid_view</span>
+                <span className="material-symbols-outlined text-[16px] block" aria-hidden="true">grid_view</span>
               </button>
               <button
                 onClick={() => {
                   sounds.playClick();
                   setLayoutMode('list');
                 }}
-                className={`p-1 rounded-md transition-all ${
+                className={`p-2.5 rounded-md transition-all ${
                   layoutMode === 'list'
                     ? isLight
                       ? 'bg-white text-[#e11d48] shadow-xs'
@@ -107,9 +108,10 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     ? 'text-gray-400 hover:text-gray-700'
                     : 'text-gray-400 hover:text-white'
                 }`}
+                aria-label="Vista lista"
                 title="Vista Lista Compacta"
               >
-                <span className="material-symbols-outlined text-[16px] block">view_list</span>
+                <span className="material-symbols-outlined text-[16px] block" aria-hidden="true">view_list</span>
               </button>
             </div>
 
@@ -189,10 +191,11 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 text-gray-400 hover:text-rose-500 p-0.5"
+                className="absolute right-1 text-gray-400 hover:text-rose-500 p-2"
+                aria-label="Limpiar búsqueda"
                 title="Limpiar búsqueda"
               >
-                <span className="material-symbols-outlined text-[15px]">close</span>
+                <span className="material-symbols-outlined text-[15px]" aria-hidden="true">close</span>
               </button>
             )}
           </div>
@@ -421,7 +424,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                           sounds.playClick();
                           onOpenChat(match.id);
                         }}
-                        className={`flex-1 h-7.5 rounded-lg border text-[10.5px] font-semibold flex items-center justify-center gap-1 transition-colors ${
+                        className={`flex-1 h-9 rounded-lg border text-[10.5px] font-semibold flex items-center justify-center gap-1 transition-colors ${
                           isLight
                             ? 'bg-[#fff1f3] hover:bg-[#ffe4e6] border-[#fecdd3] text-[#e11d48]'
                             : 'bg-white/5 hover:bg-white/10 border-white/10 text-[#fda4af]'
@@ -440,7 +443,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                           sounds.playStamp();
                           onProposeDate(match);
                         }}
-                        className="flex-1 h-7.5 rounded-lg bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[10.5px] font-bold flex items-center justify-center gap-1 shadow-xs hover:brightness-105 transition-all"
+                        className="flex-1 h-9 rounded-lg bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[10.5px] font-bold flex items-center justify-center gap-1 shadow-xs hover:brightness-105 transition-all"
                         title="Proponer Cita"
                       >
                         <span className="material-symbols-outlined text-[13px]">local_cafe</span>
@@ -538,10 +541,11 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 {/* Close Button */}
                 <button
                   onClick={() => setSelectedMatch(null)}
-                  className="absolute top-3 right-3 w-7.5 h-7.5 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors"
+                  className="absolute top-3 right-3 w-11 h-11 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors"
+                  aria-label="Cerrar"
                   title="Cerrar"
                 >
-                  <span className="material-symbols-outlined text-[18px]">close</span>
+                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
                 </button>
 
                 {/* Photo Dots */}
@@ -551,14 +555,18 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       <button
                         key={idx}
                         onClick={() => setSelectedGalleryIdx(idx)}
-                        className={`h-1.5 rounded-full transition-all duration-200 ${
-                          selectedGalleryIdx === idx ? 'w-5 bg-[#e11d48]' : 'w-2 bg-white/60'
-                        }`}
-                      />
+                        aria-label={`Foto ${idx + 1}`}
+                        className="py-3 px-1 flex items-center"
+                      >
+                        <span
+                          className={`h-1.5 rounded-full transition-all duration-200 block ${
+                            selectedGalleryIdx === idx ? 'w-5 bg-[#e11d48]' : 'w-2 bg-white/60'
+                          }`}
+                        />
+                      </button>
                     ))}
                   </div>
                 )}
-
                 {/* Bottom Identity Overlay */}
                 <div className="absolute bottom-3 left-3.5 right-3.5">
                   <div className="flex items-center gap-1.5">

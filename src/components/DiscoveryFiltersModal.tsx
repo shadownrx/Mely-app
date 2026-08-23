@@ -101,7 +101,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
               value={[localFilters.maxDistanceKm]}
               onValueChange={([v]) => setLocalFilters((prev) => ({ ...prev, maxDistanceKm: v }))}
             />
-            <div className="flex justify-between text-[9px] text-gray-400 mt-1.5 font-mono">
+            <div className={`flex justify-between text-[9px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'} mt-1.5 font-mono`}>
               <span>1 km (Mismo barrio)</span>
               <span>50 km (Metropolitano)</span>
             </div>
@@ -117,7 +117,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <span className="text-[9px] text-gray-400 block mb-0.5 font-label-caps">Mínimo</span>
+                <span className={`text-[9px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'} block mb-0.5 font-label-caps`}>Mínimo</span>
                 <Input
                   type="number"
                   min={18}
@@ -128,7 +128,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
                 />
               </div>
               <div>
-                <span className="text-[9px] text-gray-400 block mb-0.5 font-label-caps">Máximo</span>
+                <span className={`text-[9px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'} block mb-0.5 font-label-caps`}>Máximo</span>
                 <Input
                   type="number"
                   min={localFilters.minAge}

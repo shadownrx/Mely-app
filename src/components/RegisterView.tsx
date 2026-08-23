@@ -282,7 +282,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
               <span className="font-label-caps text-[10px] text-[#e11d48] uppercase font-bold tracking-wider">
                 1. IDENTIDAD & ACCESO
               </span>
-              <span className={`font-meta-data text-[9px] font-bold ${isLight ? 'text-gray-400' : 'text-[#fda4af]/60'}`}>PASO 1 DE 3</span>
+              <span className={`font-meta-data text-[9px] font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>PASO 1 DE 3</span>
             </div>
 
             {step1Error && (
@@ -405,7 +405,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
               <span className="font-label-caps text-[10px] text-[#e11d48] uppercase font-bold tracking-wider">
                 2. FOTOGRAFÍA
               </span>
-              <span className={`font-meta-data text-[9px] font-bold ${isLight ? 'text-gray-400' : 'text-[#fda4af]/60'}`}>PASO 2 DE 3</span>
+              <span className={`font-meta-data text-[9px] font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>PASO 2 DE 3</span>
             </div>
 
             <div className="flex flex-col items-center gap-3 py-2">
@@ -451,7 +451,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
               <span className="font-label-caps text-[10px] text-[#e11d48] uppercase font-bold tracking-wider">
                 3. BIO, AFINIDADES & EMISIÓN
               </span>
-              <span className={`font-meta-data text-[9px] font-bold ${isLight ? 'text-gray-400' : 'text-[#fda4af]/60'}`}>PASO 3 DE 3</span>
+              <span className={`font-meta-data text-[9px] font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>PASO 3 DE 3</span>
             </div>
 
             {submitError && (

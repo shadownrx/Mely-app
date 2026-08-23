@@ -25,13 +25,16 @@ const STATUS_LABEL: Record<DateMeet['status'], string> = {
 
 function formatDateTime(iso: string | null) {
   if (!iso) return 'A coordinar por chat';
-  return new Date(iso).toLocaleString('es-AR', {
+  const formatted = new Date(iso).toLocaleString('es-AR', {
     weekday: 'long',
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
     minute: '2-digit',
   });
+  // toLocaleString devuelve todo en minúsculas en es-AR — capitalize por CSS
+  // pondría mayúscula en cada palabra ("Lunes, 5 De Ago"), no solo la primera.
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
 interface DatesViewProps {
@@ -165,7 +168,7 @@ export const DatesView: React.FC<DatesViewProps> = ({ onOpenChat, onOpenDateQR }
                     <span className={`font-label-caps text-[9px] uppercase block mb-1 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
                       HORARIO
                     </span>
-                    <p className={`font-body-sm text-[13px] font-medium flex items-center gap-1.5 capitalize ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+                    <p className={`font-body-sm text-[13px] font-medium flex items-center gap-1.5 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
                       <span className="material-symbols-outlined text-[16px] text-[#e11d48]">schedule</span>
                       {formatDateTime(dateMeet.scheduledAt)}
                     </p>

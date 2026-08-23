@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from 'motion/react';
 import { Profile } from '../types';
 import { sounds } from '../utils/audio';
@@ -6,25 +6,30 @@ import { useTheme } from '../context/ThemeContext';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
+import { Skeleton } from './ui/skeleton';
 
 interface DiscoverViewProps {
   profiles: Profile[];
+  isLoading?: boolean;
   onLike: (profile: Profile) => void;
   onPass: (profile: Profile) => void;
   onSuperLike: (profile: Profile) => void;
   onOpenFilters?: () => void;
   activeFiltersCount?: number;
   onOpenVerifiedSpots?: () => void;
+  onReload?: () => void;
 }
 
 export const DiscoverView: React.FC<DiscoverViewProps> = ({
   profiles,
+  isLoading = false,
   onLike,
   onPass,
   onSuperLike,
   onOpenFilters,
   activeFiltersCount = 0,
   onOpenVerifiedSpots,
+  onReload,
 }) => {
   const { isLight } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -34,6 +39,21 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | 'up' | null>(null);
   const [isBlindMode, setIsBlindMode] = useState(false);
   const [unblurredCards, setUnblurredCards] = useState<Record<string, boolean>>({});
+
+  // Mazo local, append-only: cada swipe dispara un refetch de /discover (para traer perfiles
+  // nuevos), pero esa respuesta ya no incluye al que acabás de reaccionar — si indexáramos
+  // directo sobre `profiles`, la posición actual pasaría a apuntar a otra persona y se salteaba
+  // el siguiente perfil. Acá los nuevos se van agregando al final sin reordenar ni sacar nada.
+  const [deck, setDeck] = useState<Profile[]>(profiles);
+  const seenIds = useRef<Set<string>>(new Set(profiles.map((p) => p.id)));
+
+  useEffect(() => {
+    const fresh = profiles.filter((p) => !seenIds.current.has(p.id));
+    if (fresh.length === 0) return;
+    fresh.forEach((p) => seenIds.current.add(p.id));
+    setDeck((prev) => [...prev, ...fresh]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profiles]);
 
   // Motion values for gesture physics
   const dragX = useMotionValue(0);
@@ -45,8 +65,28 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
   const passOpacity = useTransform(dragX, [-30, -140], [0, 1]);
   const superLikeOpacity = useTransform(dragY, [-30, -120], [0, 1]);
 
-  const currentProfile = profiles[currentIndex];
-  const nextProfile = profiles[currentIndex + 1];
+  const currentProfile = deck[currentIndex];
+  const nextProfile = deck[currentIndex + 1];
+
+  if (isLoading && deck.length === 0) {
+    return (
+      <div className="flex flex-col gap-4">
+        <Skeleton className="h-8 w-40" />
+        <div className="w-full min-h-[560px] rounded-3xl overflow-hidden flex flex-col gap-3 p-0">
+          <Skeleton className="h-[380px] w-full rounded-none" />
+          <div className="p-5 flex flex-col gap-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <div className="flex gap-1.5">
+              <Skeleton className="h-6 w-16 rounded-full" />
+              <Skeleton className="h-6 w-20 rounded-full" />
+              <Skeleton className="h-6 w-14 rounded-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!currentProfile) {
     return (
@@ -70,13 +110,14 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           Nuevas conexiones intencionales y cuadernos editoriales se sincronizan cada medianoche.
         </p>
         <Button
+          disabled={isLoading}
           onClick={() => {
             sounds.playClick();
-            setCurrentIndex(0);
+            onReload?.();
           }}
-          className="px-6 py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] tracking-widest font-bold rounded-full tactile-btn hover:opacity-95 shadow-md shadow-[#e11d48]/25"
+          className="px-6 py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] tracking-widest font-bold rounded-full tactile-btn hover:opacity-95 shadow-md shadow-[#e11d48]/25 disabled:opacity-60"
         >
-          REABRIR CUADERNO DE PERFILES
+          {isLoading ? 'BUSCANDO NUEVOS PERFILES…' : 'BUSCAR NUEVOS PERFILES'}
         </Button>
       </motion.div>
     );

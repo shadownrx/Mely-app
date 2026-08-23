@@ -62,6 +62,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   return (
     <nav
       id="bottom-navigation-bar"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       className={`fixed bottom-0 w-full z-50 max-w-[440px] left-1/2 -translate-x-1/2 border-t backdrop-blur-xl transition-colors duration-300 ${
         isLight
           ? 'bg-white/95 border-[#ffe4e6] shadow-[0_-4px_25px_rgba(225,29,72,0.08)]'

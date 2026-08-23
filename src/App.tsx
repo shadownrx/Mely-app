@@ -189,7 +189,13 @@ function AppContent() {
         }
       />
 
-      <main className={`w-full max-w-[440px] mx-auto ${currentTab === 'mensajes' ? 'pt-16 pb-16 px-2 sm:px-3' : 'pt-20 pb-20 px-4'} flex-1 flex flex-col min-h-0`}>
+      <main
+        style={{
+          paddingTop: `calc(${currentTab === 'mensajes' ? '4rem' : '5rem'} + env(safe-area-inset-top))`,
+          paddingBottom: `calc(${currentTab === 'mensajes' ? '4rem' : '5rem'} + env(safe-area-inset-bottom))`,
+        }}
+        className={`w-full max-w-[440px] mx-auto ${currentTab === 'mensajes' ? 'px-2 sm:px-3' : 'px-4'} flex-1 flex flex-col min-h-0`}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={currentTab}
@@ -202,12 +208,14 @@ function AppContent() {
             {currentTab === 'descubrir' && (
               <DiscoverView
                 profiles={discoverQuery.data?.profiles ?? []}
+                isLoading={discoverQuery.isLoading || discoverQuery.isFetching}
                 onLike={handleLike}
                 onPass={handlePass}
                 onSuperLike={handleSuperLike}
                 onOpenFilters={() => setIsFiltersOpen(true)}
                 activeFiltersCount={activeFiltersCount}
                 onOpenVerifiedSpots={() => setIsVerifiedSpotsOpen(true)}
+                onReload={() => discoverQuery.refetch()}
               />
             )}
 

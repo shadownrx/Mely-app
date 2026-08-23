@@ -29,6 +29,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
 
   return (
     <header
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}
       className={`fixed top-0 w-full z-50 transition-colors duration-200 border-b backdrop-blur-md ${
         isLight
           ? 'bg-white/95 border-[#ffe4e6] shadow-sm'

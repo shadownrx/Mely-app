@@ -267,7 +267,7 @@ function AppContent() {
             )}
 
             {currentTab === 'ajustes' && (
-              <SettingsView onSignOut={handleSignOut} onClose={() => setCurrentTab(previousTab)} />
+              <SettingsView onSignOut={handleSignOut} />
             )}
           </motion.div>
         </AnimatePresence>

@@ -74,7 +74,7 @@ export interface Profile {
   city: string;
   distance: string;
   joined: string;
-  membership: 'Premium Member' | 'Founding Member' | 'VIP Member';
+  membership: 'Premium Member' | 'Founding Member' | 'VIP Member' | 'Nuevo Miembro' | string;
   bio: string;
   passType: string;
   avatar: string;
@@ -83,6 +83,51 @@ export interface Profile {
   prompts: { question: string; answer: string }[];
   verifiedEncounters: number;
   email?: string;
+  audioBio?: {
+    duration: string;
+    quote: string;
+    waveform: number[];
+    pitch?: number;
+  };
+  blindPrompt?: {
+    teaser: string;
+    philosophy: string;
+    idealDate: string;
+  };
+}
+
+export interface VerifiedSpot {
+  id: string;
+  name: string;
+  category: 'cafe' | 'wine' | 'cocktail' | 'books' | 'park' | 'culture';
+  neighborhood: string;
+  city: string;
+  address: string;
+  rating: number;
+  melyPerk: string;
+  image: string;
+  vibe: string;
+  averagePrice: string;
+  specialStampTitle: string;
+  recommendedTime: string;
+}
+
+export interface DiscoveryFilters {
+  minAge: number;
+  maxAge: number;
+  maxDistanceKm: number;
+  selectedInterests: string[];
+  onlyVerifiedMembers: boolean;
+  withAudioBioOnly: boolean;
+  selectedCity: string;
+}
+
+export interface IcebreakerQuestion {
+  id: string;
+  category: 'profunda' | 'divertida' | 'citas' | 'dilemas';
+  question: string;
+  context: string;
+  options?: string[];
 }
 
 export type ThemeMode = 'dark' | 'light';

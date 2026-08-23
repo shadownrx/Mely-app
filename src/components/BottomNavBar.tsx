@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import { TabType } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
@@ -61,7 +62,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   return (
     <nav
       id="bottom-navigation-bar"
-      className={`fixed bottom-0 w-full z-50 max-w-[440px] left-1/2 -translate-x-1/2 border-t backdrop-blur-xl transition-colors duration-200 ${
+      className={`fixed bottom-0 w-full z-50 max-w-[440px] left-1/2 -translate-x-1/2 border-t backdrop-blur-xl transition-colors duration-300 ${
         isLight
           ? 'bg-white/95 border-[#ffe4e6] shadow-[0_-4px_25px_rgba(225,29,72,0.08)]'
           : 'bg-[#0d070a]/95 border-[#e11d48]/20 shadow-2xl'
@@ -74,19 +75,21 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
           // Special Center Hero Button (MATCH)
           if (tab.isCenter) {
             return (
-              <button
+              <motion.button
                 key={tab.id}
                 id={`nav-btn-${tab.id}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => {
                   sounds.playHeart();
                   onTabChange(tab.id);
                 }}
-                className="group relative flex flex-col items-center justify-center -mt-4 focus:outline-none transition-transform active:scale-95"
+                className="group relative flex flex-col items-center justify-center -mt-4 focus:outline-none"
                 title="Ver tus Matches y Conexiones"
               >
                 {/* Elevated Circular Action */}
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 ${
+                  className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
                     isActive
                       ? 'bg-gradient-to-tr from-[#e11d48] via-[#f43f5e] to-[#fb7185] text-white ring-4 ring-[#e11d48]/25 scale-110 shadow-[#e11d48]/40'
                       : isLight
@@ -95,8 +98,8 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                   }`}
                 >
                   <span
-                    className={`material-symbols-outlined text-[24px] transition-transform group-hover:scale-110 ${
-                      isActive ? 'animate-pulse' : ''
+                    className={`material-symbols-outlined text-[24px] transition-transform ${
+                      isActive ? 'animate-pulse' : 'group-hover:scale-110'
                     }`}
                     style={{ fontVariationSettings: "'FILL' 1" }}
                   >
@@ -115,23 +118,25 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                 >
                   {tab.label}
                 </span>
-              </button>
+              </motion.button>
             );
           }
 
           // Regular Tabs (Descubrir, Citas, Mensajes, Perfil)
           return (
-            <button
+            <motion.button
               key={tab.id}
               id={`nav-btn-${tab.id}`}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.92 }}
               onClick={() => {
                 sounds.playClick();
                 onTabChange(tab.id);
               }}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all duration-150 relative min-w-[56px] ${
+              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all duration-200 relative min-w-[56px] ${
                 isActive
                   ? isLight
-                    ? 'text-[#e11d48] scale-105 bg-[#fff1f3] border border-[#fecdd3] shadow-sm font-bold'
+                    ? 'text-[#e11d48] scale-105 bg-[#fff1f3] border border-[#fecdd3] shadow-xs font-bold'
                     : 'text-[#fb7185] scale-105 bg-gradient-to-b from-[#2a0e16] to-[#16080d] border border-[#e11d48]/40 shadow-inner font-bold'
                   : isLight
                   ? 'text-[#64748b] hover:text-[#e11d48] hover:bg-[#fff1f3]/50'
@@ -141,7 +146,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
               {/* Badge for Notifications / Pending Counts */}
               {tab.badge !== undefined && tab.badge > 0 && (
                 <span
-                  className={`absolute top-0 right-2 min-w-[16px] h-4 px-1 rounded-full text-[9px] font-bold flex items-center justify-center text-white ring-2 ${
+                  className={`absolute top-0 right-2 min-w-[16px] h-4 px-1 rounded-full text-[9px] font-bold flex items-center justify-center text-white ring-2 animate-pulseGlow ${
                     isLight ? 'bg-[#e11d48] ring-white' : 'bg-[#e11d48] ring-[#0d070a]'
                   }`}
                 >
@@ -180,11 +185,10 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
               <span className="font-label-caps text-[9px] tracking-wider uppercase font-medium">
                 {tab.label}
               </span>
-            </button>
+            </motion.button>
           );
         })}
       </div>
     </nav>
   );
 };
-

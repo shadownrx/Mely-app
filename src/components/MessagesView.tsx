@@ -16,6 +16,8 @@ interface MessagesViewProps {
   onAcceptDate?: (threadId: string, dateId: string) => void;
   onVerifyDate?: (threadId: string, dateId: string) => void;
   onOpenProposeModal?: (threadId: string) => void;
+  onOpenIcebreaker?: (partnerName: string) => void;
+  onOpenDateQR?: (threadId: string, dateProposal: DateProposal, partnerName: string, partnerAvatar: string) => void;
 }
 
 // WhatsApp / MELY Sticker Definition
@@ -225,6 +227,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   onAcceptDate,
   onVerifyDate,
   onOpenProposeModal,
+  onOpenIcebreaker,
+  onOpenDateQR,
 }) => {
   const { isLight } = useTheme();
   
@@ -1091,6 +1095,57 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             </Button>
           )}
 
+          {/* Icebreaker Roulette button */}
+          {onOpenIcebreaker && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                sounds.playClick();
+                onOpenIcebreaker(activeThread.partnerName);
+              }}
+              className={`h-8 w-8 rounded-full transition-colors shrink-0 ${
+                isLight ? 'text-amber-600 hover:text-amber-700 hover:bg-amber-50' : 'text-amber-400 hover:text-amber-300 hover:bg-amber-500/10'
+              }`}
+              title="Ruleta de Preguntas Rompehielos"
+            >
+              <span className="material-symbols-outlined text-[19px]">casino</span>
+            </Button>
+          )}
+
+          {/* Date QR Pass Shortcut if date is accepted */}
+          {(() => {
+            const acceptedMsg = activeThread.messages.find(
+              (m) => m.dateProposal && (m.dateProposal.status === 'accepted' || m.dateProposal.status === 'verified')
+            );
+            if (!acceptedMsg || !acceptedMsg.dateProposal || !onOpenDateQR) return null;
+            const isVer = acceptedMsg.dateProposal.status === 'verified';
+            return (
+              <button
+                onClick={() => {
+                  sounds.playScanBeep();
+                  onOpenDateQR(
+                    activeThread.id,
+                    acceptedMsg.dateProposal!,
+                    activeThread.partnerName,
+                    activeThread.partnerAvatar
+                  );
+                }}
+                className={`px-2 py-1 rounded-xl text-[9px] font-label-caps uppercase font-bold flex items-center gap-1 border transition-all ${
+                  isVer
+                    ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'
+                    : 'bg-[#e11d48]/10 text-[#e11d48] border-[#e11d48]/30 animate-pulse'
+                }`}
+                title="Ver Pase QR de Encuentro Presencial"
+              >
+                <span className="material-symbols-outlined text-[13px]">
+                  {isVer ? 'verified' : 'qr_code_2'}
+                </span>
+                <span>{isVer ? 'Cita Verificada' : 'Pase QR'}</span>
+              </button>
+            );
+          })()}
+
           {/* Theme Palette Button */}
           <Button
             variant="ghost"
@@ -1801,6 +1856,24 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               Ubicación
             </span>
           </button>
+
+          {/* Ruleta de Preguntas */}
+          {onOpenIcebreaker && (
+            <button
+              onClick={() => {
+                setShowAttachmentMenu(false);
+                onOpenIcebreaker(activeThread.partnerName);
+              }}
+              className="flex flex-col items-center gap-1 text-center group"
+            >
+              <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                <span className="material-symbols-outlined text-[22px]">casino</span>
+              </div>
+              <span className={`text-[11px] font-medium ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+                Ruleta 🎲
+              </span>
+            </button>
+          )}
 
           {/* Stickers Direct */}
           <button

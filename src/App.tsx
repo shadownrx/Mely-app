@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   CURRENT_USER,
   INITIAL_STAMPS,
@@ -6,8 +7,22 @@ import {
   INITIAL_CHATS,
   PROFILES_DISCOVER,
   DEFAULT_USER_SETTINGS,
+  DEFAULT_DISCOVERY_FILTERS,
 } from './data/mockData';
-import { TabType, Profile, Stamp, Transaction, ChatThread, DateProposal, UserSettings, AuthScreenType, StoreItem, Message } from './types';
+import {
+  TabType,
+  Profile,
+  Stamp,
+  Transaction,
+  ChatThread,
+  DateProposal,
+  UserSettings,
+  AuthScreenType,
+  StoreItem,
+  Message,
+  DiscoveryFilters,
+  VerifiedSpot,
+} from './types';
 import { TopAppBar } from './components/TopAppBar';
 import { BottomNavBar } from './components/BottomNavBar';
 import { ProfileView } from './components/ProfileView';
@@ -19,6 +34,10 @@ import { StoreView } from './components/StoreView';
 import { LoginView } from './components/LoginView';
 import { RegisterView } from './components/RegisterView';
 import { SettingsView } from './components/SettingsView';
+import { VerifiedSpotsModal } from './components/VerifiedSpotsModal';
+import { DateQRModal } from './components/DateQRModal';
+import { DiscoveryFiltersModal } from './components/DiscoveryFiltersModal';
+import { IcebreakerWheelModal } from './components/IcebreakerWheelModal';
 import {
   ProposeDateModal,
   StampModal,
@@ -61,6 +80,48 @@ function AppContent() {
   const [selectedStamp, setSelectedStamp] = useState<Stamp | null>(null);
   const [rechargePack, setRechargePack] = useState<{ pts: number; price: string; name: string } | null>(null);
   const [settingsType, setSettingsType] = useState<'personal' | 'security' | 'preferences' | null>(null);
+
+  // New Feature Modals state
+  const [discoveryFilters, setDiscoveryFilters] = useState<DiscoveryFilters>(DEFAULT_DISCOVERY_FILTERS);
+  const [isFiltersOpen, setIsFiltersOpen] = useState<boolean>(false);
+  const [isVerifiedSpotsOpen, setIsVerifiedSpotsOpen] = useState<boolean>(false);
+  const [isIcebreakerOpen, setIsIcebreakerOpen] = useState<boolean>(false);
+  const [icebreakerPartnerName, setIcebreakerPartnerName] = useState<string>('Alexa');
+  const [dateQRModalData, setDateQRModalData] = useState<{
+    isOpen: boolean;
+    threadId: string;
+    proposal?: DateProposal;
+    partnerName: string;
+    partnerAvatar: string;
+  }>({
+    isOpen: false,
+    threadId: '',
+    partnerName: '',
+    partnerAvatar: '',
+  });
+
+  // Filtered Profiles Calculation
+  const filteredProfiles = profiles.filter((p) => {
+    if (discoveryFilters.onlyVerifiedMembers && p.membership === 'Nuevo Miembro') return false;
+    if (discoveryFilters.withAudioBioOnly && !p.audioBio) return false;
+    const minAge = discoveryFilters.minAge ?? 18;
+    const maxAge = discoveryFilters.maxAge ?? 60;
+    if (p.age < minAge || p.age > maxAge) return false;
+    if (discoveryFilters.selectedInterests && discoveryFilters.selectedInterests.length > 0) {
+      const hasSharedInterest = discoveryFilters.selectedInterests.some((interest) =>
+        p.tags?.some((t) => t.toLowerCase().includes(interest.toLowerCase()))
+      );
+      if (!hasSharedInterest) return false;
+    }
+    return true;
+  });
+
+  const activeFiltersCount =
+    (discoveryFilters.onlyVerifiedMembers ? 1 : 0) +
+    (discoveryFilters.withAudioBioOnly ? 1 : 0) +
+    ((discoveryFilters.selectedInterests?.length ?? 0) > 0 ? 1 : 0) +
+    ((discoveryFilters.minAge ?? 20) > 20 || (discoveryFilters.maxAge ?? 40) < 40 ? 1 : 0) +
+    ((discoveryFilters.maxDistanceKm ?? 50) < 50 ? 1 : 0);
 
   // Calculated unread & pending badges
   const unreadMessagesCount = threads.filter((t) => t.unread).length;
@@ -537,89 +598,116 @@ function AppContent() {
 
       {/* Main Container constrained to Mobile 440px hand-held viewport */}
       <main className={`w-full max-w-[440px] mx-auto ${currentTab === 'mensajes' ? 'pt-16 pb-16 px-2 sm:px-3' : 'pt-20 pb-20 px-4'} flex-1 flex flex-col min-h-0`}>
-        {currentTab === 'descubrir' && (
-          <DiscoverView
-            profiles={profiles}
-            onLike={handleLike}
-            onPass={handlePass}
-            onSuperLike={handleSuperLike}
-            onProposeDateDirect={handleProposeDateDirect}
-          />
-        )}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentTab}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full flex-1 flex flex-col min-h-0"
+          >
+            {currentTab === 'descubrir' && (
+              <DiscoverView
+                profiles={filteredProfiles}
+                onLike={handleLike}
+                onPass={handlePass}
+                onSuperLike={handleSuperLike}
+                onProposeDateDirect={handleProposeDateDirect}
+                onOpenFilters={() => setIsFiltersOpen(true)}
+                activeFiltersCount={activeFiltersCount}
+                onOpenVerifiedSpots={() => setIsVerifiedSpotsOpen(true)}
+              />
+            )}
 
-        {currentTab === 'matches' && (
-          <MatchesView
-            matches={matches}
-            onOpenChat={handleOpenChat}
-            onProposeDate={handleProposeDateDirect}
-            onExploreMore={() => handleTabChange('descubrir')}
-          />
-        )}
+            {currentTab === 'matches' && (
+              <MatchesView
+                matches={matches}
+                onOpenChat={handleOpenChat}
+                onProposeDate={handleProposeDateDirect}
+                onExploreMore={() => handleTabChange('descubrir')}
+              />
+            )}
 
-        {currentTab === 'mensajes' && (
-          <MessagesView
-            threads={threads}
-            matches={matches}
-            activeThreadId={activeThreadId}
-            onSelectThread={setActiveThreadId}
-            onSendMessage={handleSendMessage}
-            onAcceptDate={handleAcceptDate}
-            onVerifyDate={handleVerifyDate}
-            onOpenProposeModal={(threadId) => {
-              const t = threads.find((th) => th.id === threadId);
-              setProposePartnerName(t?.partnerName || 'Valentina');
-              setIsProposeModalOpen(true);
-            }}
-          />
-        )}
+            {currentTab === 'mensajes' && (
+              <MessagesView
+                threads={threads}
+                matches={matches}
+                activeThreadId={activeThreadId}
+                onSelectThread={setActiveThreadId}
+                onSendMessage={handleSendMessage}
+                onAcceptDate={handleAcceptDate}
+                onVerifyDate={handleVerifyDate}
+                onOpenProposeModal={(threadId) => {
+                  const t = threads.find((th) => th.id === threadId);
+                  setProposePartnerName(t?.partnerName || 'Valentina');
+                  setIsProposeModalOpen(true);
+                }}
+                onOpenIcebreaker={(pName) => {
+                  setIcebreakerPartnerName(pName);
+                  setIsIcebreakerOpen(true);
+                }}
+                onOpenDateQR={(threadId, dateProposal, pName, pAvatar) => {
+                  setDateQRModalData({
+                    isOpen: true,
+                    threadId,
+                    proposal: dateProposal,
+                    partnerName: pName,
+                    partnerAvatar: pAvatar,
+                  });
+                }}
+              />
+            )}
 
-        {currentTab === 'tienda' && (
-          <StoreView
-            walletBalance={walletBalance}
-            user={user}
-            onBuyItem={handleBuyStoreItem}
-            onQuickRecharge={handleBuyPack}
-          />
-        )}
+            {currentTab === 'tienda' && (
+              <StoreView
+                walletBalance={walletBalance}
+                user={user}
+                onBuyItem={handleBuyStoreItem}
+                onQuickRecharge={handleBuyPack}
+              />
+            )}
 
-        {currentTab === 'citas' && (
-          <DatesView
-            dates={allProposals}
-            onOpenChat={handleOpenChat}
-            onVerifyDate={handleVerifyDate}
-          />
-        )}
+            {currentTab === 'citas' && (
+              <DatesView
+                dates={allProposals}
+                onOpenChat={handleOpenChat}
+                onVerifyDate={handleVerifyDate}
+              />
+            )}
 
-        {currentTab === 'perfil' && (
-          <ProfileView
-            user={user}
-            stamps={stamps}
-            transactions={transactions}
-            walletBalance={walletBalance}
-            onBuyPack={handleBuyPack}
-            onSelectStamp={(stamp) => setSelectedStamp(stamp)}
-            onOpenSettings={(type) => setSettingsType(type)}
-            onOpenFullSettings={() => handleTabChange('ajustes')}
-            onOpenStore={() => handleTabChange('tienda')}
-            onToggleDiscovery={(val) => setUserSettings((s) => ({ ...s, discoveryEnabled: val }))}
-            discoveryEnabled={userSettings.discoveryEnabled}
-            onSignOut={handleSignOut}
-          />
-        )}
+            {currentTab === 'perfil' && (
+              <ProfileView
+                user={user}
+                stamps={stamps}
+                transactions={transactions}
+                walletBalance={walletBalance}
+                onBuyPack={handleBuyPack}
+                onSelectStamp={(stamp) => setSelectedStamp(stamp)}
+                onOpenSettings={(type) => setSettingsType(type)}
+                onOpenFullSettings={() => handleTabChange('ajustes')}
+                onOpenStore={() => handleTabChange('tienda')}
+                onToggleDiscovery={(val) => setUserSettings((s) => ({ ...s, discoveryEnabled: val }))}
+                discoveryEnabled={userSettings.discoveryEnabled}
+                onSignOut={handleSignOut}
+              />
+            )}
 
-        {currentTab === 'ajustes' && (
-          <SettingsView
-            user={user}
-            settings={userSettings}
-            walletBalance={walletBalance}
-            onUpdateUser={(updated) => setUser((prev) => ({ ...prev, ...updated }))}
-            onUpdateSettings={(updated) => setUserSettings((prev) => ({ ...prev, ...updated }))}
-            onRedeemCoupon={handleRedeemCoupon}
-            onSignOut={handleSignOut}
-            onResetDemo={handleResetDemo}
-            onClose={() => setCurrentTab(previousTab)}
-          />
-        )}
+            {currentTab === 'ajustes' && (
+              <SettingsView
+                user={user}
+                settings={userSettings}
+                walletBalance={walletBalance}
+                onUpdateUser={(updated) => setUser((prev) => ({ ...prev, ...updated }))}
+                onUpdateSettings={(updated) => setUserSettings((prev) => ({ ...prev, ...updated }))}
+                onRedeemCoupon={handleRedeemCoupon}
+                onSignOut={handleSignOut}
+                onResetDemo={handleResetDemo}
+                onClose={() => setCurrentTab(previousTab)}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Bottom Nav Bar */}
@@ -671,6 +759,56 @@ function AppContent() {
         onResetDemo={handleResetDemo}
         isAuthenticated={isAuthenticated}
         user={user}
+      />
+
+      {/* Discovery Filters Modal */}
+      <DiscoveryFiltersModal
+        isOpen={isFiltersOpen}
+        onClose={() => setIsFiltersOpen(false)}
+        filters={discoveryFilters}
+        onApplyFilters={(newFilters) => {
+          setDiscoveryFilters(newFilters);
+          setIsFiltersOpen(false);
+        }}
+      />
+
+      {/* Verified Spots Recommendation Modal */}
+      <VerifiedSpotsModal
+        isOpen={isVerifiedSpotsOpen}
+        onClose={() => setIsVerifiedSpotsOpen(false)}
+        onSelectSpotToPropose={(spot: VerifiedSpot) => {
+          setIsVerifiedSpotsOpen(false);
+          setProposePartnerName(spot.name);
+          setIsProposeModalOpen(true);
+        }}
+      />
+
+      {/* Icebreaker Roulette Wheel Modal */}
+      <IcebreakerWheelModal
+        isOpen={isIcebreakerOpen}
+        onClose={() => setIsIcebreakerOpen(false)}
+        partnerName={icebreakerPartnerName}
+        onSendIcebreakerToChat={(qText, opts) => {
+          handleSendMessage(
+            activeThreadId,
+            `🎲 Pregunta Rompehielos: "${qText}"${opts ? `\n\nOpciones: ${opts.join(' • ')}` : ''}`
+          );
+          setIsIcebreakerOpen(false);
+        }}
+      />
+
+      {/* Real Date QR Verification Modal */}
+      <DateQRModal
+        isOpen={dateQRModalData.isOpen}
+        onClose={() => setDateQRModalData((prev) => ({ ...prev, isOpen: false }))}
+        dateProposal={dateQRModalData.proposal}
+        partnerName={dateQRModalData.partnerName}
+        partnerAvatar={dateQRModalData.partnerAvatar}
+        threadId={dateQRModalData.threadId}
+        onConfirmVerification={(thId, dId) => {
+          handleVerifyDate(thId, dId);
+          setDateQRModalData((prev) => ({ ...prev, isOpen: false }));
+        }}
       />
     </div>
   );

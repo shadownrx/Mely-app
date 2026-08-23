@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { Stamp } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
@@ -6,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { useStamps } from '../hooks/useStamps';
 import { useWallet } from '../hooks/useWallet';
 import { useUploadAudioBio } from '../hooks/useProfile';
+import { Button } from './ui/button';
 
 interface ProfileViewProps {
   onSelectStamp: (stamp: Stamp) => void;
@@ -29,7 +31,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
   const [activeSubTab, setActiveSubTab] = useState<'passport' | 'audio_bio' | 'settings'>('passport');
   const [isPlaying, setIsPlaying] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
 
   if (!user) return null;
 
@@ -40,13 +41,12 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const handleAudioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setUploadError(null);
     uploadAudioBio.mutate(file, {
       onSuccess: () => {
         sounds.playNotification();
         refreshUser();
       },
-      onError: (err: any) => setUploadError(err?.message ?? 'No se pudo subir el audio'),
+      onError: (err: any) => toast.error(err?.message ?? 'No se pudo subir el audio'),
     });
     e.target.value = '';
   };
@@ -175,16 +175,18 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               <span className={`font-display-lg text-[32px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{walletBalance.toLocaleString()}</span>
             </div>
             {onOpenStore && (
-              <button
+              <Button
+                variant="cherry"
+                size="sm"
                 onClick={() => {
                   sounds.playClick();
                   onOpenStore();
                 }}
-                className="mt-1 h-8 px-4 rounded-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10.5px] uppercase font-bold tracking-wider shadow-md flex items-center gap-1.5"
+                className="mt-1 rounded-full gap-1.5"
               >
                 <span className="material-symbols-outlined text-[16px]">local_mall</span>
                 <span>Explorar Tienda</span>
-              </button>
+              </Button>
             )}
           </section>
         </>
@@ -233,14 +235,9 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             <span className="material-symbols-outlined text-[36px] text-[#e11d48]">mic</span>
             <p className={`text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>Subí un archivo de audio (mp3, m4a, wav) de hasta 60 segundos.</p>
             <input ref={audioInputRef} type="file" accept="audio/*" className="hidden" onChange={handleAudioFileChange} />
-            <button
-              onClick={() => audioInputRef.current?.click()}
-              disabled={uploadAudioBio.isPending}
-              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider shadow-md disabled:opacity-60"
-            >
+            <Button variant="cherry" onClick={() => audioInputRef.current?.click()} disabled={uploadAudioBio.isPending} className="rounded-full">
               {uploadAudioBio.isPending ? 'Subiendo...' : 'Subir Audio'}
-            </button>
-            {uploadError && <p className="text-[11px] text-[#e11d48] font-bold">{uploadError}</p>}
+            </Button>
           </div>
         </section>
       ) : (
@@ -255,28 +252,31 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 <span className={`font-meta-data text-[10px] block ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>Perfil, descubrimiento, seguridad y tema</span>
               </div>
             </div>
-            <button
+            <Button
+              variant="cherry"
+              size="sm"
               onClick={() => {
                 sounds.playClick();
                 onOpenFullSettings?.();
               }}
-              className="px-3.5 py-2 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-xl font-label-caps text-[9px] uppercase font-bold shadow-md flex items-center gap-1"
+              className="rounded-xl gap-1"
             >
               <span>Abrir</span>
               <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
-            </button>
+            </Button>
           </div>
 
           <div className="pt-2">
-            <button
+            <Button
+              variant="outline"
               onClick={() => {
                 sounds.playClick();
                 onSignOut();
               }}
-              className="w-full py-3.5 text-center border border-[#e11d48]/40 rounded-2xl text-[#e11d48] font-body-sm text-[14px] font-bold hover:bg-[#e11d48]/10 transition-colors"
+              className="w-full py-3.5 h-auto rounded-2xl text-[#e11d48] border-[#e11d48]/40 text-[14px] normal-case tracking-normal"
             >
               Cerrar Sesión
-            </button>
+            </Button>
           </div>
         </section>
       )}

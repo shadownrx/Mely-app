@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
+import { toast } from 'sonner';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useShop, usePurchase } from '../hooks/useShop';
 import { useCoinPacks, useRecharge, useRedeemCode, useWallet, useWalletHistory } from '../hooks/useWallet';
 import type { ShopItem } from '../types';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
 
 const ITEM_PRESENTATION: Record<string, { icon: string; color: string; badge?: string }> = {
   MEMBERSHIP_PREMIUM: { icon: 'workspace_premium', color: '#e11d48', badge: '👑 MEMBRESÍA' },
@@ -36,7 +40,6 @@ export const StoreView: React.FC = () => {
 
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const [promoCode, setPromoCode] = useState('');
-  const [promoMessage, setPromoMessage] = useState<{ type: 'ok' | 'error'; text: string } | null>(null);
   const [receipt, setReceipt] = useState<string | null>(null);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
 
@@ -86,14 +89,13 @@ export const StoreView: React.FC = () => {
     e.preventDefault();
     if (!promoCode.trim()) return;
     sounds.playClick();
-    setPromoMessage(null);
     redeemCode.mutate(promoCode.trim(), {
       onSuccess: (res) => {
-        setPromoMessage({ type: 'ok', text: `¡Código canjeado! +${res.amount} Mely Coins.` });
+        toast.success(`¡Código canjeado! +${res.amount} Mely Coins.`);
         setPromoCode('');
         celebrate();
       },
-      onError: (err: any) => setPromoMessage({ type: 'error', text: err?.message ?? 'Código inválido' }),
+      onError: (err: any) => toast.error(err?.message ?? 'Código inválido'),
     });
   };
 
@@ -166,20 +168,18 @@ export const StoreView: React.FC = () => {
                       <p className={`text-[11px] leading-snug ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>{item.description}</p>
                     </div>
                   </div>
-                  <button
+                  <Button
+                    variant={isCurrent ? 'secondary' : 'cherry'}
+                    size="sm"
                     onClick={() => {
                       sounds.playClick();
                       setSelectedItem(item);
                     }}
                     disabled={isCurrent}
-                    className={`shrink-0 px-3.5 py-2 rounded-xl font-label-caps text-[10px] font-bold uppercase tracking-wider ${
-                      isCurrent
-                        ? 'bg-gray-200 text-gray-500 dark:bg-white/10 dark:text-white/40'
-                        : 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-md shadow-[#e11d48]/25'
-                    }`}
+                    className="shrink-0 rounded-xl"
                   >
                     {isCurrent ? 'Activa' : `${item.price} coins`}
-                  </button>
+                  </Button>
                 </div>
               );
             })}
@@ -208,15 +208,17 @@ export const StoreView: React.FC = () => {
                     <h4 className={`font-headline-md text-[13px] font-bold leading-snug ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{item.name}</h4>
                     <p className={`text-[10.5px] leading-snug mt-0.5 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>{item.description}</p>
                   </div>
-                  <button
+                  <Button
+                    variant="cherry"
+                    size="sm"
                     onClick={() => {
                       sounds.playClick();
                       setSelectedItem(item);
                     }}
-                    className="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[9.5px] font-bold uppercase tracking-wider"
+                    className="h-auto px-2.5 py-1.5 rounded-xl text-[9.5px] tracking-wider"
                   >
                     {item.price} coins
-                  </button>
+                  </Button>
                 </div>
               );
             })}
@@ -256,16 +258,17 @@ export const StoreView: React.FC = () => {
         </div>
         <div className="grid grid-cols-3 gap-2.5">
           {coinPacks.map((pack) => (
-            <button
+            <Button
               key={pack.key}
+              variant="outline"
               onClick={() => handleRecharge(pack.key)}
               disabled={recharge.isPending}
-              className={`rounded-2xl p-3 flex flex-col items-center gap-1 border tactile-btn transition-all disabled:opacity-60 ${cardClass}`}
+              className={`h-auto rounded-2xl p-3 flex-col items-center gap-1 normal-case font-normal tracking-normal ${cardClass}`}
             >
               <span className="material-symbols-outlined text-[22px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>toll</span>
               <span className={`font-headline-md text-[15px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{pack.coins.toLocaleString()}</span>
               <span className={`text-[9px] text-center ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>{pack.label}</span>
-            </button>
+            </Button>
           ))}
         </div>
       </section>
@@ -276,26 +279,17 @@ export const StoreView: React.FC = () => {
           ¿Tenés un código promocional?
         </span>
         <form onSubmit={handleRedeem} className="flex gap-2">
-          <input
+          <Input
             type="text"
             value={promoCode}
             onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
             placeholder="Ej: MELY2026"
-            className={`flex-1 border rounded-xl px-3 py-2 font-mono text-[12px] tracking-wide focus:outline-none ${
-              isLight ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-            }`}
+            className="flex-1 font-mono text-[12px] tracking-wide"
           />
-          <button
-            type="submit"
-            disabled={redeemCode.isPending}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] font-bold uppercase disabled:opacity-60"
-          >
+          <Button type="submit" variant="cherry" disabled={redeemCode.isPending} className="rounded-xl">
             Canjear
-          </button>
+          </Button>
         </form>
-        {promoMessage && (
-          <p className={`text-[11px] font-bold ${promoMessage.type === 'ok' ? 'text-emerald-500' : 'text-[#e11d48]'}`}>{promoMessage.text}</p>
-        )}
       </section>
 
       {/* RECENT MOVEMENTS */}
@@ -318,80 +312,75 @@ export const StoreView: React.FC = () => {
       )}
 
       {/* PURCHASE CONFIRMATION MODAL */}
-      {selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fadeIn">
-          <div className={`border rounded-3xl w-full max-w-[390px] overflow-hidden shadow-2xl relative ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#170a0f] border-[#e11d48]/50'}`}>
-            <div className={`p-4 border-b flex justify-between items-center ${isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-gradient-to-r from-[#2b0c16] to-[#170a0f] border-[#e11d48]/30'}`}>
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#e11d48] text-[22px]">shopping_bag</span>
-                <h3 className={`font-headline-md text-[16px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>Confirmar Compra</h3>
-              </div>
-              <button onClick={() => setSelectedItem(null)} className={`p-1 ${isLight ? 'text-[#64748b] hover:text-[#0f172a]' : 'text-[#fda4af]/70 hover:text-white'}`}>
-                <span className="material-symbols-outlined text-[20px]">close</span>
-              </button>
-            </div>
-            <div className="p-5 flex flex-col gap-4">
-              <div className={`p-3.5 rounded-2xl border flex items-center gap-3.5 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0e0508] border-[#e11d48]/30'}`}>
-                <div className="min-w-0 flex-1">
-                  <h4 className={`font-headline-md text-[16px] font-bold truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{selectedItem.name}</h4>
-                  <p className={`text-[11px] ${isLight ? 'text-[#64748b]' : 'text-[#fca5a5]/80'}`}>{selectedItem.description}</p>
+      <Dialog open={Boolean(selectedItem)} onOpenChange={(open) => !open && setSelectedItem(null)}>
+        <DialogContent className="w-[calc(100%-2rem)] max-w-[390px] p-0 gap-0 overflow-hidden">
+          {selectedItem && (
+            <>
+              <DialogHeader className={`p-4 border-b flex-row items-center space-y-0 ${isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-gradient-to-r from-[#2b0c16] to-[#170a0f] border-[#e11d48]/30'}`}>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[#e11d48] text-[22px]">shopping_bag</span>
+                  <h3 className={`font-headline-md text-[16px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>Confirmar Compra</h3>
+                </div>
+              </DialogHeader>
+              <div className="p-5 flex flex-col gap-4">
+                <div className={`p-3.5 rounded-2xl border flex items-center gap-3.5 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0e0508] border-[#e11d48]/30'}`}>
+                  <div className="min-w-0 flex-1">
+                    <h4 className={`font-headline-md text-[16px] font-bold truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{selectedItem.name}</h4>
+                    <p className={`text-[11px] ${isLight ? 'text-[#64748b]' : 'text-[#fca5a5]/80'}`}>{selectedItem.description}</p>
+                  </div>
+                </div>
+                <div className={`p-3 rounded-xl border flex justify-between items-center text-[12px] ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0e0508] border-[#e11d48]/20'}`}>
+                  <span className={isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}>Total a pagar:</span>
+                  <span className="font-headline-md text-[16px] font-bold text-[#e11d48]">{selectedItem.price} Mely Coins</span>
+                </div>
+                {walletBalance < selectedItem.price && (
+                  <p className="text-[11px] text-[#e11d48] font-bold">No te alcanzan los coins. Recargá desde Monedas Mely.</p>
+                )}
+                {purchaseError && <p className="text-[11px] text-[#e11d48] font-bold">{purchaseError}</p>}
+                <div className="grid grid-cols-2 gap-2 pt-2">
+                  <Button type="button" variant="secondary" onClick={() => setSelectedItem(null)}>
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="cherry"
+                    onClick={handleConfirmPurchase}
+                    disabled={purchase.isPending || walletBalance < selectedItem.price}
+                    className="gap-1"
+                  >
+                    <span>Confirmar</span>
+                    <span className="material-symbols-outlined text-[15px]">done</span>
+                  </Button>
                 </div>
               </div>
-              <div className={`p-3 rounded-xl border flex justify-between items-center text-[12px] ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0e0508] border-[#e11d48]/20'}`}>
-                <span className={isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}>Total a pagar:</span>
-                <span className="font-headline-md text-[16px] font-bold text-[#e11d48]">{selectedItem.price} Mely Coins</span>
-              </div>
-              {walletBalance < selectedItem.price && (
-                <p className="text-[11px] text-[#e11d48] font-bold">No te alcanzan los coins. Recargá desde Monedas Mely.</p>
-              )}
-              {purchaseError && <p className="text-[11px] text-[#e11d48] font-bold">{purchaseError}</p>}
-              <div className="grid grid-cols-2 gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectedItem(null)}
-                  className={`py-2.5 rounded-xl border font-label-caps text-[10px] font-bold uppercase ${isLight ? 'border-[#fecdd3] bg-white text-[#475569] hover:bg-[#fff1f3]' : 'border-white/10 bg-[#160a0f] text-[#fda4af] hover:bg-white/5'}`}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  onClick={handleConfirmPurchase}
-                  disabled={purchase.isPending || walletBalance < selectedItem.price}
-                  className="py-2.5 rounded-xl bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] font-bold uppercase shadow-lg shadow-[#e11d48]/30 disabled:opacity-50 flex items-center justify-center gap-1"
-                >
-                  <span>Confirmar</span>
-                  <span className="material-symbols-outlined text-[15px]">done</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* RECEIPT */}
-      {receipt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fadeIn">
-          <div className={`border-2 rounded-3xl w-full max-w-[380px] overflow-hidden shadow-2xl relative text-center p-6 flex flex-col items-center gap-4 ${isLight ? 'bg-white border-[#e11d48]' : 'bg-[#170a0f] border-[#e11d48]/60'}`}>
-            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shadow-xl">
-              <span className="material-symbols-outlined text-[36px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
-            </div>
-            <div>
-              <span className="font-label-caps text-[10px] text-[#e11d48] uppercase tracking-widest font-bold block">¡ACTIVACIÓN EXITOSA!</span>
-              <h3 className={`font-headline-md text-[18px] font-bold mt-1 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{receipt}</h3>
-              <p className={`font-body-sm text-[12px] mt-1 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>Ya está disponible en tu cuenta.</p>
-            </div>
-            <button
-              onClick={() => {
-                sounds.playClick();
-                setReceipt(null);
-              }}
-              className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider shadow-lg shadow-[#e11d48]/30"
-            >
-              Continuar
-            </button>
+      <Dialog open={Boolean(receipt)} onOpenChange={(open) => !open && setReceipt(null)}>
+        <DialogContent className="w-[calc(100%-2rem)] max-w-[380px] text-center flex flex-col items-center gap-4 border-2 border-[#e11d48]/60">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shadow-xl">
+            <span className="material-symbols-outlined text-[36px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
           </div>
-        </div>
-      )}
+          <div>
+            <span className="font-label-caps text-[10px] text-[#e11d48] uppercase tracking-widest font-bold block">¡ACTIVACIÓN EXITOSA!</span>
+            <h3 className={`font-headline-md text-[18px] font-bold mt-1 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{receipt}</h3>
+            <p className={`font-body-sm text-[12px] mt-1 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>Ya está disponible en tu cuenta.</p>
+          </div>
+          <Button
+            variant="cherry"
+            onClick={() => {
+              sounds.playClick();
+              setReceipt(null);
+            }}
+            className="w-full"
+          >
+            Continuar
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

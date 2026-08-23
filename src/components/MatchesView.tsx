@@ -36,7 +36,6 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
     const q = searchQuery.toLowerCase();
     const matchesSearch =
       other.displayName.toLowerCase().includes(q) ||
-      (other.job ?? '').toLowerCase().includes(q) ||
       (other.city ?? '').toLowerCase().includes(q) ||
       other.interests.some((i) => i.name.toLowerCase().includes(q));
 
@@ -296,7 +295,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                         )}
                       </div>
                       <p className={`text-[11px] truncate ${isLight ? 'text-gray-500' : 'text-[#fda4af]/70'}`}>
-                        {match.other.job || 'Sin ocupación'} · {match.other.city || 'Buenos Aires'}
+                        {match.other.city || 'Buenos Aires'}
                       </p>
                     </div>
                   </div>
@@ -405,7 +404,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                           {match.other.displayName}, {match.other.age}
                         </h3>
                         <p className="text-[10px] text-[#fda4af] truncate font-medium">
-                          {match.other.job}
+                          {match.other.city}
                         </p>
                       </div>
                     </div>
@@ -575,7 +574,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     )}
                   </div>
                   <p className="text-[#fda4af] text-[12px] font-medium">
-                    {selectedMatch.other.job} · {selectedMatch.other.city}
+                    {selectedMatch.other.city}
                   </p>
                 </div>
               </div>

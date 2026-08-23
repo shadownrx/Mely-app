@@ -46,13 +46,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [refreshUser],
   );
 
-  const register = useCallback(
-    async (input: authApi.RegisterInput) => {
-      await authApi.register(input);
-      await refreshUser();
-    },
-    [refreshUser],
-  );
+  const register = useCallback(async (input: authApi.RegisterInput) => {
+    // No refreshUser() here on purpose: RegisterView still has to create the
+    // Profile (PUT /me/profile) and upload the photo/prompts after this call
+    // resolves. Flipping status to "authenticated" before that finishes would
+    // mount the main app with an incomplete user (no photos/profile yet).
+    // RegisterView calls refreshUser() itself once that follow-up work is done.
+    await authApi.register(input);
+  }, []);
 
   const logout = useCallback(async () => {
     disconnectRealtime();

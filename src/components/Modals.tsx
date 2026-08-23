@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Profile, Stamp, PlanType } from '../types';
+import { Profile, Stamp, PlanType, MeProfile } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useDatesMeta, useProposeDate } from '../hooks/useDates';
@@ -296,7 +296,6 @@ export const StampModal: React.FC<StampModalProps> = ({ stamp, onClose }) => {
           className={`w-24 h-24 rounded-full border-4 border-[#e11d48] text-[#e11d48] flex items-center justify-center stamp-ink mb-4 shadow-xl relative ${
             isLight ? 'bg-[#fff5f6]' : 'bg-[#0b0507]'
           }`}
-          style={{ transform: `rotate(${stamp.rotation}deg)` }}
         >
           <div className="absolute inset-1.5 border border-[#e11d48]/40 rounded-full" />
           <span
@@ -322,7 +321,7 @@ export const StampModal: React.FC<StampModalProps> = ({ stamp, onClose }) => {
           {stamp.title}
         </h3>
         <span className={`font-meta-data text-[12px] mb-4 font-semibold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]'}`}>
-          Fecha: {stamp.date}
+          {stamp.unlockedAt ? `Fecha: ${new Date(stamp.unlockedAt).toLocaleDateString('es-AR')}` : stamp.description}
         </span>
 
         <div
@@ -482,143 +481,20 @@ export const RechargeModal: React.FC<RechargeModalProps> = ({ pack, onClose, onC
   );
 };
 
-// --- SETTINGS / ACCOUNT MODAL ---
-interface SettingsModalProps {
-  type: 'personal' | 'security' | 'preferences' | null;
-  onClose: () => void;
-  user: Profile;
-  onUpdateName?: (name: string, bio: string) => void;
-}
-
-export const SettingsModal: React.FC<SettingsModalProps> = ({ type, onClose, user, onUpdateName }) => {
-  const { isLight } = useTheme();
-  const [name, setName] = useState(user.name);
-  const [bio, setBio] = useState(user.bio);
-
-  if (!type) return null;
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    sounds.playClick();
-    onUpdateName?.(name, bio);
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-      <div
-        className={`border rounded-3xl w-full max-w-[400px] overflow-hidden shadow-2xl p-6 ${
-          isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/40'
-        }`}
-      >
-        <div className="flex justify-between items-center pb-4 border-b border-[#e11d48]/20 mb-4">
-          <h3 className={`font-headline-md text-[18px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-            {type === 'personal' && 'Información Personal'}
-            {type === 'security' && 'Seguridad & Privacidad'}
-            {type === 'preferences' && 'Preferencias de Radar'}
-          </h3>
-          <button
-            onClick={() => {
-              sounds.playClick();
-              onClose();
-            }}
-            className={`p-1 rounded-full focus:outline-none ${
-              isLight ? 'text-[#64748b] hover:text-[#0f172a]' : 'text-[#fda4af] hover:text-[#fff1f2]'
-            }`}
-          >
-            <span className="material-symbols-outlined text-[20px]">close</span>
-          </button>
-        </div>
-
-        {type === 'personal' && (
-          <form onSubmit={handleSave} className="flex flex-col gap-4">
-            <div>
-              <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'}`}>
-                Nombre Completo
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
-                  isLight
-                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                }`}
-              />
-            </div>
-            <div>
-              <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'}`}>
-                Bio Editorial
-              </label>
-              <textarea
-                rows={3}
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
-                  isLight
-                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                }`}
-              />
-            </div>
-            <button
-              type="submit"
-              className="mt-2 w-full py-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] tracking-wider uppercase font-bold rounded-2xl tactile-btn hover:brightness-105 shadow-md shadow-[#e11d48]/25"
-            >
-              Guardar Cambios
-            </button>
-          </form>
-        )}
-
-        {type === 'security' && (
-          <div className="flex flex-col gap-3 text-[13px]">
-            <div className={`p-3 rounded-2xl border flex items-center justify-between ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
-              <span className={isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'}>Autenticación de 2 Factores</span>
-              <span className="text-[#e11d48] font-bold text-[11px]">ACTIVA</span>
-            </div>
-            <div className={`p-3 rounded-2xl border flex items-center justify-between ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
-              <span className={isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'}>Token de Verificación Presencial</span>
-              <span className="text-[#e11d48] font-bold text-[11px]">ROTACIÓN DIARIA</span>
-            </div>
-          </div>
-        )}
-
-        {type === 'preferences' && (
-          <div className="flex flex-col gap-3.5 text-[13px]">
-            <div>
-              <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'}`}>
-                Rango de Edad: 24 - 38 años
-              </label>
-              <input type="range" min="18" max="60" defaultValue="35" className="w-full accent-[#e11d48]" />
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
 // --- MENU DRAWER ---
 interface MenuDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onNavigate: (tab: any) => void;
-  onOpenAuth?: (screen: 'login' | 'register') => void;
-  onSignOut?: () => void;
-  onResetDemo: () => void;
-  isAuthenticated: boolean;
-  user: Profile;
+  onSignOut: () => void;
+  user: MeProfile;
 }
 
 export const MenuDrawer: React.FC<MenuDrawerProps> = ({
   isOpen,
   onClose,
   onNavigate,
-  onOpenAuth,
   onSignOut,
-  onResetDemo,
-  isAuthenticated,
   user,
 }) => {
   const { isLight, toggleTheme } = useTheme();
@@ -699,68 +575,36 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
           </div>
 
           {/* User mini passport badge */}
-          {isAuthenticated ? (
-            <div
-              onClick={() => {
-                sounds.playClick();
-                onNavigate('perfil');
-                onClose();
-              }}
-              className={`p-3 rounded-2xl border flex items-center gap-3 cursor-pointer transition-colors ${
-                isLight
-                  ? 'bg-white border-[#fecdd3] hover:border-[#e11d48] shadow-sm'
-                  : 'bg-[#190c12] border-[#e11d48]/30 hover:border-[#e11d48]/60'
-              }`}
-            >
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="w-10 h-10 rounded-full object-cover border border-[#e11d48]/50 shrink-0"
-                referrerPolicy="no-referrer"
-              />
-              <div className="flex-1 min-w-0">
-                <span className={`font-headline-md text-[13px] font-bold block truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                  {user.name}
-                </span>
-                <span className="font-meta-data text-[9px] text-[#e11d48] uppercase block truncate font-bold">
-                  {user.membership}
-                </span>
-              </div>
-              <span className={`material-symbols-outlined text-[18px] ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
-                chevron_right
+          <div
+            onClick={() => {
+              sounds.playClick();
+              onNavigate('perfil');
+              onClose();
+            }}
+            className={`p-3 rounded-2xl border flex items-center gap-3 cursor-pointer transition-colors ${
+              isLight
+                ? 'bg-white border-[#fecdd3] hover:border-[#e11d48] shadow-sm'
+                : 'bg-[#190c12] border-[#e11d48]/30 hover:border-[#e11d48]/60'
+            }`}
+          >
+            <img
+              src={user.photos[0]?.url}
+              alt={user.displayName}
+              className="w-10 h-10 rounded-full object-cover border border-[#e11d48]/50 shrink-0"
+              referrerPolicy="no-referrer"
+            />
+            <div className="flex-1 min-w-0">
+              <span className={`font-headline-md text-[13px] font-bold block truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+                {user.displayName}
+              </span>
+              <span className="font-meta-data text-[9px] text-[#e11d48] uppercase block truncate font-bold">
+                {user.membership.tierLabel}
               </span>
             </div>
-          ) : (
-            <div className={`p-3 rounded-2xl border flex flex-col gap-2 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#190c12] border-white/10'}`}>
-              <span className={`font-label-caps text-[10px] uppercase font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
-                ESTADO: MODO INVITADO
-              </span>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => {
-                    sounds.playClick();
-                    onOpenAuth?.('login');
-                    onClose();
-                  }}
-                  className="py-1.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-xl font-label-caps text-[9px] font-bold uppercase"
-                >
-                  Entrar
-                </button>
-                <button
-                  onClick={() => {
-                    sounds.playClick();
-                    onOpenAuth?.('register');
-                    onClose();
-                  }}
-                  className={`py-1.5 border rounded-xl font-label-caps text-[9px] font-bold uppercase ${
-                    isLight ? 'bg-white text-[#0f172a] border-[#fecdd3]' : 'bg-[#140a0e] text-[#fda4af] border-white/10'
-                  }`}
-                >
-                  Registro
-                </button>
-              </div>
-            </div>
-          )}
+            <span className={`material-symbols-outlined text-[18px] ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
+              chevron_right
+            </span>
+          </div>
 
           {/* Navigation Links */}
           <nav className="flex flex-col gap-1.5">
@@ -788,73 +632,24 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
             ))}
           </nav>
 
-          {/* Auth Switcher Quick Options */}
-          <div className="pt-2 flex flex-col gap-1.5 border-t border-gray-200 dark:border-white/5">
-            <span className={`font-label-caps text-[9px] uppercase tracking-wider px-1 ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
-              ACCESO & CUENTA
-            </span>
-            <button
-              onClick={() => {
-                sounds.playClick();
-                onOpenAuth?.('login');
-                onClose();
-              }}
-              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-colors text-[12px] ${
-                isLight ? 'hover:bg-[#fff1f3] text-[#475569]' : 'hover:bg-white/5 text-[#fda4af]'
-              }`}
-            >
-              <span className="material-symbols-outlined text-[18px]">key</span>
-              <span>Cambiar de Pasaporte (Login)</span>
-            </button>
-            <button
-              onClick={() => {
-                sounds.playClick();
-                onOpenAuth?.('register');
-                onClose();
-              }}
-              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-colors text-[12px] ${
-                isLight ? 'hover:bg-[#fff1f3] text-[#e11d48]' : 'hover:bg-white/5 text-[#fb7185]'
-              }`}
-            >
-              <span className="material-symbols-outlined text-[18px]">how_to_reg</span>
-              <span>Emitir Nuevo Pasaporte (Registro)</span>
-            </button>
-          </div>
         </div>
 
         {/* Footer Actions */}
         <div className="pt-4 border-t border-gray-200 dark:border-white/10 flex flex-col gap-2.5">
-          {isAuthenticated && (
-            <button
-              onClick={() => {
-                sounds.playClick();
-                onSignOut?.();
-                onClose();
-              }}
-              className={`w-full py-2 border text-[10px] font-label-caps uppercase rounded-xl flex items-center justify-center gap-1.5 ${
-                isLight
-                  ? 'bg-[#fff1f3] hover:bg-[#ffe4e6] border-[#fecdd3] text-[#e11d48]'
-                  : 'bg-[#170a0f] hover:bg-[#e11d48]/15 border-[#e11d48]/30 text-[#fda4af]'
-              }`}
-            >
-              <span className="material-symbols-outlined text-[16px]">logout</span>
-              <span>Cerrar Sesión</span>
-            </button>
-          )}
-
           <button
             onClick={() => {
               sounds.playClick();
-              onResetDemo();
+              onSignOut();
               onClose();
             }}
-            className={`w-full py-2 border text-[9px] font-label-caps uppercase rounded-xl ${
+            className={`w-full py-2 border text-[10px] font-label-caps uppercase rounded-xl flex items-center justify-center gap-1.5 ${
               isLight
-                ? 'bg-transparent hover:bg-gray-50 border-gray-200 text-gray-500'
-                : 'bg-transparent hover:bg-white/5 border-white/10 text-[#fda4af]/70'
+                ? 'bg-[#fff1f3] hover:bg-[#ffe4e6] border-[#fecdd3] text-[#e11d48]'
+                : 'bg-[#170a0f] hover:bg-[#e11d48]/15 border-[#e11d48]/30 text-[#fda4af]'
             }`}
           >
-            Restaurar Demo Mely
+            <span className="material-symbols-outlined text-[16px]">logout</span>
+            <span>Cerrar Sesión</span>
           </button>
 
           <span className={`font-meta-data text-[8px] text-center block ${isLight ? 'text-gray-400' : 'text-[#fda4af]/40'}`}>

@@ -12,7 +12,6 @@ interface DiscoverViewProps {
   onLike: (profile: Profile) => void;
   onPass: (profile: Profile) => void;
   onSuperLike: (profile: Profile) => void;
-  onProposeDateDirect: (profile: Profile) => void;
   onOpenFilters?: () => void;
   activeFiltersCount?: number;
   onOpenVerifiedSpots?: () => void;
@@ -23,7 +22,6 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
   onLike,
   onPass,
   onSuperLike,
-  onProposeDateDirect,
   onOpenFilters,
   activeFiltersCount = 0,
   onOpenVerifiedSpots,
@@ -239,9 +237,6 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                 <h3 className="font-headline-md text-[22px] font-bold text-white">
                   {nextProfile.displayName}, {nextProfile.age}
                 </h3>
-                <p className="font-body-sm text-[12px] text-[#fda4af]">
-                  {nextProfile.job}
-                </p>
               </div>
             </div>
           </div>
@@ -498,7 +493,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                       </span>
                     </div>
                     <p className="font-body-sm text-[13px] text-[#fca5a5] opacity-95 mt-0.5 font-medium truncate">
-                      {currentProfile.job}
+                      {currentProfile.lookingForLabel}
                     </p>
                     <p className="font-meta-data text-[11px] text-white/80 flex items-center gap-1 mt-1">
                       <span className="material-symbols-outlined text-[13px] text-[#ff4d67]">location_on</span>
@@ -701,26 +696,6 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                     favorite
                   </span>
-                </motion.button>
-
-                {/* Propose Date Direct button */}
-                <motion.button
-                  whileHover={{ scale: 1.08 }}
-                  whileTap={{ scale: 0.92 }}
-                  id="btn-discover-propose"
-                  onClick={() => {
-                    sounds.playStamp();
-                    onProposeDateDirect(currentProfile);
-                  }}
-                  className={`w-11 h-11 rounded-full border flex items-center justify-center shadow-xs transition-colors ${
-                    isLight
-                      ? 'border-[#fecdd3] bg-white text-[#e11d48] hover:bg-[#fff1f3]'
-                      : 'border-[#fb7185]/30 bg-[#1c0c12] text-[#fda4af] hover:bg-[#e11d48]/20'
-                  }`}
-                  title="Proponer Café / Cita"
-                  aria-label="Proponer cita"
-                >
-                  <span className="material-symbols-outlined text-[20px]">local_cafe</span>
                 </motion.button>
               </div>
             </Card>

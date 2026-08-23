@@ -233,11 +233,6 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   isLight ? 'from-black/75 via-black/20 to-transparent' : 'from-[#140b0f] via-black/30 to-transparent'
                 }`}
               />
-              <div className="absolute bottom-4 left-5 right-5">
-                <h3 className="font-headline-md text-[22px] font-bold text-white">
-                  {nextProfile.displayName}, {nextProfile.age}
-                </h3>
-              </div>
             </div>
           </div>
         )}

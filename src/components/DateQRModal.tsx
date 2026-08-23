@@ -39,7 +39,6 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
   const { isLight } = useTheme();
   const [mode, setMode] = useState<'show_qr' | 'scan_manual'>('show_qr');
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [manualCode, setManualCode] = useState('');
   const [useManualEntry, setUseManualEntry] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
@@ -69,7 +68,6 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
     if (status === 'CANCELLED' || status === 'VERIFIED') return;
     generateQr.mutate(dateId, {
       onSuccess: async (res) => {
-        setToken(res.code);
         setQrDataUrl(await QRCode.toDataURL(res.payload, { margin: 1, width: 220, color: { dark: '#0f172a' } }));
       },
     });
@@ -250,9 +248,6 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 )}
               </div>
               <div className="mt-3">
-                <span className="font-mono text-[11px] font-bold text-[#e11d48] tracking-widest block">
-                  TOKEN: {token ?? '········'}
-                </span>
                 <span className={`font-meta-data text-[9px] uppercase ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>
                   {PLAN_LABELS[planType]} EN {zone}
                 </span>

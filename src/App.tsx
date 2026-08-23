@@ -19,6 +19,7 @@ import { DiscoveryFiltersModal } from './components/DiscoveryFiltersModal';
 import { IcebreakerWheelModal } from './components/IcebreakerWheelModal';
 import { ProposeDateModal, StampModal, MenuDrawer } from './components/Modals';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { Toaster } from './components/ui/sonner';
 import { sounds } from './utils/audio';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { useAuth } from './context/AuthContext';
@@ -336,6 +337,7 @@ export default function App() {
     <ThemeProvider>
       <ErrorBoundary>
         <AppContent />
+        <Toaster />
       </ErrorBoundary>
     </ThemeProvider>
   );

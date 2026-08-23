@@ -1,12 +1,15 @@
-import React, { useMemo, useState } from 'react';
-import { Profile, Stamp, PlanType, MeProfile } from '../types';
+import React, { useState } from 'react';
+import { toast } from 'sonner';
+import { Stamp, PlanType, MeProfile } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useDatesMeta, useProposeDate } from '../hooks/useDates';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import { Badge } from './ui/badge';
+import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
+import { Sheet, SheetContent } from './ui/sheet';
 
 // --- PROPOSE DATE MODAL ---
 interface ProposeDateModalProps {
@@ -39,9 +42,6 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
   const [scheduledAt, setScheduledAt] = useState(() => defaultDateTimeLocal(3, 16));
   const [coordinateByChat, setCoordinateByChat] = useState(false);
   const [note, setNote] = useState('Un café de especialidad y caminata por la galería.');
-  const [error, setError] = useState<string | null>(null);
-
-  if (!isOpen) return null;
 
   const quickVenues: { zone: string; planType: PlanType; daysAhead: number; hour: number }[] = [
     { zone: 'The Roastery, Palermo Soho', planType: 'COFFEE', daysAhead: 3, hour: 16 },
@@ -53,7 +53,6 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     sounds.playClick();
-    setError(null);
     proposeDate.mutate(
       {
         scheduledAt: coordinateByChat ? undefined : new Date(scheduledAt).toISOString(),
@@ -64,67 +63,35 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
       {
         onSuccess: () => {
           sounds.playCoins();
+          toast.success(`Invitación enviada a ${partnerName}`);
           onClose();
         },
-        onError: (err: any) => setError(err?.message ?? 'No se pudo enviar la invitación'),
+        onError: (err: any) => toast.error(err?.message ?? 'No se pudo enviar la invitación'),
       },
     );
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-      <div
-        className={`border rounded-3xl w-full max-w-[420px] overflow-hidden shadow-2xl relative ${
-          isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/40'
-        }`}
-      >
-        {/* Header */}
-        <div
-          className={`p-5 border-b flex justify-between items-center ${
-            isLight
-              ? 'bg-[#fff1f3] border-[#fecdd3]'
-              : 'bg-[#1c0d15] border-[#e11d48]/20'
-          }`}
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="w-[calc(100%-2rem)] max-w-[420px] p-0 gap-0 rounded-3xl overflow-hidden max-h-[90dvh] flex flex-col">
+        <DialogHeader
+          className={`p-5 border-b space-y-0 ${isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#1c0d15] border-[#e11d48]/20'}`}
         >
-          <div>
-            <span
-              className={`font-label-caps text-[9px] uppercase tracking-widest block font-bold ${
-                isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'
-              }`}
-            >
-              PROPUESTA DE ENCUENTRO PRESENCIAL
-            </span>
-            <h3
-              className={`font-headline-md text-[18px] font-black ${
-                isLight ? 'text-[#0f172a]' : 'text-transparent bg-clip-text bg-gradient-to-r from-[#fb7185] to-[#fff1f2]'
-              }`}
-            >
-              Invitar a {partnerName}
-            </h3>
-          </div>
-          <button
-            onClick={() => {
-              sounds.playClick();
-              onClose();
-            }}
-            className={`p-1.5 rounded-full focus:outline-none ${
-              isLight ? 'text-[#64748b] hover:text-[#0f172a]' : 'text-[#fda4af] hover:text-[#fff1f2]'
+          <span className={`font-label-caps text-[9px] uppercase tracking-widest block font-bold ${isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'}`}>
+            PROPUESTA DE ENCUENTRO PRESENCIAL
+          </span>
+          <h3
+            className={`font-headline-md text-[18px] font-black ${
+              isLight ? 'text-[#0f172a]' : 'text-transparent dark:text-transparent bg-clip-text bg-gradient-to-r from-[#fb7185] to-[#fff1f2]'
             }`}
           >
-            <span className="material-symbols-outlined text-[20px]">close</span>
-          </button>
-        </div>
+            Invitar a {partnerName}
+          </h3>
+        </DialogHeader>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="p-5 flex flex-col gap-4 overflow-y-auto">
           <div>
-            <label
-              className={`font-label-caps text-[10px] uppercase block mb-1.5 font-bold ${
-                isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'
-              }`}
-            >
-              Plantillas de Citas Mely
-            </label>
+            <Label className="mb-1.5 block">Plantillas de Citas Mely</Label>
             <div className="grid grid-cols-2 gap-2">
               {quickVenues.map((qv, i) => (
                 <button
@@ -137,7 +104,7 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
                     setScheduledAt(defaultDateTimeLocal(qv.daysAhead, qv.hour));
                     setCoordinateByChat(false);
                   }}
-                  className={`p-2.5 rounded-2xl text-left border text-[11px] transition-all font-body-sm ${
+                  className={`p-2.5 rounded-2xl text-left border text-[11px] transition-all font-body-sm cursor-pointer ${
                     zone === qv.zone
                       ? isLight
                         ? 'bg-[#fff1f3] border-[#e11d48] text-[#e11d48] font-bold shadow-sm'
@@ -159,78 +126,51 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
           </div>
 
           <div>
-            <label
-              className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${
-                isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'
-              }`}
-            >
-              Tipo de Plan
-            </label>
-            <select
-              value={planType}
-              onChange={(e) => setPlanType(e.target.value as PlanType)}
-              className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
-                isLight
-                  ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                  : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-              }`}
-            >
-              {(meta?.planTypes ?? []).map((p) => (
-                <option key={p.value} value={p.value}>
-                  {p.label}
-                </option>
-              ))}
-            </select>
+            <Label className="mb-1 block">Tipo de Plan</Label>
+            <Select value={planType} onValueChange={(v) => setPlanType(v as PlanType)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(meta?.planTypes ?? []).map((p) => (
+                  <SelectItem key={p.value} value={p.value}>
+                    {p.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
-            <label
-              className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${
-                isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'
-              }`}
-            >
+            <Label htmlFor="propose-zone" className="mb-1 block">
               Lugar / Dirección
-            </label>
-            <input
+            </Label>
+            <Input
+              id="propose-zone"
               type="text"
               value={zone}
               onChange={(e) => setZone(e.target.value)}
               required
               minLength={2}
               maxLength={80}
-              className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
-                isLight
-                  ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                  : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-              }`}
             />
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label
-                className={`font-label-caps text-[10px] uppercase font-bold ${
-                  isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'
-                }`}
-              >
-                Fecha y Hora
-              </label>
-              <button
+              <Label>Fecha y Hora</Label>
+              <Button
                 type="button"
+                variant={coordinateByChat ? 'cherry' : 'outline'}
+                size="sm"
                 onClick={() => {
                   sounds.playClick();
                   setCoordinateByChat((prev) => !prev);
                 }}
-                className={`font-label-caps text-[9px] uppercase font-bold px-2 py-1 rounded-lg border transition-colors ${
-                  coordinateByChat
-                    ? 'bg-[#e11d48] text-white border-[#e11d48]'
-                    : isLight
-                    ? 'bg-white text-[#64748b] border-[#fecdd3] hover:text-[#e11d48]'
-                    : 'bg-[#0b0507] text-[#fda4af]/70 border-[#e11d48]/25 hover:text-[#fda4af]'
-                }`}
+                className="h-7 px-2 text-[9px] rounded-lg tracking-normal"
               >
                 Coordinar por chat
-              </button>
+              </Button>
             </div>
             {coordinateByChat ? (
               <p
@@ -241,58 +181,39 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
                 No fijás un horario: le mandás la propuesta con el lugar y plan, y se ponen de acuerdo con la hora charlando en el chat.
               </p>
             ) : (
-              <input
+              <Input
                 type="datetime-local"
                 value={scheduledAt}
                 onChange={(e) => setScheduledAt(e.target.value)}
                 required
                 min={defaultDateTimeLocal(0, 0)}
-                className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
-                  isLight
-                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                }`}
               />
             )}
           </div>
 
           <div>
-            <label
-              className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${
-                isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'
-              }`}
-            >
+            <Label htmlFor="propose-note" className="mb-1 block">
               Nota o Detalle Especial (Opcional)
-            </label>
-            <input
+            </Label>
+            <Input
+              id="propose-note"
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
               maxLength={200}
               placeholder="Ej: Un café de especialidad y caminata..."
-              className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
-                isLight
-                  ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] placeholder:text-gray-400 focus:border-[#e11d48]'
-                  : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] placeholder:text-[#fda4af]/40 focus:border-[#fb7185]'
-              }`}
             />
           </div>
 
-          {error && <p className="text-[11px] text-[#e11d48] font-bold">{error}</p>}
-
           <div className="pt-2">
-            <button
-              type="submit"
-              disabled={proposeDate.isPending}
-              className="w-full py-3.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] tracking-widest font-bold rounded-2xl tactile-btn hover:brightness-105 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#e11d48]/25 focus:outline-none disabled:opacity-60"
-            >
+            <Button type="submit" variant="cherry" size="lg" disabled={proposeDate.isPending} className="w-full gap-2">
               <span>ENVIAR INVITACIÓN TICKET</span>
               <span className="material-symbols-outlined text-[16px]">confirmation_number</span>
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -304,127 +225,80 @@ interface StampModalProps {
 
 export const StampModal: React.FC<StampModalProps> = ({ stamp, onClose }) => {
   const { isLight } = useTheme();
-  if (!stamp) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-      <div
-        className={`border rounded-3xl w-full max-w-[380px] overflow-hidden shadow-2xl relative p-6 flex flex-col items-center text-center ${
-          isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/40'
-        }`}
-      >
-        {/* Close */}
-        <button
-          onClick={() => {
-            sounds.playClick();
-            onClose();
-          }}
-          className={`absolute top-4 right-4 p-1 rounded-full focus:outline-none ${
-            isLight ? 'text-[#64748b] hover:text-[#0f172a]' : 'text-[#fda4af] hover:text-[#fff1f2]'
-          }`}
-        >
-          <span className="material-symbols-outlined text-[20px]">close</span>
-        </button>
-
-        {/* Sello Grande con efecto Ink */}
-        <div
-          className={`w-24 h-24 rounded-full border-4 border-[#e11d48] text-[#e11d48] flex items-center justify-center stamp-ink mb-4 shadow-xl relative ${
-            isLight ? 'bg-[#fff5f6]' : 'bg-[#0b0507]'
-          }`}
-        >
-          <div className="absolute inset-1.5 border border-[#e11d48]/40 rounded-full" />
-          <span
-            className="material-symbols-outlined text-[42px]"
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            {stamp.iconName}
-          </span>
-        </div>
-
-        <span
-          className={`font-label-caps text-[10px] uppercase tracking-widest mb-1 font-bold ${
-            isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'
-          }`}
-        >
-          {stamp.unlocked ? 'SELLO OFICIAL DE CONEXIÓN' : 'SELLO POR DESBLOQUEAR'}
-        </span>
-        <h3
-          className={`font-headline-md text-[22px] font-bold mb-1 ${
-            isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'
-          }`}
-        >
-          {stamp.title}
-        </h3>
-        <span className={`font-meta-data text-[12px] mb-4 font-semibold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]'}`}>
-          {stamp.unlockedAt ? `Fecha: ${new Date(stamp.unlockedAt).toLocaleDateString('es-AR')}` : stamp.description}
-        </span>
-
-        <div
-          className={`rounded-2xl p-4 border w-full text-left flex flex-col gap-2.5 mb-5 ${
-            isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'
-          }`}
-        >
-          {stamp.location && (
-            <div>
-              <span
-                className={`font-label-caps text-[9px] uppercase block font-bold ${
-                  isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'
-                }`}
-              >
-                LUGAR
+    <Dialog open={Boolean(stamp)} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="w-[calc(100%-2rem)] max-w-[380px] p-6 rounded-3xl flex flex-col items-center text-center">
+        {stamp && (
+          <>
+            <div
+              className={`w-24 h-24 rounded-full border-4 border-[#e11d48] text-[#e11d48] flex items-center justify-center stamp-ink mb-4 shadow-xl relative ${
+                isLight ? 'bg-[#fff5f6]' : 'bg-[#0b0507]'
+              }`}
+            >
+              <div className="absolute inset-1.5 border border-[#e11d48]/40 rounded-full" />
+              <span className="material-symbols-outlined text-[42px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                {stamp.iconName}
               </span>
-              <p className={`font-body-sm text-[13px] ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                {stamp.location}
-              </p>
             </div>
-          )}
 
-          {stamp.partnerName && (
-            <div>
-              <span
-                className={`font-label-caps text-[9px] uppercase block font-bold ${
-                  isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'
-                }`}
-              >
-                ENCUENTRO CON
-              </span>
-              <p className={`font-body-sm text-[13px] ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                {stamp.partnerName}
-              </p>
+            <span className={`font-label-caps text-[10px] uppercase tracking-widest mb-1 font-bold ${isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'}`}>
+              {stamp.unlocked ? 'SELLO OFICIAL DE CONEXIÓN' : 'SELLO POR DESBLOQUEAR'}
+            </span>
+            <h3 className={`font-headline-md text-[22px] font-bold mb-1 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+              {stamp.title}
+            </h3>
+            <span className={`font-meta-data text-[12px] mb-4 font-semibold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]'}`}>
+              {stamp.unlockedAt ? `Fecha: ${new Date(stamp.unlockedAt).toLocaleDateString('es-AR')}` : stamp.description}
+            </span>
+
+            <div
+              className={`rounded-2xl p-4 border w-full text-left flex flex-col gap-2.5 mb-5 ${
+                isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'
+              }`}
+            >
+              {stamp.location && (
+                <div>
+                  <span className={`font-label-caps text-[9px] uppercase block font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>
+                    LUGAR
+                  </span>
+                  <p className={`font-body-sm text-[13px] ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{stamp.location}</p>
+                </div>
+              )}
+
+              {stamp.partnerName && (
+                <div>
+                  <span className={`font-label-caps text-[9px] uppercase block font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>
+                    ENCUENTRO CON
+                  </span>
+                  <p className={`font-body-sm text-[13px] ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{stamp.partnerName}</p>
+                </div>
+              )}
+
+              {stamp.notes && (
+                <div>
+                  <span className={`font-label-caps text-[9px] uppercase block font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>
+                    MEMORIA / DETALLES
+                  </span>
+                  <p className={`font-body-sm text-[13px] italic ${isLight ? 'text-[#475569]' : 'text-[#fda4af]'}`}>"{stamp.notes}"</p>
+                </div>
+              )}
             </div>
-          )}
 
-          {stamp.notes && (
-            <div>
-              <span
-                className={`font-label-caps text-[9px] uppercase block font-bold ${
-                  isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'
-                }`}
-              >
-                MEMORIA / DETALLES
-              </span>
-              <p className={`font-body-sm text-[13px] italic ${isLight ? 'text-[#475569]' : 'text-[#fda4af]'}`}>
-                "{stamp.notes}"
-              </p>
-            </div>
-          )}
-        </div>
-
-        <button
-          onClick={() => {
-            sounds.playClick();
-            onClose();
-          }}
-          className={`w-full py-3 border font-label-caps text-[10px] tracking-wider uppercase font-bold rounded-2xl tactile-btn focus:outline-none ${
-            isLight
-              ? 'bg-[#fff1f3] border-[#fecdd3] text-[#e11d48] hover:bg-[#ffe4e6]'
-              : 'bg-[#1f0d16] hover:bg-[#2b1019] border-[#e11d48]/30 text-[#fff1f2]'
-          }`}
-        >
-          Cerrar Recuerdo
-        </button>
-      </div>
-    </div>
+            <Button
+              variant="outline"
+              onClick={() => {
+                sounds.playClick();
+                onClose();
+              }}
+              className="w-full"
+            >
+              Cerrar Recuerdo
+            </Button>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -437,82 +311,67 @@ interface RechargeModalProps {
 
 export const RechargeModal: React.FC<RechargeModalProps> = ({ pack, onClose, onConfirm }) => {
   const { isLight } = useTheme();
-  if (!pack) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-      <div
-        className={`border rounded-3xl w-full max-w-[380px] overflow-hidden shadow-2xl p-6 flex flex-col items-center text-center ${
-          isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/40'
-        }`}
-      >
-        <div
-          className={`w-16 h-16 rounded-full border text-[#e11d48] flex items-center justify-center mb-4 ${
-            isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#e11d48]/20 border-[#e11d48]/40'
-          }`}
-        >
-          <span className="material-symbols-outlined text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-            monetization_on
-          </span>
-        </div>
+    <Dialog open={Boolean(pack)} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="w-[calc(100%-2rem)] max-w-[380px] p-6 rounded-3xl flex flex-col items-center text-center">
+        {pack && (
+          <>
+            <div
+              className={`w-16 h-16 rounded-full border text-[#e11d48] flex items-center justify-center mb-4 ${
+                isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#e11d48]/20 border-[#e11d48]/40'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                monetization_on
+              </span>
+            </div>
 
-        <span
-          className={`font-label-caps text-[10px] uppercase tracking-widest mb-1 font-bold ${
-            isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'
-          }`}
-        >
-          BÓVEDA PERSONAL
-        </span>
-        <h3
-          className={`font-headline-md text-[20px] font-bold mb-1 ${
-            isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'
-          }`}
-        >
-          {pack.name}
-        </h3>
-        <p className={`font-body-sm text-[13px] mb-5 ${isLight ? 'text-[#475569]' : 'text-[#fda4af]/80'}`}>
-          Recibirás <strong className="text-[#e11d48]">+{pack.pts} PTS</strong> en tu saldo de Mely para regalos y beneficios de conexión.
-        </p>
+            <span className={`font-label-caps text-[10px] uppercase tracking-widest mb-1 font-bold ${isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'}`}>
+              BÓVEDA PERSONAL
+            </span>
+            <h3 className={`font-headline-md text-[20px] font-bold mb-1 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{pack.name}</h3>
+            <p className={`font-body-sm text-[13px] mb-5 ${isLight ? 'text-[#475569]' : 'text-[#fda4af]/80'}`}>
+              Recibirás <strong className="text-[#e11d48]">+{pack.pts} PTS</strong> en tu saldo de Mely para regalos y beneficios de conexión.
+            </p>
 
-        <div
-          className={`p-4 rounded-2xl border w-full flex justify-between items-center mb-6 ${
-            isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25'
-          }`}
-        >
-          <span className={`font-label-caps text-[11px] uppercase font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'}`}>
-            Importe Total
-          </span>
-          <span className={`font-headline-md text-[20px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-            {pack.price} USD
-          </span>
-        </div>
+            <div
+              className={`p-4 rounded-2xl border w-full flex justify-between items-center mb-6 ${
+                isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25'
+              }`}
+            >
+              <span className={`font-label-caps text-[11px] uppercase font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'}`}>
+                Importe Total
+              </span>
+              <span className={`font-headline-md text-[20px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{pack.price} USD</span>
+            </div>
 
-        <div className="flex gap-2.5 w-full">
-          <button
-            onClick={() => {
-              sounds.playClick();
-              onClose();
-            }}
-            className={`flex-1 py-3 font-label-caps text-[10px] uppercase font-bold rounded-2xl tactile-btn border focus:outline-none ${
-              isLight
-                ? 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'
-                : 'bg-[#0b0507] text-[#fda4af] hover:bg-white/5 border-white/10'
-            }`}
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={() => {
-              onConfirm();
-              onClose();
-            }}
-            className="flex-1 py-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] tracking-wider uppercase font-bold rounded-2xl tactile-btn hover:brightness-105 shadow-md shadow-[#e11d48]/25 focus:outline-none"
-          >
-            Confirmar Pago
-          </button>
-        </div>
-      </div>
-    </div>
+            <div className="flex gap-2.5 w-full">
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  sounds.playClick();
+                  onClose();
+                }}
+                className="flex-1"
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="cherry"
+                onClick={() => {
+                  onConfirm();
+                  onClose();
+                }}
+                className="flex-1"
+              >
+                Confirmar Pago
+              </Button>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -533,7 +392,6 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
   user,
 }) => {
   const { isLight, toggleTheme } = useTheme();
-  if (!isOpen) return null;
 
   const mainLinks = [
     { label: 'Descubrir Perfiles', tab: 'descubrir', icon: 'explore' },
@@ -546,36 +404,19 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex bg-black/75 backdrop-blur-sm animate-fadeIn" onClick={onClose}>
-      <div
-        className={`w-[310px] h-full border-r p-5 flex flex-col justify-between shadow-2xl overflow-y-auto no-scrollbar transition-colors ${
-          isLight
-            ? 'bg-white border-[#fecdd3] text-[#0f172a]'
-            : 'bg-[#0e070a] border-[#e11d48]/30 text-[#fff1f2]'
-        }`}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent side="left" className="w-[310px] p-5 flex flex-col justify-between overflow-y-auto no-scrollbar">
         <div className="flex flex-col gap-5">
           {/* Header */}
-          <div className="flex justify-between items-center pb-3.5 border-b border-[#e11d48]/20">
+          <div className="flex justify-between items-center pb-3.5 border-b border-[#e11d48]/20 pr-8">
             <div>
-              <h2
-                className={`font-headline-md text-[20px] tracking-[0.2em] font-bold ${
-                  isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'
-                }`}
-              >
+              <h2 className={`font-headline-md text-[20px] tracking-[0.2em] font-bold ${isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'}`}>
                 MELY
               </h2>
               <span className={`font-label-caps text-[8.5px] uppercase tracking-wider ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
                 PASAPORTE DE CONEXIONES
               </span>
             </div>
-            <button
-              onClick={onClose}
-              className={`p-1 focus:outline-none ${isLight ? 'text-[#64748b] hover:text-[#0f172a]' : 'text-[#fda4af] hover:text-white'}`}
-            >
-              <span className="material-symbols-outlined text-[22px]">close</span>
-            </button>
           </div>
 
           {/* Theme Quick Switcher Inside Drawer */}
@@ -597,16 +438,18 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
                 </span>
               </div>
             </div>
-            <button
+            <Button
               type="button"
+              variant="cherry"
+              size="sm"
               onClick={() => {
                 sounds.playClick();
                 toggleTheme();
               }}
-              className="px-2.5 py-1 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[9px] font-bold uppercase rounded-xl tactile-btn shadow-sm"
+              className="h-7 px-2.5 text-[9px] rounded-xl tracking-normal"
             >
               Cambiar
-            </button>
+            </Button>
           </div>
 
           {/* User mini passport badge */}
@@ -651,47 +494,39 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
                   onNavigate(link.tab);
                   onClose();
                 }}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors group ${
-                  isLight
-                    ? 'hover:bg-[#fff1f3] text-[#0f172a]'
-                    : 'hover:bg-white/5 text-[#fff1f2]'
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors group cursor-pointer ${
+                  isLight ? 'hover:bg-[#fff1f3] text-[#0f172a]' : 'hover:bg-white/5 text-[#fff1f2]'
                 }`}
               >
                 <span className="material-symbols-outlined text-[19px] text-[#e11d48] group-hover:scale-110 transition-transform">
                   {link.icon}
                 </span>
-                <span className="font-body-sm text-[13px] font-medium">
-                  {link.label}
-                </span>
+                <span className="font-body-sm text-[13px] font-medium">{link.label}</span>
               </button>
             ))}
           </nav>
-
         </div>
 
         {/* Footer Actions */}
         <div className="pt-4 border-t border-gray-200 dark:border-white/10 flex flex-col gap-2.5">
-          <button
+          <Button
+            variant="outline"
             onClick={() => {
               sounds.playClick();
               onSignOut();
               onClose();
             }}
-            className={`w-full py-2 border text-[10px] font-label-caps uppercase rounded-xl flex items-center justify-center gap-1.5 ${
-              isLight
-                ? 'bg-[#fff1f3] hover:bg-[#ffe4e6] border-[#fecdd3] text-[#e11d48]'
-                : 'bg-[#170a0f] hover:bg-[#e11d48]/15 border-[#e11d48]/30 text-[#fda4af]'
-            }`}
+            className={`w-full gap-1.5 text-[10px] ${isLight ? 'bg-[#fff1f3] text-[#e11d48]' : 'bg-[#170a0f] text-[#fda4af]'}`}
           >
             <span className="material-symbols-outlined text-[16px]">logout</span>
             <span>Cerrar Sesión</span>
-          </button>
+          </Button>
 
           <span className={`font-meta-data text-[8px] text-center block ${isLight ? 'text-gray-400' : 'text-[#fda4af]/40'}`}>
             MELY v2.8 • CHERRY & CORAL EDITION
           </span>
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 };

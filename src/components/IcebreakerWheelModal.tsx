@@ -11,7 +11,7 @@ interface IcebreakerWheelModalProps {
   isOpen: boolean;
   onClose: () => void;
   partnerName: string;
-  onSendIcebreakerToChat: (questionText: string, options?: string[]) => void;
+  onSendIcebreakerToChat: (questionText: string) => void;
 }
 
 export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
@@ -58,9 +58,9 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
     }, 900);
   };
 
-  const handleSendToChat = (optionsToSend?: string[]) => {
+  const handleSendToChat = () => {
     sounds.playStamp();
-    onSendIcebreakerToChat(currentQuestion.question, optionsToSend);
+    onSendIcebreakerToChat(currentQuestion.question);
     onClose();
   };
 
@@ -196,7 +196,7 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
           {/* Action Buttons */}
           <div className="flex gap-2 w-full pt-1">
             <Button
-              onClick={() => handleSendToChat(currentQuestion.options)}
+              onClick={handleSendToChat}
               className="flex-1 py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] font-bold uppercase tracking-wider rounded-2xl tactile-btn shadow-md shadow-[#e11d48]/25"
             >
               <span className="material-symbols-outlined text-[14px] mr-1">send</span>

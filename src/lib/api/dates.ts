@@ -15,7 +15,7 @@ export function getCurrentDateMeet(connectionId: string) {
 
 export function proposeDate(
   connectionId: string,
-  input: { scheduledAt: string; zone: string; planType?: PlanType; note?: string },
+  input: { scheduledAt?: string; zone: string; planType?: PlanType; note?: string },
 ) {
   return apiRequest<DateProposal>(`/dates/connections/${connectionId}/proposals`, { method: 'POST', body: input });
 }

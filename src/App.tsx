@@ -101,6 +101,9 @@ function AppContent() {
   }, [user?.id, queryClient]);
 
   const handleTabChange = (tab: TabType) => {
+    // Si un input queda enfocado cuando su vista se desmonta, el teclado del celular
+    // puede quedar "pegado" en pantalla flotando sobre la pestaña nueva.
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     if (currentTab !== 'ajustes') setPreviousTab(currentTab);
     setCurrentTab(tab);
   };
@@ -308,10 +311,8 @@ function AppContent() {
           isOpen={Boolean(icebreaker)}
           onClose={() => setIcebreaker(null)}
           partnerName={icebreaker.partnerName}
-          onSendIcebreakerToChat={(qText, opts) => {
-            icebreakerSendMessage.mutate(
-              `🎲 Pregunta Rompehielos: "${qText}"${opts ? `\n\nOpciones: ${opts.join(' • ')}` : ''}`,
-            );
+          onSendIcebreakerToChat={(qText) => {
+            icebreakerSendMessage.mutate(qText);
             setIcebreaker(null);
           }}
         />

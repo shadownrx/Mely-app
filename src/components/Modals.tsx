@@ -37,6 +37,7 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
   const [zone, setZone] = useState('The Roastery, Palermo Soho');
   const [planType, setPlanType] = useState<PlanType>('COFFEE');
   const [scheduledAt, setScheduledAt] = useState(() => defaultDateTimeLocal(3, 16));
+  const [coordinateByChat, setCoordinateByChat] = useState(false);
   const [note, setNote] = useState('Un café de especialidad y caminata por la galería.');
   const [error, setError] = useState<string | null>(null);
 
@@ -54,7 +55,12 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
     sounds.playClick();
     setError(null);
     proposeDate.mutate(
-      { scheduledAt: new Date(scheduledAt).toISOString(), zone, planType, note: note || undefined },
+      {
+        scheduledAt: coordinateByChat ? undefined : new Date(scheduledAt).toISOString(),
+        zone,
+        planType,
+        note: note || undefined,
+      },
       {
         onSuccess: () => {
           sounds.playCoins();
@@ -129,6 +135,7 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
                     setZone(qv.zone);
                     setPlanType(qv.planType);
                     setScheduledAt(defaultDateTimeLocal(qv.daysAhead, qv.hour));
+                    setCoordinateByChat(false);
                   }}
                   className={`p-2.5 rounded-2xl text-left border text-[11px] transition-all font-body-sm ${
                     zone === qv.zone
@@ -200,25 +207,53 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
           </div>
 
           <div>
-            <label
-              className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${
-                isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'
-              }`}
-            >
-              Fecha y Hora
-            </label>
-            <input
-              type="datetime-local"
-              value={scheduledAt}
-              onChange={(e) => setScheduledAt(e.target.value)}
-              required
-              min={defaultDateTimeLocal(0, 0)}
-              className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
-                isLight
-                  ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                  : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-              }`}
-            />
+            <div className="flex items-center justify-between mb-1">
+              <label
+                className={`font-label-caps text-[10px] uppercase font-bold ${
+                  isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'
+                }`}
+              >
+                Fecha y Hora
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  sounds.playClick();
+                  setCoordinateByChat((prev) => !prev);
+                }}
+                className={`font-label-caps text-[9px] uppercase font-bold px-2 py-1 rounded-lg border transition-colors ${
+                  coordinateByChat
+                    ? 'bg-[#e11d48] text-white border-[#e11d48]'
+                    : isLight
+                    ? 'bg-white text-[#64748b] border-[#fecdd3] hover:text-[#e11d48]'
+                    : 'bg-[#0b0507] text-[#fda4af]/70 border-[#e11d48]/25 hover:text-[#fda4af]'
+                }`}
+              >
+                Coordinar por chat
+              </button>
+            </div>
+            {coordinateByChat ? (
+              <p
+                className={`font-body-sm text-[11.5px] rounded-2xl px-3.5 py-2.5 border ${
+                  isLight ? 'bg-[#fff5f6] border-[#fecdd3] text-[#64748b]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fda4af]/80'
+                }`}
+              >
+                No fijás un horario: le mandás la propuesta con el lugar y plan, y se ponen de acuerdo con la hora charlando en el chat.
+              </p>
+            ) : (
+              <input
+                type="datetime-local"
+                value={scheduledAt}
+                onChange={(e) => setScheduledAt(e.target.value)}
+                required
+                min={defaultDateTimeLocal(0, 0)}
+                className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
+                  isLight
+                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
+                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
+                }`}
+              />
+            )}
           </div>
 
           <div>

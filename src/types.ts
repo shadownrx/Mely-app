@@ -130,7 +130,7 @@ export interface DateProposal {
   id: string;
   connectionId: string;
   proposerId: string;
-  scheduledAt: string;
+  scheduledAt: string | null;
   zone: string;
   planType: PlanType;
   note: string | null;
@@ -142,7 +142,7 @@ export interface DateMeet {
   id: string;
   connectionId: string;
   proposalId: string;
-  scheduledAt: string;
+  scheduledAt: string | null;
   zone: string;
   planType: PlanType;
   status: DateMeetStatus;

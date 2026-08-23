@@ -22,7 +22,8 @@ const STATUS_LABEL: Record<DateMeet['status'], string> = {
   NO_SHOW: 'NO SE PRESENTÓ',
 };
 
-function formatDateTime(iso: string) {
+function formatDateTime(iso: string | null) {
+  if (!iso) return 'A coordinar por chat';
   return new Date(iso).toLocaleString('es-AR', {
     weekday: 'long',
     day: 'numeric',

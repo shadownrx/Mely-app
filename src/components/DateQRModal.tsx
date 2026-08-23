@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
+import QrScanner from 'qr-scanner';
+import QrScannerWorkerPath from 'qr-scanner/qr-scanner-worker.min.js?url';
 import { motion } from 'motion/react';
 import { PlanType } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useConfirmDate, useCurrentDateMeet, useGenerateQr, useScanCheckIn } from '../hooks/useDates';
 import { Button } from './ui/button';
+
+QrScanner.WORKER_PATH = QrScannerWorkerPath;
 
 const PLAN_LABELS: Record<PlanType, string> = {
   COFFEE: 'Café',
@@ -37,8 +41,12 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [manualCode, setManualCode] = useState('');
+  const [useManualEntry, setUseManualEntry] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
   const [verificationSuccess, setVerificationSuccess] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const scannerRef = useRef<QrScanner | null>(null);
 
   const { data: dateMeet } = useCurrentDateMeet(isOpen ? connectionId : null);
   const dateId = dateMeet?.id ?? null;
@@ -54,6 +62,8 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
     if (!isOpen || !dateId) return;
     setMode('show_qr');
     setManualCode('');
+    setUseManualEntry(false);
+    setCameraError(null);
     setScanError(null);
     setVerificationSuccess(status === 'VERIFIED');
     if (status === 'CANCELLED' || status === 'VERIFIED') return;
@@ -66,23 +76,67 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, dateId, status]);
 
-  if (!isOpen || !connectionId || !dateId) return null;
-
-  const handleScan = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!manualCode.trim()) return;
-    sounds.playClick();
+  const submitCode = (code: string) => {
+    if (!dateId || !code.trim() || scanCheckIn.isPending) return;
     setScanError(null);
+    scannerRef.current?.pause();
     scanCheckIn.mutate(
-      { dateId, code: manualCode.trim() },
+      { dateId, code: code.trim() },
       {
         onSuccess: () => {
           sounds.playScanBeep();
           setManualCode('');
         },
-        onError: (err: any) => setScanError(err?.message ?? 'Código inválido'),
+        onError: (err: any) => {
+          setScanError(err?.message ?? 'Código inválido');
+          scannerRef.current?.start().catch(() => undefined);
+        },
       },
     );
+  };
+
+  // Escaneo real con cámara: apuntás al QR de tu pareja en vez de tener que pasarte el código
+  // por texto, que era lo que permitía el ingreso manual como único camino.
+  useEffect(() => {
+    if (!isOpen || mode !== 'scan_manual' || useManualEntry || !videoRef.current) return;
+    let cancelled = false;
+    const scanner = new QrScanner(
+      videoRef.current,
+      (result) => {
+        const text = typeof result === 'string' ? result : result.data;
+        try {
+          const parsed = JSON.parse(text) as { dateId?: string; code?: string };
+          if (!parsed.code) throw new Error('sin código');
+          if (parsed.dateId && parsed.dateId !== dateId) {
+            setScanError('Ese QR es de otra cita.');
+            return;
+          }
+          submitCode(parsed.code);
+        } catch {
+          setScanError('QR no reconocido. Probá de nuevo o ingresá el código a mano.');
+        }
+      },
+      { highlightScanRegion: true, highlightCodeOutline: true, preferredCamera: 'environment' },
+    );
+    scannerRef.current = scanner;
+    scanner.start().catch(() => {
+      if (!cancelled) setCameraError('No se pudo acceder a la cámara. Revisá los permisos o ingresá el código a mano.');
+    });
+    return () => {
+      cancelled = true;
+      scanner.stop();
+      scanner.destroy();
+      scannerRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, mode, useManualEntry, dateId]);
+
+  if (!isOpen || !connectionId || !dateId) return null;
+
+  const handleManualSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    sounds.playClick();
+    submitCode(manualCode);
   };
 
   const handleConfirm = (sawEachOther: boolean) => {
@@ -175,7 +229,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
               }`}
             >
               <span className="material-symbols-outlined text-[14px]">document_scanner</span>
-              <span>Ingresar código de {partnerName}</span>
+              <span>Escanear a {partnerName}</span>
             </button>
           </div>
         )}
@@ -248,36 +302,81 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
           </div>
         )}
 
-        {/* Mode 2: MANUAL CODE ENTRY */}
+        {/* Mode 2: CAMERA SCAN (con fallback manual) */}
         {mode === 'scan_manual' && !verificationSuccess && (
-          <form onSubmit={handleScan} className="p-5 flex flex-col items-center gap-4 text-center">
-            <span className="material-symbols-outlined text-[48px] text-[#e11d48]/70">pin</span>
-            <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
-              Pedile a {partnerName} que te muestre su pase y escribí el código de 6 dígitos.
-            </p>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={6}
-              value={manualCode}
-              onChange={(e) => setManualCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="000000"
-              autoCapitalize="off"
-              autoCorrect="off"
-              className={`w-full text-center font-mono tracking-[0.4em] border rounded-2xl px-3.5 py-3 text-[22px] focus:outline-none ${
-                isLight ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-              }`}
-            />
-            {scanError && <p className="text-[11px] text-[#e11d48] font-bold">{scanError}</p>}
-            <Button
-              type="submit"
-              disabled={scanCheckIn.isPending}
-              className="w-full py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-2xl shadow-md shadow-[#e11d48]/25 disabled:opacity-60"
-            >
-              VALIDAR CÓDIGO
-            </Button>
-          </form>
+          <div className="p-5 flex flex-col items-center gap-3 text-center">
+            {!useManualEntry ? (
+              <>
+                <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
+                  Apuntá la cámara al QR que {partnerName} te muestra en su pantalla.
+                </p>
+                <div className="w-full aspect-square rounded-2xl overflow-hidden bg-black relative border-2 border-dashed border-[#e11d48]/40">
+                  {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+                  <video ref={videoRef} className="w-full h-full object-cover" muted playsInline />
+                  {cameraError && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 bg-black/85 text-center">
+                      <span className="material-symbols-outlined text-[32px] text-[#fb7185]">videocam_off</span>
+                      <p className="text-[11px] text-white/90">{cameraError}</p>
+                    </div>
+                  )}
+                </div>
+                {scanError && <p className="text-[11px] text-[#e11d48] font-bold">{scanError}</p>}
+                <button
+                  type="button"
+                  onClick={() => {
+                    sounds.playClick();
+                    setUseManualEntry(true);
+                    setCameraError(null);
+                    setScanError(null);
+                  }}
+                  className={`font-label-caps text-[10px] uppercase font-bold underline ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}
+                >
+                  No puedo usar la cámara, ingresar código a mano
+                </button>
+              </>
+            ) : (
+              <form onSubmit={handleManualSubmit} className="w-full flex flex-col items-center gap-4">
+                <span className="material-symbols-outlined text-[48px] text-[#e11d48]/70">pin</span>
+                <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
+                  Pedile a {partnerName} que te muestre su pase y escribí el código de 6 dígitos.
+                </p>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  value={manualCode}
+                  onChange={(e) => setManualCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="000000"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  autoFocus
+                  className={`w-full text-center font-mono tracking-[0.4em] border rounded-2xl px-3.5 py-3 text-[22px] focus:outline-none ${
+                    isLight ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
+                  }`}
+                />
+                {scanError && <p className="text-[11px] text-[#e11d48] font-bold">{scanError}</p>}
+                <Button
+                  type="submit"
+                  disabled={scanCheckIn.isPending}
+                  className="w-full py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-2xl shadow-md shadow-[#e11d48]/25 disabled:opacity-60"
+                >
+                  VALIDAR CÓDIGO
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    sounds.playClick();
+                    setUseManualEntry(false);
+                    setScanError(null);
+                  }}
+                  className={`font-label-caps text-[10px] uppercase font-bold underline ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}
+                >
+                  Volver a usar la cámara
+                </button>
+              </form>
+            )}
+          </div>
         )}
 
         {/* State: VERIFICATION SUCCESS */}

@@ -5,7 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useMatches } from '../hooks/useMatches';
 import { useMarkRead, useMessages, useSendMessage, useSendPhoto, useTypingIndicator, useTypingPing } from '../hooks/useChat';
-import { useAcceptProposal, useProposals } from '../hooks/useDates';
+import { useAcceptProposal, useCounterProposal, useProposals } from '../hooks/useDates';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -260,6 +260,9 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const sendPhoto = useSendPhoto(activeConnectionId ?? '');
   const markRead = useMarkRead(activeConnectionId);
   const acceptProposal = useAcceptProposal();
+  const counterProposal = useCounterProposal();
+  const [counterFormOpen, setCounterFormOpen] = useState(false);
+  const [counterAt, setCounterAt] = useState('');
   const isPartnerTyping = useTypingIndicator(activeConnectionId);
   const pingTyping = useTypingPing(activeConnectionId);
 
@@ -272,6 +275,11 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   useEffect(() => {
     if (viewMode === 'chat') scrollToBottom('auto');
   }, [viewMode, activeConnectionId]);
+
+  useEffect(() => {
+    setCounterFormOpen(false);
+    setCounterAt('');
+  }, [activeConnectionId, activeProposal?.id]);
 
   useEffect(() => {
     if (viewMode === 'chat') scrollToBottom('smooth');
@@ -679,21 +687,68 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {/* Active proposal sticky card */}
       {activeProposal && (
         <div className={`px-3 pt-2 shrink-0 ${isLight ? 'bg-[#f4efe8]' : 'bg-[#0b090a]'}`}>
-          <div className={`p-3 rounded-2xl border-2 flex items-center justify-between gap-2 ${isLight ? 'bg-[#fff5f6] border-[#e11d48]/40' : 'bg-[#1a0c13] border-[#e11d48]/50'}`}>
-            <div className="min-w-0">
-              <span className="font-label-caps text-[9px] uppercase tracking-widest block font-bold text-[#e11d48]">TICKET DE CITA</span>
-              <p className={`text-[12px] truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                {new Date(activeProposal.scheduledAt).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' })} · {activeProposal.zone}
-              </p>
+          <div className={`p-3 rounded-2xl border-2 flex flex-col gap-2 ${isLight ? 'bg-[#fff5f6] border-[#e11d48]/40' : 'bg-[#1a0c13] border-[#e11d48]/50'}`}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <span className="font-label-caps text-[9px] uppercase tracking-widest block font-bold text-[#e11d48]">TICKET DE CITA</span>
+                <p className={`text-[12px] truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+                  {activeProposal.scheduledAt
+                    ? new Date(activeProposal.scheduledAt).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' })
+                    : 'A coordinar por chat'}{' '}
+                  · {activeProposal.zone}
+                </p>
+              </div>
+              {activeProposal.status === 'PENDING' && activeProposal.proposerId !== user?.id ? (
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setCounterFormOpen((prev) => !prev)}
+                    className="h-8 px-2.5 text-[11px] font-bold rounded-xl"
+                  >
+                    {activeProposal.scheduledAt ? 'Cambiar hora' : 'Proponer hora'}
+                  </Button>
+                  <Button size="sm" onClick={() => acceptProposal.mutate(activeProposal.id)} className="h-8 px-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[11px] font-bold rounded-xl">
+                    Aceptar
+                  </Button>
+                </div>
+              ) : (
+                <Badge className="shrink-0 text-[10px] bg-[#e11d48]/15 text-[#e11d48] border border-[#e11d48]/30">
+                  {activeProposal.status === 'PENDING' ? 'Esperando' : activeProposal.status === 'ACCEPTED' ? 'Aceptada' : 'Contrapropuesta'}
+                </Badge>
+              )}
             </div>
-            {activeProposal.status === 'PENDING' && activeProposal.proposerId !== user?.id ? (
-              <Button size="sm" onClick={() => acceptProposal.mutate(activeProposal.id)} className="h-8 px-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[11px] font-bold rounded-xl shrink-0">
-                Aceptar
-              </Button>
-            ) : (
-              <Badge className="shrink-0 text-[10px] bg-[#e11d48]/15 text-[#e11d48] border border-[#e11d48]/30">
-                {activeProposal.status === 'PENDING' ? 'Esperando' : activeProposal.status === 'ACCEPTED' ? 'Aceptada' : 'Contrapropuesta'}
-              </Badge>
+
+            {counterFormOpen && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!counterAt) return;
+                  counterProposal.mutate(
+                    { proposalId: activeProposal.id, input: { scheduledAt: new Date(counterAt).toISOString() } },
+                    { onSuccess: () => setCounterFormOpen(false) },
+                  );
+                }}
+                className="flex items-center gap-1.5 pt-1 border-t border-[#e11d48]/20"
+              >
+                <input
+                  type="datetime-local"
+                  value={counterAt}
+                  onChange={(e) => setCounterAt(e.target.value)}
+                  required
+                  className={`flex-1 min-w-0 border rounded-xl px-2.5 py-1.5 text-[12px] focus:outline-none ${
+                    isLight ? 'bg-white border-[#fecdd3] text-[#0f172a]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2]'
+                  }`}
+                />
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={counterProposal.isPending}
+                  className="h-8 px-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[11px] font-bold rounded-xl shrink-0"
+                >
+                  Enviar
+                </Button>
+              </form>
             )}
           </div>
         </div>

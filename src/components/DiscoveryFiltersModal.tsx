@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { DiscoveryFilters } from '../types';
-import { DEFAULT_DISCOVERY_FILTERS, ARGENTINA_CITIES } from '../data/mockData';
+import { DEFAULT_DISCOVERY_FILTERS } from '../data/mockData';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
+import { listInterests } from '../lib/api/profile';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
 
 interface DiscoveryFiltersModalProps {
   isOpen: boolean;
@@ -13,21 +13,6 @@ interface DiscoveryFiltersModalProps {
   filters: DiscoveryFilters;
   onApplyFilters: (filters: DiscoveryFilters) => void;
 }
-
-const INTEREST_TAGS = [
-  'Café de Especialidad',
-  'Vinos Naturales & Malbec',
-  'Muestras & MALBA',
-  'Fotografía 35mm',
-  'Librerías de Usados',
-  'Cine Gaumont & Autor',
-  'Jazz & Vinilos',
-  'Vermut en Chacarita',
-  'Música en Vivo',
-  'Cerámica & Diseño',
-  'Trekking & Montaña',
-  'Bouldering & Escalada',
-];
 
 export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
   isOpen,
@@ -37,18 +22,26 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
 }) => {
   const { isLight } = useTheme();
   const [localFilters, setLocalFilters] = useState<DiscoveryFilters>(initialFilters);
+  const [interests, setInterests] = useState<{ id: string; slug: string; name: string }[]>([]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    listInterests()
+      .then(setInterests)
+      .catch(() => undefined);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const toggleInterest = (tag: string) => {
+  const toggleInterest = (slug: string) => {
     sounds.playClick();
     setLocalFilters((prev) => {
-      const exists = prev.selectedInterests.includes(tag);
+      const exists = prev.selectedInterests.includes(slug);
       return {
         ...prev,
         selectedInterests: exists
-          ? prev.selectedInterests.filter((t) => t !== tag)
-          : [...prev.selectedInterests, tag],
+          ? prev.selectedInterests.filter((t) => t !== slug)
+          : [...prev.selectedInterests, slug],
       };
     });
   };
@@ -249,13 +242,13 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
               Intereses & Pasiones Específicas ({localFilters.selectedInterests.length})
             </label>
             <div className="flex flex-wrap gap-1.5">
-              {INTEREST_TAGS.map((tag) => {
-                const isSelected = localFilters.selectedInterests.includes(tag);
+              {interests.map((interest) => {
+                const isSelected = localFilters.selectedInterests.includes(interest.slug);
                 return (
                   <button
-                    key={tag}
+                    key={interest.id}
                     type="button"
-                    onClick={() => toggleInterest(tag)}
+                    onClick={() => toggleInterest(interest.slug)}
                     className={`px-2.5 py-1 rounded-full text-[11px] font-body-sm transition-all ${
                       isSelected
                         ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold shadow-xs'
@@ -264,7 +257,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
                         : 'bg-[#180c12] border border-[#e11d48]/20 text-[#fda4af]/70 hover:border-[#e11d48]/50'
                     }`}
                   >
-                    {tag}
+                    {interest.name}
                   </button>
                 );
               })}

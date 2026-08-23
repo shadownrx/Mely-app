@@ -1,173 +1,74 @@
 import React, { useState } from 'react';
-import { Profile } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
+import { forgotPassword } from '../lib/api/auth';
+import { ApiError } from '../lib/apiClient';
 
 interface LoginViewProps {
-  onLogin: (user: Profile, walletAmount?: number) => void;
   onGoToRegister: () => void;
 }
 
-export const LoginView: React.FC<LoginViewProps> = ({ onLogin, onGoToRegister }) => {
+export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister }) => {
   const { isLight, toggleTheme } = useTheme();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<'google' | 'apple' | 'facebook' | null>(null);
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const [recoveryEmail, setRecoveryEmail] = useState('');
   const [recoverySent, setRecoverySent] = useState(false);
+  const [recoveryError, setRecoveryError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
 
     if (!email.trim()) {
-      setErrorMsg('Por favor ingresá tu correo electrónico o Pasaporte ID.');
+      setErrorMsg('Por favor ingresá tu correo electrónico.');
       return;
     }
-
     if (!password) {
-      setErrorMsg('Por favor ingresá tu contraseña o llave de acceso.');
+      setErrorMsg('Por favor ingresá tu contraseña.');
       return;
     }
 
     setIsSubmitting(true);
     sounds.playClick();
-
-    setTimeout(() => {
-      // Dynamic profile generation or standard login
-      const cleanEmail = email.trim();
-      const localPart = cleanEmail.split('@')[0];
-      const customName = localPart
-        .replace(/[._-]/g, ' ')
-        .replace(/(^\w|\s\w)/g, (m) => m.toUpperCase()) || 'Miembro MELY';
-
-      const userProfile: Profile = {
-        id: `user-${Date.now()}`,
-        name: customName,
-        email: cleanEmail,
-        age: 28,
-        occupation: 'Diseño & Fotografía',
-        city: 'Palermo Soho, CABA',
-        distance: '0 km',
-        joined: "Feb '26",
-        membership: 'Premium Member',
-        bio: 'Enamorado/a de las sobremesas porteñas, el café de especialidad y los encuentros auténticos.',
-        passType: 'Pasaporte Nacional',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-        gallery: [
-          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-          'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
-        ],
-        tags: ['Café de Especialidad', 'Vermú en Chacarita', 'Muestras en el MALBA', 'Sobremesas Infinitas'],
-        prompts: [
-          { question: 'Mi cita ideal no negociable...', answer: 'Un café de especialidad en Cuervo o un vermut en Chacarita con charla sin apuro.' },
-        ],
-        verifiedEncounters: 1,
-      };
-
+    try {
+      await login(email.trim(), password);
       sounds.playStamp();
-      onLogin(userProfile, 3500);
-    }, 600);
+    } catch (err) {
+      const message =
+        err instanceof ApiError
+          ? err.code === 'UNAUTHORIZED'
+            ? 'Email o contraseña incorrectos.'
+            : err.message
+          : 'No pudimos conectar con el servidor. Probá de nuevo.';
+      setErrorMsg(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleSocialLogin = (provider: 'google' | 'apple' | 'facebook') => {
-    sounds.playClick();
-    setSocialLoading(provider);
-
-    setTimeout(() => {
-      sounds.playStamp();
-
-      let socialUser: Profile;
-      if (provider === 'google') {
-        socialUser = {
-          id: `user-google-${Date.now()}`,
-          name: 'Mariel Juárez',
-          email: 'marieljuarezcm@gmail.com',
-          age: 27,
-          occupation: 'Directora de Arte & Fotógrafa',
-          city: 'Palermo / Chacarita (CABA)',
-          distance: '0 km',
-          joined: "Feb '26",
-          membership: 'Founding Member',
-          bio: 'Fotografía analógica 35mm, vinilos de rock nacional, arquitectura y caminatas por San Telmo.',
-          passType: 'Founding Pass',
-          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-          gallery: [
-            'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-            'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80',
-          ],
-          tags: ['Café de Especialidad', 'Vermú en Chacarita', 'Muestras en el MALBA', 'Librerías de Corrientes'],
-          prompts: [
-            { question: 'Mi cita ideal no negociable...', answer: 'Recorrer una librería antigua y tomar un café de especialidad debatiendo sobre cine o música.' },
-          ],
-          verifiedEncounters: 2,
-        };
-      } else if (provider === 'apple') {
-        socialUser = {
-          id: `user-apple-${Date.now()}`,
-          name: 'Mateo Rossi',
-          email: 'mateo.rossi@icloud.com',
-          age: 29,
-          occupation: 'Arquitecto & Diseñador Urbano',
-          city: 'San Telmo / Puerto Madero (CABA)',
-          distance: '0 km',
-          joined: "Feb '26",
-          membership: 'VIP Member',
-          bio: 'Apasionado del diseño sustentable, los pasajes porteños y el vermut los domingos al atardecer.',
-          passType: 'VIP Pass',
-          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-          gallery: [
-            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-          ],
-          tags: ['Arquitectura & Pasajes', 'Vermú en Chacarita', 'Vinos Malbec & Bodegas'],
-          prompts: [
-            { question: 'El plan ideal de fin de semana...', answer: 'Paseo en bici por la Costanera y cena en algún bodegón clásico.' },
-          ],
-          verifiedEncounters: 3,
-        };
-      } else {
-        socialUser = {
-          id: `user-fb-${Date.now()}`,
-          name: 'Valentina Paz',
-          email: 'valentina.paz@facebook.com',
-          age: 26,
-          occupation: 'Curadora de Arte & Gestora Cultural',
-          city: 'Recoleta / Colegiales (CABA)',
-          distance: '0 km',
-          joined: "Feb '26",
-          membership: 'Premium Member',
-          bio: 'Amante del arte contemporáneo, el cine independiente y las sobremesas con amigos.',
-          passType: 'Pasaporte Nacional',
-          avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80',
-          gallery: [
-            'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80',
-          ],
-          tags: ['Muestras en el MALBA', 'Cine Gaumont & Cosmos', 'Café de Especialidad'],
-          prompts: [
-            { question: 'Una charla que nunca falla...', answer: '¿Cuál fue la última película que te voló la cabeza?' },
-          ],
-          verifiedEncounters: 1,
-        };
-      }
-
-      onLogin(socialUser, 4000);
-    }, 700);
-  };
-
-  const handleSendRecovery = (e: React.FormEvent) => {
+  const handleSendRecovery = async (e: React.FormEvent) => {
     e.preventDefault();
+    setRecoveryError('');
     sounds.playStamp();
-    setRecoverySent(true);
-    setTimeout(() => {
-      setShowRecoveryModal(false);
-      setRecoverySent(false);
-      setRecoveryEmail('');
-    }, 2000);
+    try {
+      await forgotPassword(recoveryEmail.trim());
+      setRecoverySent(true);
+      setTimeout(() => {
+        setShowRecoveryModal(false);
+        setRecoverySent(false);
+        setRecoveryEmail('');
+      }, 2500);
+    } catch {
+      setRecoveryError('No pudimos enviar el enlace. Probá de nuevo en un momento.');
+    }
   };
 
   return (
@@ -297,13 +198,13 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, onGoToRegister })
             </div>
           )}
 
-          {/* Email / Passport ID Input */}
+          {/* Email Input */}
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="login-email"
               className={`font-label-caps text-[10px] uppercase tracking-wider font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}
             >
-              CORREO ELECTRÓNICO O PASAPORTE ID
+              CORREO ELECTRÓNICO
             </label>
             <div className="relative flex items-center">
               <span className={`material-symbols-outlined absolute left-3.5 text-[18px] ${isLight ? 'text-gray-400' : 'text-[#fda4af]/50'}`}>
@@ -394,7 +295,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, onGoToRegister })
           <button
             id="login-submit-btn"
             type="submit"
-            disabled={isSubmitting || !!socialLoading}
+            disabled={isSubmitting}
             className="w-full mt-1.5 py-3.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] tracking-[0.18em] uppercase font-bold rounded-2xl tactile-btn hover:opacity-95 shadow-lg shadow-[#e11d48]/25 flex items-center justify-center gap-2 focus:outline-none disabled:opacity-50"
           >
             {isSubmitting ? (
@@ -410,107 +311,6 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, onGoToRegister })
             )}
           </button>
         </form>
-
-        {/* Social Logins Divider */}
-        <div className="px-5 pt-2 pb-1">
-          <div className="flex items-center gap-3 mb-3">
-            <div className={`flex-1 h-px ${isLight ? 'bg-gray-200' : 'bg-[#e11d48]/25'}`} />
-            <span className={`font-label-caps text-[9px] uppercase tracking-widest font-semibold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
-              O CONTINUAR CON
-            </span>
-            <div className={`flex-1 h-px ${isLight ? 'bg-gray-200' : 'bg-[#e11d48]/25'}`} />
-          </div>
-
-          {/* Social Sign-In Buttons */}
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            {/* Google Button */}
-            <button
-              type="button"
-              disabled={!!socialLoading || isSubmitting}
-              onClick={() => handleSocialLogin('google')}
-              className={`py-2 px-2 rounded-2xl transition-all flex items-center justify-center gap-1.5 font-body-sm text-[12px] font-medium tactile-btn disabled:opacity-50 shadow-sm ${
-                isLight
-                  ? 'bg-[#fff5f6] hover:bg-[#fff1f3] border border-[#fecdd3] text-[#0f172a]'
-                  : 'bg-[#0b0507] hover:bg-[#190910] border border-[#e11d48]/25 text-[#fff1f2]'
-              }`}
-              title="Continuar con Google"
-            >
-              {socialLoading === 'google' ? (
-                <span className="material-symbols-outlined animate-spin text-[16px] text-[#e11d48]">progress_activity</span>
-              ) : (
-                <>
-                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                    <path
-                      fill="#EA4335"
-                      d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.4 8.9 5 12 5z"
-                    />
-                    <path
-                      fill="#4285F4"
-                      d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.6 7.4C.6 9.4 0 11.6 0 14s.6 4.6 1.6 6.6l3.7-2.9z"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.4-6.7-5.3L1.6 16C3.5 19.8 7.4 23 12 23z"
-                    />
-                  </svg>
-                  <span className="font-bold">Google</span>
-                </>
-              )}
-            </button>
-
-            {/* Apple Button */}
-            <button
-              type="button"
-              disabled={!!socialLoading || isSubmitting}
-              onClick={() => handleSocialLogin('apple')}
-              className={`py-2 px-2 rounded-2xl transition-all flex items-center justify-center gap-1.5 font-body-sm text-[12px] font-medium tactile-btn disabled:opacity-50 shadow-sm ${
-                isLight
-                  ? 'bg-[#fff5f6] hover:bg-[#fff1f3] border border-[#fecdd3] text-[#0f172a]'
-                  : 'bg-[#0b0507] hover:bg-[#190910] border border-[#e11d48]/25 text-[#fff1f2]'
-              }`}
-              title="Continuar con Apple"
-            >
-              {socialLoading === 'apple' ? (
-                <span className="material-symbols-outlined animate-spin text-[16px] text-[#e11d48]">progress_activity</span>
-              ) : (
-                <>
-                  <svg className={`w-4 h-4 shrink-0 fill-current ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`} viewBox="0 0 24 24">
-                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 0.92-2.87-.93.04-2.02.63-2.66 1.38-.56.65-.99 1.7-0.87 2.72 1.04.08 2.05-.53 2.61-1.23z" />
-                  </svg>
-                  <span className="font-bold">Apple</span>
-                </>
-              )}
-            </button>
-
-            {/* Facebook Button */}
-            <button
-              type="button"
-              disabled={!!socialLoading || isSubmitting}
-              onClick={() => handleSocialLogin('facebook')}
-              className={`py-2 px-2 rounded-2xl transition-all flex items-center justify-center gap-1.5 font-body-sm text-[12px] font-medium tactile-btn disabled:opacity-50 shadow-sm ${
-                isLight
-                  ? 'bg-[#fff5f6] hover:bg-[#fff1f3] border border-[#fecdd3] text-[#0f172a]'
-                  : 'bg-[#0b0507] hover:bg-[#190910] border border-[#e11d48]/25 text-[#fff1f2]'
-              }`}
-              title="Continuar con Facebook"
-            >
-              {socialLoading === 'facebook' ? (
-                <span className="material-symbols-outlined animate-spin text-[16px] text-[#1877F2]">progress_activity</span>
-              ) : (
-                <>
-                  <svg className="w-4 h-4 shrink-0 fill-[#1877F2]" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                  </svg>
-                  <span className="font-bold">Facebook</span>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* Switch to Register Footer */}
@@ -571,10 +371,15 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, onGoToRegister })
 
             {recoverySent ? (
               <div className="p-3 bg-[#10b981]/15 border border-[#10b981]/40 rounded-2xl text-[#059669] text-[12px] font-body-sm text-center font-medium">
-                ✓ Enlace de restablecimiento enviado a tu correo. Revisá tu bandeja.
+                ✓ Si el correo existe, te enviamos un enlace de restablecimiento. Revisá tu bandeja.
               </div>
             ) : (
               <form onSubmit={handleSendRecovery} className="flex flex-col gap-3">
+                {recoveryError && (
+                  <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] font-body-sm">
+                    {recoveryError}
+                  </div>
+                )}
                 <input
                   type="email"
                   required

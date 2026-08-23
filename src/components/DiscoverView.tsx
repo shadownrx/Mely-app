@@ -34,7 +34,6 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
   const [galleryIndex, setGalleryIndex] = useState(0);
   const [showFullNotebook, setShowFullNotebook] = useState(false);
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | 'up' | null>(null);
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isBlindMode, setIsBlindMode] = useState(false);
   const [unblurredCards, setUnblurredCards] = useState<Record<string, boolean>>({});
 
@@ -226,8 +225,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           >
             <div className="relative h-[360px] w-full bg-[#0b0507] overflow-hidden">
               <img
-                src={nextProfile.avatar}
-                alt={nextProfile.name}
+                src={nextProfile.photos[0]?.url}
+                alt={nextProfile.displayName}
                 className="w-full h-full object-cover filter blur-[0.5px]"
                 referrerPolicy="no-referrer"
               />
@@ -238,10 +237,10 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               />
               <div className="absolute bottom-4 left-5 right-5">
                 <h3 className="font-headline-md text-[22px] font-bold text-white">
-                  {nextProfile.name}, {nextProfile.age}
+                  {nextProfile.displayName}, {nextProfile.age}
                 </h3>
                 <p className="font-body-sm text-[12px] text-[#fda4af]">
-                  {nextProfile.occupation}
+                  {nextProfile.job}
                 </p>
               </div>
             </div>
@@ -384,8 +383,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               {/* Photography Canvas */}
               <div className="relative h-[380px] w-full bg-[#0b0507] overflow-hidden group">
                 <img
-                  src={currentProfile.gallery[galleryIndex] || currentProfile.avatar}
-                  alt={currentProfile.name}
+                  src={currentProfile.photos[galleryIndex]?.url || currentProfile.photos[0]?.url}
+                  alt={currentProfile.displayName}
                   className={`w-full h-full object-cover select-none transition-all duration-700 ${
                     isBlindMode && !unblurredCards[currentProfile.id]
                       ? 'filter blur-2xl scale-110'
@@ -405,7 +404,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                       CITA A CIEGAS MELY
                     </span>
                     <p className="font-body-sm text-[12px] text-white/90 mt-1 max-w-[240px] leading-snug">
-                      {currentProfile.blindPrompt || 'Conoce primero su voz y reflexiones antes de descubrir la mirada.'}
+                      {currentProfile.blindPrompt?.teaser || 'Conoce primero su voz y reflexiones antes de descubrir la mirada.'}
                     </p>
                     <button
                       onClick={(e) => {
@@ -422,7 +421,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                 )}
 
                 {/* Left/Right Photo Tap Zones */}
-                {(!isBlindMode || unblurredCards[currentProfile.id]) && currentProfile.gallery.length > 1 && (
+                {(!isBlindMode || unblurredCards[currentProfile.id]) && currentProfile.photos.length > 1 && (
                   <div className="absolute inset-0 z-10 flex">
                     <div
                       className="w-1/2 h-full cursor-pointer"
@@ -439,7 +438,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                       className="w-1/2 h-full cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (galleryIndex < currentProfile.gallery.length - 1) {
+                        if (galleryIndex < currentProfile.photos.length - 1) {
                           sounds.playClick();
                           setGalleryIndex((prev) => prev + 1);
                         }
@@ -459,9 +458,9 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                 />
 
                 {/* Photo Pagination Bars */}
-                {currentProfile.gallery.length > 1 && (
+                {currentProfile.photos.length > 1 && (
                   <div className="absolute top-3 inset-x-4 flex gap-1.5 z-20 pointer-events-none">
-                    {currentProfile.gallery.map((_, idx) => (
+                    {currentProfile.photos.map((_, idx) => (
                       <div
                         key={idx}
                         className={`h-1 flex-1 rounded-full transition-all duration-300 ${
@@ -475,14 +474,16 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                 {/* Badges on Photo */}
                 <div className="absolute top-7 left-4 z-20 flex gap-2 pointer-events-none">
                   <Badge className="font-label-caps text-[9px] uppercase tracking-wider bg-black/75 text-[#fda4af] px-2.5 py-1 rounded-full border border-white/20 backdrop-blur-xs font-bold">
-                    {currentProfile.membership}
+                    {currentProfile.membership.tierLabel}
                   </Badge>
-                  <Badge className="font-meta-data text-[9px] bg-black/75 text-white px-2.5 py-1 rounded-full border border-white/20 flex items-center gap-1 backdrop-blur-xs font-bold">
-                    <span className="material-symbols-outlined text-[12px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      verified
-                    </span>
-                    {currentProfile.verifiedEncounters} Encuentros
-                  </Badge>
+                  {currentProfile.badges.trusted && (
+                    <Badge className="font-meta-data text-[9px] bg-black/75 text-white px-2.5 py-1 rounded-full border border-white/20 flex items-center gap-1 backdrop-blur-xs font-bold">
+                      <span className="material-symbols-outlined text-[12px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                        verified
+                      </span>
+                      Confianza verificada
+                    </Badge>
+                  )}
                 </div>
 
                 {/* Primary Name & Intro Overlay */}
@@ -490,14 +491,14 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   <div className="min-w-0 flex-1 pr-2">
                     <div className="flex items-baseline gap-2">
                       <h2 className="font-headline-md text-[26px] font-bold text-white tracking-tight drop-shadow-xs truncate">
-                        {currentProfile.name}
+                        {currentProfile.displayName}
                       </h2>
                       <span className="font-meta-data text-[18px] text-white/90 font-light">
                         {currentProfile.age}
                       </span>
                     </div>
                     <p className="font-body-sm text-[13px] text-[#fca5a5] opacity-95 mt-0.5 font-medium truncate">
-                      {currentProfile.occupation}
+                      {currentProfile.job}
                     </p>
                     <p className="font-meta-data text-[11px] text-white/80 flex items-center gap-1 mt-1">
                       <span className="material-symbols-outlined text-[13px] text-[#ff4d67]">location_on</span>
@@ -545,63 +546,22 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                         : 'bg-[#1c0c13] border-[#e11d48]/30 shadow-inner'
                     }`}
                   >
-                    {/* Play/Stop Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (isPlayingAudio) {
-                          setIsPlayingAudio(false);
-                        } else {
-                          setIsPlayingAudio(true);
-                          sounds.playVoiceSnippet(currentProfile.audioBio?.pitch || 240);
-                          setTimeout(() => {
-                            setIsPlayingAudio(false);
-                          }, (currentProfile.audioBio?.durationSeconds || 5) * 1000);
-                        }
-                      }}
-                      className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] text-white flex items-center justify-center shrink-0 shadow-md shadow-[#e11d48]/25 tactile-btn"
-                      title={isPlayingAudio ? 'Detener audio' : 'Escuchar audio-bio'}
-                    >
-                      <span className="material-symbols-outlined text-[20px]">
-                        {isPlayingAudio ? 'stop' : 'play_arrow'}
+                    <span className="material-symbols-outlined text-[20px] text-[#e11d48] shrink-0">mic</span>
+                    <div className="flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+                      <span className="font-label-caps text-[9px] uppercase font-bold text-[#e11d48] block mb-1">
+                        Audio-bio
                       </span>
-                    </button>
-
-                    {/* Waveform Visualization */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="font-label-caps text-[9px] uppercase font-bold text-[#e11d48] flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[12px]">mic</span>
-                          {currentProfile.audioBio.topic}
-                        </span>
-                        <span className={`font-mono text-[10px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
-                          0:{currentProfile.audioBio.durationSeconds < 10 ? `0${currentProfile.audioBio.durationSeconds}` : currentProfile.audioBio.durationSeconds}
-                        </span>
-                      </div>
-
-                      {/* Animated Audio Waveform Bars */}
-                      <div className="h-5 flex items-center gap-1">
-                        {currentProfile.audioBio.waveform.map((barHeight, bIdx) => (
-                          <div
-                            key={bIdx}
-                            className={`flex-1 rounded-full transition-all duration-200 ${
-                              isPlayingAudio ? 'bg-[#e11d48] animate-pulse' : isLight ? 'bg-[#fda4af]' : 'bg-[#e11d48]/40'
-                            }`}
-                            style={{
-                              height: isPlayingAudio ? `${Math.max(20, (barHeight + (bIdx % 3) * 20) % 100)}%` : `${barHeight}%`,
-                            }}
-                          />
-                        ))}
-                      </div>
+                      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+                      <audio controls preload="none" className="w-full h-8" src={currentProfile.audioBio.url} />
                     </div>
                   </div>
                 )}
 
                 {/* Interests Tags */}
                 <div className="flex flex-wrap gap-1.5">
-                  {currentProfile.tags.map((tag) => (
+                  {currentProfile.interests.map((interest) => (
                     <Badge
-                      key={tag}
+                      key={interest.id}
                       variant="outline"
                       className={`font-label-caps text-[9px] uppercase tracking-wider px-2.5 py-1 rounded-full border transition-all ${
                         isLight
@@ -609,7 +569,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                           : 'bg-[#1c0c12] text-[#fda4af] border-[#e11d48]/20 hover:border-[#e11d48]/40'
                       }`}
                     >
-                      {tag}
+                      {interest.name}
                     </Badge>
                   ))}
                 </div>
@@ -654,8 +614,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                     isLight ? 'border-[#fecdd3] text-[#64748b]' : 'border-[#e11d48]/20 text-[#fda4af]/70'
                   }`}
                 >
-                  <span>PASAPORTE: {currentProfile.passType}</span>
-                  <span>MIEMBRO DESDE: {currentProfile.joined}</span>
+                  <span>PASAPORTE: {currentProfile.membership.tierLabel}</span>
+                  <span>{currentProfile.lastActive}</span>
                 </div>
               </div>
 

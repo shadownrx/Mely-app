@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Profile, Stamp } from '../types';
+import React, { useMemo, useState } from 'react';
+import { Profile, Stamp, PlanType } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
+import { useDatesMeta, useProposeDate } from '../hooks/useDates';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
@@ -11,36 +12,57 @@ import { Badge } from './ui/badge';
 interface ProposeDateModalProps {
   isOpen: boolean;
   onClose: () => void;
+  connectionId: string;
   partnerName: string;
-  onSubmit: (title: string, venue: string, time: string, notes: string) => void;
+}
+
+function defaultDateTimeLocal(daysAhead: number, hour: number) {
+  const d = new Date();
+  d.setDate(d.getDate() + daysAhead);
+  d.setHours(hour, 0, 0, 0);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
   isOpen,
   onClose,
+  connectionId,
   partnerName,
-  onSubmit,
 }) => {
   const { isLight } = useTheme();
-  const [title, setTitle] = useState('Coffee & Art Walk');
-  const [venue, setVenue] = useState('The Roastery, Palermo Soho');
-  const [time, setTime] = useState('Jueves, 26 Oct • 4:00 PM');
-  const [notes, setNotes] = useState('Un café de especialidad y caminata por la galería.');
+  const { data: meta } = useDatesMeta();
+  const proposeDate = useProposeDate(connectionId);
+
+  const [zone, setZone] = useState('The Roastery, Palermo Soho');
+  const [planType, setPlanType] = useState<PlanType>('COFFEE');
+  const [scheduledAt, setScheduledAt] = useState(() => defaultDateTimeLocal(3, 16));
+  const [note, setNote] = useState('Un café de especialidad y caminata por la galería.');
+  const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const quickVenues = [
-    { title: 'Coffee & Art Walk', venue: 'The Roastery, Palermo Soho', time: 'Jueves, 26 Oct • 4:00 PM' },
-    { title: 'Cata de Vinos Naturales', venue: 'Bistró Rosetta, Recoleta', time: 'Viernes, 27 Oct • 8:30 PM' },
-    { title: 'Jazz & Coctelería de Autor', venue: 'Speakeasy Florería Atlántico', time: 'Sábado, 28 Oct • 9:00 PM' },
-    { title: 'Tarde de Vinilos y Libros', venue: 'Café & Libros El Ateneo', time: 'Domingo, 29 Oct • 5:00 PM' },
+  const quickVenues: { zone: string; planType: PlanType; daysAhead: number; hour: number }[] = [
+    { zone: 'The Roastery, Palermo Soho', planType: 'COFFEE', daysAhead: 3, hour: 16 },
+    { zone: 'Bistró Rosetta, Recoleta', planType: 'FOOD', daysAhead: 4, hour: 20 },
+    { zone: 'Speakeasy Florería Atlántico', planType: 'BAR', daysAhead: 5, hour: 21 },
+    { zone: 'Café & Libros El Ateneo', planType: 'CHILL', daysAhead: 6, hour: 17 },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     sounds.playClick();
-    onSubmit(title, venue, time, notes);
-    onClose();
+    setError(null);
+    proposeDate.mutate(
+      { scheduledAt: new Date(scheduledAt).toISOString(), zone, planType, note: note || undefined },
+      {
+        onSuccess: () => {
+          sounds.playCoins();
+          onClose();
+        },
+        onError: (err: any) => setError(err?.message ?? 'No se pudo enviar la invitación'),
+      },
+    );
   };
 
   return (
@@ -104,12 +126,12 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
                   type="button"
                   onClick={() => {
                     sounds.playClick();
-                    setTitle(qv.title);
-                    setVenue(qv.venue);
-                    setTime(qv.time);
+                    setZone(qv.zone);
+                    setPlanType(qv.planType);
+                    setScheduledAt(defaultDateTimeLocal(qv.daysAhead, qv.hour));
                   }}
                   className={`p-2.5 rounded-2xl text-left border text-[11px] transition-all font-body-sm ${
-                    venue === qv.venue
+                    zone === qv.zone
                       ? isLight
                         ? 'bg-[#fff1f3] border-[#e11d48] text-[#e11d48] font-bold shadow-sm'
                         : 'bg-[#2b1019] border-[#fb7185] text-[#fff1f2] font-bold shadow-md'
@@ -119,10 +141,10 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
                   }`}
                 >
                   <span className={`font-bold block truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                    {qv.title}
+                    {meta?.planTypes.find((p) => p.value === qv.planType)?.label ?? qv.planType}
                   </span>
                   <span className={`text-[9px] truncate block ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
-                    {qv.venue}
+                    {qv.zone}
                   </span>
                 </button>
               ))}
@@ -135,19 +157,23 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
                 isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'
               }`}
             >
-              Título del Plan
+              Tipo de Plan
             </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
+            <select
+              value={planType}
+              onChange={(e) => setPlanType(e.target.value as PlanType)}
               className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
                 isLight
                   ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
                   : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
               }`}
-            />
+            >
+              {(meta?.planTypes ?? []).map((p) => (
+                <option key={p.value} value={p.value}>
+                  {p.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -160,9 +186,11 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
             </label>
             <input
               type="text"
-              value={venue}
-              onChange={(e) => setVenue(e.target.value)}
+              value={zone}
+              onChange={(e) => setZone(e.target.value)}
               required
+              minLength={2}
+              maxLength={80}
               className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
                 isLight
                   ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
@@ -180,10 +208,11 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
               Fecha y Hora
             </label>
             <input
-              type="text"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
+              type="datetime-local"
+              value={scheduledAt}
+              onChange={(e) => setScheduledAt(e.target.value)}
               required
+              min={defaultDateTimeLocal(0, 0)}
               className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
                 isLight
                   ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
@@ -202,8 +231,9 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
             </label>
             <input
               type="text"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              maxLength={200}
               placeholder="Ej: Un café de especialidad y caminata..."
               className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[13px] focus:outline-none ${
                 isLight
@@ -213,10 +243,13 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
             />
           </div>
 
+          {error && <p className="text-[11px] text-[#e11d48] font-bold">{error}</p>}
+
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-3.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] tracking-widest font-bold rounded-2xl tactile-btn hover:brightness-105 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#e11d48]/25 focus:outline-none"
+              disabled={proposeDate.isPending}
+              className="w-full py-3.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] tracking-widest font-bold rounded-2xl tactile-btn hover:brightness-105 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#e11d48]/25 focus:outline-none disabled:opacity-60"
             >
               <span>ENVIAR INVITACIÓN TICKET</span>
               <span className="material-symbols-outlined text-[16px]">confirmation_number</span>

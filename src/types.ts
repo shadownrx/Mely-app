@@ -1,99 +1,231 @@
-export interface Stamp {
+export type Gender = 'WOMAN' | 'MAN' | 'NON_BINARY' | 'OTHER';
+export type LookingFor = 'RELATIONSHIP' | 'CASUAL' | 'FRIENDSHIP' | 'UNSURE';
+export type VerificationLevel = 'NONE' | 'EMAIL' | 'PHONE' | 'PHOTO' | 'VERIFIED';
+export type MembershipTier = 'STANDARD' | 'PREMIUM' | 'FOUNDING' | 'VIP';
+export type ConnectionStatus =
+  | 'MATCH'
+  | 'TALKING'
+  | 'PROPOSAL'
+  | 'DATE_AGREED'
+  | 'DATE_VERIFIED'
+  | 'SECOND_DATE'
+  | 'INACTIVE';
+export type PlanType = 'COFFEE' | 'FOOD' | 'BAR' | 'CINEMA' | 'ACTIVITY' | 'CHILL' | 'OTHER';
+export type ProposalStatus = 'PENDING' | 'ACCEPTED' | 'COUNTERED' | 'DECLINED' | 'EXPIRED';
+export type DateMeetStatus = 'AGREED' | 'CANCELLED' | 'CHECKED_IN' | 'VERIFIED' | 'NO_SHOW';
+export type CancelReason = 'SOMETHING_CAME_UP' | 'CHANGED_MIND' | 'NOT_COMFORTABLE' | 'OTHER';
+export type MessageType = 'TEXT' | 'SYSTEM' | 'IMAGE';
+
+export interface Prompt {
   id: string;
-  title: string;
-  date: string;
-  iconName: string;
-  color: 'secondary' | 'primary' | 'tertiary' | 'sage';
-  rotation: number;
-  unlocked: boolean;
-  location?: string;
-  partnerName?: string;
-  notes?: string;
+  question: string;
+  answer: string;
 }
 
-export interface Transaction {
+export interface Photo {
   id: string;
-  description: string;
-  date: string;
-  amount: number; // positive = credit, negative = debit
-  type: 'gift' | 'recharge' | 'vip' | 'reward' | 'date_verification' | 'spend' | 'purchase';
+  url: string;
+  isPrimary: boolean;
 }
 
-export interface DateProposal {
+export interface Membership {
+  tier: MembershipTier;
+  tierLabel: string;
+  expiresAt: string | null;
+}
+
+export interface AudioBio {
+  url: string;
+  durationSec: number | null;
+}
+
+export interface BlindPrompt {
+  teaser: string | null;
+  philosophy: string | null;
+  idealDate: string | null;
+}
+
+/** Perfil público — lo que devuelve el backend de cualquier otro usuario. */
+export interface Profile {
   id: string;
-  title: string;
-  venue: string;
-  time: string;
-  status: 'proposed' | 'accepted' | 'verified' | 'declined';
-  token: string;
-  icon: string;
-  notes?: string;
-  verifiedAt?: string;
+  displayName: string;
+  age: number;
+  gender: Gender;
+  genderLabel: string;
+  lookingFor: LookingFor;
+  lookingForLabel: string;
+  bio: string | null;
+  city: string | null;
+  zone: string | null;
+  distance: string | null;
+  photos: Photo[];
+  interests: { id: string; slug: string; name: string }[];
+  badges: {
+    verified: boolean;
+    verification: VerificationLevel;
+    verificationLabel: string;
+    trusted: boolean;
+  };
+  lastActive: string | null;
+  membership: Membership;
+  prompts: Prompt[];
+  audioBio: AudioBio | null;
+  blindPrompt: BlindPrompt | null;
+}
+
+/** Mi propio perfil — extiende Profile con datos privados (GET /me). */
+export interface MeProfile extends Profile {
+  email: string;
+  phone: string | null;
+  dateOfBirth: string;
+  emailVerified: boolean;
+  phoneVerified: boolean;
+  status: 'ACTIVE' | 'SUSPENDED' | 'BANNED' | 'DELETED';
+  role: 'USER' | 'ADMIN';
+  notificationPrefs: Record<string, boolean>;
+  seeking: Gender[];
+  maxDistanceKm: number;
+  minAge: number;
+  maxAge: number;
+  job: string | null;
+  studies: string | null;
+  onboardingCompleted: boolean;
+  hasLocation: boolean;
+  lastActiveAt: string | null;
+}
+
+export interface Match {
+  id: string;
+  status: ConnectionStatus;
+  label: string;
+  matchedAt: string;
+  lastMessageAt: string | null;
+  unread: number;
+  verifiedDateCount: number;
+  other: Profile;
 }
 
 export interface Message {
   id: string;
-  sender: 'user' | 'partner' | 'system';
-  text?: string;
-  timestamp: string;
-  type?: 'text' | 'voice' | 'image' | 'sticker' | 'location';
-  audioDuration?: string;
-  imageUrl?: string;
-  stickerUrl?: string;
-  stickerAlt?: string;
-  reaction?: string;
-  status?: 'sent' | 'delivered' | 'read';
-  dateProposal?: DateProposal;
-  isVerificationCard?: boolean;
-  replyTo?: { id: string; sender: string; text: string };
-  starred?: boolean;
-  locationName?: string;
+  connectionId: string;
+  senderId: string;
+  type: MessageType;
+  body: string;
+  imageUrl: string | null;
+  createdAt: string;
+  readAt: string | null;
 }
 
 export interface ChatThread {
-  id: string;
-  partnerId: string;
-  partnerName: string;
-  partnerAvatar: string;
-  partnerOnline: boolean;
-  lastMessage: string;
-  lastMessageTime: string;
-  unread: boolean;
+  id: string; // connectionId
+  partner: Profile;
+  status: ConnectionStatus;
+  statusLabel: string;
+  lastMessageAt: string | null;
+  unread: number;
   messages: Message[];
-  activeDate?: DateProposal;
-  partnerBio?: string;
-  partnerCity?: string;
-  partnerOccupation?: string;
 }
 
-export interface Profile {
+export interface DateProposal {
+  id: string;
+  connectionId: string;
+  proposerId: string;
+  scheduledAt: string;
+  zone: string;
+  planType: PlanType;
+  note: string | null;
+  status: ProposalStatus;
+  createdAt: string;
+}
+
+export interface DateMeet {
+  id: string;
+  connectionId: string;
+  proposalId: string;
+  scheduledAt: string;
+  zone: string;
+  planType: PlanType;
+  status: DateMeetStatus;
+  checkedInAt: string | null;
+  verifiedAt: string | null;
+}
+
+export interface LedgerEntry {
+  id: string;
+  amount: number;
+  direction: 'CREDIT' | 'DEBIT';
+  source: 'EARNED' | 'PURCHASED' | 'ADJUSTMENT' | 'SPENT';
+  reason: string;
+  createdAt: string;
+}
+
+export interface ShopItem {
+  key: string;
+  name: string;
+  description: string;
+  price: number;
+}
+
+export interface CoinPack {
+  key: string;
+  coins: number;
+  label: string;
+}
+
+export interface Stamp {
+  key: string;
+  title: string;
+  description: string;
+  iconName: string;
+  color: 'secondary' | 'primary' | 'tertiary' | 'sage';
+  unlocked: boolean;
+  unlockedAt: string | null;
+  location: string | null;
+  partnerName: string | null;
+  notes: string | null;
+}
+
+export interface DiscoveryFilters {
+  minAge: number;
+  maxAge: number;
+  maxDistanceKm: number;
+  selectedInterests: string[];
+  onlyVerifiedMembers: boolean;
+  withAudioBioOnly: boolean;
+  selectedCity: string;
+}
+
+export interface UserSettings {
+  theme?: ThemeMode;
+  twoFactorEnabled: boolean;
+  incognitoMode: boolean;
+  biometricLock: boolean;
+  notifyDateProposals: boolean;
+  notifyNewMessages: boolean;
+}
+
+export interface StoreItem {
   id: string;
   name: string;
-  age: number;
-  occupation: string;
-  city: string;
-  distance: string;
-  joined: string;
-  membership: 'Premium Member' | 'Founding Member' | 'VIP Member' | 'Nuevo Miembro' | string;
-  bio: string;
-  passType: string;
-  avatar: string;
-  gallery: string[];
-  tags: string[];
-  prompts: { question: string; answer: string }[];
-  verifiedEncounters: number;
-  email?: string;
-  audioBio?: {
-    duration: string;
-    quote: string;
-    waveform: number[];
-    pitch?: number;
-  };
-  blindPrompt?: {
-    teaser: string;
-    philosophy: string;
-    idealDate: string;
-  };
+  category: 'coins' | 'boosts' | 'vip' | 'experiences';
+  /** key real: CoinPack.key para 'coins', ShopItem.key para el resto */
+  backendKey: string;
+  priceCoins?: number;
+  priceMoney?: string;
+  badge?: string;
+  description: string;
+  icon: string;
+  highlightColor?: string;
+  popular?: boolean;
+  perks?: string[];
+}
+
+export interface IcebreakerQuestion {
+  id: string;
+  category: 'profunda' | 'divertida' | 'citas' | 'dilemas';
+  question: string;
+  context: string;
+  options?: string[];
 }
 
 export interface VerifiedSpot {
@@ -112,64 +244,6 @@ export interface VerifiedSpot {
   recommendedTime: string;
 }
 
-export interface DiscoveryFilters {
-  minAge: number;
-  maxAge: number;
-  maxDistanceKm: number;
-  selectedInterests: string[];
-  onlyVerifiedMembers: boolean;
-  withAudioBioOnly: boolean;
-  selectedCity: string;
-}
-
-export interface IcebreakerQuestion {
-  id: string;
-  category: 'profunda' | 'divertida' | 'citas' | 'dilemas';
-  question: string;
-  context: string;
-  options?: string[];
-}
-
 export type ThemeMode = 'dark' | 'light';
-
-export interface UserSettings {
-  theme?: ThemeMode;
-  // Discovery
-  discoveryEnabled: boolean;
-  ageRange: [number, number];
-  maxDistanceKm: number;
-  onlyVerifiedMembers: boolean;
-  selectedCity: string;
-  
-  // Security & Privacy
-  twoFactorEnabled: boolean;
-  incognitoMode: boolean;
-  biometricLock: boolean;
-  tokenAutoRotation: boolean;
-  activeSessions: { id: string; device: string; location: string; lastActive: string; isCurrent: boolean }[];
-  
-  // Sounds & Keepsake Audio
-  stampSoundsEnabled: boolean;
-  coinsSoundsEnabled: boolean;
-  hapticFeedbackEnabled: boolean;
-  notifyDateProposals: boolean;
-  notifyNewMessages: boolean;
-}
-
-export interface StoreItem {
-  id: string;
-  name: string;
-  category: 'coins' | 'boosts' | 'vip' | 'experiences';
-  priceCoins?: number;
-  priceMoney?: string;
-  badge?: string;
-  description: string;
-  icon: string;
-  highlightColor?: string;
-  popular?: boolean;
-  perks?: string[];
-}
-
 export type TabType = 'descubrir' | 'matches' | 'mensajes' | 'tienda' | 'citas' | 'perfil' | 'ajustes';
 export type AuthScreenType = 'login' | 'register' | 'forgot_password';
-

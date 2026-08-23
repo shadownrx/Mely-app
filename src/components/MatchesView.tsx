@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Profile } from '../types';
+import { Match } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { Button } from './ui/button';
@@ -8,9 +8,9 @@ import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 
 interface MatchesViewProps {
-  matches: Profile[];
-  onOpenChat: (profileId: string) => void;
-  onProposeDate: (profile: Profile) => void;
+  matches: Match[];
+  onOpenChat: (connectionId: string) => void;
+  onProposeDate: (match: Match) => void;
   onExploreMore?: () => void;
 }
 
@@ -27,28 +27,24 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [layoutMode, setLayoutMode] = useState<ViewLayout>('grid');
-  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [selectedGalleryIdx, setSelectedGalleryIdx] = useState(0);
 
   // Filter matches based on search & category
   const filteredMatches = matches.filter((match) => {
+    const other = match.other;
+    const q = searchQuery.toLowerCase();
     const matchesSearch =
-      match.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      match.occupation.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      match.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      match.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+      other.displayName.toLowerCase().includes(q) ||
+      (other.job ?? '').toLowerCase().includes(q) ||
+      (other.city ?? '').toLowerCase().includes(q) ||
+      other.interests.some((i) => i.name.toLowerCase().includes(q));
 
     if (!matchesSearch) return false;
 
-    if (activeFilter === 'online') {
-      return match.verifiedEncounters > 1 || match.id === '1' || match.id === '2';
-    }
-    if (activeFilter === 'verified') {
-      return match.verifiedEncounters > 0;
-    }
-    if (activeFilter === 'vip') {
-      return match.membership.toLowerCase().includes('vip') || match.membership.toLowerCase().includes('founding');
-    }
+    if (activeFilter === 'online') return other.lastActive === 'En línea';
+    if (activeFilter === 'verified') return other.badges.trusted;
+    if (activeFilter === 'vip') return other.membership.tier === 'VIP' || other.membership.tier === 'FOUNDING';
 
     return true;
   });
@@ -143,26 +139,32 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   whileTap={{ scale: 0.94 }}
                   onClick={() => {
                     sounds.playClick();
-                    setSelectedProfile(m);
+                    setSelectedMatch(m);
                     setSelectedGalleryIdx(0);
                   }}
                   className="flex flex-col items-center gap-1 shrink-0 group focus:outline-none"
-                  title={`Ver perfil de ${m.name}`}
+                  title={`Ver perfil de ${m.other.displayName}`}
                 >
                   <div className="relative">
                     <div className="w-[50px] h-[50px] rounded-full p-[2px] bg-gradient-to-tr from-[#e11d48] via-[#fb7185] to-[#f43f5e] shadow-sm transition-transform">
                       <img
-                        src={m.avatar}
-                        alt={m.name}
+                        src={m.other.photos[0]?.url}
+                        alt={m.other.displayName}
                         referrerPolicy="no-referrer"
                         className="w-full h-full object-cover rounded-full border border-white dark:border-[#0d070a]"
                       />
                     </div>
-                    {/* Live Online Indicator */}
-                    <span className="absolute bottom-0 right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#0d070a]" />
+                    {m.other.lastActive === 'En línea' && (
+                      <span className="absolute bottom-0 right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#0d070a]" />
+                    )}
+                    {m.unread > 0 && (
+                      <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#e11d48] text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0d070a]">
+                        {m.unread}
+                      </span>
+                    )}
                   </div>
                   <span className={`text-[10px] font-semibold truncate max-w-[54px] ${isLight ? 'text-[#1e293b]' : 'text-[#fce7eb]'}`}>
-                    {m.name.split(' ')[0]}
+                    {m.other.displayName.split(' ')[0]}
                   </span>
                 </motion.button>
               ))}
@@ -266,33 +268,35 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     className="flex items-center gap-3 cursor-pointer min-w-0 flex-1"
                     onClick={() => {
                       sounds.playClick();
-                      setSelectedProfile(match);
+                      setSelectedMatch(match);
                       setSelectedGalleryIdx(0);
                     }}
                   >
                     <div className="relative shrink-0">
                       <img
-                        src={match.avatar}
-                        alt={match.name}
+                        src={match.other.photos[0]?.url}
+                        alt={match.other.displayName}
                         referrerPolicy="no-referrer"
                         className="w-12 h-12 rounded-xl object-cover border border-[#fecdd3]/60 dark:border-white/10"
                       />
-                      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#140b0f]" />
+                      {match.other.lastActive === 'En línea' && (
+                        <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#140b0f]" />
+                      )}
                     </div>
 
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
                         <h4 className={`text-[13px] font-bold truncate ${isLight ? 'text-gray-900' : 'text-white'}`}>
-                          {match.name}, {match.age}
+                          {match.other.displayName}, {match.other.age}
                         </h4>
-                        {match.verifiedEncounters > 0 && (
+                        {match.other.badges.trusted && (
                           <span className="material-symbols-outlined text-[13px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>
                             verified
                           </span>
                         )}
                       </div>
                       <p className={`text-[11px] truncate ${isLight ? 'text-gray-500' : 'text-[#fda4af]/70'}`}>
-                        {match.occupation} · {match.city || 'Buenos Aires'}
+                        {match.other.job || 'Sin ocupación'} · {match.other.city || 'Buenos Aires'}
                       </p>
                     </div>
                   </div>
@@ -364,14 +368,14 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       className="relative h-40 w-full bg-[#0b0507] overflow-hidden cursor-pointer"
                       onClick={() => {
                         sounds.playClick();
-                        setSelectedProfile(match);
+                        setSelectedMatch(match);
                         setSelectedGalleryIdx(0);
                       }}
                       title="Ver perfil completo"
                     >
                       <img
-                        src={match.avatar}
-                        alt={match.name}
+                        src={match.other.photos[0]?.url}
+                        alt={match.other.displayName}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         referrerPolicy="no-referrer"
                       />
@@ -385,10 +389,10 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       <div className="absolute top-2 left-2 right-2 flex items-center justify-between pointer-events-none">
                         <span className="px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-[9px] font-medium flex items-center gap-0.5">
                           <span className="material-symbols-outlined text-[10px] text-[#fb7185]">location_on</span>
-                          <span>{match.city?.split(' ')[0] || 'BsAs'}</span>
+                          <span>{match.other.city?.split(' ')[0] || 'BsAs'}</span>
                         </span>
 
-                        {match.verifiedEncounters > 0 && (
+                        {match.other.badges.trusted && (
                           <span className="px-1.5 py-0.5 rounded-md bg-[#e11d48]/90 text-white text-[8.5px] font-bold flex items-center gap-0.5">
                             <span className="material-symbols-outlined text-[10px]">verified</span>
                           </span>
@@ -398,10 +402,10 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       {/* Name & Occupation inside Photo */}
                       <div className="absolute bottom-2 left-2.5 right-2.5">
                         <h3 className="text-[14px] font-bold text-white leading-tight drop-shadow-xs truncate">
-                          {match.name}, {match.age}
+                          {match.other.displayName}, {match.other.age}
                         </h3>
                         <p className="text-[10px] text-[#fda4af] truncate font-medium">
-                          {match.occupation}
+                          {match.other.job}
                         </p>
                       </div>
                     </div>
@@ -505,14 +509,14 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
       {/* MATCH PROFILE DETAIL MODAL WITH FLUID SPRING ANIMATION        */}
       {/* ------------------------------------------------------------- */}
       <AnimatePresence>
-        {selectedProfile && (
+        {selectedMatch && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              onClick={() => setSelectedProfile(null)}
+              onClick={() => setSelectedMatch(null)}
               className="absolute inset-0 bg-black/75 backdrop-blur-xs"
             />
             <motion.div
@@ -527,12 +531,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
               {/* Modal Header Gallery */}
               <div className="relative h-60 w-full bg-black shrink-0">
                 <img
-                  src={
-                    selectedProfile.gallery && selectedProfile.gallery.length > 0
-                      ? selectedProfile.gallery[selectedGalleryIdx] || selectedProfile.avatar
-                      : selectedProfile.avatar
-                  }
-                  alt={selectedProfile.name}
+                  src={selectedMatch.other.photos[selectedGalleryIdx]?.url || selectedMatch.other.photos[0]?.url}
+                  alt={selectedMatch.other.displayName}
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
@@ -540,7 +540,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
 
                 {/* Close Button */}
                 <button
-                  onClick={() => setSelectedProfile(null)}
+                  onClick={() => setSelectedMatch(null)}
                   className="absolute top-3 right-3 w-7.5 h-7.5 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors"
                   title="Cerrar"
                 >
@@ -548,9 +548,9 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 </button>
 
                 {/* Photo Dots */}
-                {selectedProfile.gallery && selectedProfile.gallery.length > 1 && (
+                {selectedMatch.other.photos.length > 1 && (
                   <div className="absolute top-3 left-3 flex items-center gap-1">
-                    {selectedProfile.gallery.map((_, idx) => (
+                    {selectedMatch.other.photos.map((_, idx) => (
                       <button
                         key={idx}
                         onClick={() => setSelectedGalleryIdx(idx)}
@@ -566,14 +566,16 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 <div className="absolute bottom-3 left-3.5 right-3.5">
                   <div className="flex items-center gap-1.5">
                     <h2 className="text-xl font-bold text-white drop-shadow-xs">
-                      {selectedProfile.name}, {selectedProfile.age}
+                      {selectedMatch.other.displayName}, {selectedMatch.other.age}
                     </h2>
-                    <span className="material-symbols-outlined text-[#e11d48] text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      verified
-                    </span>
+                    {selectedMatch.other.badges.trusted && (
+                      <span className="material-symbols-outlined text-[#e11d48] text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                        verified
+                      </span>
+                    )}
                   </div>
                   <p className="text-[#fda4af] text-[12px] font-medium">
-                    {selectedProfile.occupation} · {selectedProfile.city}
+                    {selectedMatch.other.job} · {selectedMatch.other.city}
                   </p>
                 </div>
               </div>
@@ -583,30 +585,30 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 {/* Bio */}
                 <div className={`p-2.5 rounded-xl border ${isLight ? 'bg-[#fff1f3]/50 border-[#fecdd3]' : 'bg-white/5 border-white/10'}`}>
                   <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#e11d48] mb-0.5">
-                    Sobre {selectedProfile.name}
+                    Sobre {selectedMatch.other.displayName}
                   </h4>
                   <p className={`text-[12px] leading-relaxed ${isLight ? 'text-[#334155]' : 'text-[#fce7eb]'}`}>
-                    {selectedProfile.bio}
+                    {selectedMatch.other.bio}
                   </p>
                 </div>
 
-                {/* Tags */}
-                {selectedProfile.tags && selectedProfile.tags.length > 0 && (
+                {/* Interests */}
+                {selectedMatch.other.interests.length > 0 && (
                   <div>
                     <h4 className={`text-[10px] font-bold uppercase tracking-wider mb-1.5 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
                       Intereses
                     </h4>
                     <div className="flex flex-wrap gap-1">
-                      {selectedProfile.tags.map((tag, i) => (
+                      {selectedMatch.other.interests.map((interest) => (
                         <span
-                          key={i}
+                          key={interest.id}
                           className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-medium border ${
                             isLight
                               ? 'bg-[#fff1f3] text-[#e11d48] border-[#fecdd3]'
                               : 'bg-[#e11d48]/15 text-[#fda4af] border-[#e11d48]/30'
                           }`}
                         >
-                          #{tag}
+                          #{interest.name}
                         </span>
                       ))}
                     </div>
@@ -614,14 +616,14 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 )}
 
                 {/* Prompts Q&A */}
-                {selectedProfile.prompts && selectedProfile.prompts.length > 0 && (
+                {selectedMatch.other.prompts.length > 0 && (
                   <div className="flex flex-col gap-2">
                     <h4 className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
                       Icebreakers
                     </h4>
-                    {selectedProfile.prompts.map((p, i) => (
+                    {selectedMatch.other.prompts.map((p) => (
                       <div
-                        key={i}
+                        key={p.id}
                         className={`p-2.5 rounded-xl border ${
                           isLight ? 'bg-gray-50 border-gray-200' : 'bg-white/5 border-white/10'
                         }`}
@@ -649,8 +651,9 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   whileTap={{ scale: 0.94 }}
                   onClick={() => {
                     sounds.playClick();
-                    setSelectedProfile(null);
-                    onOpenChat(selectedProfile.id);
+                    const id = selectedMatch.id;
+                    setSelectedMatch(null);
+                    onOpenChat(id);
                   }}
                   className={`flex-1 h-8.5 text-[11px] font-bold rounded-xl border flex items-center justify-center gap-1.5 transition-colors ${
                     isLight
@@ -667,8 +670,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   whileTap={{ scale: 0.94 }}
                   onClick={() => {
                     sounds.playStamp();
-                    const target = selectedProfile;
-                    setSelectedProfile(null);
+                    const target = selectedMatch;
+                    setSelectedMatch(null);
                     onProposeDate(target);
                   }}
                   className="flex-1 h-8.5 bg-gradient-to-r from-[#e11d48] via-[#f43f5e] to-[#ff4d67] text-white text-[11px] font-bold rounded-xl shadow-xs flex items-center justify-center gap-1.5 hover:brightness-105 transition-all"

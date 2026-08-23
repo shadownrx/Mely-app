@@ -32,20 +32,28 @@ export function disconnectRealtime() {
 export type ChatEvent =
   | { type: 'message'; data: unknown }
   | { type: 'read'; data: { connectionId: string; userId: string } }
-  | { type: 'typing'; data: { connectionId: string; userId: string } };
+  | { type: 'typing'; data: { connectionId: string; userId: string } }
+  /** El canal se reconectó sin garantía de continuidad (ej: el celular estuvo en segundo plano
+   * un buen rato) — puede haber mensajes perdidos, hay que refetchear en vez de confiar en el stream. */
+  | { type: 'resync' };
 
 export function subscribeConnection(connectionId: string, onEvent: (event: ChatEvent) => void): () => void {
   const channel = getRealtimeClient().channels.get(`connection:${connectionId}`);
   const onMessage = (msg: Ably.Message) => onEvent({ type: 'message', data: msg.data });
   const onRead = (msg: Ably.Message) => onEvent({ type: 'read', data: msg.data });
   const onTyping = (msg: Ably.Message) => onEvent({ type: 'typing', data: msg.data });
+  const onAttached = (stateChange: Ably.ChannelStateChange) => {
+    if (stateChange.resumed === false) onEvent({ type: 'resync' });
+  };
   channel.subscribe('message', onMessage);
   channel.subscribe('read', onRead);
   channel.subscribe('typing', onTyping);
+  channel.on('attached', onAttached);
   return () => {
     channel.unsubscribe('message', onMessage);
     channel.unsubscribe('read', onRead);
     channel.unsubscribe('typing', onTyping);
+    channel.off('attached', onAttached);
   };
 }
 

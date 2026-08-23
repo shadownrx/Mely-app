@@ -29,6 +29,8 @@ export function useMessages(connectionId: string | null) {
           const nowIso = new Date().toISOString();
           return { messages: prev.messages.map((m) => (m.readAt ? m : { ...m, readAt: nowIso })) };
         });
+      } else if (event.type === 'resync') {
+        queryClient.invalidateQueries({ queryKey: ['messages', connectionId] });
       }
     });
     return unsubscribe;

@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { ARGENTINA_CITIES } from '../data/mockData';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useInterests, useUpdateProfile, useReplacePrompts, useDeleteAccount } from '../hooks/useProfile';
 import type { Gender, LookingFor, Prompt } from '../types';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Textarea } from './ui/textarea';
+import { Slider } from './ui/slider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Dialog, DialogContent } from './ui/dialog';
 
 interface SettingsViewProps {
   onSignOut: () => void;
@@ -54,8 +62,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
   const [maxAge, setMaxAge] = useState(user?.maxAge ?? 40);
   const [maxDistanceKm, setMaxDistanceKm] = useState(user?.maxDistanceKm ?? 25);
 
-  const [savedBanner, setSavedBanner] = useState<string | null>(null);
-  const [formError, setFormError] = useState<string | null>(null);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -97,9 +103,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
   };
 
   const saveProfile = async () => {
-    setFormError(null);
     if (seeking.length === 0) {
-      setFormError('Elegí al menos a quién querés conocer.');
+      toast.error('Elegí al menos a quién querés conocer.');
       return;
     }
     try {
@@ -123,15 +128,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
       });
       await refreshUser();
       sounds.playStamp();
-      setSavedBanner('Perfil actualizado correctamente.');
-      setTimeout(() => setSavedBanner(null), 2500);
+      toast.success('Perfil actualizado correctamente.');
     } catch (err: any) {
-      setFormError(err?.message ?? 'No se pudo guardar el perfil');
+      toast.error(err?.message ?? 'No se pudo guardar el perfil');
     }
   };
 
   const saveDiscoveryPrefs = async () => {
-    setFormError(null);
     try {
       await updateProfile.mutateAsync({
         displayName,
@@ -150,23 +153,20 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
       });
       await refreshUser();
       sounds.playStamp();
-      setSavedBanner('Preferencias de descubrimiento actualizadas.');
-      setTimeout(() => setSavedBanner(null), 2500);
+      toast.success('Preferencias de descubrimiento actualizadas.');
     } catch (err: any) {
-      setFormError(err?.message ?? 'No se pudieron guardar las preferencias');
+      toast.error(err?.message ?? 'No se pudieron guardar las preferencias');
     }
   };
 
   const handleSavePrompts = async () => {
-    setFormError(null);
     try {
       await replacePrompts.mutateAsync(prompts.map((p) => ({ question: p.question, answer: p.answer })));
       await refreshUser();
       sounds.playStamp();
-      setSavedBanner('Prompts guardados.');
-      setTimeout(() => setSavedBanner(null), 2500);
+      toast.success('Prompts guardados.');
     } catch (err: any) {
-      setFormError(err?.message ?? 'No se pudieron guardar los prompts');
+      toast.error(err?.message ?? 'No se pudieron guardar los prompts');
     }
   };
 
@@ -184,9 +184,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
             Ajustes del Pasaporte
           </h2>
           {onClose && (
-            <button onClick={() => { sounds.playClick(); onClose(); }} className={`p-1.5 rounded-full ${isLight ? 'text-[#64748b] hover:text-[#0f172a]' : 'text-[#fda4af] hover:text-white'}`}>
+            <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); onClose(); }}>
               <span className="material-symbols-outlined text-[22px]">close</span>
-            </button>
+            </Button>
           )}
         </div>
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-[11px] font-label-caps uppercase">
@@ -200,7 +200,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
             <button
               key={tab.id}
               onClick={() => { sounds.playClick(); setActiveSection(tab.id); }}
-              className={`px-3 py-1.5 rounded-2xl flex items-center gap-1.5 whitespace-nowrap transition-all ${
+              className={`px-3 py-1.5 rounded-2xl flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer ${
                 activeSection === tab.id
                   ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold shadow-md shadow-[#e11d48]/25'
                   : isLight
@@ -215,16 +215,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
         </div>
       </div>
 
-      {savedBanner && (
-        <div className="p-3.5 rounded-2xl bg-[#e11d48]/10 border border-[#e11d48]/40 text-[#e11d48] text-[12px] font-body-sm flex items-center gap-2 animate-fadeIn">
-          <span className="material-symbols-outlined text-[20px]">check_circle</span>
-          <span className="font-medium">{savedBanner}</span>
-        </div>
-      )}
-      {formError && (
-        <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/40 text-red-500 text-[12px] font-body-sm">{formError}</div>
-      )}
-
       {/* THEME */}
       {activeSection === 'theme' && (
         <div className={`p-5 rounded-3xl border shadow-xl flex flex-col gap-4 ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
@@ -235,7 +225,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
             <button
               type="button"
               onClick={() => { sounds.playClick(); setTheme('light'); }}
-              className={`p-4 rounded-2xl border-2 text-left flex flex-col gap-2 transition-all ${
+              className={`p-4 rounded-2xl border-2 text-left flex flex-col gap-2 transition-all cursor-pointer ${
                 isLight ? 'border-[#e11d48] bg-gradient-to-br from-white to-[#ffe4e6]/40 shadow-lg' : 'border-[#2a131b] bg-[#0c0507] text-[#fda4af]/70'
               }`}
             >
@@ -245,7 +235,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
             <button
               type="button"
               onClick={() => { sounds.playClick(); setTheme('dark'); }}
-              className={`p-4 rounded-2xl border-2 text-left flex flex-col gap-2 transition-all ${
+              className={`p-4 rounded-2xl border-2 text-left flex flex-col gap-2 transition-all cursor-pointer ${
                 !isLight ? 'border-[#e11d48] bg-gradient-to-br from-[#1e0a12] to-[#0c0507] shadow-lg' : 'border-[#fecdd3] bg-white text-[#64748b]'
               }`}
             >
@@ -260,50 +250,54 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
       {activeSection === 'profile' && (
         <div className={`p-5 rounded-3xl border shadow-xl flex flex-col gap-4 ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
           <div>
-            <label className="font-label-caps text-[9px] uppercase block mb-1 font-bold">Nombre</label>
-            <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required minLength={2} maxLength={40}
-              className={`w-full border rounded-2xl px-3 py-2 text-[13px] focus:outline-none ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-white'}`} />
+            <Label className="mb-1 block">Nombre</Label>
+            <Input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required minLength={2} maxLength={40} />
           </div>
 
           <div className="grid grid-cols-2 gap-2.5">
             <div>
-              <label className="font-label-caps text-[9px] uppercase block mb-1 font-bold">Ciudad</label>
-              <select value={city} onChange={(e) => setCity(e.target.value)} className={`w-full border rounded-2xl px-3 py-2 text-[12px] focus:outline-none ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-white'}`}>
-                {ARGENTINA_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
+              <Label className="mb-1 block">Ciudad</Label>
+              <Select value={city} onValueChange={setCity}>
+                <SelectTrigger className="text-[12px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {ARGENTINA_CITIES.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <label className="font-label-caps text-[9px] uppercase block mb-1 font-bold">Barrio / Zona</label>
-              <input type="text" value={zone} onChange={(e) => setZone(e.target.value)} maxLength={80}
-                className={`w-full border rounded-2xl px-3 py-2 text-[12px] focus:outline-none ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-white'}`} />
+              <Label className="mb-1 block">Barrio / Zona</Label>
+              <Input type="text" value={zone} onChange={(e) => setZone(e.target.value)} maxLength={80} />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2.5">
             <div>
-              <label className="font-label-caps text-[9px] uppercase block mb-1 font-bold">Ocupación</label>
-              <input type="text" value={job} onChange={(e) => setJob(e.target.value)} maxLength={80}
-                className={`w-full border rounded-2xl px-3 py-2 text-[13px] focus:outline-none ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-white'}`} />
+              <Label className="mb-1 block">Ocupación</Label>
+              <Input type="text" value={job} onChange={(e) => setJob(e.target.value)} maxLength={80} />
             </div>
             <div>
-              <label className="font-label-caps text-[9px] uppercase block mb-1 font-bold">Estudios</label>
-              <input type="text" value={studies} onChange={(e) => setStudies(e.target.value)} maxLength={80}
-                className={`w-full border rounded-2xl px-3 py-2 text-[13px] focus:outline-none ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-white'}`} />
+              <Label className="mb-1 block">Estudios</Label>
+              <Input type="text" value={studies} onChange={(e) => setStudies(e.target.value)} maxLength={80} />
             </div>
           </div>
 
           <div>
-            <label className="font-label-caps text-[9px] uppercase block mb-1 font-bold">Bio</label>
-            <textarea rows={3} value={bio ?? ''} onChange={(e) => setBio(e.target.value)} maxLength={300}
-              className={`w-full border rounded-2xl px-3 py-2 text-[12px] focus:outline-none ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-white'}`} />
+            <Label className="mb-1 block">Bio</Label>
+            <Textarea rows={3} value={bio ?? ''} onChange={(e) => setBio(e.target.value)} maxLength={300} className="text-[12px]" />
           </div>
 
           <div>
-            <label className="font-label-caps text-[9px] uppercase block mb-1 font-bold">Tu género</label>
+            <Label className="mb-1 block">Tu género</Label>
             <div className="flex flex-wrap gap-1.5">
               {GENDER_OPTIONS.map((g) => (
                 <button key={g.value} type="button" onClick={() => { sounds.playClick(); setGender(g.value); }}
-                  className={`px-3 py-1.5 rounded-full text-[11px] border transition-all ${gender === g.value ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent' : isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fda4af]/70'}`}>
+                  className={`px-3 py-1.5 rounded-full text-[11px] border transition-all cursor-pointer ${gender === g.value ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent' : isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fda4af]/70'}`}>
                   {g.label}
                 </button>
               ))}
@@ -311,11 +305,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
           </div>
 
           <div>
-            <label className="font-label-caps text-[9px] uppercase block mb-1 font-bold">Buscás conocer a</label>
+            <Label className="mb-1 block">Buscás conocer a</Label>
             <div className="flex flex-wrap gap-1.5">
               {GENDER_OPTIONS.map((g) => (
                 <button key={g.value} type="button" onClick={() => toggleSeeking(g.value)}
-                  className={`px-3 py-1.5 rounded-full text-[11px] border transition-all ${seeking.includes(g.value) ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent' : isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fda4af]/70'}`}>
+                  className={`px-3 py-1.5 rounded-full text-[11px] border transition-all cursor-pointer ${seeking.includes(g.value) ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent' : isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fda4af]/70'}`}>
                   {g.label}
                 </button>
               ))}
@@ -323,20 +317,29 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
           </div>
 
           <div>
-            <label className="font-label-caps text-[9px] uppercase block mb-1 font-bold">Estás buscando</label>
-            <select value={lookingFor} onChange={(e) => setLookingFor(e.target.value as LookingFor)} className={`w-full border rounded-2xl px-3 py-2 text-[12px] focus:outline-none ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-white'}`}>
-              {LOOKING_FOR_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
+            <Label className="mb-1 block">Estás buscando</Label>
+            <Select value={lookingFor} onValueChange={(v) => setLookingFor(v as LookingFor)}>
+              <SelectTrigger className="text-[12px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {LOOKING_FOR_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
-            <label className="font-label-caps text-[9px] uppercase block mb-1.5 font-bold">Intereses ({selectedInterestIds.length}/20)</label>
+            <Label className="mb-1.5 block">Intereses ({selectedInterestIds.length}/20)</Label>
             <div className="flex flex-wrap gap-1.5">
               {interests.map((interest) => {
                 const isSelected = selectedInterestIds.includes(interest.id);
                 return (
                   <button key={interest.id} type="button" onClick={() => toggleInterest(interest.id)}
-                    className={`px-3 py-1 rounded-full text-[11px] transition-all border ${isSelected ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent' : isLight ? 'bg-[#fff5f6] text-[#475569] border-[#fecdd3]' : 'bg-[#0b0507] text-[#fda4af]/70 border-[#e11d48]/25'}`}>
+                    className={`px-3 py-1 rounded-full text-[11px] transition-all border cursor-pointer ${isSelected ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent' : isLight ? 'bg-[#fff5f6] text-[#475569] border-[#fecdd3]' : 'bg-[#0b0507] text-[#fda4af]/70 border-[#e11d48]/25'}`}>
                     {isSelected ? `✓ ${interest.name}` : `+ ${interest.name}`}
                   </button>
                 );
@@ -344,21 +347,17 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
             </div>
           </div>
 
-          <button type="button" onClick={saveProfile} disabled={updateProfile.isPending}
-            className="w-full py-3.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] tracking-widest uppercase font-bold rounded-2xl shadow-md shadow-[#e11d48]/25 flex items-center justify-center gap-2 disabled:opacity-60">
+          <Button type="button" variant="cherry" onClick={saveProfile} disabled={updateProfile.isPending} className="w-full gap-2">
             <span className="material-symbols-outlined text-[16px]">save</span>
             <span>GUARDAR PERFIL</span>
-          </button>
+          </Button>
 
           {/* Blind Date Prompt */}
           <div className={`pt-4 mt-1 border-t flex flex-col gap-2.5 ${isLight ? 'border-[#fecdd3]' : 'border-[#e11d48]/20'}`}>
             <span className="font-label-caps text-[10px] text-[#e11d48] uppercase font-bold tracking-wider">Perfil a Ciegas 🕶️</span>
-            <input type="text" value={blindTeaser} onChange={(e) => setBlindTeaser(e.target.value)} maxLength={160} placeholder="Un adelanto misterioso de vos..."
-              className={`w-full border rounded-2xl px-3 py-2 text-[12px] focus:outline-none ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-white'}`} />
-            <textarea rows={2} value={blindPhilosophy} onChange={(e) => setBlindPhilosophy(e.target.value)} maxLength={300} placeholder="Tu filosofía de vida en unas líneas..."
-              className={`w-full border rounded-2xl px-3 py-2 text-[12px] focus:outline-none ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-white'}`} />
-            <textarea rows={2} value={blindIdealDate} onChange={(e) => setBlindIdealDate(e.target.value)} maxLength={300} placeholder="Tu cita ideal..."
-              className={`w-full border rounded-2xl px-3 py-2 text-[12px] focus:outline-none ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-white'}`} />
+            <Input type="text" value={blindTeaser} onChange={(e) => setBlindTeaser(e.target.value)} maxLength={160} placeholder="Un adelanto misterioso de vos..." className="text-[12px]" />
+            <Textarea rows={2} value={blindPhilosophy} onChange={(e) => setBlindPhilosophy(e.target.value)} maxLength={300} placeholder="Tu filosofía de vida en unas líneas..." className="text-[12px]" />
+            <Textarea rows={2} value={blindIdealDate} onChange={(e) => setBlindIdealDate(e.target.value)} maxLength={300} placeholder="Tu cita ideal..." className="text-[12px]" />
           </div>
 
           {/* Prompts */}
@@ -366,7 +365,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
             <div className="flex items-center justify-between">
               <span className="font-label-caps text-[10px] text-[#e11d48] uppercase font-bold tracking-wider">Prompts de Perfil ({prompts.length}/5)</span>
               {prompts.length < 5 && (
-                <button type="button" onClick={addPrompt} className="text-[10px] font-bold text-[#e11d48] flex items-center gap-1">
+                <button type="button" onClick={addPrompt} className="text-[10px] font-bold text-[#e11d48] flex items-center gap-1 cursor-pointer">
                   <span className="material-symbols-outlined text-[14px]">add</span>Agregar
                 </button>
               )}
@@ -374,22 +373,31 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
             {prompts.map((p, i) => (
               <div key={p.id} className="flex flex-col gap-1.5">
                 <div className="flex gap-1.5">
-                  <input type="text" value={p.question} onChange={(e) => setPrompts((prev) => prev.map((x, idx) => idx === i ? { ...x, question: e.target.value } : x))} maxLength={120}
+                  <Input
+                    type="text"
+                    value={p.question}
+                    onChange={(e) => setPrompts((prev) => prev.map((x, idx) => (idx === i ? { ...x, question: e.target.value } : x)))}
+                    maxLength={120}
                     placeholder="Pregunta"
-                    className={`flex-1 border rounded-2xl px-3 py-1.5 text-[12px] font-bold text-[#e11d48] focus:outline-none ${isLight ? 'bg-[#fff5f6] border-[#e11d48]/30' : 'bg-[#0b0507] border-[#e11d48]/30'}`} />
-                  <button type="button" onClick={() => setPrompts((prev) => prev.filter((_, idx) => idx !== i))} className="px-2 text-[#e11d48]">
+                    className="flex-1 text-[12px] font-bold text-[#e11d48] dark:text-[#fb7185]"
+                  />
+                  <Button type="button" variant="ghost" size="icon" onClick={() => setPrompts((prev) => prev.filter((_, idx) => idx !== i))} className="text-[#e11d48] shrink-0">
                     <span className="material-symbols-outlined text-[18px]">close</span>
-                  </button>
+                  </Button>
                 </div>
-                <input type="text" value={p.answer} onChange={(e) => setPrompts((prev) => prev.map((x, idx) => idx === i ? { ...x, answer: e.target.value } : x))} maxLength={300}
+                <Input
+                  type="text"
+                  value={p.answer}
+                  onChange={(e) => setPrompts((prev) => prev.map((x, idx) => (idx === i ? { ...x, answer: e.target.value } : x)))}
+                  maxLength={300}
                   placeholder="Tu respuesta"
-                  className={`w-full border rounded-2xl px-3 py-2 text-[12px] focus:outline-none ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25 text-white'}`} />
+                  className="text-[12px]"
+                />
               </div>
             ))}
-            <button type="button" onClick={handleSavePrompts} disabled={replacePrompts.isPending}
-              className={`w-full py-2.5 border font-label-caps text-[10px] uppercase font-bold rounded-2xl disabled:opacity-60 ${isLight ? 'border-[#e11d48] text-[#e11d48] bg-[#fff1f3]' : 'border-[#e11d48]/40 text-[#fda4af] bg-[#1f0d16]'}`}>
+            <Button type="button" variant="outline" onClick={handleSavePrompts} disabled={replacePrompts.isPending} className="w-full">
               Guardar Prompts
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -400,27 +408,32 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
           <p className={`text-[11px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
             Estos valores son tus preferencias por defecto — se usan como punto de partida cada vez que abrís los filtros de Descubrir.
           </p>
-          <div className={`p-4 rounded-2xl border flex flex-col gap-2 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
+          <div className={`p-4 rounded-2xl border flex flex-col gap-3 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
             <div className="flex justify-between items-center">
               <span className="font-label-caps text-[10px] uppercase font-bold">Distancia Máxima</span>
               <span className="font-headline-md text-[16px] text-[#e11d48] font-bold">{maxDistanceKm} km</span>
             </div>
-            <input type="range" min={1} max={500} value={maxDistanceKm} onChange={(e) => setMaxDistanceKm(Number(e.target.value))} className="w-full accent-[#e11d48]" />
+            <Slider min={1} max={500} step={1} value={[maxDistanceKm]} onValueChange={([v]) => setMaxDistanceKm(v)} />
           </div>
-          <div className={`p-4 rounded-2xl border flex flex-col gap-2 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
+          <div className={`p-4 rounded-2xl border flex flex-col gap-3 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
             <div className="flex justify-between items-center">
               <span className="font-label-caps text-[10px] uppercase font-bold">Rango de Edad</span>
               <span className="font-headline-md text-[16px] text-[#e11d48] font-bold">{minAge} - {maxAge} años</span>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <input type="range" min={18} max={maxAge} value={minAge} onChange={(e) => setMinAge(Number(e.target.value))} className="w-full accent-[#e11d48]" />
-              <input type="range" min={minAge} max={99} value={maxAge} onChange={(e) => setMaxAge(Number(e.target.value))} className="w-full accent-[#e11d48]" />
-            </div>
+            <Slider
+              min={18}
+              max={99}
+              step={1}
+              value={[minAge, maxAge]}
+              onValueChange={([lo, hi]) => {
+                setMinAge(lo);
+                setMaxAge(hi);
+              }}
+            />
           </div>
-          <button type="button" onClick={saveDiscoveryPrefs} disabled={updateProfile.isPending}
-            className="w-full py-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] uppercase font-bold rounded-2xl shadow-md disabled:opacity-60">
+          <Button type="button" variant="cherry" onClick={saveDiscoveryPrefs} disabled={updateProfile.isPending} className="w-full">
             Guardar Preferencias
-          </button>
+          </Button>
         </div>
       )}
 
@@ -451,11 +464,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
         <div className={`p-5 rounded-3xl border shadow-xl flex flex-col gap-3 ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
           <div className={`p-4 rounded-2xl border flex items-center justify-between ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
             <span className="font-body-sm text-[13px] font-semibold">Sonido de sello</span>
-            <button type="button" onClick={() => sounds.playStamp()} className="px-2.5 py-1 bg-[#e11d48] text-white text-[9px] font-label-caps uppercase rounded-xl font-bold">Probar</button>
+            <Button type="button" variant="cherry" size="sm" onClick={() => sounds.playStamp()} className="h-7 px-2.5 text-[9px] rounded-xl tracking-normal">
+              Probar
+            </Button>
           </div>
           <div className={`p-4 rounded-2xl border flex items-center justify-between ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
             <span className="font-body-sm text-[13px] font-semibold">Sonido de monedas</span>
-            <button type="button" onClick={() => sounds.playCoins()} className="px-2.5 py-1 bg-[#e11d48] text-white text-[9px] font-label-caps uppercase rounded-xl font-bold">Probar</button>
+            <Button type="button" variant="cherry" size="sm" onClick={() => sounds.playCoins()} className="h-7 px-2.5 text-[9px] rounded-xl tracking-normal">
+              Probar
+            </Button>
           </div>
         </div>
       )}
@@ -463,55 +480,66 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut, onClose }
       {/* ACCOUNT ACTIONS */}
       <div className={`p-5 rounded-3xl border shadow-xl flex flex-col gap-3 ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
         <span className={`font-label-caps text-[10px] uppercase font-bold tracking-wider ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]'}`}>ACCIONES DE CUENTA</span>
-        <button type="button" onClick={() => { sounds.playClick(); setShowSignOutConfirm(true); }}
-          className={`w-full py-3 border font-label-caps text-[11px] tracking-wider uppercase font-bold rounded-2xl flex items-center justify-center gap-2 ${isLight ? 'bg-[#fff1f3] border-[#fecdd3] text-[#e11d48]' : 'bg-[#1f0d16] border-[#e11d48]/40 text-[#fda4af]'}`}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => { sounds.playClick(); setShowSignOutConfirm(true); }}
+          className={`w-full gap-2 text-[11px] ${isLight ? 'bg-[#fff1f3] text-[#e11d48]' : 'bg-[#1f0d16] text-[#fda4af]'}`}
+        >
           <span className="material-symbols-outlined text-[18px]">logout</span>
           <span>CERRAR SESIÓN</span>
-        </button>
-        <button type="button" onClick={() => { sounds.playClick(); setShowDeleteConfirm(true); }}
-          className="w-full py-2.5 border border-red-500/40 text-red-500 text-[10px] font-label-caps uppercase rounded-2xl">
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => { sounds.playClick(); setShowDeleteConfirm(true); }}
+          className="w-full text-[10px] border-red-500/40 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
+        >
           Eliminar Cuenta Permanentemente
-        </button>
+        </Button>
       </div>
 
-      {showSignOutConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-          <div className={`border rounded-3xl w-full max-w-[360px] p-6 text-center shadow-2xl ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/40'}`}>
-            <h3 className="font-headline-md text-[18px] font-bold mb-1">¿Cerrar Sesión?</h3>
-            <p className={`text-[12px] mb-5 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>Vas a poder volver a ingresar en cualquier momento con tus credenciales.</p>
-            <div className="flex gap-2.5">
-              <button type="button" onClick={() => setShowSignOutConfirm(false)} className={`flex-1 py-2.5 border font-label-caps text-[10px] uppercase font-bold rounded-2xl ${isLight ? 'bg-gray-100 text-gray-700 border-gray-200' : 'bg-[#0b0507] text-[#fda4af] border-white/10'}`}>Cancelar</button>
-              <button type="button" onClick={() => { setShowSignOutConfirm(false); onSignOut(); }} className="flex-1 py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] uppercase font-bold rounded-2xl">Confirmar</button>
-            </div>
+      <Dialog open={showSignOutConfirm} onOpenChange={setShowSignOutConfirm}>
+        <DialogContent className="w-[calc(100%-2rem)] max-w-[360px] p-6 text-center">
+          <h3 className="font-headline-md text-[18px] font-bold">¿Cerrar Sesión?</h3>
+          <p className={`text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>Vas a poder volver a ingresar en cualquier momento con tus credenciales.</p>
+          <div className="flex gap-2.5">
+            <Button type="button" variant="secondary" onClick={() => setShowSignOutConfirm(false)} className="flex-1">
+              Cancelar
+            </Button>
+            <Button type="button" variant="cherry" onClick={() => { setShowSignOutConfirm(false); onSignOut(); }} className="flex-1">
+              Confirmar
+            </Button>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-          <div className={`border rounded-3xl w-full max-w-[360px] p-6 text-center shadow-2xl ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
-            <h3 className="font-headline-md text-[18px] font-bold mb-1 text-red-500">Eliminar cuenta</h3>
-            <p className={`text-[12px] mb-5 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
-              Esta acción es permanente. Se borra tu perfil, matches, mensajes y saldo. No se puede deshacer.
-            </p>
-            <div className="flex gap-2.5">
-              <button type="button" onClick={() => setShowDeleteConfirm(false)} className={`flex-1 py-2.5 border font-label-caps text-[10px] uppercase font-bold rounded-2xl ${isLight ? 'bg-gray-100 text-gray-700 border-gray-200' : 'bg-[#0b0507] text-[#fda4af] border-white/10'}`}>Cancelar</button>
-              <button
-                type="button"
-                onClick={async () => {
-                  await deleteAccount.mutateAsync();
-                  setShowDeleteConfirm(false);
-                  onSignOut();
-                }}
-                disabled={deleteAccount.isPending}
-                className="flex-1 py-2.5 bg-red-600 text-white font-label-caps text-[10px] uppercase font-bold rounded-2xl disabled:opacity-60"
-              >
-                Eliminar
-              </button>
-            </div>
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent className="w-[calc(100%-2rem)] max-w-[360px] p-6 text-center">
+          <h3 className="font-headline-md text-[18px] font-bold text-red-500">Eliminar cuenta</h3>
+          <p className={`text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
+            Esta acción es permanente. Se borra tu perfil, matches, mensajes y saldo. No se puede deshacer.
+          </p>
+          <div className="flex gap-2.5">
+            <Button type="button" variant="secondary" onClick={() => setShowDeleteConfirm(false)} className="flex-1">
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={async () => {
+                await deleteAccount.mutateAsync();
+                setShowDeleteConfirm(false);
+                onSignOut();
+              }}
+              disabled={deleteAccount.isPending}
+              className="flex-1"
+            >
+              Eliminar
+            </Button>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

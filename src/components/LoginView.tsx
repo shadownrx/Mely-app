@@ -4,6 +4,11 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { forgotPassword } from '../lib/api/auth';
 import { ApiError } from '../lib/apiClient';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Checkbox } from './ui/checkbox';
+import { Dialog, DialogContent } from './ui/dialog';
 
 interface LoginViewProps {
   onGoToRegister: () => void;
@@ -75,24 +80,22 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister }) => {
     <div className={`w-full max-w-[420px] mx-auto min-h-screen py-8 px-4 flex flex-col justify-between items-center animate-fadeIn ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
       {/* Top Theme Switcher Bar */}
       <div className="w-full flex justify-end mb-2">
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={() => {
             sounds.playClick();
             toggleTheme();
           }}
-          className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-[11px] font-label-caps uppercase font-bold transition-colors ${
-            isLight
-              ? 'bg-white border-[#fecdd3] text-[#e11d48] hover:bg-[#fff1f3]'
-              : 'bg-[#140b0f] border-[#e11d48]/30 text-[#fda4af] hover:text-[#fff1f2]'
-          }`}
+          className="gap-1.5 rounded-full text-[11px] tracking-normal normal-case font-bold"
           title="Cambiar tema de color"
         >
           <span className="material-symbols-outlined text-[15px]">
             {isLight ? 'dark_mode' : 'light_mode'}
           </span>
           <span>{isLight ? 'Modo Oscuro' : 'Modo Blanco / Coral'}</span>
-        </button>
+        </Button>
       </div>
 
       {/* Header Emblem */}
@@ -200,28 +203,19 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister }) => {
 
           {/* Email Input */}
           <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="login-email"
-              className={`font-label-caps text-[10px] uppercase tracking-wider font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}
-            >
-              CORREO ELECTRÓNICO
-            </label>
+            <Label htmlFor="login-email">CORREO ELECTRÓNICO</Label>
             <div className="relative flex items-center">
-              <span className={`material-symbols-outlined absolute left-3.5 text-[18px] ${isLight ? 'text-gray-400' : 'text-[#fda4af]/50'}`}>
+              <span className={`material-symbols-outlined absolute left-3.5 text-[18px] z-10 ${isLight ? 'text-gray-400' : 'text-[#fda4af]/50'}`}>
                 mail
               </span>
-              <input
+              <Input
                 id="login-email"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu.correo@ejemplo.com"
-                className={`w-full border rounded-2xl pl-10 pr-3.5 py-3 font-body-sm text-[13px] focus:outline-none transition-colors ${
-                  isLight
-                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] placeholder:text-gray-400 focus:border-[#e11d48]'
-                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] placeholder:text-[#fda4af]/30 focus:border-[#fb7185]'
-                }`}
+                className="pl-10"
               />
             </div>
           </div>
@@ -229,44 +223,35 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister }) => {
           {/* Password Input */}
           <div className="flex flex-col gap-1.5">
             <div className="flex justify-between items-center">
-              <label
-                htmlFor="login-pass"
-                className={`font-label-caps text-[10px] uppercase tracking-wider font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}
-              >
-                CONTRASEÑA
-              </label>
+              <Label htmlFor="login-pass">CONTRASEÑA</Label>
               <button
                 type="button"
                 onClick={() => {
                   sounds.playClick();
                   setShowRecoveryModal(true);
                 }}
-                className="font-label-caps text-[9px] text-[#e11d48] hover:underline uppercase font-bold"
+                className="font-label-caps text-[9px] text-[#e11d48] hover:underline uppercase font-bold cursor-pointer"
               >
                 ¿Olvidaste tu contraseña?
               </button>
             </div>
             <div className="relative flex items-center">
-              <span className={`material-symbols-outlined absolute left-3.5 text-[18px] ${isLight ? 'text-gray-400' : 'text-[#fda4af]/50'}`}>
+              <span className={`material-symbols-outlined absolute left-3.5 text-[18px] z-10 ${isLight ? 'text-gray-400' : 'text-[#fda4af]/50'}`}>
                 lock
               </span>
-              <input
+              <Input
                 id="login-pass"
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Ingresá tu contraseña"
-                className={`w-full border rounded-2xl pl-10 pr-10 py-3 font-body-sm text-[13px] focus:outline-none transition-colors ${
-                  isLight
-                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] placeholder:text-gray-400 focus:border-[#e11d48]'
-                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] placeholder:text-[#fda4af]/30 focus:border-[#fb7185]'
-                }`}
+                className="pl-10 pr-10"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className={`absolute right-3 p-1 focus:outline-none ${isLight ? 'text-gray-400 hover:text-[#0f172a]' : 'text-[#fda4af]/60 hover:text-[#fff1f2]'}`}
+                className={`absolute right-3 p-1 focus:outline-none cursor-pointer ${isLight ? 'text-gray-400 hover:text-[#0f172a]' : 'text-[#fda4af]/60 hover:text-[#fff1f2]'}`}
                 aria-label="Ver u ocultar contraseña"
               >
                 <span className="material-symbols-outlined text-[18px]">
@@ -278,26 +263,14 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister }) => {
 
           {/* Remember Me */}
           <div className="flex items-center justify-between pt-0.5">
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="accent-[#e11d48] rounded w-4 h-4"
-              />
-              <span className={`font-body-sm text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
-                Recordar mi sesión
-              </span>
-            </label>
+            <Label className="flex items-center gap-2 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal text-slate-500 dark:text-rose-300/80">
+              <Checkbox checked={rememberMe} onCheckedChange={(v) => setRememberMe(v === true)} />
+              Recordar mi sesión
+            </Label>
           </div>
 
           {/* Sign In Button */}
-          <button
-            id="login-submit-btn"
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full mt-1.5 py-3.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] tracking-[0.18em] uppercase font-bold rounded-2xl tactile-btn hover:opacity-95 shadow-lg shadow-[#e11d48]/25 flex items-center justify-center gap-2 focus:outline-none disabled:opacity-50"
-          >
+          <Button id="login-submit-btn" type="submit" variant="cherry" size="lg" disabled={isSubmitting} className="w-full mt-1.5 gap-2">
             {isSubmitting ? (
               <span className="flex items-center gap-2">
                 <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
@@ -309,7 +282,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister }) => {
                 <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </>
             )}
-          </button>
+          </Button>
         </form>
       </div>
 
@@ -318,22 +291,20 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister }) => {
         <p className={`font-body-sm text-[13px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
           ¿Aún no tenés cuenta en MELY?
         </p>
-        <button
+        <Button
           id="btn-switch-register"
           type="button"
+          variant="outline"
+          size="lg"
           onClick={() => {
             sounds.playClick();
             onGoToRegister();
           }}
-          className={`w-full py-3 border text-[#e11d48] font-label-caps text-[10px] tracking-widest uppercase font-bold rounded-2xl tactile-btn transition-colors flex items-center justify-center gap-2 focus:outline-none ${
-            isLight
-              ? 'bg-white hover:bg-[#fff5f6] border-[#fecdd3]'
-              : 'bg-[#140b0f] hover:bg-[#1f0d16] border-[#e11d48]/40'
-          }`}
+          className="w-full gap-2 text-[10px] tracking-widest text-[#e11d48] border-[#fecdd3] dark:border-[#e11d48]/40"
         >
           <span className="material-symbols-outlined text-[16px]">how_to_reg</span>
           <span>REGISTRARSE / SOLICITAR PASAPORTE</span>
-        </button>
+        </Button>
 
         <span className={`font-meta-data text-[9px] uppercase tracking-wider mt-2 ${isLight ? 'text-gray-400' : 'text-[#fda4af]/40'}`}>
           MELY ARGENTINA • ENCUENTROS VERIFICADOS EN PERSONA
@@ -341,68 +312,48 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister }) => {
       </div>
 
       {/* Password Recovery Modal */}
-      {showRecoveryModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
-          <div
-            className={`border rounded-3xl w-full max-w-[360px] overflow-hidden shadow-2xl p-6 relative ${
-              isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/40'
-            }`}
-          >
-            <button
-              onClick={() => setShowRecoveryModal(false)}
-              className={`absolute top-4 right-4 p-1 focus:outline-none ${isLight ? 'text-gray-400 hover:text-[#0f172a]' : 'text-[#fda4af] hover:text-[#fff1f2]'}`}
-            >
-              <span className="material-symbols-outlined text-[20px]">close</span>
-            </button>
-
-            <div className="w-12 h-12 rounded-2xl bg-[#e11d48]/15 border border-[#e11d48]/30 text-[#e11d48] flex items-center justify-center mb-3">
-              <span className="material-symbols-outlined text-[24px]">vpn_key</span>
-            </div>
-
-            <span className="font-label-caps text-[9px] text-[#e11d48] uppercase tracking-widest block font-bold mb-0.5">
-              RECUPERACIÓN SEGURA
-            </span>
-            <h3 className={`font-headline-md text-[18px] font-bold mb-2 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-              Recuperar Contraseña
-            </h3>
-            <p className={`font-body-sm text-[12px] mb-4 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
-              Ingresá el correo asociado a tu cuenta para recibir un enlace seguro de restablecimiento.
-            </p>
-
-            {recoverySent ? (
-              <div className="p-3 bg-[#10b981]/15 border border-[#10b981]/40 rounded-2xl text-[#059669] text-[12px] font-body-sm text-center font-medium">
-                ✓ Si el correo existe, te enviamos un enlace de restablecimiento. Revisá tu bandeja.
-              </div>
-            ) : (
-              <form onSubmit={handleSendRecovery} className="flex flex-col gap-3">
-                {recoveryError && (
-                  <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] font-body-sm">
-                    {recoveryError}
-                  </div>
-                )}
-                <input
-                  type="email"
-                  required
-                  placeholder="tu.correo@ejemplo.com"
-                  value={recoveryEmail}
-                  onChange={(e) => setRecoveryEmail(e.target.value)}
-                  className={`w-full border rounded-2xl px-3.5 py-2.5 font-mono text-[12px] focus:outline-none ${
-                    isLight
-                      ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                      : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                  }`}
-                />
-                <button
-                  type="submit"
-                  className="w-full py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] tracking-wider uppercase font-bold rounded-2xl tactile-btn hover:opacity-90 shadow-md"
-                >
-                  Enviar Enlace de Recuperación
-                </button>
-              </form>
-            )}
+      <Dialog open={showRecoveryModal} onOpenChange={setShowRecoveryModal}>
+        <DialogContent className="w-[calc(100%-2rem)] max-w-[360px] p-6 rounded-3xl">
+          <div className="w-12 h-12 rounded-2xl bg-[#e11d48]/15 border border-[#e11d48]/30 text-[#e11d48] flex items-center justify-center mb-1">
+            <span className="material-symbols-outlined text-[24px]">vpn_key</span>
           </div>
-        </div>
-      )}
+
+          <span className="font-label-caps text-[9px] text-[#e11d48] uppercase tracking-widest block font-bold">
+            RECUPERACIÓN SEGURA
+          </span>
+          <h3 className={`font-headline-md text-[18px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+            Recuperar Contraseña
+          </h3>
+          <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
+            Ingresá el correo asociado a tu cuenta para recibir un enlace seguro de restablecimiento.
+          </p>
+
+          {recoverySent ? (
+            <div className="p-3 bg-[#10b981]/15 border border-[#10b981]/40 rounded-2xl text-[#059669] text-[12px] font-body-sm text-center font-medium">
+              ✓ Si el correo existe, te enviamos un enlace de restablecimiento. Revisá tu bandeja.
+            </div>
+          ) : (
+            <form onSubmit={handleSendRecovery} className="flex flex-col gap-3">
+              {recoveryError && (
+                <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] font-body-sm">
+                  {recoveryError}
+                </div>
+              )}
+              <Input
+                type="email"
+                required
+                placeholder="tu.correo@ejemplo.com"
+                value={recoveryEmail}
+                onChange={(e) => setRecoveryEmail(e.target.value)}
+                className="font-mono text-[12px]"
+              />
+              <Button type="submit" variant="cherry" className="w-full text-[10px]">
+                Enviar Enlace de Recuperación
+              </Button>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

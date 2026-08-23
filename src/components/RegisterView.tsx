@@ -7,6 +7,12 @@ import { updateProfile, replacePrompts, uploadPhoto, listInterests } from '../li
 import { redeemCode } from '../lib/api/wallet';
 import { ApiError } from '../lib/apiClient';
 import type { Gender } from '../types';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Textarea } from './ui/textarea';
+import { Checkbox } from './ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 interface RegisterViewProps {
   onGoToLogin: () => void;
@@ -164,26 +170,27 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
               onGoToLogin();
             }
           }}
-          className={`flex items-center gap-1 font-label-caps text-[10px] uppercase font-bold focus:outline-none ${isLight ? 'text-[#64748b] hover:text-[#0f172a]' : 'text-[#fda4af] hover:text-[#fff1f2]'}`}
+          className={`flex items-center gap-1 font-label-caps text-[10px] uppercase font-bold focus:outline-none cursor-pointer ${isLight ? 'text-[#64748b] hover:text-[#0f172a]' : 'text-[#fda4af] hover:text-[#fff1f2]'}`}
         >
           <span className="material-symbols-outlined text-[18px]">arrow_back</span>
           <span>{step > 1 ? 'Paso Anterior' : 'Iniciar Sesión'}</span>
         </button>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="icon-sm"
             onClick={() => {
               sounds.playClick();
               toggleTheme();
             }}
-            className={`p-1.5 rounded-full border text-[13px] ${isLight ? 'bg-white border-[#fecdd3] text-[#e11d48]' : 'bg-[#140b0f] border-[#e11d48]/30 text-[#fda4af]'}`}
             title="Cambiar tema"
           >
             <span className="material-symbols-outlined text-[15px] block">
               {isLight ? 'dark_mode' : 'light_mode'}
             </span>
-          </button>
+          </Button>
 
           <div className="flex items-center gap-1.5 ml-1">
             <span className={`w-2.5 h-2.5 rounded-full transition-all ${step >= 1 ? 'bg-[#e11d48] shadow-[0_0_8px_rgba(225,29,72,0.8)]' : isLight ? 'bg-gray-200' : 'bg-white/20'}`} />
@@ -285,107 +292,58 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
             )}
 
             <div>
-              <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}>
-                Nombre Completo / Titular del Pasaporte
-              </label>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Ej. Mariel Juárez"
-                className={`w-full border rounded-2xl px-3.5 py-2.5 font-body-sm text-[13px] focus:outline-none ${
-                  isLight
-                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                }`}
-              />
+              <Label className="mb-1 block">Nombre Completo / Titular del Pasaporte</Label>
+              <Input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Ej. Mariel Juárez" />
             </div>
 
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}>
-                  Fecha de nacimiento
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.target.value)}
-                  className={`w-full border rounded-2xl px-3.5 py-2.5 font-body-sm text-[13px] focus:outline-none ${
-                    isLight
-                      ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                      : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                  }`}
-                />
+                <Label className="mb-1 block">Fecha de nacimiento</Label>
+                <Input type="date" required value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} />
               </div>
 
               <div>
-                <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}>
-                  Ciudad / Barrio
-                </label>
-                <select
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className={`w-full border rounded-2xl px-3 py-2.5 font-body-sm text-[12px] focus:outline-none ${
-                    isLight
-                      ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                      : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                  }`}
-                >
-                  {ARGENTINA_CITIES.map((c) => (
-                    <option key={c} value={c} className={isLight ? 'bg-white text-[#0f172a]' : 'bg-[#0b0507] text-[#fff1f2]'}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                <Label className="mb-1 block">Ciudad / Barrio</Label>
+                <Select value={city} onValueChange={setCity}>
+                  <SelectTrigger className="text-[12px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ARGENTINA_CITIES.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}>
-                  Tu género
-                </label>
-                <select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value as Gender)}
-                  className={`w-full border rounded-2xl px-3 py-2.5 font-body-sm text-[12px] focus:outline-none ${
-                    isLight
-                      ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                      : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                  }`}
-                >
-                  {GENDER_OPTIONS.map((g) => (
-                    <option key={g.value} value={g.value} className={isLight ? 'bg-white text-[#0f172a]' : 'bg-[#0b0507] text-[#fff1f2]'}>
-                      {g.label}
-                    </option>
-                  ))}
-                </select>
+                <Label className="mb-1 block">Tu género</Label>
+                <Select value={gender} onValueChange={(v) => setGender(v as Gender)}>
+                  <SelectTrigger className="text-[12px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {GENDER_OPTIONS.map((g) => (
+                      <SelectItem key={g.value} value={g.value}>
+                        {g.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
-                <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}>
-                  Ocupación
-                </label>
-                <input
-                  type="text"
-                  value={job}
-                  onChange={(e) => setJob(e.target.value)}
-                  placeholder="Opcional"
-                  className={`w-full border rounded-2xl px-3.5 py-2.5 font-body-sm text-[13px] focus:outline-none ${
-                    isLight
-                      ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                      : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                  }`}
-                />
+                <Label className="mb-1 block">Ocupación</Label>
+                <Input type="text" value={job} onChange={(e) => setJob(e.target.value)} placeholder="Opcional" />
               </div>
             </div>
 
             <div>
-              <label className={`font-label-caps text-[10px] uppercase block mb-1.5 font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}>
-                Te gustaría conocer a
-              </label>
+              <Label className="mb-1.5 block">Te gustaría conocer a</Label>
               <div className="flex flex-wrap gap-1.5">
                 {GENDER_OPTIONS.map((g) => {
                   const isSelected = seeking.includes(g.value);
@@ -394,7 +352,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
                       key={g.value}
                       type="button"
                       onClick={() => toggleSeeking(g.value)}
-                      className={`px-3 py-1.5 rounded-full text-[11px] font-body-sm transition-all border ${
+                      className={`px-3 py-1.5 rounded-full text-[11px] font-body-sm transition-all border cursor-pointer ${
                         isSelected
                           ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent shadow-sm'
                           : isLight
@@ -410,49 +368,33 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
             </div>
 
             <div>
-              <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}>
-                Correo Electrónico
-              </label>
-              <input
+              <Label className="mb-1 block">Correo Electrónico</Label>
+              <Input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu.correo@mely.app"
-                className={`w-full border rounded-2xl px-3.5 py-2.5 font-mono text-[12px] focus:outline-none ${
-                  isLight
-                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                }`}
+                className="font-mono text-[12px]"
               />
             </div>
 
             <div>
-              <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}>
-                Crear Llave de Acceso (Contraseña)
-              </label>
-              <input
+              <Label className="mb-1 block">Crear Llave de Acceso (Contraseña)</Label>
+              <Input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Mínimo 8 caracteres, letras y números"
-                className={`w-full border rounded-2xl px-3.5 py-2.5 font-mono text-[12px] focus:outline-none ${
-                  isLight
-                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                }`}
+                className="font-mono text-[12px]"
               />
             </div>
 
-            <button
-              type="button"
-              onClick={handleStep1Continue}
-              className="mt-2 w-full py-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] tracking-wider uppercase font-bold rounded-2xl tactile-btn hover:opacity-95 shadow-md shadow-[#e11d48]/20 flex items-center justify-center gap-2"
-            >
+            <Button type="button" variant="cherry" onClick={handleStep1Continue} className="mt-2 w-full gap-2">
               <span>CONTINUAR A FOTOGRAFÍA</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-            </button>
+            </Button>
           </div>
         )}
 
@@ -487,17 +429,18 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
               </p>
             </div>
 
-            <button
+            <Button
               type="button"
+              variant="cherry"
               onClick={() => {
                 sounds.playClick();
                 setStep(3);
               }}
-              className="mt-2 w-full py-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] tracking-wider uppercase font-bold rounded-2xl tactile-btn hover:opacity-90 flex items-center justify-center gap-2 shadow-md"
+              className="mt-2 w-full gap-2"
             >
               <span>CONTINUAR A BIO & INTERESES</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-            </button>
+            </Button>
           </div>
         )}
 
@@ -519,28 +462,20 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
 
             {/* Bio Editorial */}
             <div>
-              <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}>
-                Bio Editorial del Pasaporte
-              </label>
-              <textarea
+              <Label className="mb-1 block">Bio Editorial del Pasaporte</Label>
+              <Textarea
                 rows={2}
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="Describí tus afinidades, gustos y lo que buscás compartir en un encuentro..."
-                className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[12px] focus:outline-none ${
-                  isLight
-                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                }`}
+                className="text-[12px]"
               />
             </div>
 
             {/* Intereses reales */}
             <div>
               <div className="flex justify-between items-center mb-1.5">
-                <label className={`font-label-caps text-[10px] uppercase font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}>
-                  Intereses ({selectedInterestIds.length}/6)
-                </label>
+                <Label>Intereses ({selectedInterestIds.length}/6)</Label>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {availableInterests.map((interest) => {
@@ -550,7 +485,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
                       key={interest.id}
                       type="button"
                       onClick={() => toggleInterest(interest.id)}
-                      className={`px-3 py-1 rounded-full text-[11px] font-body-sm transition-all border ${
+                      className={`px-3 py-1 rounded-full text-[11px] font-body-sm transition-all border cursor-pointer ${
                         isSelected
                           ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent shadow-sm'
                           : isLight
@@ -567,66 +502,42 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
 
             {/* Prompt de Cita */}
             <div>
-              <label className={`font-label-caps text-[10px] uppercase block mb-1 font-bold ${isLight ? 'text-[#334155]' : 'text-[#fda4af]'}`}>
-                Pregunta de Encuentro Presencial (opcional)
-              </label>
-              <input
+              <Label className="mb-1 block">Pregunta de Encuentro Presencial (opcional)</Label>
+              <Input
                 type="text"
                 value={promptQ}
                 onChange={(e) => setPromptQ(e.target.value)}
-                className={`w-full border rounded-2xl px-3.5 py-1.5 font-body-sm text-[12px] mb-1.5 focus:outline-none font-medium ${
-                  isLight
-                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#e11d48] focus:border-[#e11d48]'
-                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fb7185] focus:border-[#fb7185]'
-                }`}
+                className="mb-1.5 text-[12px] font-medium text-[#e11d48] dark:text-[#fb7185]"
               />
-              <input
+              <Input
                 type="text"
                 value={promptA}
                 onChange={(e) => setPromptA(e.target.value)}
                 placeholder="Tu respuesta..."
-                className={`w-full border rounded-2xl px-3.5 py-2 font-body-sm text-[12px] focus:outline-none ${
-                  isLight
-                    ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]'
-                    : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                }`}
+                className="text-[12px]"
               />
             </div>
 
             {/* Terms */}
-            <div className={`p-3 rounded-2xl border flex flex-col gap-2 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
-              <label className="flex items-start gap-2.5 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  required
-                  checked={acceptTerms}
-                  onChange={(e) => setAcceptTerms(e.target.checked)}
-                  className="accent-[#e11d48] rounded w-4 h-4 mt-0.5"
-                />
-                <span className={`font-body-sm text-[11px] leading-relaxed ${isLight ? 'text-[#475569]' : 'text-[#fda4af]/80'}`}>
-                  Acepto los <strong>Términos y Condiciones</strong> de MELY Argentina.
-                </span>
-              </label>
-              <label className="flex items-start gap-2.5 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  required
-                  checked={acceptPrivacy}
-                  onChange={(e) => setAcceptPrivacy(e.target.checked)}
-                  className="accent-[#e11d48] rounded w-4 h-4 mt-0.5"
-                />
-                <span className={`font-body-sm text-[11px] leading-relaxed ${isLight ? 'text-[#475569]' : 'text-[#fda4af]/80'}`}>
-                  Acepto la <strong>Política de Privacidad</strong> y la verificación presencial mediante token en cada encuentro.
-                </span>
-              </label>
+            <div className={`p-3 rounded-2xl border flex flex-col gap-2.5 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
+              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[11px] font-normal leading-relaxed text-slate-600 dark:text-rose-300/80">
+                <Checkbox required checked={acceptTerms} onCheckedChange={(v) => setAcceptTerms(v === true)} className="mt-0.5 shrink-0" />
+                Acepto los <strong>Términos y Condiciones</strong> de MELY Argentina.
+              </Label>
+              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[11px] font-normal leading-relaxed text-slate-600 dark:text-rose-300/80">
+                <Checkbox required checked={acceptPrivacy} onCheckedChange={(v) => setAcceptPrivacy(v === true)} className="mt-0.5 shrink-0" />
+                Acepto la <strong>Política de Privacidad</strong> y la verificación presencial mediante token en cada encuentro.
+              </Label>
             </div>
 
             {/* Final Issuance Button */}
-            <button
+            <Button
               id="register-submit-btn"
               type="submit"
+              variant="cherry"
+              size="lg"
               disabled={isIssuing || !acceptTerms || !acceptPrivacy}
-              className="w-full py-3.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] tracking-[0.18em] uppercase font-bold rounded-2xl tactile-btn hover:opacity-95 shadow-xl shadow-[#e11d48]/25 flex items-center justify-center gap-2 focus:outline-none disabled:opacity-50"
+              className="w-full gap-2"
             >
               {isIssuing ? (
                 <span className="flex items-center gap-2">
@@ -639,7 +550,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
                   <span>EMITIR MI PASAPORTE (+1,000 PTS)</span>
                 </>
               )}
-            </button>
+            </Button>
           </div>
         )}
       </form>
@@ -652,7 +563,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
             sounds.playClick();
             onGoToLogin();
           }}
-          className={`font-label-caps text-[10px] uppercase tracking-wider underline focus:outline-none font-bold ${
+          className={`font-label-caps text-[10px] uppercase tracking-wider underline focus:outline-none font-bold cursor-pointer ${
             isLight ? 'text-[#e11d48] hover:text-[#be123c]' : 'text-[#fda4af]/80 hover:text-[#fff1f2]'
           }`}
         >

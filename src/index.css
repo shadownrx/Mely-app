@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Tailwind v4 usa prefers-color-scheme por default para "dark:". Esto lo ata
+   a la clase .dark que ThemeContext alterna en <html>, para que el toggle de
+   tema de la app (no el del sistema operativo) sea el que manda. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --font-serif: 'Literata', Georgia, serif;

@@ -253,16 +253,19 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
           <form onSubmit={handleScan} className="p-5 flex flex-col items-center gap-4 text-center">
             <span className="material-symbols-outlined text-[48px] text-[#e11d48]/70">pin</span>
             <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
-              Pedile a {partnerName} que te muestre su pase y escribí el token de 16 caracteres.
+              Pedile a {partnerName} que te muestre su pase y escribí el código de 6 dígitos.
             </p>
             <input
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
               value={manualCode}
-              onChange={(e) => setManualCode(e.target.value)}
-              placeholder="Código de la cita"
+              onChange={(e) => setManualCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              placeholder="000000"
               autoCapitalize="off"
               autoCorrect="off"
-              className={`w-full text-center font-mono tracking-widest border rounded-2xl px-3.5 py-3 text-[14px] focus:outline-none ${
+              className={`w-full text-center font-mono tracking-[0.4em] border rounded-2xl px-3.5 py-3 text-[22px] focus:outline-none ${
                 isLight ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
               }`}
             />

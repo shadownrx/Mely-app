@@ -384,9 +384,9 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
 
                       {/* Top Verified / City Tag */}
                       <div className="absolute top-2 left-2 right-2 flex items-center justify-between pointer-events-none">
-                        <span className="px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-[9px] font-medium flex items-center gap-0.5">
-                          <span className="material-symbols-outlined text-[10px] text-[#fb7185]">location_on</span>
-                          <span>{match.other.city?.split(' ')[0] || 'BsAs'}</span>
+                        <span className="px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-[9px] font-medium flex items-center gap-0.5 max-w-[110px]">
+                          <span className="material-symbols-outlined text-[10px] text-[#fb7185] shrink-0">location_on</span>
+                          <span className="truncate">{match.other.city || 'BsAs'}</span>
                         </span>
 
                         {match.other.badges.trusted && (

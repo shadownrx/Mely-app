@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { IcebreakerQuestion } from '../types';
+import { motion } from 'motion/react';
 import { ICEBREAKER_QUESTIONS } from '../data/mockData';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
+import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
 
 interface IcebreakerWheelModalProps {
   isOpen: boolean;
@@ -25,8 +24,6 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [wheelRotation, setWheelRotation] = useState(0);
-
-  if (!isOpen) return null;
 
   const filteredQuestions = selectedCategory === 'all'
     ? ICEBREAKER_QUESTIONS
@@ -65,22 +62,12 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.93, y: 15 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.93, y: 15 }}
-        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className={`border rounded-3xl w-full max-w-[420px] overflow-hidden shadow-2xl relative ${
-          isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140a0e] border-[#e11d48]/40'
-        }`}
-      >
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="w-[calc(100%-1.5rem)] max-w-[420px] p-0 gap-0 overflow-hidden">
         {/* Header */}
-        <div
-          className={`p-4 sm:p-5 border-b flex justify-between items-center ${
-            isLight
-              ? 'bg-[#fff1f3] border-[#fecdd3]'
-              : 'bg-[#1c0d15] border-[#e11d48]/30'
+        <DialogHeader
+          className={`p-4 sm:p-5 border-b flex-row items-center shrink-0 space-y-0 ${
+            isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#1c0d15] border-[#e11d48]/30'
           }`}
         >
           <div className="flex items-center gap-2.5">
@@ -96,19 +83,7 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
               </h3>
             </div>
           </div>
-
-          <button
-            onClick={() => {
-              sounds.playClick();
-              onClose();
-            }}
-            className={`p-1.5 rounded-full focus:outline-none ${
-              isLight ? 'text-gray-400 hover:text-gray-900' : 'text-[#fda4af]/70 hover:text-white'
-            }`}
-          >
-            <span className="material-symbols-outlined text-[20px]">close</span>
-          </button>
-        </div>
+        </DialogHeader>
 
         {/* Roulette Animated Wheel Graphic */}
         <div className="p-5 flex flex-col items-center gap-4 text-center">
@@ -204,7 +179,7 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
             </Button>
           </div>
         </div>
-      </motion.div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

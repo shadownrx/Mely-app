@@ -8,6 +8,8 @@ import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useConfirmDate, useCurrentDateMeet, useGenerateQr, useScanCheckIn } from '../hooks/useDates';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
 
 QrScanner.WORKER_PATH = QrScannerWorkerPath;
 
@@ -153,22 +155,10 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.93, y: 15 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.93, y: 15 }}
-        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className={`border rounded-3xl w-full max-w-[400px] overflow-hidden shadow-2xl relative ${
-          isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#130a0e] border-[#e11d48]/40'
-        }`}
-      >
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="w-[calc(100%-1.5rem)] max-w-[400px] p-0 gap-0 overflow-hidden">
         {/* Top Header */}
-        <div
-          className={`p-4 border-b flex justify-between items-center ${
-            isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#1c0d15] border-[#e11d48]/30'
-          }`}
-        >
+        <DialogHeader className={`p-4 border-b flex-row items-center shrink-0 space-y-0 ${isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#1c0d15] border-[#e11d48]/30'}`}>
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full border-2 border-[#e11d48] overflow-hidden shrink-0">
               <img src={partnerAvatar} alt={partnerName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
@@ -182,16 +172,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
               </h3>
             </div>
           </div>
-          <button
-            onClick={() => {
-              sounds.playClick();
-              onClose();
-            }}
-            className={`p-1.5 rounded-full focus:outline-none ${isLight ? 'text-gray-400 hover:text-gray-900' : 'text-[#fda4af]/70 hover:text-white'}`}
-          >
-            <span className="material-symbols-outlined text-[20px]">close</span>
-          </button>
-        </div>
+        </DialogHeader>
 
         {!verificationSuccess && (
           <div
@@ -335,7 +316,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
                   Pedile a {partnerName} que te muestre su pase y escribí el código de 6 dígitos.
                 </p>
-                <input
+                <Input
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
@@ -346,9 +327,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                   autoCapitalize="off"
                   autoCorrect="off"
                   autoFocus
-                  className={`w-full text-center font-mono tracking-[0.4em] border rounded-2xl px-3.5 py-3 text-[22px] focus:outline-none ${
-                    isLight ? 'bg-[#fff5f6] border-[#fecdd3] text-[#0f172a] focus:border-[#e11d48]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2] focus:border-[#fb7185]'
-                  }`}
+                  className="text-center font-mono tracking-[0.4em] py-3 text-[22px] h-auto"
                 />
                 {scanError && <p className="text-[11px] text-[#e11d48] font-bold">{scanError}</p>}
                 <Button
@@ -406,7 +385,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
             </Button>
           </motion.div>
         )}
-      </motion.div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

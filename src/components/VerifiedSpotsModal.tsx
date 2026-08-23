@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { VerifiedSpot } from '../types';
 import { VERIFIED_SPOTS } from '../data/mockData';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
 
 interface VerifiedSpotsModalProps {
   isOpen: boolean;
@@ -22,8 +22,6 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedSpot, setSelectedSpot] = useState<VerifiedSpot | null>(null);
 
-  if (!isOpen) return null;
-
   const categories = [
     { id: 'all', label: 'Todos los Rincones', icon: 'explore' },
     { id: 'cafe', label: 'Café & Tostadores', icon: 'coffee' },
@@ -37,22 +35,16 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
     : VERIFIED_SPOTS.filter((s) => s.category === selectedCategory);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.94, y: 12 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.94, y: 12 }}
-        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className={`border rounded-3xl w-full max-w-[440px] max-h-[90vh] flex flex-col overflow-hidden shadow-2xl relative ${
-          isLight ? 'bg-[#fafafa] border-[#fecdd3]' : 'bg-[#12090d] border-[#e11d48]/40'
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        className={`w-[calc(100%-1.5rem)] max-w-[440px] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden ${
+          isLight ? 'bg-[#fafafa]' : 'bg-[#12090d]'
         }`}
       >
         {/* Modal Header */}
-        <div
-          className={`p-4 sm:p-5 border-b flex justify-between items-center shrink-0 ${
-            isLight
-              ? 'bg-white border-[#fecdd3]'
-              : 'bg-[#1c0d15] border-[#e11d48]/30'
+        <DialogHeader
+          className={`p-4 sm:p-5 border-b flex-row items-center shrink-0 space-y-0 ${
+            isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#1c0d15] border-[#e11d48]/30'
           }`}
         >
           <div className="flex items-center gap-2.5">
@@ -68,19 +60,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
               </h2>
             </div>
           </div>
-
-          <button
-            onClick={() => {
-              sounds.playClick();
-              onClose();
-            }}
-            className={`p-1.5 rounded-full focus:outline-none transition-colors ${
-              isLight ? 'text-gray-400 hover:text-gray-900' : 'text-[#fda4af]/70 hover:text-white'
-            }`}
-          >
-            <span className="material-symbols-outlined text-[20px]">close</span>
-          </button>
-        </div>
+        </DialogHeader>
 
         {/* Category Pills Bar */}
         <div
@@ -214,7 +194,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
             </motion.div>
           ))}
         </div>
-      </motion.div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

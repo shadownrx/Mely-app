@@ -6,6 +6,8 @@ import { useTheme } from '../context/ThemeContext';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
+import { Input } from './ui/input';
+import { Dialog, DialogContent } from './ui/dialog';
 
 interface MatchesViewProps {
   matches: Match[];
@@ -177,16 +179,12 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
             <span className={`material-symbols-outlined absolute left-3 text-[17px] pointer-events-none ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
               search
             </span>
-            <input
+            <Input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar match..."
-              className={`w-full border rounded-xl pl-9 pr-8 py-1.5 font-body-sm text-[12px] focus:outline-none transition-all shadow-xs ${
-                isLight
-                  ? 'bg-white border-[#fecdd3] text-[#0f172a] placeholder:text-gray-400 focus:border-[#e11d48]'
-                  : 'bg-[#140b0f] border-[#e11d48]/25 text-[#fff1f2] placeholder:text-[#fda4af]/40 focus:border-[#e11d48]'
-              }`}
+              className="pl-9 pr-8 h-auto py-1.5 text-[12px] shadow-xs"
             />
             {searchQuery && (
               <button

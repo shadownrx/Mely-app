@@ -140,35 +140,31 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
         <div className="flex items-center gap-1.5">
           {/* Verified Spots Button */}
           {onOpenVerifiedSpots && (
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => {
                 sounds.playClick();
                 onOpenVerifiedSpots();
               }}
-              className={`px-2.5 py-1 rounded-xl text-[10px] font-label-caps uppercase font-bold flex items-center gap-1 border transition-all ${
-                isLight
-                  ? 'bg-white border-[#fecdd3] text-[#e11d48] hover:bg-[#fff1f3]'
-                  : 'bg-[#1a0c13] border-[#e11d48]/30 text-[#fda4af] hover:border-[#e11d48]/60'
-              }`}
+              className="h-auto px-2.5 py-1 rounded-xl text-[10px] gap-1 text-[#e11d48] dark:text-[#fda4af]"
               title="Ver Rincones & Beneficios Asociados"
             >
               <span className="material-symbols-outlined text-[13px]">storefront</span>
               <span className="hidden sm:inline">Rincones</span>
-            </button>
+            </Button>
           )}
 
           {/* Blind Mode Toggle */}
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => {
               sounds.playClick();
               setIsBlindMode(!isBlindMode);
             }}
-            className={`px-2.5 py-1 rounded-xl text-[10px] font-label-caps uppercase font-bold flex items-center gap-1 border transition-all ${
-              isBlindMode
-                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-transparent shadow-sm'
-                : isLight
-                ? 'bg-white border-[#fecdd3] text-[#64748b] hover:text-[#e11d48]'
-                : 'bg-[#1a0c13] border-white/10 text-[#fda4af]/70 hover:text-white'
+            className={`h-auto px-2.5 py-1 rounded-xl text-[10px] gap-1 ${
+              isBlindMode ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-transparent shadow-sm' : ''
             }`}
             title="Modo Cita a Ciegas: Revela primero la mente y la voz"
           >
@@ -176,22 +172,18 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               {isBlindMode ? 'visibility' : 'visibility_off'}
             </span>
             <span>{isBlindMode ? 'Ciegas ON' : 'Ciegas'}</span>
-          </button>
+          </Button>
 
           {/* Radar Filters Button */}
           {onOpenFilters && (
-            <button
+            <Button
+              variant="outline"
+              size="icon-sm"
               onClick={() => {
                 sounds.playClick();
                 onOpenFilters();
               }}
-              className={`p-1.5 rounded-xl border flex items-center gap-1 transition-all relative ${
-                activeFiltersCount > 0
-                  ? 'bg-[#e11d48] text-white border-[#e11d48]'
-                  : isLight
-                  ? 'bg-white border-[#fecdd3] text-[#64748b] hover:text-[#e11d48]'
-                  : 'bg-[#1a0c13] border-[#e11d48]/30 text-[#fda4af]'
-              }`}
+              className={`relative rounded-xl ${activeFiltersCount > 0 ? 'bg-[#e11d48] text-white border-[#e11d48] hover:bg-[#e11d48]' : ''}`}
               title="Filtros del Radar"
             >
               <span className="material-symbols-outlined text-[16px]">tune</span>
@@ -200,7 +192,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   {activeFiltersCount}
                 </span>
               )}
-            </button>
+            </Button>
           )}
         </div>
       </div>

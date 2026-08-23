@@ -469,14 +469,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
           <div className="relative flex items-center mb-2">
             <span className={`material-symbols-outlined absolute left-3 text-[18px] pointer-events-none ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>search</span>
-            <input
+            <Input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar un chat..."
-              className={`w-full border rounded-2xl pl-9 pr-8 py-1.5 font-body-sm text-[12px] focus:outline-none transition-colors ${
-                isLight ? 'bg-white border-[#fecdd3] text-[#0f172a] placeholder:text-gray-400 focus:border-[#e11d48]' : 'bg-[#0b0507] border-[#e11d48]/20 text-[#fff1f2] placeholder:text-[#fda4af]/40 focus:border-[#e11d48]'
-              }`}
+              className="pl-9 pr-8 h-auto py-1.5 text-[12px] rounded-2xl"
             />
           </div>
 

@@ -3,6 +3,7 @@ import { DateMeet, Match, PlanType } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAllDateProposals } from '../hooks/useDates';
+import { Button } from './ui/button';
 
 const PLAN_LABELS: Record<PlanType, string> = {
   COFFEE: 'Café',
@@ -177,32 +178,32 @@ export const DatesView: React.FC<DatesViewProps> = ({ onOpenChat, onOpenDateQR }
                   }`}
                 >
                   <div className="flex gap-2">
-                    <button
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => {
                         sounds.playClick();
                         onOpenChat(match.id);
                       }}
-                      className={`px-3.5 py-1.5 border font-label-caps text-[10px] uppercase font-bold rounded-xl tactile-btn flex items-center gap-1 focus:outline-none transition-colors ${
-                        isLight
-                          ? 'bg-white border-[#fecdd3] text-[#475569] hover:text-[#e11d48] hover:border-[#e11d48]'
-                          : 'bg-[#1a0b11] hover:bg-[#280f1a] border-[#e11d48]/30 text-[#fda4af] hover:text-[#fff1f2]'
-                      }`}
+                      className="gap-1 rounded-xl"
                     >
                       <span className="material-symbols-outlined text-[14px]">chat</span>
                       <span>Chat</span>
-                    </button>
+                    </Button>
 
                     {!isVerified && (
-                      <button
+                      <Button
+                        variant="cherry"
+                        size="sm"
                         onClick={() => {
                           sounds.playClick();
                           onOpenDateQR(match.id, match.other.displayName, match.other.photos[0]?.url ?? '');
                         }}
-                        className="px-4 py-1.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] uppercase font-bold rounded-xl tactile-btn hover:opacity-90 flex items-center gap-1 focus:outline-none shadow-md shadow-[#e11d48]/25"
+                        className="gap-1 rounded-xl"
                       >
                         <span className="material-symbols-outlined text-[14px]">qr_code</span>
                         <span>Pase QR</span>
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>

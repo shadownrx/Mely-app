@@ -13,9 +13,12 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Checkbox } from './ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { GoogleAuthButton } from './GoogleAuthButton';
+import type { GooglePrefill } from './LoginView';
 
 interface RegisterViewProps {
   onGoToLogin: () => void;
+  googlePrefill?: GooglePrefill | null;
 }
 
 const GENDER_OPTIONS: { value: Gender; label: string }[] = [
@@ -32,9 +35,9 @@ function isAdult(dateOfBirth: string): boolean {
   return age >= 18;
 }
 
-export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
+export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googlePrefill }) => {
   const { isLight, toggleTheme } = useTheme();
-  const { register, refreshUser } = useAuth();
+  const { register, refreshUser, loginWithGoogle, registerWithGoogle } = useAuth();
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   // Step 1
@@ -47,6 +50,33 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [step1Error, setStep1Error] = useState('');
+  const [googleData, setGoogleData] = useState<GooglePrefill | null>(googlePrefill ?? null);
+
+  useEffect(() => {
+    if (!googlePrefill) return;
+    setGoogleData(googlePrefill);
+    setEmail(googlePrefill.email);
+    setName((prev) => prev || (googlePrefill.name ?? ''));
+  }, [googlePrefill]);
+
+  const handleGoogleCredential = async (idToken: string) => {
+    setStep1Error('');
+    sounds.playClick();
+    try {
+      const result = await loginWithGoogle(idToken);
+      if (result.needsProfile) {
+        setGoogleData({ pendingToken: result.pendingToken, email: result.email, name: result.name });
+        setEmail(result.email);
+        setName((prev) => prev || (result.name ?? ''));
+      }
+      // Si needsProfile es false ya existe una cuenta vinculada a ese Google: loginWithGoogle
+      // ya dejó la sesión iniciada y App.tsx va a sacarnos de este formulario solo.
+    } catch (err) {
+      setStep1Error(
+        err instanceof ApiError ? err.message : 'No pudimos conectar con Google. Probá de nuevo.',
+      );
+    }
+  };
 
   // Step 2
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -91,7 +121,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
 
   const handleStep1Continue = () => {
     setStep1Error('');
-    if (!name.trim() || !dateOfBirth || !email.trim() || !password) {
+    if (!name.trim() || !dateOfBirth || !email.trim() || (!googleData && !password)) {
       setStep1Error('Completá todos los campos obligatorios.');
       return;
     }
@@ -115,13 +145,22 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
     setIsIssuing(true);
     sounds.playStamp();
     try {
-      await register({
-        email: email.trim(),
-        password,
-        dateOfBirth,
-        acceptTerms: true,
-        acceptPrivacy: true,
-      });
+      if (googleData) {
+        await registerWithGoogle({
+          pendingToken: googleData.pendingToken,
+          dateOfBirth,
+          acceptTerms: true,
+          acceptPrivacy: true,
+        });
+      } else {
+        await register({
+          email: email.trim(),
+          password,
+          dateOfBirth,
+          acceptTerms: true,
+          acceptPrivacy: true,
+        });
+      }
 
       await updateProfile({
         displayName: name.trim(),
@@ -372,29 +411,50 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
               <Input
                 type="email"
                 required
+                readOnly={Boolean(googleData)}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu.correo@mely.app"
-                className="font-mono text-[12px]"
+                className={`font-mono text-[12px] ${googleData ? 'opacity-70' : ''}`}
               />
             </div>
 
-            <div>
-              <Label className="mb-1 block">Crear Llave de Acceso (Contraseña)</Label>
-              <Input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Mínimo 8 caracteres, letras y números"
-                className="font-mono text-[12px]"
-              />
-            </div>
+            {googleData ? (
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#10b981]/10 border border-[#10b981]/30 text-[#059669] text-[11px] font-body-sm">
+                <span className="material-symbols-outlined text-[16px]">verified</span>
+                <span>Cuenta verificada con Google. No necesitás contraseña.</span>
+              </div>
+            ) : (
+              <div>
+                <Label className="mb-1 block">Crear Llave de Acceso (Contraseña)</Label>
+                <Input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Mínimo 8 caracteres, letras y números"
+                  className="font-mono text-[12px]"
+                />
+              </div>
+            )}
 
             <Button type="button" variant="cherry" onClick={handleStep1Continue} className="mt-2 w-full gap-2">
               <span>CONTINUAR A FOTOGRAFÍA</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </Button>
+
+            {!googleData && (
+              <>
+                <div className="flex items-center gap-3 mt-1">
+                  <span className={`flex-1 h-px ${isLight ? 'bg-[#fecdd3]' : 'bg-[#e11d48]/25'}`} />
+                  <span className={`font-label-caps text-[9px] uppercase tracking-widest font-bold ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
+                    O CONTINUÁ CON
+                  </span>
+                  <span className={`flex-1 h-px ${isLight ? 'bg-[#fecdd3]' : 'bg-[#e11d48]/25'}`} />
+                </div>
+                <GoogleAuthButton onCredential={handleGoogleCredential} text="signup_with" />
+              </>
+            )}
           </div>
         )}
 

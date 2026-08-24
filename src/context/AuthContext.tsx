@@ -12,6 +12,8 @@ type AuthState = {
   refreshUser: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   register: (input: authApi.RegisterInput) => Promise<void>;
+  loginWithGoogle: (idToken: string) => Promise<authApi.GoogleAuthResult>;
+  registerWithGoogle: (input: authApi.CompleteGoogleSignupInput) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -55,6 +57,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await authApi.register(input);
   }, []);
 
+  const loginWithGoogle = useCallback(
+    async (idToken: string) => {
+      const result = await authApi.googleAuth(idToken);
+      if (!result.needsProfile) {
+        await refreshUser();
+      }
+      return result;
+    },
+    [refreshUser],
+  );
+
+  const registerWithGoogle = useCallback(async (input: authApi.CompleteGoogleSignupInput) => {
+    // Igual que register(): no hacemos refreshUser acá, RegisterView todavía
+    // tiene que crear el Profile y subir la foto/prompts antes de considerar
+    // al usuario "autenticado" en el sentido de tener la app principal montada.
+    await authApi.completeGoogleSignup(input);
+  }, []);
+
   const logout = useCallback(async () => {
     disconnectRealtime();
     await authApi.logout();
@@ -63,7 +83,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ status, user, refreshUser, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ status, user, refreshUser, login, register, loginWithGoogle, registerWithGoogle, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

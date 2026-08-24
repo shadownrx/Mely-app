@@ -10,7 +10,7 @@ import { DiscoverView } from './components/DiscoverView';
 import { MatchesView } from './components/MatchesView';
 import { DatesView } from './components/DatesView';
 import { StoreView } from './components/StoreView';
-import { LoginView } from './components/LoginView';
+import { LoginView, type GooglePrefill } from './components/LoginView';
 import { RegisterView } from './components/RegisterView';
 import { SettingsView } from './components/SettingsView';
 import { VerifiedSpotsModal } from './components/VerifiedSpotsModal';
@@ -41,6 +41,7 @@ function AppContent() {
   const { status, user, logout } = useAuth();
   const queryClient = useQueryClient();
   const [authScreen, setAuthScreen] = useState<'login' | 'register'>('login');
+  const [googlePrefill, setGooglePrefill] = useState<GooglePrefill | null>(null);
 
   const [currentTab, setCurrentTab] = useState<TabType>('descubrir');
   const [previousTab, setPreviousTab] = useState<TabType>('descubrir');
@@ -157,9 +158,21 @@ function AppContent() {
     return (
       <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'} antialiased flex flex-col items-center justify-center selection:bg-[#e11d48] selection:text-white p-2`}>
         {authScreen === 'login' ? (
-          <LoginView onGoToRegister={() => setAuthScreen('register')} />
+          <LoginView
+            onGoToRegister={() => setAuthScreen('register')}
+            onGoogleNeedsProfile={(data) => {
+              setGooglePrefill(data);
+              setAuthScreen('register');
+            }}
+          />
         ) : (
-          <RegisterView onGoToLogin={() => setAuthScreen('login')} />
+          <RegisterView
+            onGoToLogin={() => {
+              setGooglePrefill(null);
+              setAuthScreen('login');
+            }}
+            googlePrefill={googlePrefill}
+          />
         )}
       </div>
     );

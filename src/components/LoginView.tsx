@@ -9,14 +9,18 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Checkbox } from './ui/checkbox';
 import { Dialog, DialogContent } from './ui/dialog';
+import { GoogleAuthButton } from './GoogleAuthButton';
+
+export type GooglePrefill = { pendingToken: string; email: string; name?: string };
 
 interface LoginViewProps {
   onGoToRegister: () => void;
+  onGoogleNeedsProfile: (data: GooglePrefill) => void;
 }
 
-export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister }) => {
+export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNeedsProfile }) => {
   const { isLight, toggleTheme } = useTheme();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -56,6 +60,23 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister }) => {
       setErrorMsg(message);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleGoogleCredential = async (idToken: string) => {
+    setErrorMsg('');
+    sounds.playClick();
+    try {
+      const result = await loginWithGoogle(idToken);
+      if (result.needsProfile) {
+        onGoogleNeedsProfile({ pendingToken: result.pendingToken, email: result.email, name: result.name });
+      } else {
+        sounds.playStamp();
+      }
+    } catch (err) {
+      setErrorMsg(
+        err instanceof ApiError ? err.message : 'No pudimos conectar con Google. Probá de nuevo.',
+      );
     }
   };
 
@@ -284,6 +305,17 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister }) => {
             )}
           </Button>
         </form>
+
+        <div className="px-5 pb-5 flex flex-col gap-4 relative z-10">
+          <div className="flex items-center gap-3">
+            <span className={`flex-1 h-px ${isLight ? 'bg-[#fecdd3]' : 'bg-[#e11d48]/25'}`} />
+            <span className={`font-label-caps text-[9px] uppercase tracking-widest font-bold ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
+              O CONTINUÁ CON
+            </span>
+            <span className={`flex-1 h-px ${isLight ? 'bg-[#fecdd3]' : 'bg-[#e11d48]/25'}`} />
+          </div>
+          <GoogleAuthButton onCredential={handleGoogleCredential} text="signin_with" />
+        </div>
       </div>
 
       {/* Switch to Register Footer */}

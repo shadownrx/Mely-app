@@ -41,6 +41,50 @@ export async function login(email: string, password: string) {
   return session;
 }
 
+export type GoogleAuthResult =
+  | {
+      needsProfile: false;
+      user: { id: string; email: string; role: string };
+      tokenType: 'Bearer';
+      accessToken: string;
+      refreshToken: string;
+      expiresIn: string;
+    }
+  | { needsProfile: true; pendingToken: string; email: string; name?: string };
+
+function isGoogleSession(r: GoogleAuthResult): r is Extract<GoogleAuthResult, { needsProfile: false }> {
+  return r.needsProfile === false;
+}
+
+export async function googleAuth(idToken: string): Promise<GoogleAuthResult> {
+  const result = await apiRequest<GoogleAuthResult>('/auth/google', {
+    method: 'POST',
+    body: { idToken },
+    skipAuthRetry: true,
+  });
+  if (isGoogleSession(result)) {
+    await storeSession(result);
+  }
+  return result;
+}
+
+export type CompleteGoogleSignupInput = {
+  pendingToken: string;
+  dateOfBirth: string;
+  acceptTerms: true;
+  acceptPrivacy: true;
+};
+
+export async function completeGoogleSignup(input: CompleteGoogleSignupInput) {
+  const session = await apiRequest<Session>('/auth/google/complete', {
+    method: 'POST',
+    body: input,
+    skipAuthRetry: true,
+  });
+  await storeSession(session);
+  return session;
+}
+
 export async function logout() {
   const refreshToken = tokenStore.getRefreshToken();
   tokenStore.clear();

@@ -36,14 +36,14 @@ export function cancelDate(dateId: string, input?: { reason?: CancelReason; note
   return apiRequest<{ ok: true }>(`/dates/${dateId}/cancel`, { method: 'POST', body: input ?? {} });
 }
 
-export function generateCheckInQr(dateId: string) {
+export function generateCheckInQr(dateId: string, coords: { latitude: number; longitude: number }) {
   return apiRequest<{ code: string; expiresAt: string; ttlSeconds: number; payload: string }>(
     `/dates/${dateId}/check-in/qr`,
-    { method: 'POST' },
+    { method: 'POST', body: coords },
   );
 }
 
-export function scanCheckIn(dateId: string, code: string, coords?: { latitude: number; longitude: number }) {
+export function scanCheckIn(dateId: string, code: string, coords: { latitude: number; longitude: number }) {
   return apiRequest<{ checkIn: true }>(`/dates/${dateId}/check-in/scan`, {
     method: 'POST',
     body: { code, ...coords },

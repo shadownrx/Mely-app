@@ -96,14 +96,20 @@ export function useCancelDate() {
   });
 }
 
+type Coords = { latitude: number; longitude: number };
+
 export function useGenerateQr() {
-  return useMutation({ mutationFn: datesApi.generateCheckInQr });
+  return useMutation({
+    mutationFn: ({ dateId, coords }: { dateId: string; coords: Coords }) =>
+      datesApi.generateCheckInQr(dateId, coords),
+  });
 }
 
 export function useScanCheckIn() {
   const invalidate = useInvalidateDates();
   return useMutation({
-    mutationFn: ({ dateId, code }: { dateId: string; code: string }) => datesApi.scanCheckIn(dateId, code),
+    mutationFn: ({ dateId, code, coords }: { dateId: string; code: string; coords: Coords }) =>
+      datesApi.scanCheckIn(dateId, code, coords),
     onSuccess: invalidate,
   });
 }

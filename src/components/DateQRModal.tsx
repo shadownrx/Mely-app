@@ -13,6 +13,35 @@ import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
 
 QrScanner.WORKER_PATH = QrScannerWorkerPath;
 
+type Coords = { latitude: number; longitude: number };
+
+/**
+ * MELY verifica encuentros presenciales comparando la ubicación de quien genera el QR
+ * contra la de quien lo escanea (ver dates/service.ts scanQr). Sin esto ambos pasos
+ * eran puro trámite: nadie chequeaba que estuvieran realmente en el mismo lugar.
+ */
+function getCurrentCoords(): Promise<Coords> {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('Tu navegador no soporta geolocalización.'));
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+      (err) => {
+        if (err.code === err.PERMISSION_DENIED) {
+          reject(new Error('Activá el permiso de ubicación para generar o escanear el código.'));
+        } else if (err.code === err.TIMEOUT) {
+          reject(new Error('No pudimos obtener tu ubicación a tiempo. Probá de nuevo.'));
+        } else {
+          reject(new Error('No pudimos obtener tu ubicación. Probá de nuevo.'));
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+    );
+  });
+}
+
 const PLAN_LABELS: Record<PlanType, string> = {
   COFFEE: 'Café',
   FOOD: 'Comida',
@@ -45,6 +74,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
   const [useManualEntry, setUseManualEntry] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const [verificationSuccess, setVerificationSuccess] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const scannerRef = useRef<QrScanner | null>(null);
@@ -59,6 +89,26 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
   const scanCheckIn = useScanCheckIn();
   const confirmDate = useConfirmDate();
 
+  const startQrGeneration = (targetDateId: string) => {
+    setLocationError(null);
+    setQrDataUrl(null);
+    getCurrentCoords()
+      .then((coords) => {
+        generateQr.mutate(
+          { dateId: targetDateId, coords },
+          {
+            onSuccess: async (res) => {
+              setQrDataUrl(await QRCode.toDataURL(res.payload, { margin: 1, width: 220, color: { dark: '#0f172a' } }));
+            },
+            onError: (err: any) => {
+              setLocationError(err?.message ?? 'No pudimos generar el código. Probá de nuevo.');
+            },
+          },
+        );
+      })
+      .catch((err: Error) => setLocationError(err.message));
+  };
+
   useEffect(() => {
     if (!isOpen || !dateId) return;
     setMode('show_qr');
@@ -66,13 +116,10 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
     setUseManualEntry(false);
     setCameraError(null);
     setScanError(null);
+    setLocationError(null);
     setVerificationSuccess(status === 'VERIFIED');
     if (status === 'CANCELLED' || status === 'VERIFIED') return;
-    generateQr.mutate(dateId, {
-      onSuccess: async (res) => {
-        setQrDataUrl(await QRCode.toDataURL(res.payload, { margin: 1, width: 220, color: { dark: '#0f172a' } }));
-      },
-    });
+    startQrGeneration(dateId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, dateId, status]);
 
@@ -80,19 +127,26 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
     if (!dateId || !code.trim() || scanCheckIn.isPending) return;
     setScanError(null);
     scannerRef.current?.pause();
-    scanCheckIn.mutate(
-      { dateId, code: code.trim() },
-      {
-        onSuccess: () => {
-          sounds.playScanBeep();
-          setManualCode('');
-        },
-        onError: (err: any) => {
-          setScanError(err?.message ?? 'Código inválido');
-          scannerRef.current?.start().catch(() => undefined);
-        },
-      },
-    );
+    getCurrentCoords()
+      .then((coords) => {
+        scanCheckIn.mutate(
+          { dateId, code: code.trim(), coords },
+          {
+            onSuccess: () => {
+              sounds.playScanBeep();
+              setManualCode('');
+            },
+            onError: (err: any) => {
+              setScanError(err?.message ?? 'Código inválido');
+              scannerRef.current?.start().catch(() => undefined);
+            },
+          },
+        );
+      })
+      .catch((err: Error) => {
+        setScanError(err.message);
+        scannerRef.current?.start().catch(() => undefined);
+      });
   };
 
   // Escaneo real con cámara: apuntás al QR de tu pareja en vez de tener que pasarte el código
@@ -222,12 +276,31 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
               }`}
             >
               <div className="w-[220px] h-[220px] bg-white p-2 rounded-2xl flex items-center justify-center shadow-md overflow-hidden">
-                {qrDataUrl ? (
+                {locationError ? (
+                  <div className="flex flex-col items-center gap-2 px-3 text-center">
+                    <span className="material-symbols-outlined text-[32px] text-[#e11d48]">location_off</span>
+                    <p className="text-[11px] text-[#e11d48] font-bold leading-snug">{locationError}</p>
+                  </div>
+                ) : qrDataUrl ? (
                   <img src={qrDataUrl} alt="Código QR de la cita" className="w-full h-full object-contain" />
                 ) : (
                   <span className="material-symbols-outlined text-[48px] text-slate-300 animate-pulse">qr_code_2</span>
                 )}
               </div>
+              {locationError && (
+                <Button
+                  type="button"
+                  variant="cherry"
+                  onClick={() => {
+                    sounds.playClick();
+                    if (dateId) startQrGeneration(dateId);
+                  }}
+                  className="w-full gap-2"
+                >
+                  <span className="material-symbols-outlined text-[16px]">refresh</span>
+                  <span>Reintentar</span>
+                </Button>
+              )}
               <div className="mt-3">
                 <span className={`font-meta-data text-[9px] uppercase ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>
                   {PLAN_LABELS[planType]} EN {zone}
@@ -246,7 +319,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                   Encuentro Seguro en Persona
                 </h4>
                 <p className={`font-body-sm text-[11px] mt-0.5 leading-snug ${isLight ? 'text-[#64748b]' : 'text-[#dec0b6]/80'}`}>
-                  Mostrale este código a {partnerName}, que lo ingrese desde su celular. Al validarse ambos, confirmen que se vieron para desbloquear el sello.
+                  Mostrale este código a {partnerName}, que lo ingrese desde su celular. Usamos tu ubicación (no se guarda en tu perfil) para confirmar que están en el mismo lugar.
                 </p>
               </div>
             </div>

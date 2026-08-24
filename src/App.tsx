@@ -20,6 +20,7 @@ import { IcebreakerWheelModal } from './components/IcebreakerWheelModal';
 import { ProposeDateModal, StampModal, MenuDrawer } from './components/Modals';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Toaster } from './components/ui/sonner';
+import { toast } from 'sonner';
 import { sounds } from './utils/audio';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { useAuth } from './context/AuthContext';
@@ -89,10 +90,18 @@ function AppContent() {
     (discoveryFilters.minAge > 20 || discoveryFilters.maxAge < 40 ? 1 : 0) +
     (discoveryFilters.maxDistanceKm < 50 ? 1 : 0);
 
-  // Global realtime: refresh matches/dates when a notification arrives (new match, proposal, check-in, etc).
+  // Global realtime: refresh matches/dates y avisa con un toast + la campanita cuando
+  // llega una notificación (nuevo match, propuesta, check-in, monedas, sello, etc).
   useEffect(() => {
     if (!user) return;
-    const unsubscribe = subscribeUserNotifications(user.id, () => {
+    const unsubscribe = subscribeUserNotifications(user.id, (raw) => {
+      const payload = raw as { category?: string; title?: string; body?: string } | null;
+      if (payload?.title) {
+        toast(payload.title, { description: payload.body });
+      }
+      if (payload?.category !== 'message') {
+        queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      }
       queryClient.invalidateQueries({ queryKey: ['matches'] });
       queryClient.invalidateQueries({ queryKey: ['dateMeet'] });
       queryClient.invalidateQueries({ queryKey: ['proposals'] });

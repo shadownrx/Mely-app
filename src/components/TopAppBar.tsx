@@ -4,6 +4,7 @@ import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { NotificationBell } from './NotificationBell';
 
 interface TopAppBarProps {
   currentTab: TabType;
@@ -101,8 +102,10 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
           )}
         </div>
 
-        {/* Right Actions: Direct Theme Selector & Wallet Balance */}
+        {/* Right Actions: Notifications, Theme Selector & Wallet Balance */}
         <div className="flex items-center gap-1.5">
+          <NotificationBell />
+
           {/* Direct Theme Switcher Button */}
           <Button
             id="theme-direct-toggle-btn"

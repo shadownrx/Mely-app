@@ -522,11 +522,11 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
             <div className={`p-3 rounded-2xl border flex flex-col gap-2.5 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
               <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[11px] font-normal leading-relaxed text-slate-600 dark:text-rose-300/80">
                 <Checkbox required checked={acceptTerms} onCheckedChange={(v) => setAcceptTerms(v === true)} className="mt-0.5 shrink-0" />
-                Acepto los <strong>Términos y Condiciones</strong> de MELY Argentina.
+                <span>Acepto los <strong>Términos y Condiciones</strong> de MELY Argentina.</span>
               </Label>
               <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[11px] font-normal leading-relaxed text-slate-600 dark:text-rose-300/80">
                 <Checkbox required checked={acceptPrivacy} onCheckedChange={(v) => setAcceptPrivacy(v === true)} className="mt-0.5 shrink-0" />
-                Acepto la <strong>Política de Privacidad</strong> y la verificación presencial mediante token en cada encuentro.
+                <span>Acepto la <strong>Política de Privacidad</strong> y la verificación presencial mediante token en cada encuentro.</span>
               </Label>
             </div>
 
@@ -537,16 +537,16 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin }) => {
               variant="cherry"
               size="lg"
               disabled={isIssuing || !acceptTerms || !acceptPrivacy}
-              className="w-full gap-2"
+              className="w-full h-auto min-h-13 py-3 gap-2 whitespace-normal text-center leading-tight text-[12px] tracking-wide"
             >
               {isIssuing ? (
-                <span className="flex items-center gap-2">
-                  <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
-                  ESTAMPANDO PASAPORTE OFICIAL...
+                <span className="flex items-center justify-center gap-2">
+                  <span className="material-symbols-outlined animate-spin text-[18px] shrink-0">progress_activity</span>
+                  <span>ESTAMPANDO PASAPORTE OFICIAL...</span>
                 </span>
               ) : (
                 <>
-                  <span className="material-symbols-outlined text-[18px]">workspace_premium</span>
+                  <span className="material-symbols-outlined text-[18px] shrink-0">workspace_premium</span>
                   <span>EMITIR MI PASAPORTE (+1,000 PTS)</span>
                 </>
               )}

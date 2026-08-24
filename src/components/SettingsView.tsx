@@ -5,6 +5,8 @@ import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useInterests, useUpdateProfile, useReplacePrompts, useDeleteAccount } from '../hooks/useProfile';
+import { useRequestPhoneCode, useVerifyPhone } from '../hooks/useAuth';
+import { ApiError } from '../lib/apiClient';
 import type { Gender, LookingFor, Prompt } from '../types';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -20,7 +22,7 @@ interface SettingsViewProps {
   onSignOut: () => void;
 }
 
-type SheetId = 'profile' | 'prompts' | 'discovery' | null;
+type SheetId = 'profile' | 'prompts' | 'discovery' | 'phone' | null;
 
 const GENDER_OPTIONS: { value: Gender; label: string }[] = [
   { value: 'WOMAN', label: 'Mujer' },
@@ -127,8 +129,42 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
   const updateProfile = useUpdateProfile();
   const replacePrompts = useReplacePrompts();
   const deleteAccount = useDeleteAccount();
+  const requestPhoneCode = useRequestPhoneCode();
+  const verifyPhoneCode = useVerifyPhone();
 
   const [activeSheet, setActiveSheet] = useState<SheetId>(null);
+  const [phoneStep, setPhoneStep] = useState<'enter' | 'verify'>('enter');
+  const [phoneInput, setPhoneInput] = useState(user?.phone ?? '+54 ');
+  const [phoneCode, setPhoneCode] = useState('');
+
+  const openPhoneSheet = () => {
+    setPhoneStep('enter');
+    setPhoneInput(user?.phone ?? '+54 ');
+    setPhoneCode('');
+    setActiveSheet('phone');
+  };
+
+  const handleSendPhoneCode = async () => {
+    try {
+      await requestPhoneCode.mutateAsync(phoneInput.trim());
+      sounds.playClick();
+      setPhoneStep('verify');
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : 'No pudimos enviar el código. Probá de nuevo.');
+    }
+  };
+
+  const handleVerifyPhoneCode = async () => {
+    try {
+      await verifyPhoneCode.mutateAsync(phoneCode.trim());
+      await refreshUser();
+      sounds.playStamp();
+      toast.success('Teléfono verificado correctamente.');
+      setActiveSheet(null);
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : 'Código inválido o vencido.');
+    }
+  };
 
   const [displayName, setDisplayName] = useState(user?.displayName ?? '');
   const [bio, setBio] = useState(user?.bio ?? '');
@@ -323,6 +359,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           isLight={isLight}
           icon="call"
           label="Teléfono"
+          description={user.phoneVerified ? undefined : 'Verificalo por WhatsApp'}
+          onClick={user.phoneVerified ? undefined : openPhoneSheet}
           trailing={<StatusPill ok={user.phoneVerified} label={user.phoneVerified ? 'VERIFICADO' : 'PENDIENTE'} />}
         />
         <SettingsRow
@@ -630,6 +668,78 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           <Button type="button" variant="cherry" onClick={() => saveAll('Preferencias de descubrimiento actualizadas.')} disabled={isSaving} className="w-full">
             Guardar Preferencias
           </Button>
+        </SheetContent>
+      </Sheet>
+
+      {/* --- PANEL: Verificar Teléfono --- */}
+      <Sheet open={activeSheet === 'phone'} onOpenChange={(open) => !open && setActiveSheet(null)}>
+        <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-3xl flex flex-col gap-4 p-5">
+          <SheetHeader>
+            <SheetTitle>Verificar Teléfono</SheetTitle>
+          </SheetHeader>
+
+          {phoneStep === 'enter' ? (
+            <>
+              <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                Te mandamos un código de 6 dígitos por WhatsApp a este número. Incluí el código de país.
+              </p>
+              <div>
+                <Label className="mb-1 block">Número de WhatsApp</Label>
+                <Input
+                  type="tel"
+                  value={phoneInput}
+                  onChange={(e) => setPhoneInput(e.target.value)}
+                  placeholder="+54 9 11 1234-5678"
+                  className="font-mono text-[13px]"
+                />
+              </div>
+              <Button
+                type="button"
+                variant="cherry"
+                onClick={handleSendPhoneCode}
+                disabled={requestPhoneCode.isPending || !phoneInput.trim()}
+                className="w-full gap-2"
+              >
+                <span className="material-symbols-outlined text-[18px]">chat</span>
+                <span>{requestPhoneCode.isPending ? 'ENVIANDO...' : 'ENVIAR CÓDIGO POR WHATSAPP'}</span>
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                Te escribimos por WhatsApp a {phoneInput}. Ingresá el código de 6 dígitos que recibiste.
+              </p>
+              <div>
+                <Label className="mb-1 block">Código de verificación</Label>
+                <Input
+                  type="text"
+                  inputMode="numeric"
+                  autoFocus
+                  value={phoneCode}
+                  onChange={(e) => setPhoneCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="123456"
+                  className="text-center font-mono text-[18px] tracking-[0.3em]"
+                />
+              </div>
+              <Button
+                type="button"
+                variant="cherry"
+                onClick={handleVerifyPhoneCode}
+                disabled={verifyPhoneCode.isPending || phoneCode.length < 4}
+                className="w-full gap-2"
+              >
+                <span className="material-symbols-outlined text-[18px]">verified</span>
+                <span>{verifyPhoneCode.isPending ? 'VERIFICANDO...' : 'VERIFICAR CÓDIGO'}</span>
+              </Button>
+              <button
+                type="button"
+                onClick={() => setPhoneStep('enter')}
+                className="text-[11px] font-bold text-[#e11d48] text-center cursor-pointer"
+              >
+                Usar otro número / reenviar código
+              </button>
+            </>
+          )}
         </SheetContent>
       </Sheet>
 

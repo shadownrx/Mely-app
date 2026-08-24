@@ -118,6 +118,14 @@ export function resetPassword(email: string, code: string, password: string) {
   });
 }
 
+export function requestPhoneCode(phone: string) {
+  return apiRequest<{ ok: true; devCode?: string }>('/auth/phone', { method: 'POST', body: { phone } });
+}
+
+export function verifyPhone(code: string) {
+  return apiRequest<{ ok: true }>('/auth/verify-phone', { method: 'POST', body: { code } });
+}
+
 export function hasSession(): boolean {
   return Boolean(tokenStore.getRefreshToken());
 }

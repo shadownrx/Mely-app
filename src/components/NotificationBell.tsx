@@ -59,10 +59,10 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }
           sounds.playClick();
           setOpen(true);
         }}
-        className={`relative h-8 w-8 rounded-2xl active:scale-95 transition-all duration-200 ${
+        className={`relative h-8 w-8 rounded-2xl active:scale-95 transition-all duration-200 shadow-elevation-sm hover:shadow-elevation-md ${
           isLight
-            ? 'bg-white text-[#0f172a] border-[#fecdd3] hover:border-[#e11d48] shadow-sm'
-            : 'bg-[#1c0b11] text-[#fda4af] hover:text-[#fb7185] border-[#e11d48]/30 shadow-md'
+            ? 'bg-white text-[#0f172a] border-[#fecdd3] hover:border-[#e11d48]'
+            : 'bg-[#1c0b11] text-[#fda4af] hover:text-[#fb7185] border-[#e11d48]/30'
         }`}
         aria-label={unreadCount > 0 ? `Notificaciones, ${unreadCount} sin leer` : 'Notificaciones'}
       >

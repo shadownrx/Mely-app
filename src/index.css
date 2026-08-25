@@ -234,6 +234,55 @@
   box-shadow: 0 0 20px -3px rgba(251, 113, 133, 0.35);
 }
 
+/* Elevación premium: en vez de un solo box-shadow plano, se apilan una sombra de
+   contacto (ajustada, oscura) y una sombra ambiental más difusa con el tinte de
+   marca — así las superficies se sienten "físicas" en vez de pegadas con CSS. */
+.shadow-elevation-sm {
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 14px -6px rgba(225, 29, 72, 0.12);
+}
+.shadow-elevation-md {
+  box-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.04),
+    0 14px 30px -10px rgba(225, 29, 72, 0.16),
+    0 32px 56px -32px rgba(225, 29, 72, 0.12);
+}
+.shadow-elevation-lg {
+  box-shadow:
+    0 4px 8px rgba(15, 23, 42, 0.05),
+    0 22px 46px -14px rgba(225, 29, 72, 0.2),
+    0 52px 84px -40px rgba(225, 29, 72, 0.16);
+}
+.theme-dark .shadow-elevation-sm {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 16px -6px rgba(225, 29, 72, 0.22);
+}
+.theme-dark .shadow-elevation-md {
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.4),
+    0 16px 36px -10px rgba(225, 29, 72, 0.28),
+    0 36px 64px -32px rgba(225, 29, 72, 0.22);
+}
+.theme-dark .shadow-elevation-lg {
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.45),
+    0 26px 56px -16px rgba(225, 29, 72, 0.34),
+    0 56px 96px -40px rgba(225, 29, 72, 0.26);
+}
+
+/* Resalte interior sutil en superficies de vidrio (glass) — simula el borde superior
+   iluminado que tienen los paneles esmerilados reales, en vez de un blur plano. */
+.glass-surface {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+.theme-light .glass-surface {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+}
+
+/* Foco premium: un halo suave con el color de marca en vez del ring duro por defecto. */
+.focus-glow:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.16), 0 0 0 1.5px rgba(225, 29, 72, 0.55);
+}
+
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 4px;

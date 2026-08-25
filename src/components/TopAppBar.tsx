@@ -33,10 +33,8 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
   return (
     <header
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
-      className={`fixed top-0 w-full z-50 transition-colors duration-200 border-b backdrop-blur-md ${
-        isLight
-          ? 'bg-white/95 border-[#ffe4e6] shadow-sm'
-          : 'bg-[#0d070a]/90 border-[#e11d48]/20 shadow-lg'
+      className={`fixed top-0 w-full z-50 transition-colors duration-200 border-b backdrop-blur-md glass-surface shadow-elevation-sm ${
+        isLight ? 'bg-white/95 border-[#ffe4e6]' : 'bg-[#0d070a]/90 border-[#e11d48]/20'
       }`}
     >
       <div className="flex justify-between items-center h-16 px-3 max-w-[440px] mx-auto gap-2">
@@ -122,9 +120,9 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
                 ? 'Cambiar a modo Obsidiana & Cereza'
                 : 'Cambiar a modo Blanco & Coral'
             }
-            className={`px-2 py-1 h-8 rounded-2xl flex items-center gap-1 font-label-caps text-[10px] font-bold uppercase transition-all duration-200 tactile-btn border active:scale-95 ${
+            className={`px-2 py-1 h-8 rounded-2xl flex items-center gap-1 font-label-caps text-[10px] font-bold uppercase transition-all duration-200 tactile-btn border active:scale-95 shadow-elevation-sm ${
               isLight
-                ? 'bg-[#fff1f3] text-[#e11d48] border-[#fecdd3] hover:bg-[#ffe4e6] shadow-sm'
+                ? 'bg-[#fff1f3] text-[#e11d48] border-[#fecdd3] hover:bg-[#ffe4e6]'
                 : 'bg-[#1c0b11] text-[#fda4af] border-[#e11d48]/40 hover:text-white'
             }`}
           >
@@ -148,10 +146,10 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
               sounds.playCoins();
               onTabChange('tienda');
             }}
-            className={`relative h-8 px-2.5 rounded-2xl active:scale-95 flex items-center gap-1.5 group border transition-all duration-200 ${
+            className={`relative h-8 px-2.5 rounded-2xl active:scale-95 flex items-center gap-1.5 group border transition-all duration-200 shadow-elevation-sm hover:shadow-elevation-md ${
               isLight
-                ? 'bg-[#ffffff] text-[#0f172a] border-[#fecdd3] hover:border-[#e11d48] shadow-sm'
-                : 'bg-[#1c0b11] text-[#fda4af] hover:text-[#fb7185] border-[#e11d48]/30 shadow-md'
+                ? 'bg-[#ffffff] text-[#0f172a] border-[#fecdd3] hover:border-[#e11d48]'
+                : 'bg-[#1c0b11] text-[#fda4af] hover:text-[#fb7185] border-[#e11d48]/30'
             }`}
             aria-label="Tienda y saldo Mely Coins"
             title="Ver Tienda & Monedas"

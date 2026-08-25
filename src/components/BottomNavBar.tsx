@@ -134,20 +134,34 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                 sounds.playClick();
                 onTabChange(tab.id);
               }}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all duration-200 relative min-w-[56px] ${
+              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors duration-200 relative min-w-[56px] ${
                 isActive
                   ? isLight
-                    ? 'text-[#e11d48] scale-105 bg-[#fff1f3] border border-[#fecdd3] shadow-xs font-bold'
-                    : 'text-[#fb7185] scale-105 bg-gradient-to-b from-[#2a0e16] to-[#16080d] border border-[#e11d48]/40 shadow-inner font-bold'
+                    ? 'text-[#e11d48] font-bold'
+                    : 'text-[#fb7185] font-bold'
                   : isLight
                   ? 'text-[#64748b] hover:text-[#e11d48] hover:bg-[#fff1f3]/50'
                   : 'text-[#fda4af] opacity-65 hover:opacity-100 hover:bg-white/5'
               }`}
             >
+              {/* Pastilla que se desliza entre tabs (layoutId compartido: motion la anima
+                  automáticamente de una posición a otra en vez de aparecer/desaparecer). */}
+              {isActive && (
+                <motion.div
+                  layoutId="bottomNavActivePill"
+                  transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                  className={`absolute inset-0 rounded-xl border shadow-elevation-sm ${
+                    isLight
+                      ? 'bg-[#fff1f3] border-[#fecdd3]'
+                      : 'bg-gradient-to-b from-[#2a0e16] to-[#16080d] border-[#e11d48]/40'
+                  }`}
+                />
+              )}
+
               {/* Badge for Notifications / Pending Counts */}
               {tab.badge !== undefined && tab.badge > 0 && (
                 <span
-                  className={`absolute top-0 right-2 min-w-[16px] h-4 px-1 rounded-full text-[9px] font-bold flex items-center justify-center text-white ring-2 animate-pulseGlow ${
+                  className={`absolute top-0 right-2 z-10 min-w-[16px] h-4 px-1 rounded-full text-[9px] font-bold flex items-center justify-center text-white ring-2 animate-pulseGlow ${
                     isLight ? 'bg-[#e11d48] ring-white' : 'bg-[#e11d48] ring-[#0d070a]'
                   }`}
                 >
@@ -158,7 +172,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
               {/* Tab Icon or Profile Avatar */}
               {tab.id === 'perfil' && userAvatar ? (
                 <div
-                  className={`w-[23px] h-[23px] rounded-full overflow-hidden mb-0.5 transition-all p-0.5 border ${
+                  className={`relative z-10 w-[23px] h-[23px] rounded-full overflow-hidden mb-0.5 transition-all p-0.5 border ${
                     isActive
                       ? 'border-[#e11d48] ring-2 ring-[#e11d48]/40 scale-105'
                       : isLight
@@ -175,7 +189,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                 </div>
               ) : (
                 <span
-                  className={`material-symbols-outlined text-[22px] mb-0.5 ${
+                  className={`relative z-10 material-symbols-outlined text-[22px] mb-0.5 ${
                     isActive ? 'text-[#e11d48]' : ''
                   }`}
                   style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
@@ -183,7 +197,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                   {tab.icon}
                 </span>
               )}
-              <span className="font-label-caps text-[9px] tracking-wider uppercase font-medium">
+              <span className="relative z-10 font-label-caps text-[9px] tracking-wider uppercase font-medium">
                 {tab.label}
               </span>
             </motion.button>

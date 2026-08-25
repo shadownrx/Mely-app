@@ -243,10 +243,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
         {/* Next Card in Background (Smooth Depth Stack) */}
         {nextProfile && (
           <div
-            className={`absolute inset-0 rounded-3xl border overflow-hidden pointer-events-none transition-transform duration-300 ${
-              isLight
-                ? 'bg-white border-[#fecdd3]/60 shadow-md'
-                : 'bg-[#140b0f] border-[#e11d48]/20 shadow-lg'
+            className={`absolute inset-0 rounded-3xl border overflow-hidden pointer-events-none transition-transform duration-300 shadow-elevation-sm ${
+              isLight ? 'bg-white border-[#fecdd3]/60' : 'bg-[#140b0f] border-[#e11d48]/20'
             }`}
             style={{
               transform: 'scale(0.95) translateY(12px)',
@@ -297,10 +295,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
             className="w-full touch-pan-y cursor-grab active:cursor-grabbing"
           >
             <Card
-              className={`rounded-3xl border overflow-hidden relative shadow-2xl transition-shadow duration-300 ${
-                isLight
-                  ? 'bg-white border-[#fecdd3] shadow-[0_12px_35px_rgba(225,29,72,0.09)]'
-                  : 'bg-[#140b0f] border-[#e11d48]/30 shadow-[0_0_35px_rgba(225,29,72,0.18)]'
+              className={`rounded-3xl border overflow-hidden relative shadow-elevation-lg transition-shadow duration-300 ${
+                isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'
               }`}
             >
               {/* Security Tint Overlay */}
@@ -660,7 +656,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                     }
                   }}
                   disabled={currentIndex === 0}
-                  className={`w-11 h-11 rounded-full border flex items-center justify-center transition-colors shadow-xs ${
+                  className={`w-11 h-11 rounded-full border flex items-center justify-center transition-colors shadow-elevation-sm ${
                     currentIndex === 0
                       ? isLight
                         ? 'opacity-30 cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200'
@@ -681,7 +677,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   whileTap={{ scale: 0.9 }}
                   id="btn-discover-pass"
                   onClick={() => triggerAction('passed')}
-                  className={`w-13 h-13 rounded-full border flex items-center justify-center shadow-md transition-colors ${
+                  className={`w-13 h-13 rounded-full border flex items-center justify-center shadow-elevation-md transition-colors ${
                     isLight
                       ? 'border-red-200 bg-white text-red-500 hover:bg-red-50'
                       : 'border-[#881337] bg-[#1a080e] text-[#fb7185] hover:bg-[#881337]/30'
@@ -698,7 +694,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   whileTap={{ scale: 0.9 }}
                   id="btn-discover-superlike"
                   onClick={() => triggerAction('starred')}
-                  className={`w-11 h-11 rounded-full border flex items-center justify-center shadow-xs transition-colors ${
+                  className={`w-11 h-11 rounded-full border flex items-center justify-center shadow-elevation-sm transition-colors ${
                     isLight
                       ? 'border-amber-200 bg-white text-amber-500 hover:bg-amber-50'
                       : 'border-[#fb7185]/40 bg-[#1c0c12] text-[#ffd700] hover:bg-[#ffd700]/15'

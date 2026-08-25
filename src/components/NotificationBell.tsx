@@ -68,7 +68,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }
       >
         <span className="material-symbols-outlined text-[18px]">notifications</span>
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
+          <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[9px] font-bold flex items-center justify-center shadow-elevation-sm">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}

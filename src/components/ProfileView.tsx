@@ -78,7 +78,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               }}
               className={`px-3 py-1.5 h-auto rounded-full font-label-caps text-[9.5px] tracking-wider uppercase transition-all ${
                 activeSubTab === id
-                  ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold shadow-md shadow-[#e11d48]/30'
+                  ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold shadow-elevation-md shadow-[#e11d48]/30'
                   : isLight
                   ? 'text-[#64748b] hover:text-[#0f172a]'
                   : 'text-[#fda4af] opacity-70 hover:opacity-100'
@@ -89,7 +89,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           ))}
         </div>
 
-        <div className={`relative w-24 h-24 rounded-full overflow-hidden mb-3 border-2 p-1 shadow-md ${isLight ? 'border-[#e11d48] bg-[#fff5f6]' : 'border-[#e11d48] bg-[#0b0507] shadow-[0_0_20px_rgba(225,29,72,0.35)]'}`}>
+        <div className={`relative w-24 h-24 rounded-full overflow-hidden mb-3 border-2 p-1 shadow-elevation-md ${isLight ? 'border-[#e11d48] bg-[#fff5f6]' : 'border-[#e11d48] bg-[#0b0507] shadow-[0_0_20px_rgba(225,29,72,0.35)]'}`}>
           <img src={user.photos[0]?.url} alt={user.displayName} className="w-full h-full object-cover rounded-full" referrerPolicy="no-referrer" />
         </div>
 
@@ -130,7 +130,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               </div>
             </div>
 
-            <div className={`p-5 rounded-3xl border grid grid-cols-3 gap-4 sm:gap-6 ${isLight ? 'bg-white border-[#fecdd3] shadow-sm' : 'bg-[#0b0507] border-[#e11d48]/25 shadow-[inset_0_4px_24px_rgba(0,0,0,0.8)]'}`}>
+            <div className={`p-5 rounded-3xl border grid grid-cols-3 gap-4 sm:gap-6 ${isLight ? 'bg-white border-[#fecdd3] shadow-elevation-sm' : 'bg-[#0b0507] border-[#e11d48]/25 shadow-[inset_0_4px_24px_rgba(0,0,0,0.8)]'}`}>
               {stamps.map((stamp) => (
                 <button
                   key={stamp.key}
@@ -144,7 +144,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     className={`w-16 h-16 rounded-full border-2 flex items-center justify-center relative group-hover:scale-105 transition-transform ${
                       stamp.unlocked
                         ? isLight
-                          ? 'border-[#e11d48] bg-[#fff5f6] text-[#e11d48] shadow-sm'
+                          ? 'border-[#e11d48] bg-[#fff5f6] text-[#e11d48] shadow-elevation-sm'
                           : 'border-[#e11d48] bg-[#1c0c13]/80 text-[#e11d48] shadow-[0_0_15px_rgba(225,29,72,0.3)]'
                         : isLight
                         ? 'border-dashed border-[#fecdd3] text-[#64748b] bg-gray-50'
@@ -208,7 +208,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                       audioPlayerRef.current?.play();
                     }
                   }}
-                  className={`w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md active:scale-95 ${isPlaying ? 'bg-[#e11d48] animate-pulse' : 'bg-gradient-to-tr from-[#e11d48] to-[#ff4d67]'}`}
+                  className={`w-12 h-12 rounded-full flex items-center justify-center text-white shadow-elevation-md active:scale-95 ${isPlaying ? 'bg-[#e11d48] animate-pulse' : 'bg-gradient-to-tr from-[#e11d48] to-[#ff4d67]'}`}
                 >
                   <span className="material-symbols-outlined text-[24px]">{isPlaying ? 'pause' : 'play_arrow'}</span>
                 </button>
@@ -231,7 +231,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             )}
           </div>
 
-          <div className={`rounded-3xl p-5 border shadow-md flex flex-col gap-3 items-center text-center ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
+          <div className={`rounded-3xl p-5 border shadow-elevation-md flex flex-col gap-3 items-center text-center ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
             <span className="material-symbols-outlined text-[36px] text-[#e11d48]">mic</span>
             <p className={`text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>Subí un archivo de audio (mp3, m4a, wav) de hasta 60 segundos.</p>
             <input ref={audioInputRef} type="file" accept="audio/*" className="hidden" onChange={handleAudioFileChange} />
@@ -242,7 +242,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         </section>
       ) : (
         <section className="flex flex-col gap-5">
-          <div className={`p-4 rounded-3xl border shadow-lg flex items-center justify-between ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-gradient-to-r from-[#1c0d13] to-[#14080d] border-[#e11d48]/40'}`}>
+          <div className={`p-4 rounded-3xl border shadow-elevation-md flex items-center justify-between ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-gradient-to-r from-[#1c0d13] to-[#14080d] border-[#e11d48]/40'}`}>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-[#e11d48]/15 border border-[#e11d48]/30 text-[#e11d48] flex items-center justify-center">
                 <span className="material-symbols-outlined text-[22px]">settings</span>

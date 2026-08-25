@@ -107,8 +107,8 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
                   className={`p-2.5 rounded-2xl text-left border text-[11px] transition-all font-body-sm cursor-pointer ${
                     zone === qv.zone
                       ? isLight
-                        ? 'bg-[#fff1f3] border-[#e11d48] text-[#e11d48] font-bold shadow-sm'
-                        : 'bg-[#2b1019] border-[#fb7185] text-[#fff1f2] font-bold shadow-md'
+                        ? 'bg-[#fff1f3] border-[#e11d48] text-[#e11d48] font-bold shadow-elevation-sm'
+                        : 'bg-[#2b1019] border-[#fb7185] text-[#fff1f2] font-bold shadow-elevation-md'
                       : isLight
                       ? 'bg-white border-[#fecdd3] text-[#475569] hover:bg-[#fff5f6]'
                       : 'bg-[#0b0507] border-[#e11d48]/20 text-[#fda4af]/70 hover:border-[#e11d48]/50'
@@ -461,7 +461,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
             }}
             className={`p-3 rounded-2xl border flex items-center gap-3 cursor-pointer transition-colors ${
               isLight
-                ? 'bg-white border-[#fecdd3] hover:border-[#e11d48] shadow-sm'
+                ? 'bg-white border-[#fecdd3] hover:border-[#e11d48] shadow-elevation-sm'
                 : 'bg-[#190c12] border-[#e11d48]/30 hover:border-[#e11d48]/60'
             }`}
           >

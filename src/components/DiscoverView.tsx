@@ -98,7 +98,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
       >
         <div
           className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center text-[#e11d48] mb-4 ${
-            isLight ? 'border-[#fecdd3] bg-white shadow-sm' : 'border-[#57423b] bg-[#140b0f]'
+            isLight ? 'border-[#fecdd3] bg-white shadow-elevation-sm' : 'border-[#57423b] bg-[#140b0f]'
           }`}
         >
           <span className="material-symbols-outlined text-[36px]">auto_stories</span>
@@ -115,7 +115,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
             sounds.playClick();
             onReload?.();
           }}
-          className="px-6 py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] tracking-widest font-bold rounded-full tactile-btn hover:opacity-95 shadow-md shadow-[#e11d48]/25 disabled:opacity-60"
+          className="px-6 py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] tracking-widest font-bold rounded-full tactile-btn hover:opacity-95 shadow-elevation-md shadow-[#e11d48]/25 disabled:opacity-60"
         >
           {isLoading ? 'BUSCANDO NUEVOS PERFILES…' : 'BUSCAR NUEVOS PERFILES'}
         </Button>
@@ -205,7 +205,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               setIsBlindMode(!isBlindMode);
             }}
             className={`h-auto px-2.5 py-1 rounded-xl text-[10px] gap-1 ${
-              isBlindMode ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-transparent shadow-sm' : ''
+              isBlindMode ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-transparent shadow-elevation-sm' : ''
             }`}
             title="Modo Cita a Ciegas: Revela primero la mente y la voz"
           >
@@ -416,7 +416,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                 {/* Blind Mode Overlay if blurred */}
                 {isBlindMode && !unblurredCards[currentProfile.id] && (
                   <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center bg-black/40 backdrop-blur-md">
-                    <div className="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-300 mb-2 shadow-lg animate-pulse">
+                    <div className="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-300 mb-2 shadow-elevation-md animate-pulse">
                       <span className="material-symbols-outlined text-[26px]">visibility_off</span>
                     </div>
                     <span className="font-label-caps text-[10px] uppercase tracking-widest text-amber-300 font-bold">
@@ -431,7 +431,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                         sounds.playSpark();
                         setUnblurredCards((prev) => ({ ...prev, [currentProfile.id]: true }));
                       }}
-                      className="mt-3 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[9px] uppercase font-bold tracking-wider shadow-md hover:scale-105 transition-transform flex items-center gap-1.5"
+                      className="mt-3 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[9px] uppercase font-bold tracking-wider shadow-elevation-md hover:scale-105 transition-transform flex items-center gap-1.5"
                     >
                       <span className="material-symbols-outlined text-[13px]">sparkles</span>
                       Revelar Mirada
@@ -483,7 +483,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                       <div
                         key={idx}
                         className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                          idx === galleryIndex ? 'bg-[#ff4d67] shadow-xs' : 'bg-white/40'
+                          idx === galleryIndex ? 'bg-[#ff4d67] shadow-elevation-sm' : 'bg-white/40'
                         }`}
                       />
                     ))}
@@ -532,7 +532,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                       sounds.playClick();
                       setShowFullNotebook(!showFullNotebook);
                     }}
-                    className="p-2.5 bg-black/60 text-white hover:bg-black/80 rounded-full border border-white/30 backdrop-blur-xs shadow-md transition-colors"
+                    className="p-2.5 bg-black/60 text-white hover:bg-black/80 rounded-full border border-white/30 backdrop-blur-xs shadow-elevation-md transition-colors"
                     title="Abrir cuaderno de memorias"
                   >
                     <motion.span

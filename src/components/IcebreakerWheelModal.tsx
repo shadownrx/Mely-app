@@ -71,7 +71,7 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
           }`}
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shadow-md shadow-[#e11d48]/30">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shadow-elevation-md shadow-[#e11d48]/30">
               <span className="material-symbols-outlined text-[18px]">casino</span>
             </div>
             <div>
@@ -107,14 +107,14 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
             </motion.div>
 
             {/* Pointer Indicator */}
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#e11d48] rotate-45 border-2 border-white shadow-md z-10" />
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#e11d48] rotate-45 border-2 border-white shadow-elevation-md z-10" />
           </div>
 
           <Button
             size="sm"
             onClick={handleSpinRoulette}
             disabled={isSpinning}
-            className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-label-caps text-[10px] uppercase font-bold tracking-wider rounded-xl tactile-btn shadow-md shadow-amber-500/25"
+            className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-label-caps text-[10px] uppercase font-bold tracking-wider rounded-xl tactile-btn shadow-elevation-md shadow-amber-500/25"
           >
             <span className="material-symbols-outlined text-[14px] mr-1.5">autorenew</span>
             GIRAR RULETA DE PREGUNTAS
@@ -172,7 +172,7 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
           <div className="flex gap-2 w-full pt-1">
             <Button
               onClick={handleSendToChat}
-              className="flex-1 py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] font-bold uppercase tracking-wider rounded-2xl tactile-btn shadow-md shadow-[#e11d48]/25"
+              className="flex-1 py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[10px] font-bold uppercase tracking-wider rounded-2xl tactile-btn shadow-elevation-md shadow-[#e11d48]/25"
             >
               <span className="material-symbols-outlined text-[14px] mr-1">send</span>
               ENVIAR AL CHAT

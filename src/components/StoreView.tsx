@@ -121,9 +121,9 @@ export const StoreView: React.FC = () => {
               TIENDA & BENEFICIOS MELY
             </span>
           </div>
-          <div className={`flex items-center justify-between p-3.5 rounded-2xl border ${isLight ? 'bg-white border-[#fecdd3] shadow-sm' : 'bg-[#090406]/95 border-[#e11d48]/30 shadow-inner'}`}>
+          <div className={`flex items-center justify-between p-3.5 rounded-2xl border ${isLight ? 'bg-white border-[#fecdd3] shadow-elevation-sm' : 'bg-[#090406]/95 border-[#e11d48]/30 shadow-inner'}`}>
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shadow-lg shadow-[#e11d48]/25">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shadow-elevation-md shadow-[#e11d48]/25">
                 <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
               </div>
               <div>

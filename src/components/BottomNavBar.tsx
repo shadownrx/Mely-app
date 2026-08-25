@@ -90,12 +90,12 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
               >
                 {/* Elevated Circular Action */}
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
+                  className={`w-12 h-12 rounded-full flex items-center justify-center shadow-elevation-md transition-all duration-300 ${
                     isActive
                       ? 'bg-gradient-to-tr from-[#e11d48] via-[#f43f5e] to-[#fb7185] text-white ring-4 ring-[#e11d48]/25 scale-110 shadow-[#e11d48]/40'
                       : isLight
-                      ? 'bg-gradient-to-tr from-[#fff1f3] to-white text-[#e11d48] border-2 border-[#fecdd3] hover:scale-105 shadow-md'
-                      : 'bg-gradient-to-tr from-[#220d17] to-[#14080e] text-[#fda4af] border-2 border-[#e11d48]/50 hover:scale-105 shadow-lg'
+                      ? 'bg-gradient-to-tr from-[#fff1f3] to-white text-[#e11d48] border-2 border-[#fecdd3] hover:scale-105 shadow-elevation-md'
+                      : 'bg-gradient-to-tr from-[#220d17] to-[#14080e] text-[#fda4af] border-2 border-[#e11d48]/50 hover:scale-105 shadow-elevation-md'
                   }`}
                 >
                   <span

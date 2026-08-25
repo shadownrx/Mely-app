@@ -114,7 +114,7 @@ export const DatesView: React.FC<DatesViewProps> = ({ onOpenChat, onOpenDateQR }
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#e11d48] shrink-0 shadow-md">
+                  <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#e11d48] shrink-0 shadow-elevation-md">
                     <img
                       src={match.other.photos[0]?.url}
                       alt={match.other.displayName}

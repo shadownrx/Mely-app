@@ -272,7 +272,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
         />
 
         <div className="flex items-center gap-3.5 relative z-10">
-          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#e11d48] shrink-0 p-0.5 bg-[#fff5f6] dark:bg-[#0b0507] shadow-md flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#e11d48] shrink-0 p-0.5 bg-[#fff5f6] dark:bg-[#0b0507] shadow-elevation-md flex items-center justify-center">
             {avatarPreview ? (
               <img src={avatarPreview} alt="Avatar Preview" className="w-full h-full object-cover rounded-full" />
             ) : (
@@ -393,7 +393,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                       onClick={() => toggleSeeking(g.value)}
                       className={`px-3 py-1.5 rounded-full text-[11px] font-body-sm transition-all border cursor-pointer ${
                         isSelected
-                          ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent shadow-sm'
+                          ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent shadow-elevation-sm'
                           : isLight
                           ? 'bg-white text-[#475569] border-[#fecdd3] hover:border-[#e11d48]'
                           : 'bg-[#0b0507] text-[#fda4af]/70 border-[#e11d48]/25 hover:border-[#e11d48]/50'
@@ -469,7 +469,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             </div>
 
             <div className="flex flex-col items-center gap-3 py-2">
-              <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-[#e11d48] p-0.5 bg-[#fff5f6] dark:bg-[#0b0507] shadow-md flex items-center justify-center">
+              <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-[#e11d48] p-0.5 bg-[#fff5f6] dark:bg-[#0b0507] shadow-elevation-md flex items-center justify-center">
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover rounded-full" />
                 ) : (
@@ -547,7 +547,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                       onClick={() => toggleInterest(interest.id)}
                       className={`px-3 py-1 rounded-full text-[11px] font-body-sm transition-all border cursor-pointer ${
                         isSelected
-                          ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent shadow-sm'
+                          ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent shadow-elevation-sm'
                           : isLight
                           ? 'bg-white text-[#475569] border-[#fecdd3] hover:border-[#e11d48]'
                           : 'bg-[#0b0507] text-[#fda4af]/70 border-[#e11d48]/25 hover:border-[#e11d48]/50'

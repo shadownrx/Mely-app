@@ -13,7 +13,7 @@ const buttonVariants = cva(
         cherry:
           'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-md hover:opacity-95 hover:shadow-elevation-lg font-semibold font-label-caps tracking-wider uppercase',
         destructive:
-          'bg-red-500 text-white shadow-sm hover:bg-red-600 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800',
+          'bg-red-500 text-white shadow-elevation-sm hover:bg-red-600 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800',
         outline:
           'border border-rose-200 bg-white text-slate-800 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-900/40 dark:bg-[#140b0f] dark:text-rose-100 dark:hover:bg-rose-950/40',
         secondary:

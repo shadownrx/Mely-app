@@ -124,7 +124,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
         {/* Keepsake Stamp Logo */}
         <div className="relative mb-3 group cursor-pointer" onClick={() => sounds.playStamp()}>
           <div
-            className={`w-20 h-20 rounded-full border-2 text-[#e11d48] flex items-center justify-center stamp-ink relative shadow-md ${
+            className={`w-20 h-20 rounded-full border-2 text-[#e11d48] flex items-center justify-center stamp-ink relative shadow-elevation-md ${
               isLight
                 ? 'border-[#e11d48] bg-white'
                 : 'border-[#e11d48] bg-[#140b0f] shadow-[0_0_25px_rgba(225,29,72,0.35)]'

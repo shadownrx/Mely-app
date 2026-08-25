@@ -332,11 +332,11 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   };
 
   const getUserBubbleClass = () =>
-    customColor ? 'text-white rounded-2xl rounded-tr-sm shadow-md border border-white/20' : isLight ? currentTheme.userBubbleLight : currentTheme.userBubbleDark;
+    customColor ? 'text-white rounded-2xl rounded-tr-sm shadow-elevation-md border border-white/20' : isLight ? currentTheme.userBubbleLight : currentTheme.userBubbleDark;
   const getPartnerBubbleClass = () =>
     isLight
-      ? 'bg-white text-[#0f172a] rounded-2xl rounded-tl-sm border border-[#fecdd3] shadow-sm'
-      : 'bg-[#1a0e15] text-[#fff1f2] rounded-2xl rounded-tl-sm border border-[#e11d48]/25 shadow-sm';
+      ? 'bg-white text-[#0f172a] rounded-2xl rounded-tl-sm border border-[#fecdd3] shadow-elevation-sm'
+      : 'bg-[#1a0e15] text-[#fff1f2] rounded-2xl rounded-tl-sm border border-[#e11d48]/25 shadow-elevation-sm';
 
   const handleApplyTheme = (themeId: string) => {
     sounds.playClick();
@@ -599,7 +599,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       <input ref={photoInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePhotoSelected} />
 
       {/* Header */}
-      <div className={`px-3 py-2 border-b flex items-center justify-between shrink-0 relative z-30 shadow-sm min-h-[56px] ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/25'}`}>
+      <div className={`px-3 py-2 border-b flex items-center justify-between shrink-0 relative z-30 shadow-elevation-sm min-h-[56px] ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/25'}`}>
         <div className="flex items-center gap-2 min-w-0 flex-1 mr-1">
           <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); setViewMode('inbox'); setActiveMediaTray(null); }} className="h-8 w-8 -ml-1 rounded-full text-[#64748b] hover:text-[#e11d48] shrink-0" title="Volver">
             <span className="material-symbols-outlined text-[22px]">arrow_back</span>
@@ -632,7 +632,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
         <div className="flex items-center gap-1 shrink-0">
           {onOpenProposeModal && (
-            <Button size="sm" onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }} className="h-8 px-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full font-label-caps text-[10px] font-bold uppercase flex items-center gap-1 shadow-sm shrink-0">
+            <Button size="sm" onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }} className="h-8 px-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full font-label-caps text-[10px] font-bold uppercase flex items-center gap-1 shadow-elevation-sm shrink-0">
               <span className="material-symbols-outlined text-[15px]">local_cafe</span>
               <span>Cita</span>
             </Button>
@@ -772,7 +772,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-3 space-y-2 relative z-10 no-scrollbar select-text transition-all duration-300" style={getWallpaperStyle()}>
         <div className="flex justify-center my-1">
-          <div className={`max-w-xs px-3 py-1.5 rounded-xl border text-center text-[10px] leading-tight shadow-sm backdrop-blur-md ${isLight ? 'bg-white/80 border-[#fecdd3] text-[#475569]' : 'bg-[#180c13]/80 border-[#e11d48]/30 text-[#fda4af]/80'}`}>
+          <div className={`max-w-xs px-3 py-1.5 rounded-xl border text-center text-[10px] leading-tight shadow-elevation-sm backdrop-blur-md ${isLight ? 'bg-white/80 border-[#fecdd3] text-[#475569]' : 'bg-[#180c13]/80 border-[#e11d48]/30 text-[#fda4af]/80'}`}>
             <span className="inline-flex items-center gap-1 font-bold text-[#e11d48] mb-0.5">
               <span className="material-symbols-outlined text-[12px]">lock</span>Conexión Privada MELY
             </span>
@@ -803,7 +803,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     {isStarred && <span className="absolute -top-1 -right-1 text-amber-400 text-[13px]">⭐</span>}
                   </div>
                 ) : (
-                  <div style={isUser && customColor ? { backgroundColor: customColor } : undefined} className={`p-2.5 sm:p-3 relative transition-all shadow-md ${isUser ? getUserBubbleClass() : getPartnerBubbleClass()}`}>
+                  <div style={isUser && customColor ? { backgroundColor: customColor } : undefined} className={`p-2.5 sm:p-3 relative transition-all shadow-elevation-md ${isUser ? getUserBubbleClass() : getPartnerBubbleClass()}`}>
                     {gif && (
                       <div className="mb-2 rounded-xl overflow-hidden max-w-[220px] border border-black/10">
                         <img src={gif.url} alt={gif.title} className="w-full h-auto object-cover max-h-52 rounded-xl" referrerPolicy="no-referrer" />
@@ -824,7 +824,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                       {isUser && msg.readAt && <span className="material-symbols-outlined text-[13px] text-[#53bdeb]" title="Leído">done_all</span>}
                     </div>
                     {msgReaction && (
-                      <button onClick={() => handleToggleReaction(msg.id, msgReaction)} className={`absolute -bottom-2 ${isUser ? 'left-2' : 'right-2'} px-1.5 py-0.5 rounded-full text-[11px] shadow-md flex items-center gap-1 ${isLight ? 'bg-white border border-[#fecdd3]' : 'bg-[#180b12] border border-[#e11d48]/40'}`}>
+                      <button onClick={() => handleToggleReaction(msg.id, msgReaction)} className={`absolute -bottom-2 ${isUser ? 'left-2' : 'right-2'} px-1.5 py-0.5 rounded-full text-[11px] shadow-elevation-md flex items-center gap-1 ${isLight ? 'bg-white border border-[#fecdd3]' : 'bg-[#180b12] border border-[#e11d48]/40'}`}>
                         <span>{msgReaction}</span>
                       </button>
                     )}
@@ -833,7 +833,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
                 {/* Visibles siempre a media opacidad (no solo con hover, que en touch no existe) */}
                 <div className="opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                  <button type="button" onClick={() => setActiveReactionMenuMsgId(activeReactionMenuMsgId === msg.id ? null : msg.id)} className="h-8 w-8 flex items-center justify-center rounded-full bg-white dark:bg-[#160a10] border border-[#e11d48]/30 text-[#e11d48] shadow-sm" aria-label="Reaccionar" title="Reaccionar">
+                  <button type="button" onClick={() => setActiveReactionMenuMsgId(activeReactionMenuMsgId === msg.id ? null : msg.id)} className="h-8 w-8 flex items-center justify-center rounded-full bg-white dark:bg-[#160a10] border border-[#e11d48]/30 text-[#e11d48] shadow-elevation-sm" aria-label="Reaccionar" title="Reaccionar">
                     <span className="material-symbols-outlined text-[13px] block" aria-hidden="true">add_reaction</span>
                   </button>
                   <button type="button" onClick={() => setActiveOptionsMenuMsgId(activeOptionsMenuMsgId === msg.id ? null : msg.id)} className="h-8 w-8 flex items-center justify-center rounded-full bg-white dark:bg-[#160a10] border border-gray-200 dark:border-white/10 text-gray-500" aria-label="Más opciones" title="Opciones">
@@ -876,7 +876,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               <AvatarImage src={partner.photos[0]?.url} alt={partner.displayName} />
               <AvatarFallback>{partner.displayName.slice(0, 2)}</AvatarFallback>
             </Avatar>
-            <div className={`px-3 py-2 rounded-2xl rounded-tl-sm flex items-center gap-1 shadow-sm border ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#202c33] border-[#e11d48]/20'}`}>
+            <div className={`px-3 py-2 rounded-2xl rounded-tl-sm flex items-center gap-1 shadow-elevation-sm border ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#202c33] border-[#e11d48]/20'}`}>
               <span className="w-1.5 h-1.5 bg-[#e11d48] rounded-full animate-bounce [animation-delay:-0.3s]" />
               <span className="w-1.5 h-1.5 bg-[#ff4d67] rounded-full animate-bounce [animation-delay:-0.15s]" />
               <span className="w-1.5 h-1.5 bg-[#e11d48] rounded-full animate-bounce" />
@@ -906,27 +906,27 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {showAttachmentMenu && (
         <div className={`border-t p-3.5 grid grid-cols-3 gap-3 animate-fadeIn relative z-20 shrink-0 ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
           <button onClick={() => photoInputRef.current?.click()} className="flex flex-col items-center gap-1 text-center group">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
               <span className="material-symbols-outlined text-[22px]">image</span>
             </div>
             <span className={`text-[11px] font-medium ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>Fotos</span>
           </button>
           <button onClick={() => { setShowAttachmentMenu(false); onOpenProposeModal?.(activeMatch.id); }} className="flex flex-col items-center gap-1 text-center group">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
               <span className="material-symbols-outlined text-[22px]">local_cafe</span>
             </div>
             <span className={`text-[11px] font-medium ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>Cita MELY</span>
           </button>
           {onOpenIcebreaker && (
             <button onClick={() => { setShowAttachmentMenu(false); onOpenIcebreaker(partner.displayName); }} className="flex flex-col items-center gap-1 text-center group">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
                 <span className="material-symbols-outlined text-[22px]">casino</span>
               </div>
               <span className={`text-[11px] font-medium ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>Ruleta 🎲</span>
             </button>
           )}
           <button onClick={() => { setShowAttachmentMenu(false); setActiveMediaTray('stickers'); }} className="flex flex-col items-center gap-1 text-center group">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-600 text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-600 text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
               <span className="material-symbols-outlined text-[22px]">auto_awesome</span>
             </div>
             <span className={`text-[11px] font-medium ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>Stickers</span>
@@ -945,7 +945,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => setActiveMediaTray(tab)}
-                  className={`h-7 px-3 rounded-full text-[11px] font-bold flex items-center gap-1 ${activeMediaTray === tab ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-sm' : isLight ? 'text-gray-600' : 'text-gray-300'}`}
+                  className={`h-7 px-3 rounded-full text-[11px] font-bold flex items-center gap-1 ${activeMediaTray === tab ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-sm' : isLight ? 'text-gray-600' : 'text-gray-300'}`}
                 >
                   <span>{tab === 'emojis' ? '😊' : tab === 'stickers' ? '👾' : '🎬'}</span>
                   <span>{tab === 'emojis' ? 'Emojis' : tab === 'stickers' ? 'Stickers' : 'GIFs'}</span>
@@ -982,7 +982,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     <button
                       key={sticker.id}
                       onClick={() => handleSendSticker(sticker)}
-                      className="flex flex-col items-center p-2 rounded-2xl border transition-all hover:scale-110 active:scale-95 group relative shadow-sm"
+                      className="flex flex-col items-center p-2 rounded-2xl border transition-all hover:scale-110 active:scale-95 group relative shadow-elevation-sm"
                       style={{ background: isLight ? '#ffffff' : '#1a0c13', borderColor: isLight ? '#fecdd3' : 'rgba(225,29,72,0.25)' }}
                       title={`Enviar ${sticker.title}`}
                     >
@@ -1019,7 +1019,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           {activeMediaTray === 'gifs' && (
             <div className="flex-1 overflow-y-auto p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 no-scrollbar">
               {QUICK_GIFS.map((gif) => (
-                <div key={gif.id} onClick={() => handleSendGif(gif)} className="rounded-2xl overflow-hidden border border-[#fecdd3] dark:border-[#e11d48]/30 cursor-pointer group relative shadow-md">
+                <div key={gif.id} onClick={() => handleSendGif(gif)} className="rounded-2xl overflow-hidden border border-[#fecdd3] dark:border-[#e11d48]/30 cursor-pointer group relative shadow-elevation-md">
                   <img src={gif.url} alt={gif.title} className="w-full h-24 object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
                   <div className="absolute bottom-0 inset-x-0 p-1 bg-gradient-to-t from-black/80 to-transparent text-white text-[10px] font-bold truncate text-center">{gif.tag}</div>
                 </div>
@@ -1032,7 +1032,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {/* Input bar */}
       <div className={`border-t p-2 relative z-30 shrink-0 ${isLight ? 'bg-[#f4efe8] border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/25'}`}>
         <form onSubmit={handleSendText} className="flex items-center gap-1.5" autoComplete="off">
-          <div className={`flex-1 flex items-center gap-1.5 px-3 py-1.5 rounded-full border shadow-sm transition-colors ${isLight ? 'bg-white border-[#fecdd3] focus-within:border-[#e11d48]' : 'bg-[#1e0c15] border-[#e11d48]/30 focus-within:border-[#fb7185]'}`}>
+          <div className={`flex-1 flex items-center gap-1.5 px-3 py-1.5 rounded-full border shadow-elevation-sm transition-colors ${isLight ? 'bg-white border-[#fecdd3] focus-within:border-[#e11d48]' : 'bg-[#1e0c15] border-[#e11d48]/30 focus-within:border-[#fb7185]'}`}>
             <button
               type="button"
               onClick={() => { sounds.playClick(); setActiveMediaTray(activeMediaTray ? null : 'stickers'); setShowAttachmentMenu(false); }}
@@ -1063,7 +1063,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           <button
             type="submit"
             disabled={!inputText.trim()}
-            className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] text-white flex items-center justify-center tactile-btn shadow-md hover:brightness-105 transition-transform active:scale-95 shrink-0 disabled:opacity-40"
+            className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] text-white flex items-center justify-center tactile-btn shadow-elevation-md hover:brightness-105 transition-transform active:scale-95 shrink-0 disabled:opacity-40"
             title="Enviar mensaje"
           >
             <span className="material-symbols-outlined text-[19px]" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
@@ -1080,7 +1080,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             </div>
             <h3 className="font-headline-md text-[16px] font-bold mb-3">{selectedStickerDetail.title}</h3>
             <div className="flex flex-col gap-2 w-full">
-              <Button onClick={() => { handleSendSticker(selectedStickerDetail); setSelectedStickerDetail(null); }} className="w-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold h-9 rounded-2xl shadow-md">
+              <Button onClick={() => { handleSendSticker(selectedStickerDetail); setSelectedStickerDetail(null); }} className="w-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold h-9 rounded-2xl shadow-elevation-md">
                 Enviar Sticker al chat
               </Button>
               <Button variant="outline" onClick={() => handleToggleFavoriteSticker(selectedStickerDetail.id)} className="w-full h-9 rounded-2xl flex items-center justify-center gap-1.5 text-[12px]">
@@ -1130,7 +1130,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 </div>
               </div>
             </div>
-            <Button onClick={() => { setShowContactInfoDrawer(false); onOpenProposeModal?.(activeMatch.id); }} className="w-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold h-10 rounded-2xl shadow-lg">
+            <Button onClick={() => { setShowContactInfoDrawer(false); onOpenProposeModal?.(activeMatch.id); }} className="w-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold h-10 rounded-2xl shadow-elevation-md">
               Proponer Cita a {partner.displayName}
             </Button>
           </div>
@@ -1180,7 +1180,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                       >
                         <div className="flex items-center justify-between w-full">
                           <span className="text-[11px] font-bold truncate">{preset.previewBadge}</span>
-                          <span className="w-3.5 h-3.5 rounded-full border border-white/50 shadow-sm shrink-0" style={{ backgroundColor: preset.accentColor }} />
+                          <span className="w-3.5 h-3.5 rounded-full border border-white/50 shadow-elevation-sm shrink-0" style={{ backgroundColor: preset.accentColor }} />
                         </div>
                         <p className="text-[10px] opacity-75 line-clamp-1">{preset.description}</p>
                       </button>
@@ -1235,7 +1235,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
             <div className="flex gap-2 pt-3 border-t border-black/10 dark:border-white/10 mt-3">
               <Button variant="outline" onClick={() => { sounds.playClick(); handleApplyTheme('mely-cherry'); }} className="flex-1 h-9 rounded-2xl text-[11.5px]">Por Defecto</Button>
-              <Button onClick={() => { sounds.playStamp(); setShowThemeCustomizer(false); }} className="flex-1 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold h-9 rounded-2xl shadow-md text-[11.5px]">Aplicar y Guardar</Button>
+              <Button onClick={() => { sounds.playStamp(); setShowThemeCustomizer(false); }} className="flex-1 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold h-9 rounded-2xl shadow-elevation-md text-[11.5px]">Aplicar y Guardar</Button>
             </div>
           </div>
         </div>

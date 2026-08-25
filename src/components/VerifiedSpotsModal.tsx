@@ -48,7 +48,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
           }`}
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shadow-md shadow-[#e11d48]/30">
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shadow-elevation-md shadow-[#e11d48]/30">
               <span className="material-symbols-outlined text-[20px]">storefront</span>
             </div>
             <div>
@@ -79,7 +79,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
                 }}
                 className={`px-3 py-1.5 rounded-xl font-label-caps text-[10px] uppercase font-bold tracking-wider whitespace-nowrap flex items-center gap-1.5 transition-all ${
                   isCatActive
-                    ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-sm scale-102'
+                    ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-sm scale-102'
                     : isLight
                     ? 'bg-white border border-[#fecdd3] text-[#475569] hover:text-[#e11d48]'
                     : 'bg-[#1a0c13] border border-[#e11d48]/30 text-[#fda4af]/70 hover:text-[#fda4af]'
@@ -100,9 +100,9 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
               layout
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`border rounded-2xl overflow-hidden shadow-sm transition-all duration-200 ${
+              className={`border rounded-2xl overflow-hidden shadow-elevation-sm transition-all duration-200 ${
                 isLight
-                  ? 'bg-white border-[#fecdd3] hover:border-[#e11d48]/50 hover:shadow-md'
+                  ? 'bg-white border-[#fecdd3] hover:border-[#e11d48]/50 hover:shadow-elevation-md'
                   : 'bg-[#180c12] border-[#e11d48]/30 hover:border-[#e11d48]/60 hover:shadow-[0_4px_20px_rgba(225,29,72,0.15)]'
               }`}
             >
@@ -125,7 +125,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
                 </div>
 
                 {/* Neighborhood badge */}
-                <div className="absolute top-2.5 left-2.5 bg-[#e11d48]/90 text-white font-label-caps text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm">
+                <div className="absolute top-2.5 left-2.5 bg-[#e11d48]/90 text-white font-label-caps text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-elevation-sm">
                   {spot.neighborhood}
                 </div>
 
@@ -184,7 +184,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
                       }
                       onClose();
                     }}
-                    className="bg-gradient-to-r from-[#e11d48] to-[#ff4d67] hover:opacity-95 text-white font-label-caps text-[10px] tracking-wider font-bold rounded-xl px-3 py-1.5 h-auto tactile-btn shadow-sm shadow-[#e11d48]/20"
+                    className="bg-gradient-to-r from-[#e11d48] to-[#ff4d67] hover:opacity-95 text-white font-label-caps text-[10px] tracking-wider font-bold rounded-xl px-3 py-1.5 h-auto tactile-btn shadow-elevation-sm shadow-[#e11d48]/20"
                   >
                     <span className="material-symbols-outlined text-[13px] mr-1">send</span>
                     PROPONER CITA AQUÍ

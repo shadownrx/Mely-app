@@ -70,7 +70,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
           }`}
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shadow-md shadow-[#e11d48]/30">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shadow-elevation-md shadow-[#e11d48]/30">
               <span className="material-symbols-outlined text-[18px]">tune</span>
             </div>
             <div>
@@ -208,7 +208,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
                     onClick={() => toggleInterest(interest.slug)}
                     className={`px-2.5 py-1 rounded-full text-[11px] font-body-sm transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold shadow-xs'
+                        ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold shadow-elevation-sm'
                         : isLight
                         ? 'bg-white border border-[#fecdd3] text-[#475569] hover:bg-[#fff5f6]'
                         : 'bg-[#180c12] border border-[#e11d48]/20 text-[#fda4af]/70 hover:border-[#e11d48]/50'

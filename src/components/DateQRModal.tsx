@@ -239,7 +239,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
               }}
               className={`flex-1 py-1.5 rounded-xl font-label-caps text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
                 mode === 'show_qr'
-                  ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-sm'
+                  ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-sm'
                   : isLight
                   ? 'text-[#64748b] hover:bg-white'
                   : 'text-[#fda4af]/60 hover:text-[#fda4af]'
@@ -255,7 +255,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
               }}
               className={`flex-1 py-1.5 rounded-xl font-label-caps text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
                 mode === 'scan_manual'
-                  ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-sm'
+                  ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-sm'
                   : isLight
                   ? 'text-[#64748b] hover:bg-white'
                   : 'text-[#fda4af]/60 hover:text-[#fda4af]'
@@ -275,7 +275,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#0d070a] border-[#e11d48]/40'
               }`}
             >
-              <div className="w-[220px] h-[220px] bg-white p-2 rounded-2xl flex items-center justify-center shadow-md overflow-hidden">
+              <div className="w-[220px] h-[220px] bg-white p-2 rounded-2xl flex items-center justify-center shadow-elevation-md overflow-hidden">
                 {locationError ? (
                   <div className="flex flex-col items-center gap-2 px-3 text-center">
                     <span className="material-symbols-outlined text-[32px] text-[#e11d48]">location_off</span>
@@ -406,7 +406,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 <Button
                   type="submit"
                   disabled={scanCheckIn.isPending}
-                  className="w-full py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-2xl shadow-md shadow-[#e11d48]/25 disabled:opacity-60"
+                  className="w-full py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-2xl shadow-elevation-md shadow-[#e11d48]/25 disabled:opacity-60"
                 >
                   VALIDAR CÓDIGO
                 </Button>
@@ -452,7 +452,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 sounds.playClick();
                 onClose();
               }}
-              className="w-full py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-2xl tactile-btn shadow-md shadow-[#e11d48]/25"
+              className="w-full py-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-2xl tactile-btn shadow-elevation-md shadow-[#e11d48]/25"
             >
               LISTO • VOLVER AL ITINERARIO
             </Button>

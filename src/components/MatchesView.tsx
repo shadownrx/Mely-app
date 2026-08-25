@@ -86,7 +86,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 className={`p-2.5 rounded-md transition-all ${
                   layoutMode === 'grid'
                     ? isLight
-                      ? 'bg-white text-[#e11d48] shadow-xs'
+                      ? 'bg-white text-[#e11d48] shadow-elevation-sm'
                       : 'bg-[#e11d48] text-white'
                     : isLight
                     ? 'text-gray-400 hover:text-gray-700'
@@ -105,7 +105,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 className={`p-2.5 rounded-md transition-all ${
                   layoutMode === 'list'
                     ? isLight
-                      ? 'bg-white text-[#e11d48] shadow-xs'
+                      ? 'bg-white text-[#e11d48] shadow-elevation-sm'
                       : 'bg-[#e11d48] text-white'
                     : isLight
                     ? 'text-gray-400 hover:text-gray-700'
@@ -120,7 +120,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
 
             <Badge
               variant="outline"
-              className={`font-meta-data text-[11px] font-bold px-2.5 py-0.5 rounded-full border shadow-xs ${
+              className={`font-meta-data text-[11px] font-bold px-2.5 py-0.5 rounded-full border shadow-elevation-sm ${
                 isLight
                   ? 'bg-[#fff1f3] text-[#e11d48] border-[#fecdd3]'
                   : 'bg-[#e11d48]/20 text-[#fb7185] border-[#e11d48]/40'
@@ -152,7 +152,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   title={`Ver perfil de ${m.other.displayName}`}
                 >
                   <div className="relative">
-                    <div className="w-[50px] h-[50px] rounded-full p-[2px] bg-gradient-to-tr from-[#e11d48] via-[#fb7185] to-[#f43f5e] shadow-sm transition-transform">
+                    <div className="w-[50px] h-[50px] rounded-full p-[2px] bg-gradient-to-tr from-[#e11d48] via-[#fb7185] to-[#f43f5e] shadow-elevation-sm transition-transform">
                       <img
                         src={m.other.photos[0]?.url}
                         alt={m.other.displayName}
@@ -189,7 +189,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar match..."
-              className="pl-9 pr-8 h-auto py-1.5 text-[12px] shadow-xs"
+              className="pl-9 pr-8 h-auto py-1.5 text-[12px] shadow-elevation-sm"
             />
             {searchQuery && (
               <button
@@ -222,7 +222,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   }}
                   className={`px-2.5 py-1 rounded-lg text-[10.5px] font-semibold flex items-center gap-1 whitespace-nowrap transition-all border shrink-0 ${
                     isSelected
-                      ? 'bg-[#e11d48] text-white border-[#e11d48] shadow-xs'
+                      ? 'bg-[#e11d48] text-white border-[#e11d48] shadow-elevation-sm'
                       : isLight
                       ? 'bg-white text-[#475569] border-gray-200 hover:border-[#fecdd3] hover:text-[#e11d48]'
                       : 'bg-[#140b0f] text-[#fda4af]/80 border-white/10 hover:border-[#e11d48]/40'
@@ -271,7 +271,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   transition={{ delay: idx * 0.04, duration: 0.25 }}
                   className={`p-2.5 rounded-2xl border flex items-center justify-between gap-3 transition-colors ${
                     isLight
-                      ? 'bg-white border-[#fecdd3]/70 hover:border-[#e11d48] shadow-xs'
+                      ? 'bg-white border-[#fecdd3]/70 hover:border-[#e11d48] shadow-elevation-sm'
                       : 'bg-[#140b0f] border-[#e11d48]/25 hover:border-[#e11d48]/60'
                   }`}
                 >
@@ -341,7 +341,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                         sounds.playStamp();
                         onProposeDate(match);
                       }}
-                      className="h-8 px-2.5 rounded-xl bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[10.5px] font-bold flex items-center gap-1 shadow-xs hover:brightness-105 transition-all"
+                      className="h-8 px-2.5 rounded-xl bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[10.5px] font-bold flex items-center gap-1 shadow-elevation-sm hover:brightness-105 transition-all"
                       title="Proponer Cita"
                     >
                       <span className="material-symbols-outlined text-[14px]">local_cafe</span>
@@ -369,7 +369,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   transition={{ delay: idx * 0.04, duration: 0.25 }}
                 >
                   <Card
-                    className={`rounded-2xl border overflow-hidden relative shadow-xs flex flex-col group transition-colors p-0 ${
+                    className={`rounded-2xl border overflow-hidden relative shadow-elevation-sm flex flex-col group transition-colors p-0 ${
                       isLight
                         ? 'bg-white border-[#fecdd3] hover:border-[#e11d48]'
                         : 'bg-[#140b0f] border-[#e11d48]/25 hover:border-[#e11d48]/60'
@@ -455,7 +455,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                           sounds.playStamp();
                           onProposeDate(match);
                         }}
-                        className="flex-1 h-9 rounded-lg bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[10.5px] font-bold flex items-center justify-center gap-1 shadow-xs hover:brightness-105 transition-all"
+                        className="flex-1 h-9 rounded-lg bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[10.5px] font-bold flex items-center justify-center gap-1 shadow-elevation-sm hover:brightness-105 transition-all"
                         title="Proponer Cita"
                       >
                         <span className="material-symbols-outlined text-[13px]">local_cafe</span>
@@ -508,7 +508,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 sounds.playHeart();
                 onExploreMore();
               }}
-              className="bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full px-4 h-8 text-[11px] font-bold shadow-xs hover:brightness-105 flex items-center gap-1.5"
+              className="bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full px-4 h-8 text-[11px] font-bold shadow-elevation-sm hover:brightness-105 flex items-center gap-1.5"
             >
               <span className="material-symbols-outlined text-[15px]">explore</span>
               <span>Seguir Descubriendo</span>
@@ -691,7 +691,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     setSelectedMatch(null);
                     onProposeDate(target);
                   }}
-                  className="flex-1 h-8.5 bg-gradient-to-r from-[#e11d48] via-[#f43f5e] to-[#ff4d67] text-white text-[11px] font-bold rounded-xl shadow-xs flex items-center justify-center gap-1.5 hover:brightness-105 transition-all"
+                  className="flex-1 h-8.5 bg-gradient-to-r from-[#e11d48] via-[#f43f5e] to-[#ff4d67] text-white text-[11px] font-bold rounded-xl shadow-elevation-sm flex items-center justify-center gap-1.5 hover:brightness-105 transition-all"
                 >
                   <span className="material-symbols-outlined text-[15px]">local_cafe</span>
                   <span>Proponer Cita</span>

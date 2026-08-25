@@ -149,6 +149,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
               {isActive && (
                 <motion.div
                   layoutId="bottomNavActivePill"
+                  layout="position"
                   transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                   className={`absolute inset-0 rounded-xl border shadow-elevation-sm ${
                     isLight

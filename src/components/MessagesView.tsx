@@ -453,33 +453,22 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   // =========================================================================
   if (viewMode === 'inbox' || !activeMatch) {
     return (
-      <div
-        className={`flex flex-col w-full h-[calc(100dvh-130px)] min-h-[500px] rounded-3xl border overflow-hidden shadow-2xl animate-fadeIn ${
-          isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#0d070a] border-[#e11d48]/25'
-        }`}
-      >
-        <div className={`p-3 border-b shrink-0 ${isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/20'}`}>
-          <div className="flex items-center justify-between mb-2.5">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] text-white flex items-center justify-center shadow-sm shrink-0">
-                <span className="material-symbols-outlined text-[19px]" style={{ fontVariationSettings: "'FILL' 1" }}>forum</span>
-              </div>
-              <h2 className={`font-headline-md text-[16px] font-bold tracking-wide truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>MELY Chat</h2>
-            </div>
-          </div>
-
-          <div className="relative flex items-center mb-2">
-            <span className={`material-symbols-outlined absolute left-3 text-[18px] pointer-events-none ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>search</span>
+      <div className="flex flex-col w-full h-[calc(100dvh-130px)] min-h-[500px] animate-fadeIn">
+        {/* Búsqueda y filtros quedan pegados arriba mientras se scrollea la lista — sin
+            repetir el título "MELY Chat" que ya muestra el TopAppBar de la app. */}
+        <div className="shrink-0 pb-3">
+          <div className="relative flex items-center mb-2.5">
+            <span className={`material-symbols-outlined absolute left-3.5 text-[18px] pointer-events-none ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>search</span>
             <Input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar un chat..."
-              className="pl-9 pr-8 h-auto py-1.5 text-[12px] rounded-2xl"
+              className="pl-10 h-11 text-[13px] rounded-2xl"
             />
           </div>
 
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
             {[
               { id: 'all', label: 'Todos', count: matches.length },
               { id: 'unread', label: 'No leídos', count: matches.filter((m) => m.unread > 0).length },
@@ -493,8 +482,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     sounds.playClick();
                     setInboxFilter(chip.id as 'all' | 'unread' | 'dates');
                   }}
-                  className={`px-2.5 py-1 rounded-full text-[10.5px] font-bold flex items-center gap-1 whitespace-nowrap transition-all border ${
-                    isSelected ? 'bg-[#e11d48] text-white border-[#e11d48] shadow-sm' : isLight ? 'bg-white text-[#475569] border-[#fecdd3]' : 'bg-white/5 text-[#fda4af]/80 border-[#e11d48]/20'
+                  className={`px-2.5 py-1.5 rounded-full text-[10.5px] font-bold flex items-center gap-1 whitespace-nowrap transition-all border shadow-elevation-sm ${
+                    isSelected
+                      ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white border-transparent'
+                      : isLight
+                      ? 'bg-white text-[#475569] border-[#fecdd3]'
+                      : 'bg-white/5 text-[#fda4af]/80 border-[#e11d48]/20'
                   }`}
                 >
                   <span>{chip.label}</span>
@@ -505,14 +498,14 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           </div>
         </div>
 
-        <div className={`flex-1 overflow-y-auto divide-y no-scrollbar ${isLight ? 'divide-gray-100' : 'divide-[#e11d48]/10'}`}>
+        <div className="flex-1 overflow-y-auto no-scrollbar">
           {matches.length > 0 && (
-            <div className={`p-3 ${isLight ? 'bg-[#fff5f6]' : 'bg-[#12080d]'}`}>
-              <span className={`font-label-caps text-[9.5px] uppercase tracking-wider font-bold block mb-2 px-1 ${isLight ? 'text-[#475569]' : 'text-[#fda4af]/70'}`}>SPARKS</span>
+            <div className={`pb-4 mb-2 border-b ${isLight ? 'border-[#fecdd3]/60' : 'border-[#e11d48]/15'}`}>
+              <span className={`font-label-caps text-[9.5px] uppercase tracking-wider font-bold block mb-2.5 ${isLight ? 'text-[#475569]' : 'text-[#fda4af]/70'}`}>SPARKS</span>
               <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
                 {matches.map((m) => (
                   <button key={`story-${m.id}`} onClick={() => handleOpenConversation(m.id)} className="flex flex-col items-center gap-1 shrink-0 group focus:outline-none">
-                    <div className="relative w-13 h-13 rounded-full p-0.5 bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] group-hover:scale-105 transition-transform shadow-md">
+                    <div className="relative w-13 h-13 rounded-full p-0.5 bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] group-hover:scale-105 transition-transform shadow-elevation-sm">
                       <div className="w-full h-full rounded-full overflow-hidden border-2 border-white dark:border-[#0d070a]">
                         <img src={m.other.photos[0]?.url} alt={m.other.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
@@ -527,12 +520,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             </div>
           )}
 
-          <div className="p-2 space-y-1">
+          <div className="space-y-0.5 pb-2">
             {isLoadingMatches && matches.length === 0 ? (
-              <div className="p-2 space-y-1">
+              <div className="space-y-1">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-full p-2.5 rounded-2xl flex items-center gap-3">
-                    <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+                  <div key={i} className="w-full py-3 flex items-center gap-3">
+                    <Skeleton className="w-13 h-13 rounded-full shrink-0" />
                     <div className="flex-1 min-w-0 flex flex-col gap-1.5">
                       <Skeleton className="h-3.5 w-24" />
                       <Skeleton className="h-3 w-40" />
@@ -551,29 +544,36 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 <button
                   key={match.id}
                   onClick={() => handleOpenConversation(match.id)}
-                  className={`w-full p-2.5 rounded-2xl flex items-center gap-3 transition-all text-left group ${
-                    match.unread > 0
-                      ? isLight ? 'bg-[#fff1f3] border border-[#fecdd3] shadow-sm' : 'bg-[#1c0c13] border border-[#e11d48]/40 shadow-sm'
-                      : isLight ? 'hover:bg-[#fff5f6] border border-transparent' : 'hover:bg-[#160a10] border border-transparent'
+                  className={`relative w-full pl-4 pr-2.5 py-3 rounded-2xl flex items-center gap-3 transition-colors text-left group ${
+                    isLight ? 'hover:bg-[#fff5f6]' : 'hover:bg-[#160a10]'
                   }`}
                 >
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border border-[#e11d48]/30">
+                  {/* Barra de acento en vez de una caja entera resaltada: menos "chip
+                      dentro de chip", el color hace todo el trabajo de indicar no leído. */}
+                  {match.unread > 0 && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-7 w-[3px] rounded-full bg-gradient-to-b from-[#e11d48] to-[#ff4d67]" />
+                  )}
+                  <div className="relative w-13 h-13 rounded-full overflow-hidden shrink-0 shadow-elevation-sm">
                     <img src={match.other.photos[0]?.url} alt={match.other.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     {match.other.lastActive === 'En línea' && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#10b981] border-2 border-white rounded-full" />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-center mb-0.5">
+                    <div className="flex justify-between items-baseline gap-2 mb-0.5">
                       <div className="flex items-center gap-1.5 min-w-0">
-                        <h3 className={`font-headline-md text-[14px] font-bold truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{match.other.displayName}</h3>
-                        {match.other.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>}
+                        <h3 className={`font-headline-md text-[14.5px] font-bold truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{match.other.displayName}</h3>
+                        {match.other.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#e11d48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>}
                       </div>
                       {match.lastMessageAt && <span className={`font-meta-data text-[10px] shrink-0 ${isLight ? 'text-gray-400' : 'text-[#fda4af]/60'}`}>{formatTime(match.lastMessageAt)}</span>}
                     </div>
-                    <div className="flex items-center justify-between gap-1">
-                      <p className={`text-[12px] truncate ${match.unread > 0 ? 'font-bold text-[#e11d48]' : isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className={`text-[12.5px] truncate ${match.unread > 0 ? 'font-semibold text-[#e11d48]' : isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
                         {match.status === 'MATCH' ? '¡Comenzá la conversación!' : match.label}
                       </p>
-                      {match.unread > 0 && <span className="w-2.5 h-2.5 bg-[#e11d48] rounded-full shrink-0 shadow-[0_0_8px_#e11d48]" />}
+                      {match.unread > 0 && (
+                        <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[10px] font-bold flex items-center justify-center shrink-0 shadow-elevation-sm">
+                          {match.unread}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </button>

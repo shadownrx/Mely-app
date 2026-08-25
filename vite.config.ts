@@ -11,6 +11,11 @@ export default defineConfig(() => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
+        // Service worker propio (en vez de que Workbox genere uno solo) porque
+        // necesita manejar los eventos "push" y "notificationclick" de Web Push.
+        strategies: 'injectManifest',
+        srcDir: 'src',
+        filename: 'sw.ts',
         includeAssets: ['icon-32.png', 'icon-180.png'],
         manifest: {
           name: 'MELY — Pasaporte de Conexiones',
@@ -29,14 +34,8 @@ export default defineConfig(() => {
             { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
           ],
         },
-        workbox: {
-          navigateFallbackDenylist: [/^\/api\//],
-          runtimeCaching: [
-            {
-              urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
-              handler: 'NetworkOnly',
-            },
-          ],
+        injectManifest: {
+          globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest}'],
         },
       }),
     ],

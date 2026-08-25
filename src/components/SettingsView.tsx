@@ -6,6 +6,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useInterests, useUpdateProfile, useReplacePrompts, useDeleteAccount } from '../hooks/useProfile';
 import { useRequestPhoneCode, useVerifyPhone } from '../hooks/useAuth';
+import { usePushSubscription } from '../hooks/usePushSubscription';
 import { ApiError } from '../lib/apiClient';
 import type { Gender, LookingFor, Prompt } from '../types';
 import { Button } from './ui/button';
@@ -131,6 +132,26 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
   const deleteAccount = useDeleteAccount();
   const requestPhoneCode = useRequestPhoneCode();
   const verifyPhoneCode = useVerifyPhone();
+  const { state: pushState, subscribe: subscribePush, unsubscribe: unsubscribePush } = usePushSubscription();
+  const [isTogglingPush, setIsTogglingPush] = useState(false);
+
+  const handleTogglePush = async (checked: boolean) => {
+    sounds.playClick();
+    setIsTogglingPush(true);
+    try {
+      if (checked) {
+        await subscribePush();
+        toast.success('Notificaciones push activadas.');
+      } else {
+        await unsubscribePush();
+        toast.success('Notificaciones push desactivadas.');
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No pudimos cambiar la configuración.');
+    } finally {
+      setIsTogglingPush(false);
+    }
+  };
 
   const [activeSheet, setActiveSheet] = useState<SheetId>(null);
   const [phoneStep, setPhoneStep] = useState<'enter' | 'verify'>('enter');
@@ -347,6 +368,29 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           }
         />
       </SettingsGroup>
+
+      {pushState !== 'unsupported' && (
+        <SettingsGroup title="Notificaciones" isLight={isLight}>
+          <SettingsRow
+            isLight={isLight}
+            icon="notifications_active"
+            label="Notificaciones push"
+            description={
+              pushState === 'denied'
+                ? 'Bloqueadas por el navegador — activalas en su configuración de sitio'
+                : 'Recibí avisos de matches, citas y monedas aunque tengas la app cerrada'
+            }
+            trailing={
+              <Switch
+                checked={pushState === 'subscribed'}
+                disabled={pushState === 'denied' || pushState === 'checking' || isTogglingPush}
+                onCheckedChange={handleTogglePush}
+                aria-label="Notificaciones push"
+              />
+            }
+          />
+        </SettingsGroup>
+      )}
 
       <SettingsGroup title="Seguridad" isLight={isLight}>
         <SettingsRow

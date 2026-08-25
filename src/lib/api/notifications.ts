@@ -21,3 +21,11 @@ export function markNotificationRead(id: string) {
 export function markAllNotificationsRead() {
   return apiRequest<{ ok: true }>('/me/notifications/read-all', { method: 'POST' });
 }
+
+export function saveWebPushSubscription(subscription: PushSubscriptionJSON) {
+  return apiRequest<{ ok: true }>('/me/web-push-subscription', { method: 'POST', body: subscription });
+}
+
+export function deleteWebPushSubscription(endpoint: string) {
+  return apiRequest<{ ok: true }>('/me/web-push-subscription', { method: 'DELETE', body: { endpoint } });
+}

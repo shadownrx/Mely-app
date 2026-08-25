@@ -8,9 +8,11 @@ import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 import { Input } from './ui/input';
 import { Dialog, DialogContent } from './ui/dialog';
+import { Skeleton } from './ui/skeleton';
 
 interface MatchesViewProps {
   matches: Match[];
+  isLoading?: boolean;
   onOpenChat: (connectionId: string) => void;
   onProposeDate: (match: Match) => void;
   onExploreMore?: () => void;
@@ -21,6 +23,7 @@ type ViewLayout = 'grid' | 'list';
 
 export const MatchesView: React.FC<MatchesViewProps> = ({
   matches,
+  isLoading = false,
   onOpenChat,
   onProposeDate,
   onExploreMore,
@@ -239,7 +242,16 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
       {/* ------------------------------------------------------------- */}
       {/* MATCHES LIST / GRID LAYOUT                                   */}
       {/* ------------------------------------------------------------- */}
-      {filteredMatches.length > 0 ? (
+      {isLoading && matches.length === 0 ? (
+        <div className="grid grid-cols-2 gap-3">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="flex flex-col gap-2">
+              <Skeleton className="aspect-[3/4] w-full rounded-2xl" />
+              <Skeleton className="h-3 w-2/3" />
+            </div>
+          ))}
+        </div>
+      ) : filteredMatches.length > 0 ? (
         <AnimatePresence mode="wait">
           {layoutMode === 'list' ? (
             /* COMPACT LIST VIEW */

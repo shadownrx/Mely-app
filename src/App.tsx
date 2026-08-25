@@ -1,22 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { DEFAULT_DISCOVERY_FILTERS } from './data/mockData';
 import { TabType, DiscoveryFilters, Profile, Match } from './types';
 import { TopAppBar } from './components/TopAppBar';
 import { BottomNavBar } from './components/BottomNavBar';
-import { ProfileView } from './components/ProfileView';
-import { MessagesView } from './components/MessagesView';
 import { DiscoverView } from './components/DiscoverView';
-import { MatchesView } from './components/MatchesView';
-import { DatesView } from './components/DatesView';
-import { StoreView } from './components/StoreView';
-import { LoginView, type GooglePrefill } from './components/LoginView';
-import { RegisterView } from './components/RegisterView';
-import { SettingsView } from './components/SettingsView';
+import type { GooglePrefill } from './components/LoginView';
 import { VerifiedSpotsModal } from './components/VerifiedSpotsModal';
-import { DateQRModal } from './components/DateQRModal';
 import { DiscoveryFiltersModal } from './components/DiscoveryFiltersModal';
-import { IcebreakerWheelModal } from './components/IcebreakerWheelModal';
 import { ProposeDateModal, StampModal, MenuDrawer } from './components/Modals';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Toaster } from './components/ui/sonner';
@@ -30,8 +21,31 @@ import { useWallet } from './hooks/useWallet';
 import { useAllDateProposals } from './hooks/useDates';
 import { useSendMessage } from './hooks/useChat';
 import { subscribeUserNotifications } from './lib/realtime';
+import { resolveNotificationTarget } from './lib/notificationRouting';
 import { useQueryClient } from '@tanstack/react-query';
 import type { Stamp } from './types';
+
+// Todo lo que no hace falta en el primer paint (pantallas fuera de Descubrir, y los
+// modales que solo se abren con una acción explícita) se carga bajo demanda: reduce
+// bastante el bundle inicial, sobre todo DateQRModal (arrastra qr-scanner + qrcode).
+const MatchesView = lazy(() => import('./components/MatchesView').then((m) => ({ default: m.MatchesView })));
+const MessagesView = lazy(() => import('./components/MessagesView').then((m) => ({ default: m.MessagesView })));
+const StoreView = lazy(() => import('./components/StoreView').then((m) => ({ default: m.StoreView })));
+const DatesView = lazy(() => import('./components/DatesView').then((m) => ({ default: m.DatesView })));
+const ProfileView = lazy(() => import('./components/ProfileView').then((m) => ({ default: m.ProfileView })));
+const SettingsView = lazy(() => import('./components/SettingsView').then((m) => ({ default: m.SettingsView })));
+const LoginView = lazy(() => import('./components/LoginView').then((m) => ({ default: m.LoginView })));
+const RegisterView = lazy(() => import('./components/RegisterView').then((m) => ({ default: m.RegisterView })));
+const IcebreakerWheelModal = lazy(() =>
+  import('./components/IcebreakerWheelModal').then((m) => ({ default: m.IcebreakerWheelModal })),
+);
+const DateQRModal = lazy(() => import('./components/DateQRModal').then((m) => ({ default: m.DateQRModal })));
+
+const TabFallback: React.FC = () => (
+  <div className="w-full flex-1 flex items-center justify-center py-20">
+    <span className="material-symbols-outlined text-[32px] text-[#e11d48] animate-pulse">favorite</span>
+  </div>
+);
 
 type ProposeModalState = { connectionId: string; partnerName: string } | null;
 type DateQRModalState = { connectionId: string; partnerName: string; partnerAvatar: string } | null;
@@ -90,14 +104,69 @@ function AppContent() {
     (discoveryFilters.minAge > 20 || discoveryFilters.maxAge < 40 ? 1 : 0) +
     (discoveryFilters.maxDistanceKm < 50 ? 1 : 0);
 
+  const handleTabChange = (tab: TabType) => {
+    // Si un input queda enfocado cuando su vista se desmonta, el teclado del celular
+    // puede quedar "pegado" en pantalla flotando sobre la pestaña nueva.
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    if (currentTab !== 'ajustes') setPreviousTab(currentTab);
+    setCurrentTab(tab);
+  };
+
+  // A qué pantalla te lleva tocar una notificación (toast, campanita, o push del SO).
+  const handleNotificationNavigate = (category?: string, data?: Record<string, unknown>) => {
+    const target = resolveNotificationTarget(category, data);
+    if (!target) return;
+    if (target.connectionId) setActiveConnectionId(target.connectionId);
+    handleTabChange(target.tab);
+  };
+
+  // Si el push llegó con la app cerrada, el Service Worker abre una URL con estos
+  // query params (no tiene acceso al estado de React) — los leemos una sola vez al
+  // arrancar y limpiamos la URL para que no se re-dispare en un refresh.
+  useEffect(() => {
+    if (!user) return;
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab') as TabType | null;
+    if (!tab) return;
+    const connectionId = params.get('connectionId');
+    if (connectionId) setActiveConnectionId(connectionId);
+    handleTabChange(tab);
+    window.history.replaceState({}, '', window.location.pathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
+
+  // Si el push llegó con una pestaña ya abierta, el Service Worker la enfoca y le
+  // manda un postMessage en vez de navegar por URL (focus() no cambia la URL).
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return;
+    const handler = (event: MessageEvent) => {
+      if (event.data?.type !== 'notification-navigate') return;
+      const target = event.data.target as { tab: TabType; connectionId?: string } | undefined;
+      if (!target) return;
+      if (target.connectionId) setActiveConnectionId(target.connectionId);
+      handleTabChange(target.tab);
+    };
+    navigator.serviceWorker.addEventListener('message', handler);
+    return () => navigator.serviceWorker.removeEventListener('message', handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Global realtime: refresh matches/dates y avisa con un toast + la campanita cuando
   // llega una notificación (nuevo match, propuesta, check-in, monedas, sello, etc).
   useEffect(() => {
     if (!user) return;
     const unsubscribe = subscribeUserNotifications(user.id, (raw) => {
-      const payload = raw as { category?: string; title?: string; body?: string } | null;
+      const payload = raw as
+        | { category?: string; title?: string; body?: string; data?: Record<string, unknown> }
+        | null;
       if (payload?.title) {
-        toast(payload.title, { description: payload.body });
+        const target = resolveNotificationTarget(payload.category, payload.data);
+        toast(payload.title, {
+          description: payload.body,
+          action: target
+            ? { label: 'Ver', onClick: () => handleNotificationNavigate(payload.category, payload.data) }
+            : undefined,
+        });
       }
       if (payload?.category !== 'message') {
         queryClient.invalidateQueries({ queryKey: ['notifications'] });
@@ -109,15 +178,8 @@ function AppContent() {
       queryClient.invalidateQueries({ queryKey: ['wallet'] });
     });
     return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, queryClient]);
-
-  const handleTabChange = (tab: TabType) => {
-    // Si un input queda enfocado cuando su vista se desmonta, el teclado del celular
-    // puede quedar "pegado" en pantalla flotando sobre la pestaña nueva.
-    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
-    if (currentTab !== 'ajustes') setPreviousTab(currentTab);
-    setCurrentTab(tab);
-  };
 
   const handleLike = (profile: Profile) => {
     sounds.playStamp();
@@ -166,23 +228,25 @@ function AppContent() {
   if (status === 'unauthenticated' || !user) {
     return (
       <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'} antialiased flex flex-col items-center justify-center selection:bg-[#e11d48] selection:text-white p-2`}>
-        {authScreen === 'login' ? (
-          <LoginView
-            onGoToRegister={() => setAuthScreen('register')}
-            onGoogleNeedsProfile={(data) => {
-              setGooglePrefill(data);
-              setAuthScreen('register');
-            }}
-          />
-        ) : (
-          <RegisterView
-            onGoToLogin={() => {
-              setGooglePrefill(null);
-              setAuthScreen('login');
-            }}
-            googlePrefill={googlePrefill}
-          />
-        )}
+        <Suspense fallback={<TabFallback />}>
+          {authScreen === 'login' ? (
+            <LoginView
+              onGoToRegister={() => setAuthScreen('register')}
+              onGoogleNeedsProfile={(data) => {
+                setGooglePrefill(data);
+                setAuthScreen('register');
+              }}
+            />
+          ) : (
+            <RegisterView
+              onGoToLogin={() => {
+                setGooglePrefill(null);
+                setAuthScreen('login');
+              }}
+              googlePrefill={googlePrefill}
+            />
+          )}
+        </Suspense>
       </div>
     );
   }
@@ -194,6 +258,7 @@ function AppContent() {
         currentTab={currentTab}
         walletBalance={walletBalance}
         onTabChange={handleTabChange}
+        onNavigateNotification={handleNotificationNavigate}
         onOpenMenu={() => setIsMenuOpen(true)}
         showBackButton={currentTab === 'ajustes'}
         onBack={() => setCurrentTab(previousTab)}
@@ -227,6 +292,7 @@ function AppContent() {
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="w-full flex-1 flex flex-col min-h-0"
           >
+            <Suspense fallback={<TabFallback />}>
             {currentTab === 'descubrir' && (
               <DiscoverView
                 profiles={discoverQuery.data?.profiles ?? []}
@@ -244,6 +310,7 @@ function AppContent() {
             {currentTab === 'matches' && (
               <MatchesView
                 matches={matches}
+                isLoading={matchesQuery.isLoading}
                 onOpenChat={handleOpenChat}
                 onProposeDate={handleProposeDate}
                 onExploreMore={() => handleTabChange('descubrir')}
@@ -291,6 +358,7 @@ function AppContent() {
             {currentTab === 'ajustes' && (
               <SettingsView onSignOut={handleSignOut} />
             )}
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </main>
@@ -338,25 +406,29 @@ function AppContent() {
       <VerifiedSpotsModal isOpen={isVerifiedSpotsOpen} onClose={() => setIsVerifiedSpotsOpen(false)} />
 
       {icebreaker && (
-        <IcebreakerWheelModal
-          isOpen={Boolean(icebreaker)}
-          onClose={() => setIcebreaker(null)}
-          partnerName={icebreaker.partnerName}
-          onSendIcebreakerToChat={(qText) => {
-            icebreakerSendMessage.mutate(qText);
-            setIcebreaker(null);
-          }}
-        />
+        <Suspense fallback={null}>
+          <IcebreakerWheelModal
+            isOpen={Boolean(icebreaker)}
+            onClose={() => setIcebreaker(null)}
+            partnerName={icebreaker.partnerName}
+            onSendIcebreakerToChat={(qText) => {
+              icebreakerSendMessage.mutate(qText);
+              setIcebreaker(null);
+            }}
+          />
+        </Suspense>
       )}
 
       {dateQRModal && (
-        <DateQRModal
-          isOpen={Boolean(dateQRModal)}
-          onClose={() => setDateQRModal(null)}
-          connectionId={dateQRModal.connectionId}
-          partnerName={dateQRModal.partnerName}
-          partnerAvatar={dateQRModal.partnerAvatar}
-        />
+        <Suspense fallback={null}>
+          <DateQRModal
+            isOpen={Boolean(dateQRModal)}
+            onClose={() => setDateQRModal(null)}
+            connectionId={dateQRModal.connectionId}
+            partnerName={dateQRModal.partnerName}
+            partnerAvatar={dateQRModal.partnerAvatar}
+          />
+        </Suspense>
       )}
     </div>
   );

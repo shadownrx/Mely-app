@@ -10,6 +10,7 @@ interface TopAppBarProps {
   currentTab: TabType;
   walletBalance: number;
   onTabChange: (tab: TabType) => void;
+  onNavigateNotification: (category?: string, data?: Record<string, unknown>) => void;
   onOpenMenu: () => void;
   customTitle?: string;
   customSubtitle?: string;
@@ -20,6 +21,7 @@ interface TopAppBarProps {
 export const TopAppBar: React.FC<TopAppBarProps> = ({
   walletBalance,
   onTabChange,
+  onNavigateNotification,
   onOpenMenu,
   customTitle,
   customSubtitle,
@@ -104,7 +106,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
 
         {/* Right Actions: Notifications, Theme Selector & Wallet Balance */}
         <div className="flex items-center gap-1.5">
-          <NotificationBell />
+          <NotificationBell onNavigate={onNavigateNotification} />
 
           {/* Direct Theme Switcher Button */}
           <Button

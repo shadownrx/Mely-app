@@ -10,6 +10,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Input } from './ui/input';
+import { Skeleton } from './ui/skeleton';
 
 interface MessagesViewProps {
   activeConnectionId: string | null;
@@ -245,7 +246,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
-  const { data: matches = [] } = useMatches();
+  const { data: matches = [], isLoading: isLoadingMatches } = useMatches();
   const activeMatch: Match | null = matches.find((m) => m.id === activeConnectionId) ?? null;
 
   const { data: messagesData } = useMessages(activeConnectionId);
@@ -527,7 +528,19 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           )}
 
           <div className="p-2 space-y-1">
-            {filteredMatches.length === 0 ? (
+            {isLoadingMatches && matches.length === 0 ? (
+              <div className="p-2 space-y-1">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="w-full p-2.5 rounded-2xl flex items-center gap-3">
+                    <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+                    <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                      <Skeleton className="h-3.5 w-24" />
+                      <Skeleton className="h-3 w-40" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredMatches.length === 0 ? (
               <div className={`p-8 text-center font-body-sm text-[13px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
                 {matches.length === 0
                   ? 'Todavía no tenés matches. Andá a Descubrir para empezar a conectar.'

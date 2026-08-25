@@ -8,6 +8,7 @@ import { clientsClaim } from 'workbox-core';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute, NavigationRoute } from 'workbox-routing';
 import { NetworkOnly } from 'workbox-strategies';
+import { resolveNotificationTarget } from './lib/notificationRouting';
 
 declare const self: ServiceWorkerGlobalScope;
 
@@ -46,12 +47,22 @@ self.addEventListener('push', (event: PushEvent) => {
 
 self.addEventListener('notificationclick', (event: NotificationEvent) => {
   event.notification.close();
+  const data = (event.notification.data ?? {}) as Record<string, unknown>;
+  const target = resolveNotificationTarget(data.category as string | undefined, data);
+  const url = target
+    ? `/?tab=${target.tab}${target.connectionId ? `&connectionId=${target.connectionId}` : ''}`
+    : '/';
+
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
-        if ('focus' in client) return client.focus();
+        if ('focus' in client) {
+          client.focus();
+          if (target) client.postMessage({ type: 'notification-navigate', target });
+          return undefined;
+        }
       }
-      return self.clients.openWindow('/');
+      return self.clients.openWindow(url);
     }),
   );
 });

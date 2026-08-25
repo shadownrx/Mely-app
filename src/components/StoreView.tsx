@@ -10,6 +10,7 @@ import type { ShopItem } from '../types';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
+import { Skeleton } from './ui/skeleton';
 
 const ITEM_PRESENTATION: Record<string, { icon: string; color: string; badge?: string }> = {
   MEMBERSHIP_PREMIUM: { icon: 'workspace_premium', color: '#e11d48', badge: '👑 MEMBRESÍA' },
@@ -30,7 +31,7 @@ const CONTEXTUAL_HINT: Record<string, string> = {
 export const StoreView: React.FC = () => {
   const { isLight } = useTheme();
   const { user } = useAuth();
-  const { data: shopItems = [] } = useShop();
+  const { data: shopItems = [], isLoading: isLoadingShop } = useShop();
   const { data: wallet } = useWallet();
   const { data: history } = useWalletHistory();
   const { data: coinPacks = [] } = useCoinPacks();
@@ -143,6 +144,14 @@ export const StoreView: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {isLoadingShop && shopItems.length === 0 && (
+        <div className="flex flex-col gap-3">
+          <Skeleton className="h-24 w-full rounded-2xl" />
+          <Skeleton className="h-24 w-full rounded-2xl" />
+          <Skeleton className="h-24 w-full rounded-2xl" />
+        </div>
+      )}
 
       {/* MEMBERSHIPS */}
       {memberships.length > 0 && (

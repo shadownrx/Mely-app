@@ -29,7 +29,11 @@ function timeAgo(iso: string): string {
   return new Date(iso).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
 }
 
-export const NotificationBell: React.FC = () => {
+interface NotificationBellProps {
+  onNavigate: (category?: string, data?: Record<string, unknown>) => void;
+}
+
+export const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }) => {
   const { isLight } = useTheme();
   const [open, setOpen] = useState(false);
   const { data } = useNotifications();
@@ -41,6 +45,8 @@ export const NotificationBell: React.FC = () => {
 
   const handleItemClick = (n: AppNotification) => {
     if (!n.readAt) markRead.mutate(n.id);
+    setOpen(false);
+    onNavigate(n.category, n.data);
   };
 
   return (

@@ -201,7 +201,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [inputText, setInputText] = useState('');
 
-  const [activeMediaTray, setActiveMediaTray] = useState<'emojis' | 'stickers' | 'gifs' | null>(null);
+  const [activeMediaTray, setActiveMediaTray] = useState<'sparks' | 'emojis' | 'stickers' | 'gifs' | null>(null);
   const [selectedStickerPackId, setSelectedStickerPackId] = useState<string>('pack-romance');
   const [favoriteStickerIds, setFavoriteStickerIds] = useState<string[]>(['stk-coffee', 'stk-spark']);
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
@@ -777,7 +777,9 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 relative z-10 no-scrollbar select-text transition-all duration-300" style={getWallpaperStyle()}>
+      {/* justify-end: con pocos mensajes, se pegan abajo (como cualquier chat real) en vez
+          de quedar arriba con un hueco vacío antes del input. */}
+      <div className="flex-1 overflow-y-auto p-3 flex flex-col justify-end gap-2 relative z-10 no-scrollbar select-text transition-all duration-300" style={getWallpaperStyle()}>
         <div className="flex justify-center my-1">
           <div className={`max-w-xs px-3 py-1.5 rounded-xl border text-center text-[10px] leading-tight shadow-elevation-sm backdrop-blur-md ${isLight ? 'bg-white/80 border-[#fecdd3] text-[#475569]' : 'bg-[#180c13]/80 border-[#e11d48]/30 text-[#fda4af]/80'}`}>
             <span className="inline-flex items-center gap-1 font-bold text-[#e11d48] mb-0.5">
@@ -912,22 +914,6 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick sparks */}
-      <div className={`px-3 py-1.5 border-t flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#12080d] border-[#e11d48]/20'}`}>
-        {CONVERSATION_SPARKS.map((spark, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => { sounds.playClick(); sendMessage.mutate({ body: spark }); }}
-            className={`px-2.5 py-1 border rounded-full text-[11px] font-body-sm whitespace-nowrap shrink-0 transition-colors ${
-              isLight ? 'bg-white border-[#fecdd3] text-[#475569] hover:text-[#e11d48]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fda4af]'
-            }`}
-          >
-            {spark}
-          </button>
-        ))}
-      </div>
-
       {/* Attachment menu */}
       {showAttachmentMenu && (
         <div className={`border-t p-3.5 grid grid-cols-3 gap-3 animate-fadeIn relative z-20 shrink-0 ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
@@ -964,24 +950,41 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {activeMediaTray && (
         <div className={`border-t flex flex-col h-64 max-h-[45vh] animate-fadeIn relative z-20 shrink-0 ${isLight ? 'bg-[#fffafb] border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
           <div className={`px-3 py-1.5 border-b flex items-center justify-between shrink-0 ${isLight ? 'bg-[#fff1f3]' : 'bg-[#1a0c13]'}`}>
-            <div className="flex items-center gap-2">
-              {(['emojis', 'stickers', 'gifs'] as const).map((tab) => (
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+              {(['sparks', 'emojis', 'stickers', 'gifs'] as const).map((tab) => (
                 <Button
                   key={tab}
                   variant="ghost"
                   size="sm"
                   onClick={() => setActiveMediaTray(tab)}
-                  className={`h-7 px-3 rounded-full text-[11px] font-bold flex items-center gap-1 ${activeMediaTray === tab ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-sm' : isLight ? 'text-gray-600' : 'text-gray-300'}`}
+                  className={`h-7 px-3 rounded-full text-[11px] font-bold flex items-center gap-1 shrink-0 ${activeMediaTray === tab ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-sm' : isLight ? 'text-gray-600' : 'text-gray-300'}`}
                 >
-                  <span>{tab === 'emojis' ? '😊' : tab === 'stickers' ? '👾' : '🎬'}</span>
-                  <span>{tab === 'emojis' ? 'Emojis' : tab === 'stickers' ? 'Stickers' : 'GIFs'}</span>
+                  <span>{tab === 'sparks' ? '💡' : tab === 'emojis' ? '😊' : tab === 'stickers' ? '👾' : '🎬'}</span>
+                  <span>{tab === 'sparks' ? 'Ideas' : tab === 'emojis' ? 'Emojis' : tab === 'stickers' ? 'Stickers' : 'GIFs'}</span>
                 </Button>
               ))}
             </div>
-            <Button variant="ghost" size="icon" onClick={() => setActiveMediaTray(null)} className="h-8 w-8 rounded-full text-gray-400" aria-label="Cerrar">
+            <Button variant="ghost" size="icon" onClick={() => setActiveMediaTray(null)} className="h-8 w-8 rounded-full text-gray-400 shrink-0" aria-label="Cerrar">
               <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
             </Button>
           </div>
+
+          {activeMediaTray === 'sparks' && (
+            <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2 no-scrollbar">
+              {CONVERSATION_SPARKS.map((spark, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => { sounds.playClick(); sendMessage.mutate({ body: spark }); setActiveMediaTray(null); }}
+                  className={`px-3 py-2 border rounded-2xl text-[12.5px] font-body-sm text-left transition-colors ${
+                    isLight ? 'bg-white border-[#fecdd3] text-[#475569] hover:border-[#e11d48] hover:text-[#e11d48]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fda4af] hover:border-[#e11d48]/60'
+                  }`}
+                >
+                  {spark}
+                </button>
+              ))}
+            </div>
+          )}
 
           {activeMediaTray === 'stickers' && (
             <div className="flex-1 flex flex-col overflow-hidden">

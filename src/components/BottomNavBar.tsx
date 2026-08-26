@@ -63,7 +63,10 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
     <nav
       id="bottom-navigation-bar"
       style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
-      className={`fixed left-1/2 -translate-x-1/2 z-50 w-[calc(100%-24px)] max-w-[416px] rounded-[28px] border liquid-glass transition-colors duration-300 ${
+      // inset-x-3 fija los dos bordes directo contra el viewport (en vez de centrar con
+      // left-50%+translate, que en mobile puede desalinearse si el viewport "de layout"
+      // no coincide exacto con el visual) — así queda centrado sin importar el ancho real.
+      className={`fixed inset-x-3 mx-auto z-50 max-w-[416px] rounded-[28px] border liquid-glass transition-colors duration-300 ${
         isLight
           ? 'bg-white/75 border-white/60 shadow-elevation-lg'
           : 'bg-[#0d070a]/65 border-white/10 shadow-elevation-lg'

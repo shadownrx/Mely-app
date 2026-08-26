@@ -350,6 +350,27 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   </div>
                 </motion.div>
               ))}
+
+              {onExploreMore && (
+                <motion.button
+                  type="button"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: filteredMatches.length * 0.04, duration: 0.25 }}
+                  onClick={() => {
+                    sounds.playClick();
+                    onExploreMore();
+                  }}
+                  className={`p-3 rounded-2xl border-2 border-dashed flex items-center justify-center gap-2 transition-colors ${
+                    isLight
+                      ? 'border-[#fecdd3] hover:border-[#e11d48] text-[#e11d48] hover:bg-[#fff1f3]'
+                      : 'border-[#e11d48]/30 hover:border-[#e11d48]/60 text-[#fda4af] hover:bg-white/5'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[16px]">explore</span>
+                  <span className="text-[12px] font-bold">Seguir descubriendo</span>
+                </motion.button>
+              )}
             </motion.div>
           ) : (
             /* REFINED COMPACT GRID VIEW */
@@ -465,6 +486,35 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   </Card>
                 </motion.div>
               ))}
+
+              {/* Tile final para seguir explorando: con pocos matches, el grid dejaba
+                  mucho espacio vacío debajo en vez de invitar a la próxima acción. */}
+              {onExploreMore && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: filteredMatches.length * 0.04, duration: 0.25 }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sounds.playClick();
+                      onExploreMore();
+                    }}
+                    className={`w-full h-full min-h-[212px] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-2 text-center p-4 transition-colors ${
+                      isLight
+                        ? 'border-[#fecdd3] hover:border-[#e11d48] text-[#e11d48] hover:bg-[#fff1f3]'
+                        : 'border-[#e11d48]/30 hover:border-[#e11d48]/60 text-[#fda4af] hover:bg-white/5'
+                    }`}
+                  >
+                    <span className="w-10 h-10 rounded-full bg-[#e11d48]/10 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[22px]">explore</span>
+                    </span>
+                    <span className="text-[12px] font-bold leading-tight">Seguir descubriendo</span>
+                    <span className="text-[10px] opacity-70">Encontrá más conexiones</span>
+                  </button>
+                </motion.div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

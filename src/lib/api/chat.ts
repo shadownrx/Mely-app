@@ -7,8 +7,8 @@ export function listMessages(connectionId: string, cursor?: string) {
   return apiRequest<{ messages: Message[] }>(`/chat/${connectionId}/messages${qs}`);
 }
 
-export function sendMessage(connectionId: string, body: string) {
-  return apiRequest<Message>(`/chat/${connectionId}/messages`, { method: 'POST', body: { body } });
+export function sendMessage(connectionId: string, body: string, replyToId?: string) {
+  return apiRequest<Message>(`/chat/${connectionId}/messages`, { method: 'POST', body: { body, replyToId } });
 }
 
 export async function sendPhoto(connectionId: string, file: File): Promise<Message> {

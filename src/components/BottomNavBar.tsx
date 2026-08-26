@@ -62,11 +62,11 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   return (
     <nav
       id="bottom-navigation-bar"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-      className={`fixed bottom-0 w-full z-50 max-w-[440px] left-1/2 -translate-x-1/2 border-t backdrop-blur-xl transition-colors duration-300 ${
+      style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
+      className={`fixed left-1/2 -translate-x-1/2 z-50 w-[calc(100%-24px)] max-w-[416px] rounded-[28px] border liquid-glass transition-colors duration-300 ${
         isLight
-          ? 'bg-white/95 border-[#ffe4e6] shadow-[0_-4px_25px_rgba(225,29,72,0.08)]'
-          : 'bg-[#0d070a]/95 border-[#e11d48]/20 shadow-2xl'
+          ? 'bg-white/75 border-white/60 shadow-elevation-lg'
+          : 'bg-[#0d070a]/65 border-white/10 shadow-elevation-lg'
       }`}
     >
       <div className="flex justify-around items-center py-1.5 px-2 w-full max-w-full">

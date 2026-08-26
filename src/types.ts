@@ -105,6 +105,14 @@ export interface Match {
   other: Profile;
 }
 
+export interface MessageReplyPreview {
+  id: string;
+  body: string;
+  type: MessageType;
+  senderId: string;
+  imageUrl: string | null;
+}
+
 export interface Message {
   id: string;
   connectionId: string;
@@ -112,6 +120,8 @@ export interface Message {
   type: MessageType;
   body: string;
   imageUrl: string | null;
+  replyToId: string | null;
+  replyTo: MessageReplyPreview | null;
   createdAt: string;
   readAt: string | null;
 }

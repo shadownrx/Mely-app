@@ -73,7 +73,8 @@ function useInvalidateChat(connectionId: string) {
 export function useSendMessage(connectionId: string) {
   const invalidate = useInvalidateChat(connectionId);
   return useMutation({
-    mutationFn: (body: string) => chatApi.sendMessage(connectionId, body),
+    mutationFn: ({ body, replyToId }: { body: string; replyToId?: string }) =>
+      chatApi.sendMessage(connectionId, body, replyToId),
     onSuccess: invalidate,
   });
 }

@@ -207,6 +207,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
   const [activeReactionMenuMsgId, setActiveReactionMenuMsgId] = useState<string | null>(null);
   const [activeOptionsMenuMsgId, setActiveOptionsMenuMsgId] = useState<string | null>(null);
+  const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [selectedStickerDetail, setSelectedStickerDetail] = useState<WhatsAppSticker | null>(null);
 
   const [inChatSearchOpen, setInChatSearchOpen] = useState(false);
@@ -331,12 +332,16 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     }
   };
 
+  // El redondeo (rounded-[20px]) se aplica una sola vez en el wrapper de la burbuja —
+  // antes cada rama lo repetía con una asimetría "cola" (rounded-tr/tl-sm) distinta al
+  // estilo iMessage/Telegram que se busca, y el caso de tema preseteado (sin customColor)
+  // ni siquiera la incluía, dejando esa burbuja sin bordes redondeados.
   const getUserBubbleClass = () =>
-    customColor ? 'text-white rounded-2xl rounded-tr-sm shadow-elevation-md border border-white/20' : isLight ? currentTheme.userBubbleLight : currentTheme.userBubbleDark;
+    customColor ? 'text-white shadow-elevation-md border border-white/20' : isLight ? currentTheme.userBubbleLight : currentTheme.userBubbleDark;
   const getPartnerBubbleClass = () =>
     isLight
-      ? 'bg-white text-[#0f172a] rounded-2xl rounded-tl-sm border border-[#fecdd3] shadow-elevation-sm'
-      : 'bg-[#1a0e15] text-[#fff1f2] rounded-2xl rounded-tl-sm border border-[#e11d48]/25 shadow-elevation-sm';
+      ? 'bg-white text-[#0f172a] border border-[#fecdd3] shadow-elevation-sm'
+      : 'bg-[#1a0e15] text-[#fff1f2] border border-[#e11d48]/25 shadow-elevation-sm';
 
   const handleApplyTheme = (themeId: string) => {
     sounds.playClick();
@@ -379,6 +384,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     setViewMode('chat');
     setActiveMediaTray(null);
     setShowAttachmentMenu(false);
+    setReplyingTo(null);
   };
 
   const handleSendText = (e?: React.FormEvent) => {
@@ -389,7 +395,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     setInputText('');
     setActiveMediaTray(null);
     setShowAttachmentMenu(false);
-    sendMessage.mutate(text);
+    sendMessage.mutate({ body: text, replyToId: replyingTo?.id });
+    setReplyingTo(null);
     inputRef.current?.focus();
   };
 
@@ -397,14 +404,14 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     if (!activeConnectionId) return;
     sounds.playStamp();
     setActiveMediaTray(null);
-    sendMessage.mutate(`${STICKER_MARK}${sticker.id}`);
+    sendMessage.mutate({ body: `${STICKER_MARK}${sticker.id}` });
   };
 
   const handleSendGif = (gif: (typeof QUICK_GIFS)[number]) => {
     if (!activeConnectionId) return;
     sounds.playStamp();
     setActiveMediaTray(null);
-    sendMessage.mutate(`${GIF_MARK}${gif.id}`);
+    sendMessage.mutate({ body: `${GIF_MARK}${gif.id}` });
   };
 
   const handlePhotoSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -592,14 +599,14 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
   return (
     <div
-      className={`flex flex-col h-[calc(100dvh-130px)] min-h-[480px] w-full rounded-3xl border overflow-hidden shadow-2xl relative animate-fadeIn ${
+      className={`flex flex-col h-full min-h-0 w-full rounded-3xl border overflow-hidden shadow-2xl relative animate-fadeIn ${
         isLight ? 'bg-[#f4efe8] border-[#fecdd3]' : 'bg-[#0b090a] border-[#e11d48]/30'
       }`}
     >
       <input ref={photoInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePhotoSelected} />
 
       {/* Header */}
-      <div className={`px-3 py-2 border-b flex items-center justify-between shrink-0 relative z-30 shadow-elevation-sm min-h-[56px] ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/25'}`}>
+      <div className={`px-3 py-2 border-b flex items-center justify-between shrink-0 relative z-30 shadow-elevation-sm liquid-glass min-h-[56px] ${isLight ? 'bg-white/60 border-[#fecdd3]/60' : 'bg-[#140b0f]/60 border-[#e11d48]/25'}`}>
         <div className="flex items-center gap-2 min-w-0 flex-1 mr-1">
           <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); setViewMode('inbox'); setActiveMediaTray(null); }} className="h-8 w-8 -ml-1 rounded-full text-[#64748b] hover:text-[#e11d48] shrink-0" title="Volver">
             <span className="material-symbols-outlined text-[22px]">arrow_back</span>
@@ -803,7 +810,19 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     {isStarred && <span className="absolute -top-1 -right-1 text-amber-400 text-[13px]">⭐</span>}
                   </div>
                 ) : (
-                  <div style={isUser && customColor ? { backgroundColor: customColor } : undefined} className={`p-2.5 sm:p-3 relative transition-all shadow-elevation-md ${isUser ? getUserBubbleClass() : getPartnerBubbleClass()}`}>
+                  <div style={isUser && customColor ? { backgroundColor: customColor } : undefined} className={`p-2.5 sm:p-3 relative transition-all shadow-elevation-md rounded-[20px] ${isUser ? getUserBubbleClass() : getPartnerBubbleClass()}`}>
+                    {msg.replyTo && (
+                      <div className={`mb-1.5 pl-2 pr-1 py-1 rounded-lg border-l-2 max-w-[220px] ${
+                        isUser ? 'border-l-white/50 bg-black/10' : isLight ? 'border-l-[#e11d48] bg-black/[0.03]' : 'border-l-[#e11d48] bg-white/5'
+                      }`}>
+                        <span className={`block text-[9.5px] font-bold ${isUser ? 'text-white/80' : 'text-[#e11d48]'}`}>
+                          {msg.replyTo.senderId === msg.senderId ? 'Se respondió a sí mismo' : msg.replyTo.senderId === user?.id ? 'Vos' : partner.displayName}
+                        </span>
+                        <span className={`block text-[11px] truncate ${isUser ? 'text-white/70' : isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                          {msg.replyTo.type === 'IMAGE' ? '📷 Foto' : msg.replyTo.body}
+                        </span>
+                      </div>
+                    )}
                     {gif && (
                       <div className="mb-2 rounded-xl overflow-hidden max-w-[220px] border border-black/10">
                         <img src={gif.url} alt={gif.title} className="w-full h-auto object-cover max-h-52 rounded-xl" referrerPolicy="no-referrer" />
@@ -854,6 +873,13 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
               {activeOptionsMenuMsgId === msg.id && (
                 <div className={`mt-1 z-30 p-1.5 rounded-2xl shadow-2xl flex flex-col gap-1 animate-fadeIn border text-[11px] font-medium ${isLight ? 'bg-white border-[#fecdd3] text-[#0f172a]' : 'bg-[#140b0f] border-[#e11d48]/40 text-[#fff1f2]'} ${isUser ? 'self-end mr-2' : 'self-start ml-2'}`}>
+                  <button
+                    onClick={() => { setReplyingTo(msg); setActiveOptionsMenuMsgId(null); sounds.playClick(); inputRef.current?.focus(); }}
+                    className="px-2.5 py-1 text-left rounded-lg hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-1.5"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">reply</span>
+                    <span>Responder</span>
+                  </button>
                   <button onClick={() => handleToggleStar(msg.id)} className="px-2.5 py-1 text-left rounded-lg hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-[14px]">{isStarred ? 'star_half' : 'star'}</span>
                     <span>{isStarred ? 'Quitar estrella' : 'Destacar'}</span>
@@ -876,7 +902,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               <AvatarImage src={partner.photos[0]?.url} alt={partner.displayName} />
               <AvatarFallback>{partner.displayName.slice(0, 2)}</AvatarFallback>
             </Avatar>
-            <div className={`px-3 py-2 rounded-2xl rounded-tl-sm flex items-center gap-1 shadow-elevation-sm border ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#202c33] border-[#e11d48]/20'}`}>
+            <div className={`px-3 py-2 rounded-[20px] flex items-center gap-1 shadow-elevation-sm border ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#202c33] border-[#e11d48]/20'}`}>
               <span className="w-1.5 h-1.5 bg-[#e11d48] rounded-full animate-bounce [animation-delay:-0.3s]" />
               <span className="w-1.5 h-1.5 bg-[#ff4d67] rounded-full animate-bounce [animation-delay:-0.15s]" />
               <span className="w-1.5 h-1.5 bg-[#e11d48] rounded-full animate-bounce" />
@@ -892,7 +918,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           <button
             key={idx}
             type="button"
-            onClick={() => { sounds.playClick(); sendMessage.mutate(spark); }}
+            onClick={() => { sounds.playClick(); sendMessage.mutate({ body: spark }); }}
             className={`px-2.5 py-1 border rounded-full text-[11px] font-body-sm whitespace-nowrap shrink-0 transition-colors ${
               isLight ? 'bg-white border-[#fecdd3] text-[#475569] hover:text-[#e11d48]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fda4af]'
             }`}
@@ -1030,7 +1056,30 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       )}
 
       {/* Input bar */}
-      <div className={`border-t p-2 relative z-30 shrink-0 ${isLight ? 'bg-[#f4efe8] border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/25'}`}>
+      <div className={`border-t p-2 relative z-30 shrink-0 liquid-glass ${isLight ? 'bg-white/55 border-[#fecdd3]/60' : 'bg-[#140b0f]/55 border-[#e11d48]/20'}`}>
+        {replyingTo && (
+          <div className={`flex items-center gap-2 mb-1.5 pl-3 pr-1.5 py-1.5 rounded-2xl border-l-4 border animate-fadeIn ${
+            isLight ? 'bg-white border-l-[#e11d48] border-[#fecdd3]' : 'bg-[#1e0c15] border-l-[#e11d48] border-[#e11d48]/25'
+          }`}>
+            <div className="flex-1 min-w-0">
+              <span className="block text-[10.5px] font-bold text-[#e11d48]">
+                Respondiendo a {replyingTo.senderId === user?.id ? 'vos' : partner.displayName}
+              </span>
+              <span className={`block text-[12px] truncate ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
+                {replyingTo.type === 'IMAGE' ? '📷 Foto' : replyingTo.body}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setReplyingTo(null); sounds.playClick(); }}
+              className={`h-7 w-7 shrink-0 flex items-center justify-center rounded-full ${isLight ? 'text-gray-400 hover:text-[#e11d48] hover:bg-[#fff1f3]' : 'text-[#fda4af]/60 hover:text-[#fb7185] hover:bg-white/5'}`}
+              aria-label="Cancelar respuesta"
+              title="Cancelar respuesta"
+            >
+              <span className="material-symbols-outlined text-[16px]">close</span>
+            </button>
+          </div>
+        )}
         <form onSubmit={handleSendText} className="flex items-center gap-1.5" autoComplete="off">
           <div className={`flex-1 flex items-center gap-1.5 px-3 py-1.5 rounded-full border shadow-elevation-sm transition-colors ${isLight ? 'bg-white border-[#fecdd3] focus-within:border-[#e11d48]' : 'bg-[#1e0c15] border-[#e11d48]/30 focus-within:border-[#fb7185]'}`}>
             <button
@@ -1153,12 +1202,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#e11d48] block mb-2">VISTA PREVIA EN VIVO</span>
                 <div className="p-3.5 rounded-2xl border transition-all duration-300 relative overflow-hidden flex flex-col gap-2.5 shadow-inner" style={getWallpaperStyle()}>
                   <div className="flex justify-start">
-                    <div className={`p-2.5 max-w-[80%] ${getPartnerBubbleClass()}`}>
+                    <div className={`p-2.5 max-w-[80%] rounded-[20px] ${getPartnerBubbleClass()}`}>
                       <p className="text-[12px] font-medium leading-tight">¿Qué te parece este color para el chat? ☕</p>
                     </div>
                   </div>
                   <div className="flex justify-end">
-                    <div style={customColor ? { backgroundColor: customColor } : undefined} className={`p-2.5 max-w-[80%] ${getUserBubbleClass()}`}>
+                    <div style={customColor ? { backgroundColor: customColor } : undefined} className={`p-2.5 max-w-[80%] rounded-[20px] ${getUserBubbleClass()}`}>
                       <p className="text-[12px] font-medium leading-tight">¡Me encanta! Queda súper estético ✨</p>
                     </div>
                   </div>

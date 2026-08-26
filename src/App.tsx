@@ -252,34 +252,43 @@ function AppContent() {
   }
 
   // --- MAIN APPLICATION ---
+  // Igual que WhatsApp/Telegram: adentro de una conversación puntual, el chrome de
+  // navegación de la app (header + tab bar) se saca por completo — el chat ya tiene su
+  // propio header con botón de volver, y así aprovecha toda la altura de la pantalla.
+  const isChatDetail = currentTab === 'mensajes' && Boolean(activeConnectionId);
+
   return (
     <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'} antialiased flex flex-col items-center justify-start selection:bg-[#e11d48] selection:text-white`}>
-      <TopAppBar
-        currentTab={currentTab}
-        walletBalance={walletBalance}
-        onTabChange={handleTabChange}
-        onNavigateNotification={handleNotificationNavigate}
-        onOpenMenu={() => setIsMenuOpen(true)}
-        showBackButton={currentTab === 'ajustes'}
-        onBack={() => setCurrentTab(previousTab)}
-        customTitle={
-          currentTab === 'ajustes' ? 'AJUSTES' : currentTab === 'tienda' ? 'TIENDA' : currentTab === 'mensajes' ? 'MELY CHAT' : 'MELY'
-        }
-        customSubtitle={
-          currentTab === 'ajustes'
-            ? 'CONFIGURACIÓN DE PASAPORTE'
-            : currentTab === 'tienda'
-            ? 'BENEFICIOS & PERKS'
-            : currentTab === 'mensajes'
-            ? 'CONEXIONES & CITAS'
-            : undefined
-        }
-      />
+      {!isChatDetail && (
+        <TopAppBar
+          currentTab={currentTab}
+          walletBalance={walletBalance}
+          onTabChange={handleTabChange}
+          onNavigateNotification={handleNotificationNavigate}
+          onOpenMenu={() => setIsMenuOpen(true)}
+          showBackButton={currentTab === 'ajustes'}
+          onBack={() => setCurrentTab(previousTab)}
+          customTitle={
+            currentTab === 'ajustes' ? 'AJUSTES' : currentTab === 'tienda' ? 'TIENDA' : currentTab === 'mensajes' ? 'MELY CHAT' : 'MELY'
+          }
+          customSubtitle={
+            currentTab === 'ajustes'
+              ? 'CONFIGURACIÓN DE PASAPORTE'
+              : currentTab === 'tienda'
+              ? 'BENEFICIOS & PERKS'
+              : currentTab === 'mensajes'
+              ? 'CONEXIONES & CITAS'
+              : undefined
+          }
+        />
+      )}
 
       <main
         style={{
-          paddingTop: `calc(${currentTab === 'mensajes' ? '4rem' : '5rem'} + env(safe-area-inset-top))`,
-          paddingBottom: `calc(${currentTab === 'mensajes' ? '4rem' : '5rem'} + env(safe-area-inset-bottom))`,
+          paddingTop: isChatDetail ? 'env(safe-area-inset-top)' : `calc(${currentTab === 'mensajes' ? '4rem' : '5rem'} + env(safe-area-inset-top))`,
+          // +0.75rem: el nav ahora flota con margen respecto al borde inferior en vez de
+          // quedar pegado (ver BottomNavBar), así el contenido no queda tapado por ese hueco.
+          paddingBottom: isChatDetail ? 'env(safe-area-inset-bottom)' : `calc(${currentTab === 'mensajes' ? '4.75rem' : '5.75rem'} + env(safe-area-inset-bottom))`,
         }}
         className={`w-full max-w-[440px] mx-auto ${currentTab === 'mensajes' ? 'px-2 sm:px-3' : 'px-4'} flex-1 flex flex-col min-h-0`}
       >
@@ -363,7 +372,7 @@ function AppContent() {
         </AnimatePresence>
       </main>
 
-      {currentTab !== 'ajustes' && (
+      {currentTab !== 'ajustes' && !isChatDetail && (
         <BottomNavBar
           currentTab={currentTab}
           onTabChange={handleTabChange}
@@ -412,7 +421,7 @@ function AppContent() {
             onClose={() => setIcebreaker(null)}
             partnerName={icebreaker.partnerName}
             onSendIcebreakerToChat={(qText) => {
-              icebreakerSendMessage.mutate(qText);
+              icebreakerSendMessage.mutate({ body: qText });
               setIcebreaker(null);
             }}
           />

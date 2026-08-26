@@ -506,27 +506,6 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
         </div>
 
         <div className="flex-1 overflow-y-auto no-scrollbar">
-          {matches.length > 0 && (
-            <div className={`pb-4 mb-2 border-b ${isLight ? 'border-[#fecdd3]/60' : 'border-[#e11d48]/15'}`}>
-              <span className={`font-label-caps text-[9.5px] uppercase tracking-wider font-bold block mb-2.5 ${isLight ? 'text-[#475569]' : 'text-[#fda4af]/70'}`}>SPARKS</span>
-              <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
-                {matches.map((m) => (
-                  <button key={`story-${m.id}`} onClick={() => handleOpenConversation(m.id)} className="flex flex-col items-center gap-1 shrink-0 group focus:outline-none">
-                    <div className="relative w-13 h-13 rounded-full p-0.5 bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] group-hover:scale-105 transition-transform shadow-elevation-sm">
-                      <div className="w-full h-full rounded-full overflow-hidden border-2 border-white dark:border-[#0d070a]">
-                        <img src={m.other.photos[0]?.url} alt={m.other.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                      </div>
-                      {m.other.lastActive === 'En línea' && <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#10b981] border-2 border-white rounded-full" />}
-                    </div>
-                    <span className={`font-label-caps text-[9.5px] font-bold tracking-wider uppercase max-w-[54px] truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                      {m.other.displayName}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           <div className="space-y-0.5 pb-2">
             {isLoadingMatches && matches.length === 0 ? (
               <div className="space-y-1">

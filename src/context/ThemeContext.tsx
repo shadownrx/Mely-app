@@ -53,6 +53,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     const root = document.documentElement;
     const body = document.body;
+    // La barra de estado del OS toma este color cuando la PWA corre standalone (sin la
+    // barra de direcciones del navegador) — si queda fija en el rosa de marca en vez de
+    // seguir el tema, se ve como una franja roja pegada arriba que no combina con nada.
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 
     if (theme === 'light') {
       root.classList.add('theme-light');
@@ -61,6 +65,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       body.classList.remove('theme-dark', 'dark');
       body.style.backgroundColor = '#ffffff';
       body.style.color = '#0f172a';
+      themeColorMeta?.setAttribute('content', '#ffffff');
     } else {
       root.classList.add('theme-dark', 'dark');
       root.classList.remove('theme-light');
@@ -68,6 +73,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       body.classList.remove('theme-light');
       body.style.backgroundColor = '#0b090a';
       body.style.color = '#fdf2f4';
+      themeColorMeta?.setAttribute('content', '#0b090a');
     }
   }, [theme]);
 

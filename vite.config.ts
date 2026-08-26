@@ -21,7 +21,7 @@ export default defineConfig(() => {
           name: 'MELY — Pasaporte de Conexiones',
           short_name: 'MELY',
           description: 'Conexiones intencionales con encuentros verificados en persona.',
-          theme_color: '#e11d48',
+          theme_color: '#0b090a',
           background_color: '#141312',
           display: 'standalone',
           orientation: 'portrait',

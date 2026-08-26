@@ -14,7 +14,7 @@ import { Skeleton } from './ui/skeleton';
 
 interface MessagesViewProps {
   activeConnectionId: string | null;
-  onSelectConnection: (connectionId: string) => void;
+  onSelectConnection: (connectionId: string | null) => void;
   onOpenProposeModal?: (connectionId: string) => void;
   onOpenIcebreaker?: (partnerName: string) => void;
   onOpenDateQR?: (connectionId: string, partnerName: string, partnerAvatar: string) => void;
@@ -608,7 +608,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {/* Header */}
       <div className={`px-3 py-2 border-b flex items-center justify-between shrink-0 relative z-30 shadow-elevation-sm liquid-glass min-h-[56px] ${isLight ? 'bg-white/60 border-[#fecdd3]/60' : 'bg-[#140b0f]/60 border-[#e11d48]/25'}`}>
         <div className="flex items-center gap-2 min-w-0 flex-1 mr-1">
-          <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); setViewMode('inbox'); setActiveMediaTray(null); }} className="h-8 w-8 -ml-1 rounded-full text-[#64748b] hover:text-[#e11d48] shrink-0" title="Volver">
+          <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); setViewMode('inbox'); setActiveMediaTray(null); onSelectConnection(null); }} className="h-8 w-8 -ml-1 rounded-full text-[#64748b] hover:text-[#e11d48] shrink-0" title="Volver">
             <span className="material-symbols-outlined text-[22px]">arrow_back</span>
           </Button>
 

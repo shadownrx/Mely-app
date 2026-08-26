@@ -599,7 +599,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
   return (
     <div
-      className={`flex flex-col h-full min-h-0 w-full rounded-3xl border overflow-hidden shadow-2xl relative animate-fadeIn ${
+      className={`flex flex-col h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full rounded-3xl border overflow-hidden shadow-2xl relative animate-fadeIn ${
         isLight ? 'bg-[#f4efe8] border-[#fecdd3]' : 'bg-[#0b090a] border-[#e11d48]/30'
       }`}
     >

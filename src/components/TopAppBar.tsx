@@ -28,7 +28,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
   showBackButton = false,
   onBack,
 }) => {
-  const { theme, isLight, toggleTheme } = useTheme();
+  const { isLight } = useTheme();
 
   return (
     <header
@@ -102,40 +102,9 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
           )}
         </div>
 
-        {/* Right Actions: Notifications, Theme Selector & Wallet Balance */}
+        {/* Right Actions: Notifications & Wallet Balance (el toggle de tema vive en Ajustes) */}
         <div className="flex items-center gap-1.5">
           <NotificationBell onNavigate={onNavigateNotification} />
-
-          {/* Direct Theme Switcher Button */}
-          <Button
-            id="theme-direct-toggle-btn"
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              sounds.playClick();
-              toggleTheme();
-            }}
-            title={
-              isLight
-                ? 'Cambiar a modo Obsidiana & Cereza'
-                : 'Cambiar a modo Blanco & Coral'
-            }
-            className={`px-2 py-1 h-8 rounded-2xl flex items-center gap-1 font-label-caps text-[10px] font-bold uppercase transition-all duration-200 tactile-btn border active:scale-95 shadow-elevation-sm ${
-              isLight
-                ? 'bg-[#fff1f3] text-[#e11d48] border-[#fecdd3] hover:bg-[#ffe4e6]'
-                : 'bg-[#1c0b11] text-[#fda4af] border-[#e11d48]/40 hover:text-white'
-            }`}
-          >
-            <span
-              className="material-symbols-outlined text-[16px]"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              {isLight ? 'wb_sunny' : 'dark_mode'}
-            </span>
-            <span className="hidden sm:inline text-[9px] tracking-wider">
-              {isLight ? 'Coral' : 'Noir'}
-            </span>
-          </Button>
 
           {/* Wallet Balance */}
           <Button

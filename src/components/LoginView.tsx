@@ -291,17 +291,20 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
           </div>
 
           {/* Sign In Button */}
-          <Button id="login-submit-btn" type="submit" variant="cherry" size="lg" disabled={isSubmitting} className="w-full mt-1.5 gap-2">
+          <Button id="login-submit-btn" type="submit" variant="cherry" size="lg" disabled={isSubmitting} className="w-full mt-1.5 h-auto min-h-13 px-4 py-3 whitespace-normal">
             {isSubmitting ? (
-              <span className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-2">
                 <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
                 INICIANDO SESIÓN...
               </span>
             ) : (
-              <>
-                <span>INGRESAR A MI PASAPORTE</span>
-                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-              </>
+              // Bloque (no flex) para que el ícono fluya como una palabra más del texto y
+              // quede pegado a "PASAPORTE" en vez de aparecer suelto en medio del salto de
+              // línea en pantallas angostas donde el texto no entra en una sola línea.
+              <span className="block text-center leading-snug">
+                INGRESAR A MI PASAPORTE{' '}
+                <span className="material-symbols-outlined text-[18px] align-middle">arrow_forward</span>
+              </span>
             )}
           </Button>
         </form>
@@ -332,10 +335,12 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
             sounds.playClick();
             onGoToRegister();
           }}
-          className="w-full gap-2 text-[10px] tracking-widest text-[#e11d48] border-[#fecdd3] dark:border-[#e11d48]/40"
+          className="w-full px-4 text-[10px] tracking-widest text-[#e11d48] border-[#fecdd3] dark:border-[#e11d48]/40 h-auto min-h-13 py-3 whitespace-normal"
         >
-          <span className="material-symbols-outlined text-[16px]">how_to_reg</span>
-          <span>REGISTRARSE / SOLICITAR PASAPORTE</span>
+          <span className="block text-center leading-snug">
+            <span className="material-symbols-outlined text-[16px] align-middle mr-1">how_to_reg</span>
+            REGISTRARSE / SOLICITAR PASAPORTE
+          </span>
         </Button>
 
         <span className={`font-meta-data text-[9px] uppercase tracking-wider mt-2 ${isLight ? 'text-gray-400' : 'text-[#fda4af]/40'}`}>

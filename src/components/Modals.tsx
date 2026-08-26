@@ -206,9 +206,11 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
           </div>
 
           <div className="pt-2">
-            <Button type="submit" variant="cherry" size="lg" disabled={proposeDate.isPending} className="w-full gap-2">
-              <span>ENVIAR INVITACIÓN TICKET</span>
-              <span className="material-symbols-outlined text-[16px]">confirmation_number</span>
+            <Button type="submit" variant="cherry" size="lg" disabled={proposeDate.isPending} className="w-full h-auto min-h-13 px-4 py-3 whitespace-normal">
+              <span className="block text-center leading-snug">
+                ENVIAR INVITACIÓN TICKET{' '}
+                <span className="material-symbols-outlined text-[16px] align-middle">confirmation_number</span>
+              </span>
             </Button>
           </div>
         </form>

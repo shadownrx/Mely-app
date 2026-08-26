@@ -438,9 +438,11 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
               </div>
             )}
 
-            <Button type="button" variant="cherry" onClick={handleStep1Continue} className="mt-2 w-full gap-2">
-              <span>CONTINUAR A FOTOGRAFÍA</span>
-              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+            <Button type="button" variant="cherry" onClick={handleStep1Continue} className="mt-2 w-full px-4 h-auto min-h-11 py-2.5 whitespace-normal">
+              <span className="block text-center leading-snug">
+                CONTINUAR A FOTOGRAFÍA{' '}
+                <span className="material-symbols-outlined text-[16px] align-middle">arrow_forward</span>
+              </span>
             </Button>
 
             {!googleData && (
@@ -496,10 +498,12 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                 sounds.playClick();
                 setStep(3);
               }}
-              className="mt-2 w-full gap-2"
+              className="mt-2 w-full px-4 h-auto min-h-11 py-2.5 whitespace-normal"
             >
-              <span>CONTINUAR A BIO & INTERESES</span>
-              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              <span className="block text-center leading-snug">
+                CONTINUAR A BIO & INTERESES{' '}
+                <span className="material-symbols-outlined text-[16px] align-middle">arrow_forward</span>
+              </span>
             </Button>
           </div>
         )}
@@ -597,18 +601,18 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
               variant="cherry"
               size="lg"
               disabled={isIssuing || !acceptTerms || !acceptPrivacy}
-              className="w-full h-auto min-h-13 py-3 gap-2 whitespace-normal text-center leading-tight text-[12px] tracking-wide"
+              className="w-full h-auto min-h-13 py-3 px-4 text-center leading-tight text-[12px] tracking-wide whitespace-normal"
             >
               {isIssuing ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="material-symbols-outlined animate-spin text-[18px] shrink-0">progress_activity</span>
-                  <span>ESTAMPANDO PASAPORTE OFICIAL...</span>
+                <span className="block text-center">
+                  <span className="material-symbols-outlined animate-spin text-[18px] align-middle mr-1">progress_activity</span>
+                  ESTAMPANDO PASAPORTE OFICIAL...
                 </span>
               ) : (
-                <>
-                  <span className="material-symbols-outlined text-[18px] shrink-0">workspace_premium</span>
-                  <span>EMITIR MI PASAPORTE (+1,000 PTS)</span>
-                </>
+                <span className="block text-center">
+                  <span className="material-symbols-outlined text-[18px] align-middle mr-1">workspace_premium</span>
+                  EMITIR MI PASAPORTE (+1,000 PTS)
+                </span>
               )}
             </Button>
           </div>

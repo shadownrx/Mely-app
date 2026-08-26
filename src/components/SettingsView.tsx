@@ -742,10 +742,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
                 variant="cherry"
                 onClick={handleSendPhoneCode}
                 disabled={requestPhoneCode.isPending || !phoneInput.trim()}
-                className="w-full gap-2"
+                className="w-full h-auto min-h-11 py-2.5 whitespace-normal"
               >
-                <span className="material-symbols-outlined text-[18px]">chat</span>
-                <span>{requestPhoneCode.isPending ? 'ENVIANDO...' : 'ENVIAR CÓDIGO POR WHATSAPP'}</span>
+                <span className="block text-center leading-snug">
+                  <span className="material-symbols-outlined text-[18px] align-middle mr-1">chat</span>
+                  {requestPhoneCode.isPending ? 'ENVIANDO...' : 'ENVIAR CÓDIGO POR WHATSAPP'}
+                </span>
               </Button>
             </>
           ) : (

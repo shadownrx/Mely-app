@@ -637,6 +637,10 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           </div>
         </div>
 
+        {/* Solo las 2 acciones más contextuales quedan siempre visibles (proponer cita y
+            estado de verificación) — Ruleta y Personalizar tema se mudan al menú "⋮" de
+            abajo. Antes, con las 4 juntas + badge + menú, el nombre/estado de la izquierda
+            se comprimía a 0px de ancho en pantallas angostas y quedaba pegado al avatar. */}
         <div className="flex items-center gap-1 shrink-0">
           {onOpenProposeModal && (
             <Button size="sm" onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }} className="h-8 px-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full font-label-caps text-[10px] font-bold uppercase flex items-center gap-1 shadow-elevation-sm shrink-0">
@@ -644,15 +648,10 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               <span>Cita</span>
             </Button>
           )}
-          {onOpenIcebreaker && (
-            <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); onOpenIcebreaker(partner.displayName); }} className={`h-8 w-8 rounded-full shrink-0 ${isLight ? 'text-amber-600' : 'text-amber-400'}`} title="Ruleta de Preguntas">
-              <span className="material-symbols-outlined text-[19px]">casino</span>
-            </Button>
-          )}
           {onOpenDateQR && (activeMatch.status === 'DATE_AGREED' || activeMatch.status === 'DATE_VERIFIED' || activeMatch.status === 'SECOND_DATE') && (
             <button
               onClick={() => { sounds.playScanBeep(); onOpenDateQR(activeMatch.id, partner.displayName, partner.photos[0]?.url ?? ''); }}
-              className={`px-2 py-1 rounded-xl text-[9px] font-label-caps uppercase font-bold flex items-center gap-1 border transition-all ${
+              className={`px-2 py-1 rounded-xl text-[9px] font-label-caps uppercase font-bold flex items-center gap-1 border transition-all shrink-0 ${
                 activeMatch.status === 'DATE_VERIFIED' || activeMatch.status === 'SECOND_DATE' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' : 'bg-[#e11d48]/10 text-[#e11d48] border-[#e11d48]/30 animate-pulse'
               }`}
               title="Ver Pase QR"
@@ -661,9 +660,6 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               <span>{activeMatch.status === 'DATE_VERIFIED' || activeMatch.status === 'SECOND_DATE' ? 'Verificada' : 'Pase QR'}</span>
             </button>
           )}
-          <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); setShowThemeCustomizer(true); }} className={`h-8 w-8 rounded-full shrink-0 ${isLight ? 'text-[#e11d48]' : 'text-[#fda4af]'}`} title="Personalizar tema">
-            <span className="material-symbols-outlined text-[18px]">palette</span>
-          </Button>
           <div className="relative shrink-0">
             <Button variant="ghost" size="icon" onClick={() => setShowHeaderMenu(!showHeaderMenu)} className={`h-8 w-8 rounded-full ${isLight ? 'text-[#475569]' : 'text-[#fda4af]/80'}`} title="Más opciones">
               <span className="material-symbols-outlined text-[19px]">more_vert</span>
@@ -683,6 +679,16 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   <button onClick={() => { setShowHeaderMenu(false); setActiveMediaTray('stickers'); }} className="w-full text-left px-3 py-2 text-[12px] font-medium rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2">
                     <span className="material-symbols-outlined text-[16px] text-[#e11d48]">auto_awesome</span>
                     <span>Panel de Stickers</span>
+                  </button>
+                  {onOpenIcebreaker && (
+                    <button onClick={() => { setShowHeaderMenu(false); onOpenIcebreaker(partner.displayName); }} className="w-full text-left px-3 py-2 text-[12px] font-medium rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2">
+                      <span className={`material-symbols-outlined text-[16px] ${isLight ? 'text-amber-600' : 'text-amber-400'}`}>casino</span>
+                      <span>Ruleta de Preguntas</span>
+                    </button>
+                  )}
+                  <button onClick={() => { setShowHeaderMenu(false); setShowThemeCustomizer(true); }} className="w-full text-left px-3 py-2 text-[12px] font-medium rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[16px] text-[#e11d48]">palette</span>
+                    <span>Personalizar tema</span>
                   </button>
                 </div>
               </>

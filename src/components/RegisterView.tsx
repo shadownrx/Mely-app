@@ -36,7 +36,7 @@ function isAdult(dateOfBirth: string): boolean {
 }
 
 export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googlePrefill }) => {
-  const { isLight, toggleTheme } = useTheme();
+  const { isLight } = useTheme();
   const { register, refreshUser, loginWithGoogle, registerWithGoogle } = useAuth();
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
@@ -187,7 +187,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
       const message =
         err instanceof ApiError
           ? err.code === 'EMAIL_TAKEN'
-            ? 'Ese correo ya tiene un pasaporte emitido. Iniciá sesión.'
+            ? 'Ese correo ya tiene una cuenta registrada. Iniciá sesión.'
             : err.message
           : 'No pudimos completar el registro. Probá de nuevo.';
       setSubmitError(message);
@@ -195,10 +195,18 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
     }
   };
 
+  const stepTitle = step === 1 ? 'Creá tu cuenta' : step === 2 ? 'Tu foto' : 'Bio e intereses';
+  const stepSubtitle =
+    step === 1
+      ? 'Sumate a MELY y empezá a conocer gente real, verificada.'
+      : step === 2
+      ? 'Elegí una foto clara donde se te vea bien. Podés cambiarla después.'
+      : 'Contá un poco de vos para romper el hielo.';
+
   return (
-    <div className={`w-full max-w-[420px] mx-auto min-h-screen py-6 px-4 flex flex-col justify-between animate-fadeIn pb-12 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-      {/* Top Header & Theme Switcher */}
-      <div className="w-full flex justify-between items-center mb-5 pb-3 border-b border-[#e11d48]/25">
+    <div className={`w-full max-w-[420px] mx-auto min-h-screen py-6 px-6 flex flex-col animate-fadeIn pb-12 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+      {/* Back + step dots, onboarding chrome */}
+      <div className="flex items-center gap-3.5 mb-6">
         <button
           type="button"
           onClick={() => {
@@ -209,129 +217,33 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
               onGoToLogin();
             }
           }}
-          className={`flex items-center gap-1 font-label-caps text-[10px] uppercase font-bold focus:outline-none cursor-pointer ${isLight ? 'text-[#64748b] hover:text-[#0f172a]' : 'text-[#fda4af] hover:text-[#fff1f2]'}`}
+          className={`w-9 h-9 -ml-1.5 rounded-full flex items-center justify-center focus:outline-none cursor-pointer ${
+            isLight ? 'text-[#0f172a] hover:bg-[#f2f2f4]' : 'text-[#fff1f2] hover:bg-white/8'
+          }`}
+          aria-label="Volver"
         >
-          <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-          <span>{step > 1 ? 'Paso Anterior' : 'Iniciar Sesión'}</span>
+          <span className="material-symbols-outlined text-[20px]">arrow_back</span>
         </button>
-
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            onClick={() => {
-              sounds.playClick();
-              toggleTheme();
-            }}
-            title="Cambiar tema"
-          >
-            <span className="material-symbols-outlined text-[15px] block">
-              {isLight ? 'dark_mode' : 'light_mode'}
-            </span>
-          </Button>
-
-          <div className="flex items-center gap-1.5 ml-1">
-            <span className={`w-2.5 h-2.5 rounded-full transition-all ${step >= 1 ? 'bg-[#e11d48] shadow-[0_0_8px_rgba(225,29,72,0.8)]' : isLight ? 'bg-gray-200' : 'bg-white/20'}`} />
-            <span className={`w-2.5 h-2.5 rounded-full transition-all ${step >= 2 ? 'bg-[#e11d48] shadow-[0_0_8px_rgba(225,29,72,0.8)]' : isLight ? 'bg-gray-200' : 'bg-white/20'}`} />
-            <span className={`w-2.5 h-2.5 rounded-full transition-all ${step >= 3 ? 'bg-[#e11d48] shadow-[0_0_8px_rgba(225,29,72,0.8)]' : isLight ? 'bg-gray-200' : 'bg-white/20'}`} />
-          </div>
+        <div className="flex items-center gap-1.5">
+          <span className={`w-[22px] h-1 rounded-full transition-colors ${step >= 1 ? 'bg-[#e11d48]' : isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`} />
+          <span className={`w-[22px] h-1 rounded-full transition-colors ${step >= 2 ? 'bg-[#e11d48]' : isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`} />
+          <span className={`w-[22px] h-1 rounded-full transition-colors ${step >= 3 ? 'bg-[#e11d48]' : isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`} />
         </div>
       </div>
 
-      {/* Hero Passport Application Badge */}
-      <div className="text-center mb-5">
-        <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border mb-2 ${isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#e11d48]/15 border-[#e11d48]/30'}`}>
-          <span className="text-[12px]">🇦🇷</span>
-          <span className="font-label-caps text-[9px] text-[#e11d48] uppercase tracking-[0.2em] font-bold">
-            REPÚBLICA ARGENTINA • MELY CLUB
-          </span>
-        </div>
-        <h2 className={`font-headline-md text-[22px] font-black tracking-tight ${isLight ? 'text-[#0f172a]' : 'text-transparent bg-clip-text bg-gradient-to-r from-[#fb7185] to-[#fff1f2]'}`}>
-          Emisión de Pasaporte de Conexiones
-        </h2>
-        <p className={`font-body-sm text-[12px] mt-1 max-w-[340px] mx-auto ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
-          Creá tu credencial oficial para citas presenciales y encuentros verificados en Argentina.
-        </p>
-      </div>
+      <span className="font-headline-md text-[22px] font-bold">{stepTitle}</span>
+      <p className={`text-[13.5px] mt-1.5 mb-7 leading-relaxed ${isLight ? 'text-[#64748b]' : 'text-[#a89a9e]'}`}>{stepSubtitle}</p>
 
-      {/* Live Passport Card Preview */}
-      <div
-        className={`rounded-3xl p-4 border relative overflow-hidden shadow-2xl mb-5 ticket-edge-bottom ${
-          isLight
-            ? 'bg-white border-[#fecdd3] shadow-[0_10px_30px_rgba(225,29,72,0.08)]'
-            : 'bg-[#140b0f] border-[#e11d48]/35'
-        }`}
-      >
-        <div
-          className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(#e11d48 1px, transparent 1px)',
-            backgroundSize: '12px 12px',
-          }}
-        />
-
-        <div className="flex items-center gap-3.5 relative z-10">
-          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#e11d48] shrink-0 p-0.5 bg-[#fff5f6] dark:bg-[#0b0507] shadow-elevation-md flex items-center justify-center">
-            {avatarPreview ? (
-              <img src={avatarPreview} alt="Avatar Preview" className="w-full h-full object-cover rounded-full" />
-            ) : (
-              <span className="material-symbols-outlined text-[26px] text-[#e11d48]">person</span>
-            )}
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5">
-              <span className={`font-headline-md text-[18px] font-bold truncate block ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                {name || 'Tu Nombre'}
-              </span>
-            </div>
-            <span className="font-meta-data text-[10px] text-[#e11d48] uppercase tracking-wider block truncate font-bold">
-              Nuevo Miembro • {city}
-            </span>
-            <span className={`font-body-sm text-[11px] block truncate mt-0.5 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
-              {job || 'Tu ocupación'}
-            </span>
-          </div>
-
-          <div className="w-10 h-10 rounded-full border border-dashed border-[#e11d48] flex items-center justify-center text-[#e11d48] shrink-0">
-            <span className="material-symbols-outlined text-[20px]">
-              verified_user
-            </span>
-          </div>
-        </div>
-
-        <div className={`mt-3 pt-2.5 border-t flex justify-between items-center text-[9px] font-label-caps ${isLight ? 'border-[#fecdd3] text-[#64748b]' : 'border-[#e11d48]/20 text-[#fda4af]/60'}`}>
-          <span>PASAPORTE OFICIAL ARGENTINA</span>
-          <span className="text-[#e11d48] font-bold">+1,000 PTS BONO DE BIENVENIDA</span>
-        </div>
-      </div>
-
-      {/* Multistep Form */}
-      <form
-        onSubmit={handleCompleteRegistration}
-        className={`rounded-3xl p-5 border shadow-2xl flex flex-col gap-4 ${
-          isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'
-        }`}
-      >
+      <form onSubmit={handleCompleteRegistration} className="flex flex-col gap-4">
         {/* STEP 1: Personal Identification */}
         {step === 1 && (
-          <div className="flex flex-col gap-3.5 animate-fadeIn">
-            <div className={`border-b pb-2 mb-1 flex justify-between items-center ${isLight ? 'border-[#fecdd3]' : 'border-[#e11d48]/20'}`}>
-              <span className="font-label-caps text-[10px] text-[#e11d48] uppercase font-bold tracking-wider">
-                1. IDENTIDAD & ACCESO
-              </span>
-              <span className={`font-meta-data text-[9px] font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>PASO 1 DE 3</span>
-            </div>
-
+          <div className="flex flex-col gap-4 animate-fadeIn">
             {step1Error && (
-              <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] font-body-sm">
-                {step1Error}
-              </div>
+              <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px]">{step1Error}</div>
             )}
 
             <div>
-              <Label className="mb-1 block">Nombre Completo / Titular del Pasaporte</Label>
+              <Label className="mb-1 block">Nombre</Label>
               <Input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Ej. Mariel Juárez" />
             </div>
 
@@ -342,7 +254,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
               </div>
 
               <div>
-                <Label className="mb-1 block">Ciudad / Barrio</Label>
+                <Label className="mb-1 block">Ciudad</Label>
                 <Select value={city} onValueChange={setCity}>
                   <SelectTrigger className="text-[12px]">
                     <SelectValue />
@@ -360,7 +272,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
 
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <Label className="mb-1 block">Tu género</Label>
+                <Label className="mb-1 block">Género</Label>
                 <Select value={gender} onValueChange={(v) => setGender(v as Gender)}>
                   <SelectTrigger className="text-[12px]">
                     <SelectValue />
@@ -382,7 +294,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             </div>
 
             <div>
-              <Label className="mb-1.5 block">Te gustaría conocer a</Label>
+              <Label className="mb-1.5 block">Buscás conocer a</Label>
               <div className="flex flex-wrap gap-1.5">
                 {GENDER_OPTIONS.map((g) => {
                   const isSelected = seeking.includes(g.value);
@@ -391,15 +303,15 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                       key={g.value}
                       type="button"
                       onClick={() => toggleSeeking(g.value)}
-                      className={`px-3 py-1.5 rounded-full text-[11px] font-body-sm transition-all border cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-full text-[12px] transition-all border cursor-pointer ${
                         isSelected
-                          ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent shadow-elevation-sm'
+                          ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent'
                           : isLight
-                          ? 'bg-white text-[#475569] border-[#fecdd3] hover:border-[#e11d48]'
-                          : 'bg-[#0b0507] text-[#fda4af]/70 border-[#e11d48]/25 hover:border-[#e11d48]/50'
+                          ? 'bg-[#f7f7f8] text-[#475569] border-[#e7e7ea] hover:border-[#e11d48]/40'
+                          : 'bg-white/5 text-[#a89a9e] border-white/10 hover:border-[#e11d48]/40'
                       }`}
                     >
-                      {isSelected ? `✓ ${g.label}` : g.label}
+                      {g.label}
                     </button>
                   );
                 })}
@@ -407,7 +319,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             </div>
 
             <div>
-              <Label className="mb-1 block">Correo Electrónico</Label>
+              <Label className="mb-1 block">Email</Label>
               <Input
                 type="email"
                 required
@@ -415,44 +327,38 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu.correo@mely.app"
-                className={`font-mono text-[12px] ${googleData ? 'opacity-70' : ''}`}
+                className={googleData ? 'opacity-70' : ''}
               />
             </div>
 
             {googleData ? (
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#10b981]/10 border border-[#10b981]/30 text-[#059669] text-[11px] font-body-sm">
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#10b981]/10 border border-[#10b981]/30 text-[#059669] text-[11px]">
                 <span className="material-symbols-outlined text-[16px]">verified</span>
                 <span>Cuenta verificada con Google. No necesitás contraseña.</span>
               </div>
             ) : (
               <div>
-                <Label className="mb-1 block">Crear Llave de Acceso (Contraseña)</Label>
+                <Label className="mb-1 block">Contraseña</Label>
                 <Input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Mínimo 8 caracteres, letras y números"
-                  className="font-mono text-[12px]"
                 />
               </div>
             )}
 
-            <Button type="button" variant="cherry" onClick={handleStep1Continue} className="mt-2 w-full px-4 h-auto min-h-11 py-2.5 whitespace-normal">
-              <span className="block text-center leading-snug">
-                CONTINUAR A FOTOGRAFÍA{' '}
-                <span className="material-symbols-outlined text-[16px] align-middle">arrow_forward</span>
-              </span>
+            <Button type="button" variant="cherry" onClick={handleStep1Continue} className="mt-1 w-full normal-case tracking-normal text-[15px]">
+              Continuar
             </Button>
 
             {!googleData && (
               <>
                 <div className="flex items-center gap-3 mt-1">
-                  <span className={`flex-1 h-px ${isLight ? 'bg-[#fecdd3]' : 'bg-[#e11d48]/25'}`} />
-                  <span className={`font-label-caps text-[9px] uppercase tracking-widest font-bold ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
-                    O CONTINUÁ CON
-                  </span>
-                  <span className={`flex-1 h-px ${isLight ? 'bg-[#fecdd3]' : 'bg-[#e11d48]/25'}`} />
+                  <span className={`flex-1 h-px ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/10'}`} />
+                  <span className={`text-[12px] ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>o continuá con</span>
+                  <span className={`flex-1 h-px ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/10'}`} />
                 </div>
                 <GoogleAuthButton onCredential={handleGoogleCredential} text="signup_with" />
               </>
@@ -462,31 +368,24 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
 
         {/* STEP 2: Photo */}
         {step === 2 && (
-          <div className="flex flex-col gap-3.5 animate-fadeIn">
-            <div className={`border-b pb-2 mb-1 flex justify-between items-center ${isLight ? 'border-[#fecdd3]' : 'border-[#e11d48]/20'}`}>
-              <span className="font-label-caps text-[10px] text-[#e11d48] uppercase font-bold tracking-wider">
-                2. FOTOGRAFÍA
-              </span>
-              <span className={`font-meta-data text-[9px] font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>PASO 2 DE 3</span>
-            </div>
-
+          <div className="flex flex-col gap-4 animate-fadeIn">
             <div className="flex flex-col items-center gap-3 py-2">
-              <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-[#e11d48] p-0.5 bg-[#fff5f6] dark:bg-[#0b0507] shadow-elevation-md flex items-center justify-center">
+              <div className={`w-28 h-28 rounded-full overflow-hidden border ${isLight ? 'border-[#e7e7ea] bg-[#f7f7f8]' : 'border-white/10 bg-white/5'} flex items-center justify-center`}>
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover rounded-full" />
                 ) : (
-                  <span className="material-symbols-outlined text-[48px] text-[#e11d48]">person</span>
+                  <span className="material-symbols-outlined text-[44px] text-[#e11d48]">person</span>
                 )}
               </div>
               <label
-                className={`px-4 py-2 rounded-2xl border cursor-pointer font-label-caps text-[10px] uppercase font-bold tactile-btn ${
-                  isLight ? 'bg-[#fff5f6] border-[#fecdd3] text-[#e11d48]' : 'bg-[#0b0507] border-[#e11d48]/30 text-[#fda4af]'
+                className={`px-4 py-2 rounded-full border cursor-pointer text-[13px] font-bold ${
+                  isLight ? 'bg-[#f7f7f8] border-[#e7e7ea] text-[#e11d48]' : 'bg-white/5 border-white/10 text-[#fb7185]'
                 }`}
               >
                 {avatarFile ? 'Cambiar foto' : 'Subir foto'}
                 <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarChange} />
               </label>
-              <p className={`font-body-sm text-[11px] text-center max-w-[280px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+              <p className={`text-[11.5px] text-center max-w-[280px] ${isLight ? 'text-[#64748b]' : 'text-[#a89a9e]'}`}>
                 Podés subirla ahora o después desde tu perfil.
               </p>
             </div>
@@ -498,49 +397,32 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                 sounds.playClick();
                 setStep(3);
               }}
-              className="mt-2 w-full px-4 h-auto min-h-11 py-2.5 whitespace-normal"
+              className="mt-1 w-full normal-case tracking-normal text-[15px]"
             >
-              <span className="block text-center leading-snug">
-                CONTINUAR A BIO & INTERESES{' '}
-                <span className="material-symbols-outlined text-[16px] align-middle">arrow_forward</span>
-              </span>
+              Continuar
             </Button>
           </div>
         )}
 
         {/* STEP 3: Bio, Prompts, Interests, and Terms */}
         {step === 3 && (
-          <div className="flex flex-col gap-3.5 animate-fadeIn">
-            <div className={`border-b pb-2 mb-1 flex justify-between items-center ${isLight ? 'border-[#fecdd3]' : 'border-[#e11d48]/20'}`}>
-              <span className="font-label-caps text-[10px] text-[#e11d48] uppercase font-bold tracking-wider">
-                3. BIO, AFINIDADES & EMISIÓN
-              </span>
-              <span className={`font-meta-data text-[9px] font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>PASO 3 DE 3</span>
-            </div>
-
+          <div className="flex flex-col gap-4 animate-fadeIn">
             {submitError && (
-              <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] font-body-sm">
-                {submitError}
-              </div>
+              <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px]">{submitError}</div>
             )}
 
-            {/* Bio Editorial */}
             <div>
-              <Label className="mb-1 block">Bio Editorial del Pasaporte</Label>
+              <Label className="mb-1 block">Bio</Label>
               <Textarea
                 rows={2}
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                placeholder="Describí tus afinidades, gustos y lo que buscás compartir en un encuentro..."
-                className="text-[12px]"
+                placeholder="Contá tus afinidades, gustos y lo que buscás compartir en un encuentro..."
               />
             </div>
 
-            {/* Intereses reales */}
             <div>
-              <div className="flex justify-between items-center mb-1.5">
-                <Label>Intereses ({selectedInterestIds.length}/6)</Label>
-              </div>
+              <Label className="mb-1.5 block">Intereses ({selectedInterestIds.length}/6)</Label>
               <div className="flex flex-wrap gap-1.5">
                 {availableInterests.map((interest) => {
                   const isSelected = selectedInterestIds.includes(interest.id);
@@ -549,89 +431,76 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                       key={interest.id}
                       type="button"
                       onClick={() => toggleInterest(interest.id)}
-                      className={`px-3 py-1 rounded-full text-[11px] font-body-sm transition-all border cursor-pointer ${
+                      className={`px-3 py-1 rounded-full text-[11.5px] transition-all border cursor-pointer ${
                         isSelected
-                          ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent shadow-elevation-sm'
+                          ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent'
                           : isLight
-                          ? 'bg-white text-[#475569] border-[#fecdd3] hover:border-[#e11d48]'
-                          : 'bg-[#0b0507] text-[#fda4af]/70 border-[#e11d48]/25 hover:border-[#e11d48]/50'
+                          ? 'bg-[#f7f7f8] text-[#475569] border-[#e7e7ea] hover:border-[#e11d48]/40'
+                          : 'bg-white/5 text-[#a89a9e] border-white/10 hover:border-[#e11d48]/40'
                       }`}
                     >
-                      {isSelected ? `✓ ${interest.name}` : `+ ${interest.name}`}
+                      {interest.name}
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* Prompt de Cita */}
             <div>
-              <Label className="mb-1 block">Pregunta de Encuentro Presencial (opcional)</Label>
+              <Label className="mb-1 block">Un prompt para romper el hielo (opcional)</Label>
               <Input
                 type="text"
                 value={promptQ}
                 onChange={(e) => setPromptQ(e.target.value)}
-                className="mb-1.5 text-[12px] font-medium text-[#e11d48] dark:text-[#fb7185]"
+                className="mb-1.5 font-medium text-[#e11d48] dark:text-[#fb7185]"
               />
-              <Input
-                type="text"
-                value={promptA}
-                onChange={(e) => setPromptA(e.target.value)}
-                placeholder="Tu respuesta..."
-                className="text-[12px]"
-              />
+              <Input type="text" value={promptA} onChange={(e) => setPromptA(e.target.value)} placeholder="Tu respuesta..." />
             </div>
 
-            {/* Terms */}
-            <div className={`p-3 rounded-2xl border flex flex-col gap-2.5 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
-              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[11px] font-normal leading-relaxed text-slate-600 dark:text-rose-300/80">
+            {/* Single combined consent block, not a wall of checkboxes */}
+            <div className="flex flex-col gap-2.5">
+              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-slate-600 dark:text-[#a89a9e]">
                 <Checkbox required checked={acceptTerms} onCheckedChange={(v) => setAcceptTerms(v === true)} className="mt-0.5 shrink-0" />
-                <span>Acepto los <strong>Términos y Condiciones</strong> de MELY Argentina.</span>
+                <span>Acepto los <strong>Términos y condiciones</strong> de MELY.</span>
               </Label>
-              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[11px] font-normal leading-relaxed text-slate-600 dark:text-rose-300/80">
+              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-slate-600 dark:text-[#a89a9e]">
                 <Checkbox required checked={acceptPrivacy} onCheckedChange={(v) => setAcceptPrivacy(v === true)} className="mt-0.5 shrink-0" />
-                <span>Acepto la <strong>Política de Privacidad</strong> y la verificación presencial mediante token en cada encuentro.</span>
+                <span>Acepto la <strong>Política de privacidad</strong> y la verificación presencial en cada encuentro.</span>
               </Label>
             </div>
 
-            {/* Final Issuance Button */}
             <Button
               id="register-submit-btn"
               type="submit"
               variant="cherry"
               size="lg"
               disabled={isIssuing || !acceptTerms || !acceptPrivacy}
-              className="w-full h-auto min-h-13 py-3 px-4 text-center leading-tight text-[12px] tracking-wide whitespace-normal"
+              className="w-full mt-1 normal-case tracking-normal text-[15px]"
             >
               {isIssuing ? (
-                <span className="block text-center">
-                  <span className="material-symbols-outlined animate-spin text-[18px] align-middle mr-1">progress_activity</span>
-                  ESTAMPANDO PASAPORTE OFICIAL...
+                <span className="inline-flex items-center gap-2">
+                  <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                  Creando tu cuenta...
                 </span>
               ) : (
-                <span className="block text-center">
-                  <span className="material-symbols-outlined text-[18px] align-middle mr-1">workspace_premium</span>
-                  EMITIR MI PASAPORTE (+1,000 PTS)
-                </span>
+                'Crear cuenta'
               )}
             </Button>
           </div>
         )}
       </form>
 
-      {/* Switch to Login */}
-      <div className="mt-4 text-center">
+      <div className="mt-8 flex items-center justify-center gap-1.5">
+        <span className={`text-[13.5px] ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>¿Ya tenés cuenta?</span>
         <button
           type="button"
           onClick={() => {
             sounds.playClick();
             onGoToLogin();
           }}
-          className={`font-label-caps text-[10px] uppercase tracking-wider underline focus:outline-none font-bold cursor-pointer ${
-            isLight ? 'text-[#e11d48] hover:text-[#be123c]' : 'text-[#fda4af]/80 hover:text-[#fff1f2]'
-          }`}
+          className="text-[13.5px] font-bold text-[#e11d48] hover:underline cursor-pointer"
         >
-          ¿Ya tenés un Pasaporte emitido? Iniciá Sesión acá
+          Iniciá sesión
         </button>
       </div>
     </div>

@@ -98,281 +98,151 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
   };
 
   return (
-    <div className={`w-full max-w-[420px] mx-auto min-h-screen py-8 px-4 flex flex-col justify-between items-center animate-fadeIn ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-      {/* Top Theme Switcher Bar */}
-      <div className="w-full flex justify-end mb-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            sounds.playClick();
-            toggleTheme();
-          }}
-          className="gap-1.5 rounded-full text-[11px] tracking-normal normal-case font-bold"
-          title="Cambiar tema de color"
-        >
-          <span className="material-symbols-outlined text-[15px]">
-            {isLight ? 'dark_mode' : 'light_mode'}
-          </span>
-          <span>{isLight ? 'Modo Oscuro' : 'Modo Blanco / Coral'}</span>
-        </Button>
-      </div>
-
-      {/* Header Emblem */}
-      <div className="w-full flex flex-col items-center text-center mb-6">
-        {/* Keepsake Stamp Logo */}
-        <div className="relative mb-3 group cursor-pointer" onClick={() => sounds.playStamp()}>
-          <div
-            className={`w-20 h-20 rounded-full border-2 text-[#e11d48] flex items-center justify-center stamp-ink relative shadow-elevation-md ${
-              isLight
-                ? 'border-[#e11d48] bg-white'
-                : 'border-[#e11d48] bg-[#140b0f] shadow-[0_0_25px_rgba(225,29,72,0.35)]'
-            }`}
-          >
-            <div className="absolute inset-1 border border-dashed border-[#e11d48]/40 rounded-full" />
-            <span
-              className="material-symbols-outlined text-[36px] text-[#e11d48]"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              favorite
-            </span>
-          </div>
-          <div className="absolute -bottom-1 -right-1 bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] text-white rounded-full p-1 border-2 border-white dark:border-[#0b0507]">
-            <span className="material-symbols-outlined text-[14px] font-bold block">
-              verified
-            </span>
-          </div>
-        </div>
-
-        <div
-          className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full border mb-1.5 ${
-            isLight
-              ? 'bg-[#fff1f3] border-[#fecdd3] text-[#e11d48]'
-              : 'bg-[#e11d48]/15 border-[#e11d48]/30 text-[#fb7185]'
-          }`}
-        >
-          <span className="text-[11px]">🇦🇷</span>
-          <span className="font-label-caps text-[9px] uppercase tracking-widest font-bold">
-            ARGENTINA
-          </span>
-        </div>
-
-        <h1
-          className={`font-headline-md text-[28px] tracking-[0.22em] uppercase font-black ${
-            isLight
-              ? 'text-[#0f172a]'
-              : 'text-transparent bg-clip-text bg-gradient-to-r from-[#fb7185] to-[#fff1f2]'
-          }`}
-        >
-          MELY
-        </h1>
-        <span className={`font-label-caps text-[10px] tracking-[0.25em] uppercase -mt-1 block font-bold ${isLight ? 'text-[#e11d48]' : 'text-[#fda4af]'}`}>
-          PASAPORTE DE CONEXIONES
-        </span>
-        <div className="h-0.5 w-16 bg-gradient-to-r from-transparent via-[#e11d48] to-transparent mt-3" />
-      </div>
-
-      {/* Main Passport Login Card */}
-      <div
-        className={`w-full rounded-3xl border shadow-2xl overflow-hidden relative ticket-edge-bottom pb-5 ${
-          isLight
-            ? 'bg-white border-[#fecdd3] shadow-[0_10px_30px_rgba(225,29,72,0.08)]'
-            : 'bg-[#140b0f] border-[#e11d48]/30 shadow-2xl'
+    <div className={`w-full max-w-[420px] mx-auto min-h-screen py-10 px-6 flex flex-col justify-center animate-fadeIn ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+      {/* Theme toggle, unobtrusive corner control */}
+      <button
+        type="button"
+        onClick={() => {
+          sounds.playClick();
+          toggleTheme();
+        }}
+        className={`self-end w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+          isLight ? 'bg-[#f2f2f4] text-[#0f172a] hover:bg-[#e7e7ea]' : 'bg-white/8 text-[#fff1f2] hover:bg-white/14'
         }`}
+        title="Cambiar tema de color"
+        aria-label="Cambiar tema de color"
       >
-        {/* Security watermark pattern */}
-        <div
-          className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(#e11d48 1px, transparent 1px)',
-            backgroundSize: '12px 12px',
-          }}
-        />
+        <span className="material-symbols-outlined text-[17px]">{isLight ? 'dark_mode' : 'light_mode'}</span>
+      </button>
 
-        {/* Ticket Header Strip */}
-        <div
-          className={`px-5 py-3.5 border-b flex justify-between items-center ${
-            isLight
-              ? 'bg-[#fff5f6] border-[#fecdd3]'
-              : 'bg-[#1c0d14] border-[#e11d48]/25'
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#e11d48] text-[18px]">
-              login
-            </span>
-            <span className={`font-label-caps text-[10px] tracking-wider uppercase font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-              INICIAR SESIÓN
-            </span>
-          </div>
-          <span className={`font-meta-data text-[9px] uppercase tracking-widest font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
-            ACCESO SEGURO
-          </span>
-        </div>
-
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 pb-3 flex flex-col gap-4 relative z-10">
-          {errorMsg && (
-            <div className="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-[12px] font-body-sm flex items-start gap-2">
-              <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5 text-[#e11d48]">
-                error
-              </span>
-              <span>{errorMsg}</span>
-            </div>
-          )}
-
-          {/* Email Input */}
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="login-email">CORREO ELECTRÓNICO</Label>
-            <div className="relative flex items-center">
-              <span className={`material-symbols-outlined absolute left-3.5 text-[18px] z-10 ${isLight ? 'text-gray-400' : 'text-[#fda4af]/50'}`}>
-                mail
-              </span>
-              <Input
-                id="login-email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu.correo@ejemplo.com"
-                className="pl-10"
-              />
-            </div>
-          </div>
-
-          {/* Password Input */}
-          <div className="flex flex-col gap-1.5">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="login-pass">CONTRASEÑA</Label>
-              <button
-                type="button"
-                onClick={() => {
-                  sounds.playClick();
-                  setShowRecoveryModal(true);
-                }}
-                className="font-label-caps text-[9px] text-[#e11d48] hover:underline uppercase font-bold cursor-pointer"
-              >
-                ¿Olvidaste tu contraseña?
-              </button>
-            </div>
-            <div className="relative flex items-center">
-              <span className={`material-symbols-outlined absolute left-3.5 text-[18px] z-10 ${isLight ? 'text-gray-400' : 'text-[#fda4af]/50'}`}>
-                lock
-              </span>
-              <Input
-                id="login-pass"
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Ingresá tu contraseña"
-                className="pl-10 pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className={`absolute right-3 p-1 focus:outline-none cursor-pointer ${isLight ? 'text-gray-400 hover:text-[#0f172a]' : 'text-[#fda4af]/60 hover:text-[#fff1f2]'}`}
-                aria-label="Ver u ocultar contraseña"
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  {showPassword ? 'visibility_off' : 'visibility'}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Remember Me */}
-          <div className="flex items-center justify-between pt-0.5">
-            <Label className="flex items-center gap-2 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal text-slate-500 dark:text-rose-300/80">
-              <Checkbox checked={rememberMe} onCheckedChange={(v) => setRememberMe(v === true)} />
-              Recordar mi sesión
-            </Label>
-          </div>
-
-          {/* Sign In Button */}
-          <Button id="login-submit-btn" type="submit" variant="cherry" size="lg" disabled={isSubmitting} className="w-full mt-1.5 h-auto min-h-13 px-4 py-3 whitespace-normal">
-            {isSubmitting ? (
-              <span className="inline-flex items-center gap-2">
-                <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
-                INICIANDO SESIÓN...
-              </span>
-            ) : (
-              // Bloque (no flex) para que el ícono fluya como una palabra más del texto y
-              // quede pegado a "PASAPORTE" en vez de aparecer suelto en medio del salto de
-              // línea en pantallas angostas donde el texto no entra en una sola línea.
-              <span className="block text-center leading-snug">
-                INGRESAR A MI PASAPORTE{' '}
-                <span className="material-symbols-outlined text-[18px] align-middle">arrow_forward</span>
-              </span>
-            )}
-          </Button>
-        </form>
-
-        <div className="px-5 pb-5 flex flex-col gap-4 relative z-10">
-          <div className="flex items-center gap-3">
-            <span className={`flex-1 h-px ${isLight ? 'bg-[#fecdd3]' : 'bg-[#e11d48]/25'}`} />
-            <span className={`font-label-caps text-[9px] uppercase tracking-widest font-bold ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
-              O CONTINUÁ CON
-            </span>
-            <span className={`flex-1 h-px ${isLight ? 'bg-[#fecdd3]' : 'bg-[#e11d48]/25'}`} />
-          </div>
-          <GoogleAuthButton onCredential={handleGoogleCredential} text="signin_with" />
-        </div>
+      {/* Wordmark + one-line promise */}
+      <div className="mt-2 mb-9">
+        <span className="font-headline-md text-[30px] font-bold text-[#e11d48]">MELY</span>
+        <p className={`text-[14px] mt-2 leading-relaxed ${isLight ? 'text-[#64748b]' : 'text-[#a89a9e]'}`}>
+          Bienvenida de vuelta. Iniciá sesión para seguir tus citas y conversaciones.
+        </p>
       </div>
 
-      {/* Switch to Register Footer */}
-      <div className="w-full mt-6 flex flex-col items-center gap-3 text-center">
-        <p className={`font-body-sm text-[13px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
-          ¿Aún no tenés cuenta en MELY?
-        </p>
+      {errorMsg && (
+        <div className="mb-4 p-3 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-[12px] flex items-start gap-2">
+          <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5 text-[#e11d48]">error</span>
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="login-email">Email</Label>
+          <Input
+            id="login-email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="tu.correo@ejemplo.com"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="login-pass">Contraseña</Label>
+            <button
+              type="button"
+              onClick={() => {
+                sounds.playClick();
+                setShowRecoveryModal(true);
+              }}
+              className="text-[12.5px] font-bold text-[#e11d48] hover:underline cursor-pointer normal-case tracking-normal"
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
+          <div className="relative flex items-center">
+            <Input
+              id="login-pass"
+              type={showPassword ? 'text' : 'password'}
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Ingresá tu contraseña"
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className={`absolute right-3 p-1 focus:outline-none cursor-pointer ${isLight ? 'text-gray-400 hover:text-[#0f172a]' : 'text-[#a89a9e] hover:text-[#fff1f2]'}`}
+              aria-label="Ver u ocultar contraseña"
+            >
+              <span className="material-symbols-outlined text-[18px]">{showPassword ? 'visibility_off' : 'visibility'}</span>
+            </button>
+          </div>
+        </div>
+
+        <Label className="flex items-center gap-2 cursor-pointer select-none normal-case tracking-normal text-[12.5px] font-normal text-slate-500 dark:text-[#a89a9e]">
+          <Checkbox checked={rememberMe} onCheckedChange={(v) => setRememberMe(v === true)} />
+          Recordar mi sesión
+        </Label>
+
         <Button
+          id="login-submit-btn"
+          type="submit"
+          variant="cherry"
+          size="lg"
+          disabled={isSubmitting}
+          className="w-full mt-1 normal-case tracking-normal text-[15px]"
+        >
+          {isSubmitting ? (
+            <span className="inline-flex items-center gap-2">
+              <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+              Iniciando sesión...
+            </span>
+          ) : (
+            'Iniciar sesión'
+          )}
+        </Button>
+      </form>
+
+      <div className="flex items-center gap-3 my-6">
+        <span className={`flex-1 h-px ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/10'}`} />
+        <span className={`text-[12px] ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>o continuá con</span>
+        <span className={`flex-1 h-px ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/10'}`} />
+      </div>
+
+      <GoogleAuthButton onCredential={handleGoogleCredential} text="signin_with" />
+
+      <div className="mt-8 flex items-center justify-center gap-1.5">
+        <span className={`text-[13.5px] ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>¿No tenés cuenta?</span>
+        <button
           id="btn-switch-register"
           type="button"
-          variant="outline"
-          size="lg"
           onClick={() => {
             sounds.playClick();
             onGoToRegister();
           }}
-          className="w-full px-4 text-[10px] tracking-widest text-[#e11d48] border-[#fecdd3] dark:border-[#e11d48]/40 h-auto min-h-13 py-3 whitespace-normal"
+          className="text-[13.5px] font-bold text-[#e11d48] hover:underline cursor-pointer"
         >
-          <span className="block text-center leading-snug">
-            <span className="material-symbols-outlined text-[16px] align-middle mr-1">how_to_reg</span>
-            REGISTRARSE / SOLICITAR PASAPORTE
-          </span>
-        </Button>
-
-        <span className={`font-meta-data text-[9px] uppercase tracking-wider mt-2 ${isLight ? 'text-gray-400' : 'text-[#fda4af]/40'}`}>
-          MELY ARGENTINA • ENCUENTROS VERIFICADOS EN PERSONA
-        </span>
+          Registrate
+        </button>
       </div>
 
       {/* Password Recovery Modal */}
       <Dialog open={showRecoveryModal} onOpenChange={setShowRecoveryModal}>
         <DialogContent className="w-[calc(100%-2rem)] max-w-[360px] p-6 rounded-3xl">
-          <div className="w-12 h-12 rounded-2xl bg-[#e11d48]/15 border border-[#e11d48]/30 text-[#e11d48] flex items-center justify-center mb-1">
-            <span className="material-symbols-outlined text-[24px]">vpn_key</span>
-          </div>
-
-          <span className="font-label-caps text-[9px] text-[#e11d48] uppercase tracking-widest block font-bold">
-            RECUPERACIÓN SEGURA
-          </span>
           <h3 className={`font-headline-md text-[18px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-            Recuperar Contraseña
+            Recuperar contraseña
           </h3>
-          <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
+          <p className={`text-[12.5px] ${isLight ? 'text-[#64748b]' : 'text-[#a89a9e]'}`}>
             Ingresá el correo asociado a tu cuenta para recibir un enlace seguro de restablecimiento.
           </p>
 
           {recoverySent ? (
-            <div className="p-3 bg-[#10b981]/15 border border-[#10b981]/40 rounded-2xl text-[#059669] text-[12px] font-body-sm text-center font-medium">
-              ✓ Si el correo existe, te enviamos un enlace de restablecimiento. Revisá tu bandeja.
+            <div className="p-3 bg-[#10b981]/15 border border-[#10b981]/40 rounded-2xl text-[#059669] text-[12.5px] text-center font-medium">
+              Si el correo existe, te enviamos un enlace de restablecimiento. Revisá tu bandeja.
             </div>
           ) : (
             <form onSubmit={handleSendRecovery} className="flex flex-col gap-3">
               {recoveryError && (
-                <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] font-body-sm">
+                <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px]">
                   {recoveryError}
                 </div>
               )}
@@ -382,10 +252,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
                 placeholder="tu.correo@ejemplo.com"
                 value={recoveryEmail}
                 onChange={(e) => setRecoveryEmail(e.target.value)}
-                className="font-mono text-[12px]"
               />
-              <Button type="submit" variant="cherry" className="w-full text-[10px]">
-                Enviar Enlace de Recuperación
+              <Button type="submit" variant="cherry" className="w-full normal-case tracking-normal">
+                Enviar enlace de recuperación
               </Button>
             </form>
           )}

@@ -293,7 +293,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
 
   return (
     <div className={`w-full max-w-[420px] mx-auto flex flex-col gap-5 pb-24 animate-fadeIn ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-      <SettingsGroup title="Tu pasaporte" isLight={isLight}>
+      <SettingsGroup title="Tu perfil" isLight={isLight}>
         <SettingsRow
           isLight={isLight}
           icon="badge"

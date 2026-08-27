@@ -299,15 +299,6 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                 isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'
               }`}
             >
-              {/* Security Tint Overlay */}
-              <div
-                className="absolute inset-0 opacity-10 pointer-events-none z-10"
-                style={{
-                  backgroundImage: 'radial-gradient(#e11d48 1px, transparent 1px)',
-                  backgroundSize: '10px 10px',
-                }}
-              />
-
               {/* Dynamic Live Stamp Indicators on Drag */}
               {/* LIKE Stamp (Drag Right) */}
               <motion.div
@@ -352,48 +343,30 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                 </div>
               </motion.div>
 
-              {/* Instant Action Stamps Overlays on Button Click */}
+              {/* Instant Action Feedback on Button Click */}
               {actionState === 'liked' && (
-                <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-[2px]">
-                  <div
-                    className="w-40 h-40 rounded-full border-4 border-[#e11d48] text-[#ff4d67] bg-[#0e070a]/95 flex flex-col items-center justify-center stamp-ink ink-stamp-pressed shadow-[0_0_40px_rgba(225,29,72,0.6)]"
-                    style={{ transform: 'rotate(-10deg)' }}
-                  >
-                    <span className="material-symbols-outlined text-[48px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/45 backdrop-blur-[2px]">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center shadow-[0_10px_30px_rgba(225,29,72,0.5)]">
+                    <span className="material-symbols-outlined text-[40px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
                       favorite
-                    </span>
-                    <span className="font-label-caps text-[12px] tracking-widest font-bold text-white">
-                      SELLO CONEXIÓN
                     </span>
                   </div>
                 </div>
               )}
 
               {actionState === 'passed' && (
-                <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-[2px]">
-                  <div
-                    className="w-36 h-36 rounded-full border-4 border-[#881337] text-[#fda4af] bg-[#0e070a]/95 flex flex-col items-center justify-center stamp-ink ink-stamp-pressed shadow-2xl"
-                    style={{ transform: 'rotate(8deg)' }}
-                  >
-                    <span className="material-symbols-outlined text-[44px] text-[#e11d48]">close</span>
-                    <span className="font-label-caps text-[11px] tracking-widest font-bold text-white">
-                      ARCHIVADO
-                    </span>
+                <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/45 backdrop-blur-[2px]">
+                  <div className="w-24 h-24 rounded-full bg-white/15 border border-white/30 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[36px] text-white">close</span>
                   </div>
                 </div>
               )}
 
               {actionState === 'starred' && (
-                <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-[2px]">
-                  <div
-                    className="w-36 h-36 rounded-full border-4 border-[#ffd700] text-[#ffd700] bg-[#0e070a]/95 flex flex-col items-center justify-center stamp-ink ink-stamp-pressed shadow-2xl"
-                    style={{ transform: 'rotate(5deg)' }}
-                  >
-                    <span className="material-symbols-outlined text-[44px] text-[#ffd700]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/45 backdrop-blur-[2px]">
+                  <div className="w-24 h-24 rounded-full bg-amber-400 flex items-center justify-center shadow-[0_10px_30px_rgba(251,191,36,0.5)]">
+                    <span className="material-symbols-outlined text-[36px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
                       star
-                    </span>
-                    <span className="font-label-caps text-[11px] tracking-widest font-bold text-white">
-                      SUPER SPARK
                     </span>
                   </div>
                 </div>
@@ -626,24 +599,10 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-
-                {/* Ticket Perforation & Stub Metadata */}
-                <div
-                  className={`border-t pt-4 perforation-line flex justify-between items-center text-[10.5px] font-meta-data ${
-                    isLight ? 'border-[#fecdd3] text-[#64748b]' : 'border-[#e11d48]/20 text-[#fda4af]/70'
-                  }`}
-                >
-                  <span>PASAPORTE: {currentProfile.membership.tierLabel}</span>
-                  <span>{currentProfile.lastActive}</span>
-                </div>
               </div>
 
-              {/* Tactile Action Controls Bar */}
-              <div
-                className={`p-4 border-t flex items-center justify-between px-6 ${
-                  isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#0d0609] border-[#e11d48]/20'
-                }`}
-              >
+              {/* Action Controls Bar */}
+              <div className="p-4 flex items-center justify-between px-6">
                 {/* Rewind button */}
                 <motion.button
                   whileHover={{ scale: currentIndex > 0 ? 1.08 : 1 }}

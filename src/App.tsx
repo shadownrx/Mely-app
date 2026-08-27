@@ -273,7 +273,7 @@ function AppContent() {
           }
           customSubtitle={
             currentTab === 'ajustes'
-              ? 'CONFIGURACIÓN DE PASAPORTE'
+              ? 'PERFIL & CUENTA'
               : currentTab === 'tienda'
               ? 'BENEFICIOS & PERKS'
               : currentTab === 'mensajes'

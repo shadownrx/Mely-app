@@ -164,68 +164,60 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
 
   return (
     <div className="flex flex-col gap-4 pb-8 select-none">
-      {/* Top Header Tag & Controls */}
+      {/* Minimal top chrome: small wordmark, one filter icon — the rest live behind small icon buttons instead of labeled pills */}
       <div className="flex justify-between items-center px-1">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#e11d48] animate-pulseGlow" />
-          <Badge
-            variant="outline"
-            className={`font-label-caps text-[10px] uppercase tracking-widest font-bold border-0 px-0 ${
-              isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'
-            }`}
-          >
-            Curaduría MELY
-          </Badge>
-        </div>
+        <span className="font-headline-md text-[19px] font-bold text-[#e11d48]">MELY</span>
 
         <div className="flex items-center gap-1.5">
-          {/* Verified Spots Button */}
           {onOpenVerifiedSpots && (
-            <Button
-              variant="outline"
-              size="sm"
+            <button
               onClick={() => {
                 sounds.playClick();
                 onOpenVerifiedSpots();
               }}
-              className="h-auto px-2.5 py-1 rounded-xl text-[10px] gap-1 text-[#e11d48] dark:text-[#fda4af]"
-              title="Ver Rincones & Beneficios Asociados"
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+                isLight ? 'bg-[#f2f2f4] text-[#0f172a] hover:bg-[#e7e7ea]' : 'bg-white/8 text-[#fff1f2] hover:bg-white/14'
+              }`}
+              title="Rincones & Beneficios"
+              aria-label="Rincones & Beneficios"
             >
-              <span className="material-symbols-outlined text-[13px]">storefront</span>
-              <span className="hidden sm:inline">Rincones</span>
-            </Button>
+              <span className="material-symbols-outlined text-[16px]">storefront</span>
+            </button>
           )}
 
-          {/* Blind Mode Toggle */}
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={() => {
               sounds.playClick();
               setIsBlindMode(!isBlindMode);
             }}
-            className={`h-auto px-2.5 py-1 rounded-xl text-[10px] gap-1 ${
-              isBlindMode ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-transparent shadow-elevation-sm' : ''
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+              isBlindMode
+                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                : isLight
+                ? 'bg-[#f2f2f4] text-[#0f172a] hover:bg-[#e7e7ea]'
+                : 'bg-white/8 text-[#fff1f2] hover:bg-white/14'
             }`}
-            title="Modo Cita a Ciegas: Revela primero la mente y la voz"
+            title="Modo Cita a Ciegas"
+            aria-label="Modo Cita a Ciegas"
           >
-            <span className="material-symbols-outlined text-[13px]">
-              {isBlindMode ? 'visibility' : 'visibility_off'}
-            </span>
-            <span>{isBlindMode ? 'Ciegas ON' : 'Ciegas'}</span>
-          </Button>
+            <span className="material-symbols-outlined text-[16px]">{isBlindMode ? 'visibility' : 'visibility_off'}</span>
+          </button>
 
-          {/* Radar Filters Button */}
           {onOpenFilters && (
-            <Button
-              variant="outline"
-              size="icon-sm"
+            <button
               onClick={() => {
                 sounds.playClick();
                 onOpenFilters();
               }}
-              className={`relative rounded-xl ${activeFiltersCount > 0 ? 'bg-[#e11d48] text-white border-[#e11d48] hover:bg-[#e11d48]' : ''}`}
-              title="Filtros del Radar"
+              className={`relative w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+                activeFiltersCount > 0
+                  ? 'bg-[#e11d48] text-white'
+                  : isLight
+                  ? 'bg-[#f2f2f4] text-[#0f172a] hover:bg-[#e7e7ea]'
+                  : 'bg-white/8 text-[#fff1f2] hover:bg-white/14'
+              }`}
+              title="Filtros"
+              aria-label="Filtros"
             >
               <span className="material-symbols-outlined text-[16px]">tune</span>
               {activeFiltersCount > 0 && (
@@ -233,7 +225,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   {activeFiltersCount}
                 </span>
               )}
-            </Button>
+            </button>
           )}
         </div>
       </div>
@@ -449,53 +441,40 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   }`}
                 />
 
-                {/* Photo Pagination Bars */}
+                {/* Photo progress segments, top */}
                 {currentProfile.photos.length > 1 && (
                   <div className="absolute top-3 inset-x-4 flex gap-1.5 z-20 pointer-events-none">
                     {currentProfile.photos.map((_, idx) => (
                       <div
                         key={idx}
                         className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                          idx === galleryIndex ? 'bg-[#ff4d67] shadow-elevation-sm' : 'bg-white/40'
+                          idx === galleryIndex ? 'bg-white/90' : 'bg-white/35'
                         }`}
                       />
                     ))}
                   </div>
                 )}
 
-                {/* Badges on Photo */}
-                <div className="absolute top-7 left-4 z-20 flex gap-2 pointer-events-none">
-                  <Badge className="font-label-caps text-[9px] uppercase tracking-wider bg-black/75 text-[#fda4af] px-2.5 py-1 rounded-full border border-white/20 backdrop-blur-xs font-bold">
-                    {currentProfile.membership.tierLabel}
-                  </Badge>
-                  {currentProfile.badges.trusted && (
-                    <Badge className="font-meta-data text-[9px] bg-black/75 text-white px-2.5 py-1 rounded-full border border-white/20 flex items-center gap-1 backdrop-blur-xs font-bold">
-                      <span className="material-symbols-outlined text-[12px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                        verified
-                      </span>
-                      Confianza verificada
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Primary Name & Intro Overlay */}
+                {/* Primary Name & Intro Overlay — name/verified/location/bio-teaser directly on the photo, no separate white panel by default */}
                 <div className="absolute bottom-4 left-5 right-5 z-20 flex justify-between items-end">
                   <div className="min-w-0 flex-1 pr-2">
-                    <div className="flex items-baseline gap-2">
-                      <h2 className="font-headline-md text-[26px] font-bold text-white tracking-tight drop-shadow-xs truncate">
-                        {currentProfile.displayName}
+                    <div className="flex items-center gap-2">
+                      <h2 className="font-headline-md text-[27px] font-extrabold text-white tracking-tight drop-shadow-xs truncate">
+                        {currentProfile.displayName}, {currentProfile.age}
                       </h2>
-                      <span className="font-meta-data text-[18px] text-white/90 font-light">
-                        {currentProfile.age}
-                      </span>
+                      {currentProfile.badges.trusted && (
+                        <span className="material-symbols-outlined text-[20px] text-sky-400 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>
+                          verified
+                        </span>
+                      )}
                     </div>
-                    <p className="font-body-sm text-[13px] text-[#fca5a5] opacity-95 mt-0.5 font-medium truncate">
-                      {currentProfile.lookingForLabel}
-                    </p>
-                    <p className="font-meta-data text-[11px] text-white/80 flex items-center gap-1 mt-1">
+                    <p className="text-[13.5px] text-white/90 flex items-center gap-1 mt-1.5">
                       <span className="material-symbols-outlined text-[13px] text-[#ff4d67]">location_on</span>
                       {currentProfile.city} • {currentProfile.distance}
                     </p>
+                    {currentProfile.bio && (
+                      <p className="text-[13.5px] text-white/80 mt-1.5 truncate">{currentProfile.bio}</p>
+                    )}
                   </div>
 
                   <motion.button
@@ -519,91 +498,76 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                 </div>
               </div>
 
-              {/* Bio & Details Notebook Area */}
-              <div className={`p-5 flex flex-col gap-4 ${isLight ? 'bg-white' : 'bg-[#140b0f]'}`}>
-                <p
-                  className={`font-body-sm text-[14px] leading-relaxed italic border-l-2 border-[#e11d48] pl-3 ${
-                    isLight ? 'text-[#334155]' : 'text-[#fce7eb]/90'
-                  }`}
-                >
-                  "{currentProfile.bio}"
-                </p>
-
-                {/* Audio Bio Player Widget */}
-                {currentProfile.audioBio && (
-                  <div
-                    className={`p-3.5 rounded-2xl border flex items-center gap-3 transition-all ${
-                      isLight
-                        ? 'bg-[#fff1f3] border-[#fecdd3]'
-                        : 'bg-[#1c0c13] border-[#e11d48]/30 shadow-inner'
-                    }`}
+              {/* Everything below lives behind the expand chevron — by default the card is just
+                  the photo + actions, matching the restrained direction. Nothing here is lost,
+                  it's one tap away instead of always competing for space. */}
+              <AnimatePresence>
+                {showFullNotebook && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden"
                   >
-                    <span className="material-symbols-outlined text-[20px] text-[#e11d48] shrink-0">mic</span>
-                    <div className="flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
-                      <span className="font-label-caps text-[9px] uppercase font-bold text-[#e11d48] block mb-1">
-                        Audio-bio
-                      </span>
-                      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-                      <audio controls preload="none" className="w-full h-8" src={currentProfile.audioBio.url} />
+                    <div className={`p-5 flex flex-col gap-4 ${isLight ? 'bg-white' : 'bg-[#140b0f]'}`}>
+                      {currentProfile.bio && (
+                        <p className={`text-[14px] leading-relaxed ${isLight ? 'text-[#334155]' : 'text-[#fce7eb]/90'}`}>
+                          {currentProfile.bio}
+                        </p>
+                      )}
+
+                      {currentProfile.audioBio && (
+                        <div
+                          className={`p-3.5 rounded-2xl flex items-center gap-3 transition-all ${
+                            isLight ? 'bg-[#fff1f3]' : 'bg-[#1c0c13]'
+                          }`}
+                        >
+                          <span className="material-symbols-outlined text-[20px] text-[#e11d48] shrink-0">mic</span>
+                          <div className="flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
+                            <span className="text-[10px] font-bold text-[#e11d48] block mb-1">Audio-bio</span>
+                            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+                            <audio controls preload="none" className="w-full h-8" src={currentProfile.audioBio.url} />
+                          </div>
+                        </div>
+                      )}
+
+                      {currentProfile.interests.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5">
+                          {currentProfile.interests.map((interest) => (
+                            <Badge
+                              key={interest.id}
+                              variant="outline"
+                              className={`text-[11px] px-2.5 py-1 rounded-full border-0 ${
+                                isLight ? 'bg-[#fff1f3] text-[#e11d48] font-bold' : 'bg-[#1c0c12] text-[#fda4af]'
+                              }`}
+                            >
+                              {interest.name}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+
+                      {currentProfile.prompts.map((prompt, pIdx) => (
+                        <motion.div
+                          key={pIdx}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: pIdx * 0.08 }}
+                          className={`p-3.5 rounded-2xl ${isLight ? 'bg-[#fff5f6]' : 'bg-[#0e070a]'}`}
+                        >
+                          <span className="text-[11px] font-bold text-[#e11d48] block mb-1">{prompt.question}</span>
+                          <p className={`text-[13px] ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{prompt.answer}</p>
+                        </motion.div>
+                      ))}
                     </div>
-                  </div>
+                  </motion.div>
                 )}
+              </AnimatePresence>
 
-                {/* Interests Tags */}
-                <div className="flex flex-wrap gap-1.5">
-                  {currentProfile.interests.map((interest) => (
-                    <Badge
-                      key={interest.id}
-                      variant="outline"
-                      className={`font-label-caps text-[9px] uppercase tracking-wider px-2.5 py-1 rounded-full border transition-all ${
-                        isLight
-                          ? 'bg-[#fff1f3] text-[#e11d48] border-[#fecdd3] font-bold hover:bg-[#ffe4e6]'
-                          : 'bg-[#1c0c12] text-[#fda4af] border-[#e11d48]/20 hover:border-[#e11d48]/40'
-                      }`}
-                    >
-                      {interest.name}
-                    </Badge>
-                  ))}
-                </div>
-
-                {/* Expanded Prompts with Fluid Spring Animation */}
-                <AnimatePresence>
-                  {showFullNotebook && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <div className={`flex flex-col gap-3 pt-3 border-t ${isLight ? 'border-gray-100' : 'border-white/5'}`}>
-                        {currentProfile.prompts.map((prompt, pIdx) => (
-                          <motion.div
-                            key={pIdx}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: pIdx * 0.08 }}
-                            className={`p-3.5 rounded-2xl border ${
-                              isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0e070a] border-[#e11d48]/20'
-                            }`}
-                          >
-                            <span className="font-label-caps text-[10px] text-[#e11d48] block mb-1 uppercase font-bold">
-                              {prompt.question}
-                            </span>
-                            <p className={`font-body-sm text-[13px] ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                              {prompt.answer}
-                            </p>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Action Controls Bar */}
-              <div className="p-4 flex items-center justify-between px-6">
-                {/* Rewind button */}
+              {/* Action row: small–big–small, the familiar Tinder/Bumble/Hinge rhythm. Rewind
+                  sits further out and subdued so it doesn't compete with the 3 main actions. */}
+              <div className="pt-4 pb-2 flex items-center justify-center gap-4">
                 <motion.button
                   whileHover={{ scale: currentIndex > 0 ? 1.08 : 1 }}
                   whileTap={{ scale: currentIndex > 0 ? 0.92 : 1 }}
@@ -615,69 +579,60 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                     }
                   }}
                   disabled={currentIndex === 0}
-                  className={`w-11 h-11 rounded-full border flex items-center justify-center transition-colors shadow-elevation-sm ${
+                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
                     currentIndex === 0
-                      ? isLight
-                        ? 'opacity-30 cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200'
-                        : 'opacity-30 cursor-not-allowed bg-[#140a0e] text-[#fda4af]/40 border-white/10'
+                      ? 'opacity-30 cursor-not-allowed text-slate-400 dark:text-white/30'
                       : isLight
-                      ? 'bg-white text-[#64748b] hover:text-[#e11d48] border-[#fecdd3]'
-                      : 'bg-[#1c0c12] text-[#fda4af] hover:text-[#fb7185] border-white/10'
+                      ? 'text-slate-400 hover:text-[#e11d48]'
+                      : 'text-white/40 hover:text-[#fb7185]'
                   }`}
                   title="Deshacer"
                   aria-label="Deshacer perfil"
                 >
-                  <span className="material-symbols-outlined text-[20px]">replay</span>
+                  <span className="material-symbols-outlined text-[18px]">replay</span>
                 </motion.button>
 
-                {/* Pass button */}
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   id="btn-discover-pass"
                   onClick={() => triggerAction('passed')}
-                  className={`w-13 h-13 rounded-full border flex items-center justify-center shadow-elevation-md transition-colors ${
-                    isLight
-                      ? 'border-red-200 bg-white text-red-500 hover:bg-red-50'
-                      : 'border-[#881337] bg-[#1a080e] text-[#fb7185] hover:bg-[#881337]/30'
+                  className={`w-[46px] h-[46px] rounded-full flex items-center justify-center shadow-elevation-sm transition-colors ${
+                    isLight ? 'bg-white text-[#f43f5e]' : 'bg-[#17101390] text-[#fb7185]'
                   }`}
                   title="Pasar"
                   aria-label="Pasar perfil"
                 >
-                  <span className="material-symbols-outlined text-[26px]">close</span>
+                  <span className="material-symbols-outlined text-[22px]">close</span>
                 </motion.button>
 
-                {/* Super Like Star button */}
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  id="btn-discover-superlike"
-                  onClick={() => triggerAction('starred')}
-                  className={`w-11 h-11 rounded-full border flex items-center justify-center shadow-elevation-sm transition-colors ${
-                    isLight
-                      ? 'border-amber-200 bg-white text-amber-500 hover:bg-amber-50'
-                      : 'border-[#fb7185]/40 bg-[#1c0c12] text-[#ffd700] hover:bg-[#ffd700]/15'
-                  }`}
-                  title="Super Spark"
-                  aria-label="Super Like"
-                >
-                  <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    star
-                  </span>
-                </motion.button>
-
-                {/* Like / Stamp button (Coral / Rose Gradient) */}
                 <motion.button
                   whileHover={{ scale: 1.12 }}
                   whileTap={{ scale: 0.88 }}
                   id="btn-discover-stamp-like"
                   onClick={() => triggerAction('liked')}
-                  className="w-13 h-13 rounded-full border border-[#e11d48] bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] text-white flex items-center justify-center shadow-[0_0_22px_rgba(225,29,72,0.45)] transition-all"
+                  className="w-[60px] h-[60px] rounded-full bg-gradient-to-br from-[#e11d48] to-[#ff4d67] text-white flex items-center justify-center shadow-[0_10px_22px_-6px_rgba(225,29,72,0.55)] transition-all"
                   title="Me gusta"
                   aria-label="Me gusta y conectar"
                 >
-                  <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  <span className="material-symbols-outlined text-[27px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                     favorite
+                  </span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  id="btn-discover-superlike"
+                  onClick={() => triggerAction('starred')}
+                  className={`w-[46px] h-[46px] rounded-full flex items-center justify-center shadow-elevation-sm transition-colors ${
+                    isLight ? 'bg-white text-[#3b82f6]' : 'bg-[#17101390] text-[#60a5fa]'
+                  }`}
+                  title="Super Spark"
+                  aria-label="Super Like"
+                >
+                  <span className="material-symbols-outlined text-[21px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    star
                   </span>
                 </motion.button>
               </div>

@@ -4,8 +4,6 @@ import { Match } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Card } from './ui/card';
 import { Input } from './ui/input';
 import { Dialog, DialogContent } from './ui/dialog';
 import { Skeleton } from './ui/skeleton';
@@ -34,6 +32,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
   const [layoutMode, setLayoutMode] = useState<ViewLayout>('grid');
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [selectedGalleryIdx, setSelectedGalleryIdx] = useState(0);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   // Filter matches based on search & category
   const filteredMatches = matches.filter((match) => {
@@ -55,89 +54,45 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
 
   return (
     <div className="flex flex-col gap-4 pb-20 select-none">
-      {/* Header Info & Counters */}
+      {/* Minimal header: wordmark left, view toggle + search behind small icon buttons on the right */}
       <div className="flex flex-col gap-3 px-0.5">
         <div className="flex justify-between items-center">
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span
-                className="material-symbols-outlined text-[#e11d48] text-[24px]"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                favorite
-              </span>
-              <h2 className={`font-headline-md text-[20px] font-bold tracking-tight ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                Tus Matches
-              </h2>
-            </div>
-            <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
-              Conexiones recíprocas listas para interactuar.
-            </p>
-          </div>
+          <span className="font-headline-md text-[19px] font-bold text-[#e11d48]">MELY</span>
 
-          <div className="flex items-center gap-2">
-            {/* View Mode Toggle */}
-            <div className={`flex items-center p-0.5 rounded-lg border ${isLight ? 'bg-gray-100 border-gray-200' : 'bg-black/40 border-white/10'}`}>
-              <button
-                onClick={() => {
-                  sounds.playClick();
-                  setLayoutMode('grid');
-                }}
-                className={`p-2.5 rounded-md transition-all ${
-                  layoutMode === 'grid'
-                    ? isLight
-                      ? 'bg-white text-[#e11d48] shadow-elevation-sm'
-                      : 'bg-[#e11d48] text-white'
-                    : isLight
-                    ? 'text-gray-400 hover:text-gray-700'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-                aria-label="Vista cuadrícula"
-                title="Vista Cuadrícula"
-              >
-                <span className="material-symbols-outlined text-[16px] block" aria-hidden="true">grid_view</span>
-              </button>
-              <button
-                onClick={() => {
-                  sounds.playClick();
-                  setLayoutMode('list');
-                }}
-                className={`p-2.5 rounded-md transition-all ${
-                  layoutMode === 'list'
-                    ? isLight
-                      ? 'bg-white text-[#e11d48] shadow-elevation-sm'
-                      : 'bg-[#e11d48] text-white'
-                    : isLight
-                    ? 'text-gray-400 hover:text-gray-700'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-                aria-label="Vista lista"
-                title="Vista Lista Compacta"
-              >
-                <span className="material-symbols-outlined text-[16px] block" aria-hidden="true">view_list</span>
-              </button>
-            </div>
-
-            <Badge
-              variant="outline"
-              className={`font-meta-data text-[11px] font-bold px-2.5 py-0.5 rounded-full border shadow-elevation-sm ${
-                isLight
-                  ? 'bg-[#fff1f3] text-[#e11d48] border-[#fecdd3]'
-                  : 'bg-[#e11d48]/20 text-[#fb7185] border-[#e11d48]/40'
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => {
+                sounds.playClick();
+                setSearchOpen((v) => !v);
+              }}
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+                searchOpen ? 'bg-[#e11d48] text-white' : isLight ? 'bg-[#f2f2f4] text-[#0f172a] hover:bg-[#e7e7ea]' : 'bg-white/8 text-[#fff1f2] hover:bg-white/14'
               }`}
+              aria-label="Buscar y filtrar"
+              title="Buscar y filtrar"
             >
-              {matches.length} Sparks
-            </Badge>
+              <span className="material-symbols-outlined text-[16px]">search</span>
+            </button>
+            <button
+              onClick={() => {
+                sounds.playClick();
+                setLayoutMode(layoutMode === 'grid' ? 'list' : 'grid');
+              }}
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+                isLight ? 'bg-[#f2f2f4] text-[#0f172a] hover:bg-[#e7e7ea]' : 'bg-white/8 text-[#fff1f2] hover:bg-white/14'
+              }`}
+              aria-label={layoutMode === 'grid' ? 'Ver como lista' : 'Ver como cuadrícula'}
+              title={layoutMode === 'grid' ? 'Ver como lista' : 'Ver como cuadrícula'}
+            >
+              <span className="material-symbols-outlined text-[16px]">{layoutMode === 'grid' ? 'view_list' : 'grid_view'}</span>
+            </button>
           </div>
         </div>
 
-        {/* Quick Horizontal Sparks Ribbon */}
+        {/* Story-row of matches, Instagram-style gradient ring around each avatar */}
         {matches.length > 0 && (
           <div className="flex flex-col gap-1.5 pt-0.5">
-            <span className={`text-[10px] font-label-caps uppercase font-bold tracking-wider ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/60'}`}>
-              Sparks Recientes
-            </span>
-            <div className="flex items-center gap-3 overflow-x-auto no-scrollbar py-0.5">
+            <div className="flex items-center gap-4 overflow-x-auto no-scrollbar py-0.5">
               {matches.map((m) => (
                 <motion.button
                   key={`ribbon-${m.id}`}
@@ -178,65 +133,77 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
           </div>
         )}
 
-        {/* Search & Filter Bar */}
-        <div className="flex flex-col gap-1.5 pt-0.5">
-          <div className="relative flex items-center">
-            <span className={`material-symbols-outlined absolute left-3 text-[17px] pointer-events-none ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
-              search
-            </span>
-            <Input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar match..."
-              className="pl-9 pr-8 h-auto py-1.5 text-[12px] shadow-elevation-sm"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-1 text-gray-400 hover:text-rose-500 p-2"
-                aria-label="Limpiar búsqueda"
-                title="Limpiar búsqueda"
-              >
-                <span className="material-symbols-outlined text-[15px]" aria-hidden="true">close</span>
-              </button>
-            )}
-          </div>
-
-          {/* Filter Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-            {[
-              { id: 'all', label: 'Todos', icon: 'grid_view' },
-              { id: 'online', label: 'En línea', icon: 'bolt' },
-              { id: 'verified', label: 'Verificados', icon: 'verified' },
-              { id: 'vip', label: 'VIP', icon: 'workspace_premium' },
-            ].map((f) => {
-              const isSelected = activeFilter === f.id;
-              return (
-                <motion.button
-                  key={f.id}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    sounds.playClick();
-                    setActiveFilter(f.id as FilterType);
-                  }}
-                  className={`px-2.5 py-1 rounded-lg text-[10.5px] font-semibold flex items-center gap-1 whitespace-nowrap transition-all border shrink-0 ${
-                    isSelected
-                      ? 'bg-[#e11d48] text-white border-[#e11d48] shadow-elevation-sm'
-                      : isLight
-                      ? 'bg-white text-[#475569] border-gray-200 hover:border-[#fecdd3] hover:text-[#e11d48]'
-                      : 'bg-[#140b0f] text-[#fda4af]/80 border-white/10 hover:border-[#e11d48]/40'
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: isSelected ? "'FILL' 1" : "'FILL' 0" }}>
-                    {f.icon}
+        {/* Search & Filter Bar — collapsed by default, one tap away behind the search icon */}
+        <AnimatePresence>
+          {searchOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="flex flex-col gap-1.5 pt-0.5">
+                <div className="relative flex items-center">
+                  <span className={`material-symbols-outlined absolute left-3 text-[17px] pointer-events-none ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
+                    search
                   </span>
-                  <span>{f.label}</span>
-                </motion.button>
-              );
-            })}
-          </div>
-        </div>
+                  <Input
+                    type="text"
+                    autoFocus
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar match..."
+                    className="pl-9 pr-8 h-auto py-1.5 text-[12px]"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-1 text-gray-400 hover:text-rose-500 p-2"
+                      aria-label="Limpiar búsqueda"
+                      title="Limpiar búsqueda"
+                    >
+                      <span className="material-symbols-outlined text-[15px]" aria-hidden="true">close</span>
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                  {[
+                    { id: 'all', label: 'Todos', icon: 'grid_view' },
+                    { id: 'online', label: 'En línea', icon: 'bolt' },
+                    { id: 'verified', label: 'Verificados', icon: 'verified' },
+                    { id: 'vip', label: 'VIP', icon: 'workspace_premium' },
+                  ].map((f) => {
+                    const isSelected = activeFilter === f.id;
+                    return (
+                      <motion.button
+                        key={f.id}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          sounds.playClick();
+                          setActiveFilter(f.id as FilterType);
+                        }}
+                        className={`px-2.5 py-1 rounded-full text-[10.5px] font-semibold flex items-center gap-1 whitespace-nowrap transition-all shrink-0 ${
+                          isSelected
+                            ? 'bg-[#e11d48] text-white'
+                            : isLight
+                            ? 'bg-[#f7f7f8] text-[#475569] hover:text-[#e11d48]'
+                            : 'bg-white/5 text-[#a89a9e] hover:text-[#fb7185]'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: isSelected ? "'FILL' 1" : "'FILL' 0" }}>
+                          {f.icon}
+                        </span>
+                        <span>{f.label}</span>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ------------------------------------------------------------- */}
@@ -389,101 +356,53 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: idx * 0.04, duration: 0.25 }}
                 >
-                  <Card
-                    className={`rounded-2xl border overflow-hidden relative shadow-elevation-sm flex flex-col group transition-colors p-0 ${
-                      isLight
-                        ? 'bg-white border-[#fecdd3] hover:border-[#e11d48]'
-                        : 'bg-[#140b0f] border-[#e11d48]/25 hover:border-[#e11d48]/60'
-                    }`}
+                  {/* Instagram-grid weight: square photo, minimal chrome, name below not on top */}
+                  <div
+                    className="relative aspect-[1/1.15] rounded-2xl overflow-hidden cursor-pointer bg-[#0b0507] group"
+                    onClick={() => {
+                      sounds.playClick();
+                      setSelectedMatch(match);
+                      setSelectedGalleryIdx(0);
+                    }}
+                    title="Ver perfil completo"
                   >
-                    {/* Photo & Identity Banner */}
-                    <div
-                      className="relative h-40 w-full bg-[#0b0507] overflow-hidden cursor-pointer"
-                      onClick={() => {
+                    <img
+                      src={match.other.photos[0]?.url}
+                      alt={match.other.displayName}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      referrerPolicy="no-referrer"
+                    />
+                    {match.other.lastActive === 'En línea' && (
+                      <span className="absolute top-2.5 right-2.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#0b090a]" />
+                    )}
+                    <motion.button
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.92 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
                         sounds.playClick();
-                        setSelectedMatch(match);
-                        setSelectedGalleryIdx(0);
+                        onOpenChat(match.id);
                       }}
-                      title="Ver perfil completo"
+                      className="absolute bottom-2.5 right-2.5 w-9 h-9 rounded-full bg-white/95 shadow-elevation-sm flex items-center justify-center text-[#e11d48]"
+                      title="Abrir chat"
+                      aria-label="Abrir chat"
                     >
-                      <img
-                        src={match.other.photos[0]?.url}
-                        alt={match.other.displayName}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div
-                        className={`absolute inset-0 bg-gradient-to-t ${
-                          isLight ? 'from-black/85 via-black/25 to-transparent' : 'from-[#140b0f] via-black/30 to-transparent'
-                        }`}
-                      />
-
-                      {/* Top Verified / City Tag */}
-                      <div className="absolute top-2 left-2 right-2 flex items-center justify-between pointer-events-none">
-                        <span className="px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-[9px] font-medium flex items-center gap-0.5 max-w-[110px]">
-                          <span className="material-symbols-outlined text-[10px] text-[#fb7185] shrink-0">location_on</span>
-                          <span className="truncate">{match.other.city || 'BsAs'}</span>
+                      <span className="material-symbols-outlined text-[16px]">chat</span>
+                    </motion.button>
+                  </div>
+                  <div className="pt-2 px-0.5">
+                    <div className="flex items-center gap-1">
+                      <h3 className="text-[13.5px] font-bold truncate">
+                        {match.other.displayName}, {match.other.age}
+                      </h3>
+                      {match.other.badges.trusted && (
+                        <span className="material-symbols-outlined text-[13px] text-sky-400 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>
+                          verified
                         </span>
-
-                        {match.other.badges.trusted && (
-                          <span className="px-1.5 py-0.5 rounded-md bg-[#e11d48]/90 text-white text-[8.5px] font-bold flex items-center gap-0.5">
-                            <span className="material-symbols-outlined text-[10px]">verified</span>
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Name & Occupation inside Photo */}
-                      <div className="absolute bottom-2 left-2.5 right-2.5">
-                        <h3 className="text-[14px] font-bold text-white leading-tight drop-shadow-xs truncate">
-                          {match.other.displayName}, {match.other.age}
-                        </h3>
-                        <p className="text-[10px] text-[#fda4af] truncate font-medium">
-                          {match.other.city}
-                        </p>
-                      </div>
+                      )}
                     </div>
-
-                    {/* Compact Action Footer with Perfectly Proportioned Buttons */}
-                    <div
-                      className={`p-2 flex items-center gap-1.5 ${
-                        isLight ? 'bg-white' : 'bg-[#140b0f]'
-                      }`}
-                    >
-                      {/* Compact Chat Button */}
-                      <motion.button
-                        whileHover={{ scale: 1.04 }}
-                        whileTap={{ scale: 0.94 }}
-                        onClick={() => {
-                          sounds.playClick();
-                          onOpenChat(match.id);
-                        }}
-                        className={`flex-1 h-9 rounded-lg border text-[10.5px] font-semibold flex items-center justify-center gap-1 transition-colors ${
-                          isLight
-                            ? 'bg-[#fff1f3] hover:bg-[#ffe4e6] border-[#fecdd3] text-[#e11d48]'
-                            : 'bg-white/5 hover:bg-white/10 border-white/10 text-[#fda4af]'
-                        }`}
-                        title="Abrir Chat"
-                      >
-                        <span className="material-symbols-outlined text-[13px]">chat</span>
-                        <span>Chat</span>
-                      </motion.button>
-
-                      {/* Compact Date Button */}
-                      <motion.button
-                        whileHover={{ scale: 1.04 }}
-                        whileTap={{ scale: 0.94 }}
-                        onClick={() => {
-                          sounds.playStamp();
-                          onProposeDate(match);
-                        }}
-                        className="flex-1 h-9 rounded-lg bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[10.5px] font-bold flex items-center justify-center gap-1 shadow-elevation-sm hover:brightness-105 transition-all"
-                        title="Proponer Cita"
-                      >
-                        <span className="material-symbols-outlined text-[13px]">local_cafe</span>
-                        <span>Cita</span>
-                      </motion.button>
-                    </div>
-                  </Card>
+                    <span className="text-[11px] text-slate-500 dark:text-[#a89a9e]">{match.other.city || 'Buenos Aires'}</span>
+                  </div>
                 </motion.div>
               ))}
 

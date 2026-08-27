@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { motion, type Variants } from 'motion/react';
 import { toast } from 'sonner';
 import { ARGENTINA_CITIES } from '../data/mockData';
 import { sounds } from '../utils/audio';
@@ -291,8 +292,23 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
 
   const isSaving = updateProfile.isPending || replacePrompts.isPending;
 
+  const containerVariants: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.08, delayChildren: 0.04 } },
+  };
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 14 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.32, ease: [0.16, 1, 0.3, 1] } },
+  };
+
   return (
-    <div className={`w-full max-w-[420px] mx-auto flex flex-col gap-5 pb-24 animate-fadeIn ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className={`w-full max-w-[420px] mx-auto flex flex-col gap-5 pb-24 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}
+    >
+      <motion.div variants={itemVariants}>
       <SettingsGroup title="Tu perfil" isLight={isLight}>
         <SettingsRow
           isLight={isLight}
@@ -316,7 +332,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           onClick={() => setActiveSheet('discovery')}
         />
       </SettingsGroup>
+      </motion.div>
 
+      <motion.div variants={itemVariants}>
       <SettingsGroup title="Apariencia" isLight={isLight}>
         <SettingsRow
           isLight={isLight}
@@ -368,8 +386,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           }
         />
       </SettingsGroup>
+      </motion.div>
 
       {pushState !== 'unsupported' && (
+        <motion.div variants={itemVariants}>
         <SettingsGroup title="Notificaciones" isLight={isLight}>
           <SettingsRow
             isLight={isLight}
@@ -390,8 +410,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
             }
           />
         </SettingsGroup>
+        </motion.div>
       )}
 
+      <motion.div variants={itemVariants}>
       <SettingsGroup title="Seguridad" isLight={isLight}>
         <SettingsRow
           isLight={isLight}
@@ -416,7 +438,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           }
         />
       </SettingsGroup>
+      </motion.div>
 
+      <motion.div variants={itemVariants}>
       <SettingsGroup title="Cuenta" isLight={isLight}>
         <SettingsRow
           isLight={isLight}
@@ -432,6 +456,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           onClick={() => setShowDeleteConfirm(true)}
         />
       </SettingsGroup>
+      </motion.div>
 
       {/* --- PANEL: Editar Perfil --- */}
       <Sheet open={activeSheet === 'profile'} onOpenChange={(open) => !open && setActiveSheet(null)}>
@@ -830,6 +855,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 };

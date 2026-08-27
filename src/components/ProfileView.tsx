@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { motion, type Variants } from 'motion/react';
 import { toast } from 'sonner';
 import { Stamp } from '../types';
 import { sounds } from '../utils/audio';
@@ -47,10 +48,19 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
     e.target.value = '';
   };
 
+  const container: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.07, delayChildren: 0.04 } },
+  };
+  const item: Variants = {
+    hidden: { opacity: 0, y: 16 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } },
+  };
+
   return (
-    <div className="flex flex-col gap-6 pb-6 animate-fadeIn">
+    <motion.div variants={container} initial="hidden" animate="show" className="flex flex-col gap-6 pb-6">
       {/* Settings door — the one place that leads to the full Ajustes panel */}
-      <div className="flex justify-end -mb-2">
+      <motion.div variants={item} className="flex justify-end -mb-2">
         <Button
           variant="ghost"
           size="icon"
@@ -63,15 +73,20 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         >
           <span className="material-symbols-outlined text-[22px]">settings</span>
         </Button>
-      </div>
+      </motion.div>
 
       {/* Header: avatar in gradient ring, name + verified, one-line meta, membership pill */}
-      <section className="flex flex-col items-center text-center">
-        <div className="w-24 h-24 rounded-full p-[3px] bg-gradient-to-br from-[#e11d48] to-[#ff4d67]">
+      <motion.section variants={item} className="flex flex-col items-center text-center">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.05 }}
+          className="w-24 h-24 rounded-full p-[3px] bg-gradient-to-br from-[#e11d48] to-[#ff4d67]"
+        >
           <div className="w-full h-full rounded-full overflow-hidden border-[3px] border-white dark:border-[#0b090a]">
             <img src={user.photos[0]?.url} alt={user.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
           </div>
-        </div>
+        </motion.div>
 
         <div className="flex items-center gap-1.5 mt-3">
           <h2 className="font-headline-md text-[19px] font-extrabold">
@@ -105,10 +120,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             Editar perfil
           </button>
         )}
-      </section>
+      </motion.section>
 
       {/* Stat row: number over label, thin dividers */}
-      <section className="flex items-center justify-center border-y border-slate-100 dark:border-white/10 py-4">
+      <motion.section variants={item} className="flex items-center justify-center border-y border-slate-100 dark:border-white/10 py-4">
         <div className="flex-1 flex flex-col items-center">
           <span className="text-[17px] font-extrabold">
             {unlockedStamps.length}/{stamps.length}
@@ -127,13 +142,14 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           </span>
           <span className="text-[10.5px] text-slate-500 dark:text-[#a89a9e] mt-0.5">Identidad</span>
         </div>
-      </section>
+      </motion.section>
 
       {/* Audio-bio: one playable row, or an upload prompt when there isn't one yet */}
-      <section className="rounded-2xl p-3.5 border border-slate-100 dark:border-white/10 bg-white dark:bg-[#150f11] flex items-center gap-3">
+      <motion.section variants={item} className="rounded-2xl p-3.5 border border-slate-100 dark:border-white/10 bg-white dark:bg-[#150f11] flex items-center gap-3">
         {user.audioBio ? (
           <>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={() => {
                 if (isPlaying) {
                   audioPlayerRef.current?.pause();
@@ -141,10 +157,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   audioPlayerRef.current?.play();
                 }
               }}
-              className={`w-11 h-11 rounded-full flex items-center justify-center text-white shrink-0 active:scale-95 ${isPlaying ? 'bg-[#e11d48] animate-pulse' : 'bg-gradient-to-tr from-[#e11d48] to-[#ff4d67]'}`}
+              className={`w-11 h-11 rounded-full flex items-center justify-center text-white shrink-0 ${isPlaying ? 'bg-[#e11d48] animate-pulse' : 'bg-gradient-to-tr from-[#e11d48] to-[#ff4d67]'}`}
             >
               <span className="material-symbols-outlined text-[22px]">{isPlaying ? 'pause' : 'play_arrow'}</span>
-            </button>
+            </motion.button>
             <div className="flex-1 min-w-0">
               <span className="block text-[13px] font-bold">Mi audio-bio</span>
               <span className="block text-[11px] text-slate-500 dark:text-[#a89a9e]">
@@ -174,30 +190,30 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             </Button>
           </>
         )}
-      </section>
+      </motion.section>
 
       {/* Bio */}
       {user.bio && (
-        <section>
+        <motion.section variants={item}>
           <span className="text-[11px] font-bold tracking-wide text-slate-500 dark:text-[#a89a9e]">SOBRE MÍ</span>
           <p className="text-[13.5px] leading-relaxed mt-1.5">{user.bio}</p>
-        </section>
+        </motion.section>
       )}
 
       {/* Prompts, stacked cards */}
       {user.prompts.length > 0 && (
-        <section className="flex flex-col gap-2.5">
+        <motion.section variants={item} className="flex flex-col gap-2.5">
           {user.prompts.map((p) => (
             <div key={p.id} className="rounded-2xl p-3.5 border border-slate-100 dark:border-white/10 bg-white dark:bg-[#150f11]">
               <span className="block text-[11px] font-bold text-[#e11d48]">{p.question}</span>
               <p className="text-[13.5px] leading-snug mt-1">{p.answer}</p>
             </div>
           ))}
-        </section>
+        </motion.section>
       )}
 
       {/* Stamps grid */}
-      <section className="flex flex-col gap-3">
+      <motion.section variants={item} className="flex flex-col gap-3">
         <div className="flex items-baseline justify-between">
           <span className="text-[11px] font-bold tracking-wide text-slate-500 dark:text-[#a89a9e]">SELLOS</span>
           <span className="text-[11.5px] text-slate-500 dark:text-[#a89a9e]">
@@ -205,9 +221,13 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           </span>
         </div>
         <div className="grid grid-cols-4 gap-3">
-          {stamps.map((stamp) => (
-            <button
+          {stamps.map((stamp, idx) => (
+            <motion.button
               key={stamp.key}
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 + idx * 0.03, duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              whileTap={{ scale: 0.92 }}
               onClick={() => {
                 sounds.playStamp();
                 onSelectStamp(stamp);
@@ -226,13 +246,13 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 </span>
               </div>
               <span className="text-[9.5px] font-bold text-center leading-tight">{stamp.title}</span>
-            </button>
+            </motion.button>
           ))}
         </div>
-      </section>
+      </motion.section>
 
       {/* Wallet -> Store */}
-      <section className="rounded-2xl p-5 border border-slate-100 dark:border-white/10 bg-white dark:bg-[#150f11] flex flex-col items-center text-center gap-1.5">
+      <motion.section variants={item} className="rounded-2xl p-5 border border-slate-100 dark:border-white/10 bg-white dark:bg-[#150f11] flex flex-col items-center text-center gap-1.5">
         <span className="text-[11px] font-bold tracking-wide text-slate-500 dark:text-[#a89a9e]">BALANCE ACTUAL</span>
         <div className="flex items-center gap-1.5">
           <span className="material-symbols-outlined text-[#e11d48] text-[26px]" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -254,9 +274,11 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             <span>Explorar tienda</span>
           </Button>
         )}
-      </section>
+      </motion.section>
 
-      <button
+      <motion.button
+        variants={item}
+        whileTap={{ scale: 0.95 }}
         type="button"
         onClick={() => {
           sounds.playClick();
@@ -265,7 +287,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         className="text-[13px] font-bold text-[#e11d48] cursor-pointer"
       >
         Cerrar sesión
-      </button>
-    </div>
+      </motion.button>
+    </motion.div>
   );
 };

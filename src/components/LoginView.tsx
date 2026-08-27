@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence, type Variants } from 'motion/react';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -97,11 +98,27 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
     }
   };
 
+  const container = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
+  } satisfies Variants;
+  const item = {
+    hidden: { opacity: 0, y: 14 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const } },
+  } satisfies Variants;
+
   return (
-    <div className={`w-full max-w-[420px] mx-auto min-h-screen py-10 px-6 flex flex-col justify-center animate-fadeIn ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className={`w-full max-w-[420px] mx-auto min-h-screen py-10 px-6 flex flex-col justify-center ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}
+    >
       {/* Theme toggle, unobtrusive corner control */}
-      <button
+      <motion.button
+        variants={item}
         type="button"
+        whileTap={{ scale: 0.9 }}
         onClick={() => {
           sounds.playClick();
           toggleTheme();
@@ -112,25 +129,43 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
         title="Cambiar tema de color"
         aria-label="Cambiar tema de color"
       >
-        <span className="material-symbols-outlined text-[17px]">{isLight ? 'dark_mode' : 'light_mode'}</span>
-      </button>
+        <motion.span
+          key={isLight ? 'light' : 'dark'}
+          initial={{ rotate: -90, opacity: 0 }}
+          animate={{ rotate: 0, opacity: 1 }}
+          transition={{ duration: 0.25 }}
+          className="material-symbols-outlined text-[17px] block"
+        >
+          {isLight ? 'dark_mode' : 'light_mode'}
+        </motion.span>
+      </motion.button>
 
       {/* Wordmark + one-line promise */}
-      <div className="mt-2 mb-9">
+      <motion.div variants={item} className="mt-2 mb-9">
         <span className="font-headline-md text-[30px] font-bold text-[#e11d48]">MELY</span>
         <p className={`text-[14px] mt-2 leading-relaxed ${isLight ? 'text-[#64748b]' : 'text-[#a89a9e]'}`}>
           Bienvenida de vuelta. Iniciá sesión para seguir tus citas y conversaciones.
         </p>
-      </div>
+      </motion.div>
 
-      {errorMsg && (
-        <div className="mb-4 p-3 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-[12px] flex items-start gap-2">
-          <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5 text-[#e11d48]">error</span>
-          <span>{errorMsg}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {errorMsg && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+            animate={{ opacity: 1, height: 'auto', marginBottom: 16 }}
+            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-[12px] flex items-start gap-2">
+              <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5 text-[#e11d48]">error</span>
+              <span>{errorMsg}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <motion.form variants={item} onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="login-email">Email</Label>
           <Input
@@ -183,34 +218,38 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
           Recordar mi sesión
         </Label>
 
-        <Button
-          id="login-submit-btn"
-          type="submit"
-          variant="cherry"
-          size="lg"
-          disabled={isSubmitting}
-          className="w-full mt-1 normal-case tracking-normal text-[15px]"
-        >
-          {isSubmitting ? (
-            <span className="inline-flex items-center gap-2">
-              <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
-              Iniciando sesión...
-            </span>
-          ) : (
-            'Iniciar sesión'
-          )}
-        </Button>
-      </form>
+        <motion.div whileTap={{ scale: 0.97 }}>
+          <Button
+            id="login-submit-btn"
+            type="submit"
+            variant="cherry"
+            size="lg"
+            disabled={isSubmitting}
+            className="w-full mt-1 normal-case tracking-normal text-[15px]"
+          >
+            {isSubmitting ? (
+              <span className="inline-flex items-center gap-2">
+                <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                Iniciando sesión...
+              </span>
+            ) : (
+              'Iniciar sesión'
+            )}
+          </Button>
+        </motion.div>
+      </motion.form>
 
-      <div className="flex items-center gap-3 my-6">
+      <motion.div variants={item} className="flex items-center gap-3 my-6">
         <span className={`flex-1 h-px ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/10'}`} />
         <span className={`text-[12px] ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>o continuá con</span>
         <span className={`flex-1 h-px ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/10'}`} />
-      </div>
+      </motion.div>
 
-      <GoogleAuthButton onCredential={handleGoogleCredential} text="signin_with" />
+      <motion.div variants={item}>
+        <GoogleAuthButton onCredential={handleGoogleCredential} text="signin_with" />
+      </motion.div>
 
-      <div className="mt-8 flex items-center justify-center gap-1.5">
+      <motion.div variants={item} className="mt-8 flex items-center justify-center gap-1.5">
         <span className={`text-[13.5px] ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>¿No tenés cuenta?</span>
         <button
           id="btn-switch-register"
@@ -223,7 +262,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
         >
           Registrate
         </button>
-      </div>
+      </motion.div>
 
       {/* Password Recovery Modal */}
       <Dialog open={showRecoveryModal} onOpenChange={setShowRecoveryModal}>
@@ -260,6 +299,6 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 };

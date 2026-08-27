@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence, type Variants } from 'motion/react';
 import { ARGENTINA_CITIES } from '../data/mockData';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
@@ -39,6 +40,12 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
   const { isLight } = useTheme();
   const { register, refreshUser, loginWithGoogle, registerWithGoogle } = useAuth();
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [direction, setDirection] = useState(1);
+
+  const goToStep = (next: 1 | 2 | 3) => {
+    setDirection(next > step ? 1 : -1);
+    setStep(next);
+  };
 
   // Step 1
   const [name, setName] = useState('');
@@ -134,7 +141,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
       return;
     }
     sounds.playClick();
-    setStep(2);
+    goToStep(2);
   };
 
   const handleCompleteRegistration = async (e: React.FormEvent) => {
@@ -203,8 +210,19 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
       ? 'Elegí una foto clara donde se te vea bien. Podés cambiarla después.'
       : 'Contá un poco de vos para romper el hielo.';
 
+  const slideVariants: Variants = {
+    enter: (dir: number) => ({ opacity: 0, x: dir * 24 }),
+    center: { opacity: 1, x: 0, transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] } },
+    exit: (dir: number) => ({ opacity: 0, x: dir * -24, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } }),
+  };
+
   return (
-    <div className={`w-full max-w-[420px] mx-auto min-h-screen py-6 px-6 flex flex-col animate-fadeIn pb-12 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className={`w-full max-w-[420px] mx-auto min-h-screen py-6 px-6 flex flex-col pb-12 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}
+    >
       {/* Back + step dots, onboarding chrome */}
       <div className="flex items-center gap-3.5 mb-6">
         <button
@@ -212,7 +230,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
           onClick={() => {
             sounds.playClick();
             if (step > 1) {
-              setStep((s) => (s - 1) as 1 | 2 | 3);
+              goToStep((step - 1) as 1 | 2 | 3);
             } else {
               onGoToLogin();
             }
@@ -225,19 +243,39 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
         </button>
         <div className="flex items-center gap-1.5">
-          <span className={`w-[22px] h-1 rounded-full transition-colors ${step >= 1 ? 'bg-[#e11d48]' : isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`} />
-          <span className={`w-[22px] h-1 rounded-full transition-colors ${step >= 2 ? 'bg-[#e11d48]' : isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`} />
-          <span className={`w-[22px] h-1 rounded-full transition-colors ${step >= 3 ? 'bg-[#e11d48]' : isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`} />
+          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 1 ? 'w-[22px] bg-[#e11d48]' : `w-[22px] ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`}`} />
+          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 2 ? 'w-[22px] bg-[#e11d48]' : `w-[22px] ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`}`} />
+          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 3 ? 'w-[22px] bg-[#e11d48]' : `w-[22px] ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`}`} />
         </div>
       </div>
 
-      <span className="font-headline-md text-[22px] font-bold">{stepTitle}</span>
-      <p className={`text-[13.5px] mt-1.5 mb-7 leading-relaxed ${isLight ? 'text-[#64748b]' : 'text-[#a89a9e]'}`}>{stepSubtitle}</p>
+      <AnimatePresence mode="wait" custom={direction}>
+        <motion.div
+          key={`header-${step}`}
+          custom={direction}
+          initial={{ opacity: 0, x: direction * 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: direction * -16 }}
+          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <span className="font-headline-md text-[22px] font-bold block">{stepTitle}</span>
+          <p className={`text-[13.5px] mt-1.5 mb-7 leading-relaxed ${isLight ? 'text-[#64748b]' : 'text-[#a89a9e]'}`}>{stepSubtitle}</p>
+        </motion.div>
+      </AnimatePresence>
 
       <form onSubmit={handleCompleteRegistration} className="flex flex-col gap-4">
+       <AnimatePresence mode="wait" custom={direction}>
         {/* STEP 1: Personal Identification */}
         {step === 1 && (
-          <div className="flex flex-col gap-4 animate-fadeIn">
+          <motion.div
+            key="step-1"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            className="flex flex-col gap-4"
+          >
             {step1Error && (
               <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px]">{step1Error}</div>
             )}
@@ -363,12 +401,20 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                 <GoogleAuthButton onCredential={handleGoogleCredential} text="signup_with" />
               </>
             )}
-          </div>
+          </motion.div>
         )}
 
         {/* STEP 2: Photo */}
         {step === 2 && (
-          <div className="flex flex-col gap-4 animate-fadeIn">
+          <motion.div
+            key="step-2"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            className="flex flex-col gap-4"
+          >
             <div className="flex flex-col items-center gap-3 py-2">
               <div className={`w-28 h-28 rounded-full overflow-hidden border ${isLight ? 'border-[#e7e7ea] bg-[#f7f7f8]' : 'border-white/10 bg-white/5'} flex items-center justify-center`}>
                 {avatarPreview ? (
@@ -395,18 +441,26 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
               variant="cherry"
               onClick={() => {
                 sounds.playClick();
-                setStep(3);
+                goToStep(3);
               }}
               className="mt-1 w-full normal-case tracking-normal text-[15px]"
             >
               Continuar
             </Button>
-          </div>
+          </motion.div>
         )}
 
         {/* STEP 3: Bio, Prompts, Interests, and Terms */}
         {step === 3 && (
-          <div className="flex flex-col gap-4 animate-fadeIn">
+          <motion.div
+            key="step-3"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            className="flex flex-col gap-4"
+          >
             {submitError && (
               <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px]">{submitError}</div>
             )}
@@ -486,8 +540,9 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                 'Crear cuenta'
               )}
             </Button>
-          </div>
+          </motion.div>
         )}
+       </AnimatePresence>
       </form>
 
       <div className="mt-8 flex items-center justify-center gap-1.5">
@@ -503,6 +558,6 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
           Iniciá sesión
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };

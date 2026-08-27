@@ -164,9 +164,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
 
   return (
     <div className="flex flex-col gap-4 pb-8 select-none">
-      {/* Minimal top chrome: small wordmark, one filter icon — the rest live behind small icon buttons instead of labeled pills */}
-      <div className="flex justify-between items-center px-1">
-        <span className="font-headline-md text-[19px] font-bold text-[#e11d48]">MELY</span>
+      {/* Minimal top chrome — TopAppBar already shows the page title, this is just the filter icons */}
+      <div className="flex justify-end items-center px-1">
 
         <div className="flex items-center gap-1.5">
           {onOpenVerifiedSpots && (

@@ -62,11 +62,17 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   return (
     <nav
       id="bottom-navigation-bar"
-      style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
-      // inset-x-3 fija los dos bordes directo contra el viewport (en vez de centrar con
-      // left-50%+translate, que en mobile puede desalinearse si el viewport "de layout"
-      // no coincide exacto con el visual) — así queda centrado sin importar el ancho real.
-      className={`fixed inset-x-3 mx-auto z-50 max-w-[416px] rounded-[28px] border liquid-glass transition-colors duration-300 ${
+      // Insets calculados a mano en vez de max-width + margin:auto: en algunos Chrome/WebView
+      // de Android el auto-margin sobre un elemento fixed con left/right ya seteados no siempre
+      // resuelve al centro real (queda pegado a un lado). Con left/right = max(12px, 50% - 208px)
+      // el navbar queda centrado por construcción — mismo cálculo espejado en los dos lados — sin
+      // depender de esa resolución de márgenes, y sigue clampeando a 416px de ancho máximo.
+      style={{
+        bottom: 'calc(0.75rem + env(safe-area-inset-bottom))',
+        left: 'max(0.75rem, calc(50% - 208px))',
+        right: 'max(0.75rem, calc(50% - 208px))',
+      }}
+      className={`fixed z-50 rounded-[28px] border liquid-glass transition-colors duration-300 ${
         isLight
           ? 'bg-white/75 border-white/60 shadow-elevation-lg'
           : 'bg-[#0d070a]/65 border-white/10 shadow-elevation-lg'

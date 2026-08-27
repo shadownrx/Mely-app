@@ -77,28 +77,14 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
           </Button>
         )}
 
-        {/* Brand Center */}
+        {/* Brand Center — small wordmark, no gradient/uppercase drama, matching the rest of the app */}
         <div
           className="flex flex-col items-center justify-center cursor-pointer select-none"
           onClick={() => onTabChange('descubrir')}
         >
-          <h1
-            className={`font-headline-md text-[21px] tracking-[0.25em] uppercase font-black transition-all ${
-              isLight
-                ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#ff4d67] via-[#e11d48] to-[#fb7185] drop-shadow-sm'
-                : 'text-transparent bg-clip-text bg-gradient-to-r from-[#fb7185] via-[#e11d48] to-[#fda4af] drop-shadow-[0_2px_10px_rgba(225,29,72,0.3)]'
-            }`}
-          >
-            {customTitle || 'MELY'}
-          </h1>
+          <h1 className="font-headline-md text-[17px] font-bold text-[#e11d48]">{customTitle || 'MELY'}</h1>
           {customSubtitle && (
-            <span
-              className={`font-label-caps text-[8px] tracking-widest uppercase -mt-0.5 font-bold ${
-                isLight ? 'text-[#ff4d67]' : 'text-[#fca5a5]/80'
-              }`}
-            >
-              {customSubtitle}
-            </span>
+            <span className={`text-[10px] -mt-0.5 ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>{customSubtitle}</span>
           )}
         </div>
 

@@ -269,16 +269,7 @@ function AppContent() {
           showBackButton={currentTab === 'ajustes'}
           onBack={() => setCurrentTab(previousTab)}
           customTitle={
-            currentTab === 'ajustes' ? 'AJUSTES' : currentTab === 'tienda' ? 'TIENDA' : currentTab === 'mensajes' ? 'MENSAJES' : 'MELY'
-          }
-          customSubtitle={
-            currentTab === 'ajustes'
-              ? 'PERFIL & CUENTA'
-              : currentTab === 'tienda'
-              ? 'BENEFICIOS & PERKS'
-              : currentTab === 'mensajes'
-              ? 'CONEXIONES & CITAS'
-              : undefined
+            currentTab === 'ajustes' ? 'Ajustes' : currentTab === 'tienda' ? 'Tienda' : currentTab === 'mensajes' ? 'Mensajes' : 'MELY'
           }
         />
       )}

@@ -54,11 +54,9 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
 
   return (
     <div className="flex flex-col gap-4 pb-20 select-none">
-      {/* Minimal header: wordmark left, view toggle + search behind small icon buttons on the right */}
+      {/* Minimal header — TopAppBar already shows the page title, this is just the icon controls */}
       <div className="flex flex-col gap-3 px-0.5">
-        <div className="flex justify-between items-center">
-          <span className="font-headline-md text-[19px] font-bold text-[#e11d48]">MELY</span>
-
+        <div className="flex justify-end items-center">
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => {

@@ -697,7 +697,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           <div className={`p-3 rounded-2xl border-2 flex flex-col gap-2 ${isLight ? 'bg-[#fff5f6] border-[#e11d48]/40' : 'bg-[#1a0c13] border-[#e11d48]/50'}`}>
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
-                <span className="font-label-caps text-[9px] uppercase tracking-widest block font-bold text-[#e11d48]">TICKET DE CITA</span>
+                <span className="text-[10px] uppercase tracking-wide block font-bold text-[#e11d48]">Próxima cita</span>
                 <p className={`text-[12px] truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
                   {activeProposal.scheduledAt
                     ? new Date(activeProposal.scheduledAt).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' })

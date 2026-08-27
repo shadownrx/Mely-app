@@ -52,17 +52,37 @@
   }
 }
 
-/* Custom font utilities */
-.font-headline-md, .font-display-lg, .font-display-lg-mobile {
-  font-family: 'Literata', Georgia, serif;
-}
-
-.font-label-caps, .font-meta-data {
-  font-family: 'Space Mono', monospace;
-}
-
+/* Custom font utilities — la dirección visual aprobada usa DM Sans para todo
+   y reserva Literata (serif) exclusivamente para el wordmark "MELY", no para
+   títulos ni nombres de perfil como antes. */
+.font-headline-md, .font-display-lg, .font-display-lg-mobile,
+.font-label-caps, .font-meta-data,
 .font-body-sm, .font-body-lg {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Los bordes rosa/rojo saturados (border-[#fecdd3], border-[#e11d48]/NN) eran
+   el color de borde "default" de casi toda tarjeta, input y chip de la app —
+   parte de la estética de ticket/pasaporte descartada. Se neutralizan acá a
+   nivel global (en vez de tocar los ~280 usos dispersos en los componentes)
+   por bordes casi invisibles, como en la dirección aprobada. Los bordes rojos
+   SIN alpha (border-[#e11d48] a secas) quedan intactos a propósito: son estado
+   activo/seleccionado/hover, no el reposo decorativo. */
+[class*="border-[#fecdd3]"],
+[class*="divide-[#fecdd3]"] {
+  border-color: rgb(0 0 0 / 0.07);
+}
+.dark [class*="border-[#fecdd3]"],
+.dark [class*="divide-[#fecdd3]"] {
+  border-color: rgb(255 255 255 / 0.09);
+}
+[class*="border-[#e11d48]/"],
+[class*="divide-[#e11d48]/"] {
+  border-color: rgb(0 0 0 / 0.07);
+}
+.dark [class*="border-[#e11d48]/"],
+.dark [class*="divide-[#e11d48]/"] {
+  border-color: rgb(255 255 255 / 0.09);
 }
 
 /* Tactile Skeuomorphism & Ticket Edge Masks */

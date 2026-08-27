@@ -11,7 +11,7 @@ const buttonVariants = cva(
         default:
           'bg-gradient-to-r from-rose-600 to-rose-500 text-white shadow-elevation-sm hover:from-rose-700 hover:to-rose-600 hover:shadow-elevation-md font-semibold',
         cherry:
-          'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-md hover:opacity-95 hover:shadow-elevation-lg font-semibold font-label-caps tracking-wider uppercase',
+          'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-md hover:opacity-95 hover:shadow-elevation-lg font-semibold',
         destructive:
           'bg-red-500 text-white shadow-elevation-sm hover:bg-red-600 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800',
         outline:

@@ -5,9 +5,10 @@ import { ARGENTINA_CITIES } from '../data/mockData';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
-import { useInterests, useUpdateProfile, useReplacePrompts, useDeleteAccount } from '../hooks/useProfile';
+import { useInterests, useUpdateProfile, useReplacePrompts, useDeleteAccount, useUpdateLocation } from '../hooks/useProfile';
 import { useRequestPhoneCode, useVerifyPhone } from '../hooks/useAuth';
 import { usePushSubscription } from '../hooks/usePushSubscription';
+import { getCurrentCoords } from '../lib/geolocation';
 import { ApiError } from '../lib/apiClient';
 import type { Gender, LookingFor, Prompt } from '../types';
 import { Button } from './ui/button';
@@ -133,8 +134,22 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
   const deleteAccount = useDeleteAccount();
   const requestPhoneCode = useRequestPhoneCode();
   const verifyPhoneCode = useVerifyPhone();
+  const updateLocation = useUpdateLocation();
   const { state: pushState, subscribe: subscribePush, unsubscribe: unsubscribePush } = usePushSubscription();
   const [isTogglingPush, setIsTogglingPush] = useState(false);
+
+  const handleUpdateLocation = async () => {
+    sounds.playClick();
+    try {
+      const coords = await getCurrentCoords();
+      await updateLocation.mutateAsync(coords);
+      await refreshUser();
+      sounds.playStamp();
+      toast.success('Ubicación actualizada.');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No pudimos actualizar tu ubicación.');
+    }
+  };
 
   const handleTogglePush = async (checked: boolean) => {
     sounds.playClick();
@@ -709,6 +724,20 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
             Estos valores son tu punto de partida cada vez que abrís los filtros de Descubrir.
           </p>
+
+          <div className={`p-3.5 rounded-2xl border flex items-center gap-3 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
+            <span className="material-symbols-outlined text-[19px] text-[#e11d48] shrink-0">location_on</span>
+            <div className="flex-1 min-w-0">
+              <span className="block text-[13px] font-bold">Mi ubicación</span>
+              <span className="block text-[11px] text-[#64748b] dark:text-[#fda4af]/70">
+                {user.hasLocation ? 'Activa — se usa para calcular la distancia' : 'No activada — no filtramos por distancia'}
+              </span>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={handleUpdateLocation} disabled={updateLocation.isPending} className="shrink-0 rounded-full">
+              {updateLocation.isPending ? '...' : user.hasLocation ? 'Actualizar' : 'Activar'}
+            </Button>
+          </div>
+
           <div className={`p-4 rounded-2xl border flex flex-col gap-3 ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'}`}>
             <div className="flex justify-between items-center">
               <span className="font-label-caps text-[10px] uppercase font-bold">Distancia Máxima</span>

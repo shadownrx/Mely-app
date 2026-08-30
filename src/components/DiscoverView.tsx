@@ -7,6 +7,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 import { Skeleton } from './ui/skeleton';
+import { LocationPrompt } from './LocationPrompt';
 
 interface DiscoverViewProps {
   profiles: Profile[];
@@ -90,6 +91,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
 
   if (!currentProfile) {
     return (
+      <div className="flex flex-col gap-4">
+      <LocationPrompt />
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -120,6 +123,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           {isLoading ? 'BUSCANDO NUEVOS PERFILES…' : 'BUSCAR NUEVOS PERFILES'}
         </Button>
       </motion.div>
+      </div>
     );
   }
 
@@ -228,6 +232,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           )}
         </div>
       </div>
+
+      <LocationPrompt />
 
       {/* Card Deck Container */}
       <div className="relative w-full min-h-[560px]">

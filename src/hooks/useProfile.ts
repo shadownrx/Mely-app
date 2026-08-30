@@ -36,3 +36,7 @@ export function useUpdateNotificationPrefs() {
 export function useDeleteAccount() {
   return useMutation({ mutationFn: profileApi.deleteAccount });
 }
+
+export function useUpdateLocation() {
+  return useMutation({ mutationFn: profileApi.updateLocation });
+}

@@ -9,6 +9,7 @@ import type { GooglePrefill } from './components/LoginView';
 import { VerifiedSpotsModal } from './components/VerifiedSpotsModal';
 import { DiscoveryFiltersModal } from './components/DiscoveryFiltersModal';
 import { ProposeDateModal, StampModal, MenuDrawer } from './components/Modals';
+import { MatchCelebrationModal } from './components/MatchCelebrationModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Toaster } from './components/ui/sonner';
 import { toast } from 'sonner';
@@ -66,6 +67,7 @@ function AppContent() {
   const [selectedStamp, setSelectedStamp] = useState<Stamp | null>(null);
   const [dateQRModal, setDateQRModal] = useState<DateQRModalState>(null);
   const [icebreaker, setIcebreaker] = useState<IcebreakerState>(null);
+  const [matchCelebration, setMatchCelebration] = useState<{ profile: Profile; connectionId: string } | null>(null);
   const [activeConnectionId, setActiveConnectionId] = useState<string | null>(null);
 
   const [discoveryFilters, setDiscoveryFilters] = useState<DiscoveryFilters>(DEFAULT_DISCOVERY_FILTERS);
@@ -185,7 +187,10 @@ function AppContent() {
     sounds.playStamp();
     swipe.like.mutate(profile.id, {
       onSuccess: (res) => {
-        if (res.match) sounds.playHeart();
+        if (res.match) {
+          sounds.playHeart();
+          setMatchCelebration({ profile, connectionId: res.match.id });
+        }
       },
     });
   };
@@ -198,7 +203,10 @@ function AppContent() {
     sounds.playCoins();
     swipe.superLike.mutate(profile.id, {
       onSuccess: (res) => {
-        if (res.match) sounds.playHeart();
+        if (res.match) {
+          sounds.playHeart();
+          setMatchCelebration({ profile, connectionId: res.match.id });
+        }
       },
     });
   };
@@ -374,6 +382,18 @@ function AppContent() {
       )}
 
       {/* Modals */}
+      <MatchCelebrationModal
+        profile={matchCelebration?.profile ?? null}
+        myAvatar={user.photos[0]?.url}
+        onSendMessage={() => {
+          if (!matchCelebration) return;
+          const connectionId = matchCelebration.connectionId;
+          setMatchCelebration(null);
+          handleOpenChat(connectionId);
+        }}
+        onClose={() => setMatchCelebration(null)}
+      />
+
       {proposeModal && (
         <ProposeDateModal
           isOpen={Boolean(proposeModal)}

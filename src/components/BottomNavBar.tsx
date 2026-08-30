@@ -60,24 +60,26 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   ];
 
   return (
-    <nav
-      id="bottom-navigation-bar"
-      // Insets calculados a mano en vez de max-width + margin:auto: en algunos Chrome/WebView
-      // de Android el auto-margin sobre un elemento fixed con left/right ya seteados no siempre
-      // resuelve al centro real (queda pegado a un lado). Con left/right = max(12px, 50% - 208px)
-      // el navbar queda centrado por construcción — mismo cálculo espejado en los dos lados — sin
-      // depender de esa resolución de márgenes, y sigue clampeando a 416px de ancho máximo.
+    // Envoltorio fixed con inset:0 puro (sin cálculos) que sí cubre el viewport real de forma
+    // confiable, y centra el nav adentro con flexbox — en vez de depender de left/right +
+    // margin:auto sobre el propio elemento fixed, que en la práctica seguía saliendo
+    // descentrado en algunos navegadores móviles aunque la matemática fuera correcta.
+    <div
       style={{
-        bottom: 'calc(0.75rem + env(safe-area-inset-bottom))',
-        left: 'max(0.75rem, calc(50% - 208px))',
-        right: 'max(0.75rem, calc(50% - 208px))',
+        paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))',
+        paddingLeft: '0.75rem',
+        paddingRight: '0.75rem',
       }}
-      className={`fixed z-50 rounded-[28px] border liquid-glass transition-colors duration-300 ${
-        isLight
-          ? 'bg-white/75 border-white/60 shadow-elevation-lg'
-          : 'bg-[#0d070a]/65 border-white/10 shadow-elevation-lg'
-      }`}
+      className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none"
     >
+      <nav
+        id="bottom-navigation-bar"
+        className={`pointer-events-auto w-full max-w-[416px] rounded-[28px] border liquid-glass transition-colors duration-300 ${
+          isLight
+            ? 'bg-white/75 border-white/60 shadow-elevation-lg'
+            : 'bg-[#0d070a]/65 border-white/10 shadow-elevation-lg'
+        }`}
+      >
       <div className="flex justify-around items-center py-1.5 px-2 w-full max-w-full">
         {tabs.map((tab) => {
           const isActive = currentTab === tab.id;
@@ -216,6 +218,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
           );
         })}
       </div>
-    </nav>
+      </nav>
+    </div>
   );
 };

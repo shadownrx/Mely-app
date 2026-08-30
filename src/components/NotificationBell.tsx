@@ -77,7 +77,10 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="flex flex-col gap-0 p-0">
           <SheetHeader
-            className={`p-4 border-b flex-row items-center justify-between space-y-0 shrink-0 ${
+            // pr-12 en vez de p-4 parejo: el botón "X" para cerrar del Sheet se dibuja
+            // absoluto en la esquina (right-4 top-4, ~28px de ancho) — sin este padding
+            // extra, "Marcar todo leído" quedaba flush a la derecha y se superponía con la X.
+            className={`p-4 pr-12 border-b flex-row items-center justify-between space-y-0 shrink-0 ${
               isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#1c0d15] border-[#e11d48]/30'
             }`}
           >

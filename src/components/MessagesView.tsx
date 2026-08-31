@@ -861,10 +861,13 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       )}
 
       {/* Messages */}
-      {/* justify-end: con pocos mensajes, se pegan abajo (como cualquier chat real) en vez
-          de quedar arriba con un hueco vacío antes del input. */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-3 flex flex-col justify-end gap-2 relative z-10 no-scrollbar select-text transition-all duration-300" style={getWallpaperStyle()}>
-        <div className="flex justify-center my-1">
+      {/* mt-auto en el primer hijo (no justify-end en el contenedor) para pegar los
+          mensajes abajo cuando hay pocos: justify-end en un flex column con
+          overflow-y-auto tiene un bug conocido de Chromium donde scrollHeight queda
+          igual a clientHeight apenas el contenido desborda — se veía "scrolleable"
+          pero nunca se movía ni un píxel. */}
+      <div className="flex-1 min-h-0 overflow-y-auto p-3 flex flex-col gap-2 relative z-10 no-scrollbar select-text transition-all duration-300" style={getWallpaperStyle()}>
+        <div className="flex justify-center mb-1 mt-auto">
           <div className={`max-w-xs px-3 py-1.5 rounded-xl border text-center text-[10px] leading-tight shadow-elevation-sm backdrop-blur-md ${isLight ? 'bg-white/80 border-[#fecdd3] text-[#475569]' : 'bg-[#180c13]/80 border-[#e11d48]/30 text-[#fda4af]/80'}`}>
             <span className="inline-flex items-center gap-1 font-bold text-[#e11d48] mb-0.5">
               <span className="material-symbols-outlined text-[12px]">lock</span>Conexión Privada MELY

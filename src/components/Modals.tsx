@@ -396,13 +396,13 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
   const { isLight, toggleTheme } = useTheme();
 
   const mainLinks = [
-    { label: 'Descubrir Perfiles', tab: 'descubrir', icon: 'explore' },
-    { label: 'Matches & Conexiones', tab: 'matches', icon: 'favorite' },
-    { label: 'Mensajes & Chat', tab: 'mensajes', icon: 'chat_bubble' },
-    { label: 'Tienda & Beneficios', tab: 'tienda', icon: 'local_mall' },
-    { label: 'Itinerario de Citas', tab: 'citas', icon: 'event_available' },
-    { label: 'Pasaporte & Bóveda', tab: 'perfil', icon: 'badge' },
-    { label: 'Panel de Ajustes', tab: 'ajustes', icon: 'settings' },
+    { label: 'Descubrir', tab: 'descubrir', icon: 'explore' },
+    { label: 'Matches', tab: 'matches', icon: 'favorite' },
+    { label: 'Mensajes', tab: 'mensajes', icon: 'chat_bubble' },
+    { label: 'Tienda', tab: 'tienda', icon: 'local_mall' },
+    { label: 'Citas', tab: 'citas', icon: 'event_available' },
+    { label: 'Perfil', tab: 'perfil', icon: 'badge' },
+    { label: 'Ajustes', tab: 'ajustes', icon: 'settings' },
   ];
 
   return (
@@ -410,51 +410,11 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
       <SheetContent side="left" className="w-[310px] p-5 flex flex-col justify-between overflow-y-auto no-scrollbar">
         <div className="flex flex-col gap-5">
           {/* Header */}
-          <div className="flex justify-between items-center pb-3.5 border-b border-[#e11d48]/20 pr-8">
-            <div>
-              <h2 className={`font-headline-md text-[20px] tracking-[0.2em] font-bold ${isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'}`}>
-                MELY
-              </h2>
-              <span className={`font-label-caps text-[8.5px] uppercase tracking-wider ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
-                PASAPORTE DE CONEXIONES
-              </span>
-            </div>
+          <div className={`pb-3.5 border-b pr-8 ${isLight ? 'border-slate-100' : 'border-white/10'}`}>
+            <h2 className="font-headline-md text-[19px] font-bold text-[#e11d48]">MELY</h2>
           </div>
 
-          {/* Theme Quick Switcher Inside Drawer */}
-          <div
-            className={`p-3 rounded-2xl border flex items-center justify-between ${
-              isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#190c12] border-[#e11d48]/30'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#e11d48] text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                {isLight ? 'wb_sunny' : 'dark_mode'}
-              </span>
-              <div>
-                <span className={`font-label-caps text-[9px] uppercase font-bold block ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                  {isLight ? 'Tema Blanco & Coral' : 'Tema Obsidiana Noir'}
-                </span>
-                <span className={`text-[10px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
-                  {isLight ? 'Fondo blanco puro' : 'Fondo oscuro noche'}
-                </span>
-              </div>
-            </div>
-            <Button
-              type="button"
-              variant="cherry"
-              size="sm"
-              onClick={() => {
-                sounds.playClick();
-                toggleTheme();
-              }}
-              className="h-7 px-2.5 text-[9px] rounded-xl tracking-normal"
-            >
-              Cambiar
-            </Button>
-          </div>
-
-          {/* User mini passport badge */}
+          {/* User mini badge */}
           <div
             onClick={() => {
               sounds.playClick();
@@ -462,24 +422,20 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
               onClose();
             }}
             className={`p-3 rounded-2xl border flex items-center gap-3 cursor-pointer transition-colors ${
-              isLight
-                ? 'bg-white border-[#fecdd3] hover:border-[#e11d48] shadow-elevation-sm'
-                : 'bg-[#190c12] border-[#e11d48]/30 hover:border-[#e11d48]/60'
+              isLight ? 'border-slate-100 hover:bg-slate-50' : 'border-white/10 hover:bg-white/5'
             }`}
           >
             <img
               src={user.photos[0]?.url}
               alt={user.displayName}
-              className="w-10 h-10 rounded-full object-cover border border-[#e11d48]/50 shrink-0"
+              className="w-10 h-10 rounded-full object-cover shrink-0"
               referrerPolicy="no-referrer"
             />
             <div className="flex-1 min-w-0">
-              <span className={`font-headline-md text-[13px] font-bold block truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+              <span className={`text-[13.5px] font-bold block truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
                 {user.displayName}
               </span>
-              <span className="font-meta-data text-[9px] text-[#e11d48] uppercase block truncate font-bold">
-                {user.membership.tierLabel}
-              </span>
+              <span className="text-[11px] text-[#e11d48] font-bold block truncate">{user.membership.tierLabel}</span>
             </div>
             <span className={`material-symbols-outlined text-[18px] ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
               chevron_right
@@ -497,20 +453,34 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
                   onClose();
                 }}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors group cursor-pointer ${
-                  isLight ? 'hover:bg-[#fff1f3] text-[#0f172a]' : 'hover:bg-white/5 text-[#fff1f2]'
+                  isLight ? 'hover:bg-slate-50 text-[#0f172a]' : 'hover:bg-white/5 text-[#fff1f2]'
                 }`}
               >
                 <span className="material-symbols-outlined text-[19px] text-[#e11d48] group-hover:scale-110 transition-transform">
                   {link.icon}
                 </span>
-                <span className="font-body-sm text-[13px] font-medium">{link.label}</span>
+                <span className="text-[13.5px] font-medium">{link.label}</span>
               </button>
             ))}
           </nav>
         </div>
 
         {/* Footer Actions */}
-        <div className="pt-4 border-t border-gray-200 dark:border-white/10 flex flex-col gap-2.5">
+        <div className={`pt-4 border-t flex flex-col gap-2.5 ${isLight ? 'border-slate-100' : 'border-white/10'}`}>
+          <button
+            type="button"
+            onClick={() => {
+              sounds.playClick();
+              toggleTheme();
+            }}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors group cursor-pointer ${
+              isLight ? 'hover:bg-slate-50 text-[#0f172a]' : 'hover:bg-white/5 text-[#fff1f2]'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[19px] text-[#e11d48]">{isLight ? 'dark_mode' : 'light_mode'}</span>
+            <span className="text-[13.5px] font-medium">{isLight ? 'Modo oscuro' : 'Modo claro'}</span>
+          </button>
+
           <Button
             variant="outline"
             onClick={() => {
@@ -518,15 +488,11 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
               onSignOut();
               onClose();
             }}
-            className={`w-full gap-1.5 text-[10px] ${isLight ? 'bg-[#fff1f3] text-[#e11d48]' : 'bg-[#170a0f] text-[#fda4af]'}`}
+            className="w-full gap-1.5 text-[13px] normal-case tracking-normal text-[#e11d48]"
           >
             <span className="material-symbols-outlined text-[16px]">logout</span>
-            <span>Cerrar Sesión</span>
+            <span>Cerrar sesión</span>
           </Button>
-
-          <span className={`font-meta-data text-[8px] text-center block ${isLight ? 'text-gray-400' : 'text-[#fda4af]/40'}`}>
-            MELY v2.8 • CHERRY & CORAL EDITION
-          </span>
         </div>
       </SheetContent>
     </Sheet>

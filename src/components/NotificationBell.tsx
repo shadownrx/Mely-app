@@ -81,7 +81,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }
             // absoluto en la esquina (right-4 top-4, ~28px de ancho) — sin este padding
             // extra, "Marcar todo leído" quedaba flush a la derecha y se superponía con la X.
             className={`p-4 pr-12 border-b flex-row items-center justify-between space-y-0 shrink-0 ${
-              isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#1c0d15] border-[#e11d48]/30'
+              isLight ? 'border-slate-100' : 'border-white/10'
             }`}
           >
             <SheetTitle>Notificaciones</SheetTitle>
@@ -92,7 +92,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }
                   sounds.playClick();
                   markAllRead.mutate();
                 }}
-                className="font-label-caps text-[10px] uppercase font-bold text-[#e11d48] hover:underline cursor-pointer"
+                className="text-[12.5px] font-bold text-[#e11d48] hover:underline cursor-pointer"
               >
                 Marcar todo leído
               </button>
@@ -115,10 +115,11 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }
                   key={n.id}
                   type="button"
                   onClick={() => handleItemClick(n)}
-                  className={`w-full flex items-start gap-3 p-4 text-left border-b transition-colors cursor-pointer ${
-                    isLight ? 'border-[#fecdd3]/60 hover:bg-[#fff1f3]' : 'border-[#e11d48]/15 hover:bg-white/5'
-                  } ${!n.readAt ? (isLight ? 'bg-[#fff5f6]' : 'bg-[#1c0d15]/60') : ''}`}
+                  className={`relative w-full flex items-start gap-3 p-4 text-left border-b transition-colors cursor-pointer ${
+                    isLight ? 'border-slate-100 hover:bg-slate-50' : 'border-white/8 hover:bg-white/5'
+                  }`}
                 >
+                  {!n.readAt && <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#e11d48]" />}
                   <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shrink-0">
                     <span className="material-symbols-outlined text-[18px]">
                       {CATEGORY_ICONS[n.category] ?? 'notifications'}
@@ -126,15 +127,15 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className={`text-[13px] font-bold truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+                      <span className={`text-[13.5px] font-bold truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
                         {n.title}
                       </span>
                       {!n.readAt && <span className="w-1.5 h-1.5 rounded-full bg-[#e11d48] shrink-0" />}
                     </div>
-                    <p className={`text-[12px] mt-0.5 leading-snug ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
+                    <p className={`text-[12.5px] mt-0.5 leading-snug ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
                       {n.body}
                     </p>
-                    <span className={`font-meta-data text-[9px] uppercase mt-1 block ${isLight ? 'text-gray-400' : 'text-white/30'}`}>
+                    <span className={`text-[11px] mt-1 block ${isLight ? 'text-gray-400' : 'text-white/35'}`}>
                       {timeAgo(n.createdAt)}
                     </span>
                   </div>

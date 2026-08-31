@@ -289,7 +289,7 @@ function AppContent() {
           // quedar pegado (ver BottomNavBar), así el contenido no queda tapado por ese hueco.
           paddingBottom: isChatDetail ? 'env(safe-area-inset-bottom)' : `calc(${currentTab === 'mensajes' ? '4.75rem' : '5.75rem'} + env(safe-area-inset-bottom))`,
         }}
-        className={`w-full max-w-[440px] mx-auto ${currentTab === 'mensajes' ? 'px-2 sm:px-3' : 'px-4'} flex-1 flex flex-col min-h-0`}
+        className={`w-full max-w-[440px] mx-auto ${isChatDetail ? '' : currentTab === 'mensajes' ? 'px-2 sm:px-3' : 'px-4'} flex-1 flex flex-col min-h-0`}
       >
         <AnimatePresence mode="wait">
           <motion.div

@@ -155,8 +155,9 @@ const QUICK_GIFS = [
   { id: 'gif-4', title: 'Vinilo', url: 'https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=300&q=80', tag: '🎵 Música' },
 ];
 
+const DEFAULT_FREQUENT_EMOJIS = ['☕', '🍷', '✨', '❤️', '🔥', '😂', '🇦🇷', '🥐', '🎶', '😻', '🚀'];
+
 const EMOJI_CATEGORIES = [
-  { name: 'Frecuentes', icon: '🕒', emojis: ['☕', '🍷', '✨', '❤️', '🔥', '😂', '🇦🇷', '🥐', '🎶', '😻', '🚀'] },
   { name: 'Caritas', icon: '😊', emojis: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '😉', '😌', '😍', '🥰', '😘', '😋', '😎', '🥳', '🤩'] },
   { name: 'Romance', icon: '❤️', emojis: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '💖', '💗', '💌', '💍', '💐', '🌹', '💋'] },
   { name: 'Café & Vino', icon: '☕', emojis: ['☕', '🍵', '🧋', '🍷', '🍸', '🍹', '🥐', '🥖', '🥞', '🍕', '🍰', '🍓'] },
@@ -242,6 +243,39 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
   const [localReactions, setLocalReactions] = useState<Record<string, string>>({});
   const [starredMsgIds, setStarredMsgIds] = useState<string[]>([]);
+  // Quién no quiere ver la tarjeta de "próxima cita" la puede ocultar; queda oculta
+  // (por id de propuesta, no de conexión) hasta que haya una propuesta nueva.
+  const [hiddenProposalIds, setHiddenProposalIds] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('mely_hidden_proposals') ?? '[]');
+    } catch {
+      return [];
+    }
+  });
+  const dismissProposalCard = (id: string) => {
+    sounds.playClick();
+    setHiddenProposalIds((prev) => {
+      const next = [...new Set([...prev, id])];
+      localStorage.setItem('mely_hidden_proposals', JSON.stringify(next));
+      return next;
+    });
+  };
+  const restoreProposalCard = (id: string) => {
+    sounds.playClick();
+    setHiddenProposalIds((prev) => {
+      const next = prev.filter((pid) => pid !== id);
+      localStorage.setItem('mely_hidden_proposals', JSON.stringify(next));
+      return next;
+    });
+  };
+  // Emojis usados de verdad (no una lista fija) — como en el "Frecuentes" real de WhatsApp.
+  const [recentEmojis, setRecentEmojis] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('mely_recent_emojis') ?? '[]');
+    } catch {
+      return [];
+    }
+  });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -455,6 +489,22 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     sounds.playClick();
     setFavoriteStickerIds((prev) => (prev.includes(stickerId) ? prev.filter((id) => id !== stickerId) : [...prev, stickerId]));
   };
+  const handleInsertEmoji = (emoji: string) => {
+    sounds.playClick();
+    setInputText((prev) => prev + emoji);
+    setRecentEmojis((prev) => {
+      const next = [emoji, ...prev.filter((e) => e !== emoji)].slice(0, 24);
+      localStorage.setItem('mely_recent_emojis', JSON.stringify(next));
+      return next;
+    });
+    inputRef.current?.focus();
+  };
+  const handleBackspaceEmoji = () => {
+    sounds.playClick();
+    // Borra el último "carácter" completo (un emoji puede ocupar más de un code unit).
+    setInputText((prev) => (prev ? [...prev].slice(0, -1).join('') : prev));
+    inputRef.current?.focus();
+  };
 
   const filteredMatches = matches.filter((m) => {
     const q = searchQuery.toLowerCase();
@@ -595,9 +645,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const partner = activeMatch.other;
 
   return (
+    // Sin rounded/border/shadow acá: en isChatDetail (App.tsx) se saca la topbar/navbar y el
+    // padding del <main> para que el chat sea de borde a borde, como cualquier chat nativo
+    // (WhatsApp/Telegram/iMessage) — quedaba flotando como una tarjeta si se lo bordeaba.
     <div
-      className={`flex flex-col h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full rounded-3xl border overflow-hidden shadow-2xl relative animate-fadeIn ${
-        isLight ? 'bg-[#f4efe8] border-[#fecdd3]' : 'bg-[#0b090a] border-[#e11d48]/30'
+      className={`flex flex-col h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full overflow-hidden relative animate-fadeIn ${
+        isLight ? 'bg-[#f4efe8]' : 'bg-[#0b090a]'
       }`}
     >
       <input ref={photoInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePhotoSelected} />
@@ -710,7 +763,22 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       )}
 
       {/* Active proposal sticky card */}
-      {activeProposal && (
+      {activeProposal && hiddenProposalIds.includes(activeProposal.id) && (
+        <div className={`px-3 pt-2 shrink-0 ${isLight ? 'bg-[#f4efe8]' : 'bg-[#0b090a]'}`}>
+          <button
+            type="button"
+            onClick={() => restoreProposalCard(activeProposal.id)}
+            className={`w-full flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[11px] font-bold transition-colors ${
+              isLight ? 'bg-white border-[#fecdd3] text-[#e11d48] hover:border-[#e11d48]' : 'bg-[#1a0c13] border-[#e11d48]/30 text-[#fda4af] hover:border-[#e11d48]/60'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[14px]">event</span>
+            Próxima cita
+            <span className="material-symbols-outlined text-[14px] ml-auto">expand_more</span>
+          </button>
+        </div>
+      )}
+      {activeProposal && !hiddenProposalIds.includes(activeProposal.id) && (
         <div className={`px-3 pt-2 shrink-0 ${isLight ? 'bg-[#f4efe8]' : 'bg-[#0b090a]'}`}>
           <div className={`p-3 rounded-2xl border-2 flex flex-col gap-2 ${isLight ? 'bg-[#fff5f6] border-[#e11d48]/40' : 'bg-[#1a0c13] border-[#e11d48]/50'}`}>
             <div className="flex items-center justify-between gap-2">
@@ -723,25 +791,38 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   · {activeProposal.zone}
                 </p>
               </div>
-              {activeProposal.status === 'PENDING' && activeProposal.proposerId !== user?.id ? (
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setCounterFormOpen((prev) => !prev)}
-                    className="h-8 px-2.5 text-[11px] font-bold rounded-xl"
-                  >
-                    {activeProposal.scheduledAt ? 'Cambiar hora' : 'Proponer hora'}
-                  </Button>
-                  <Button size="sm" onClick={() => acceptProposal.mutate(activeProposal.id)} className="h-8 px-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[11px] font-bold rounded-xl">
-                    Aceptar
-                  </Button>
-                </div>
-              ) : (
-                <Badge className="shrink-0 text-[10px] bg-[#e11d48]/15 text-[#e11d48] border border-[#e11d48]/30">
-                  {activeProposal.status === 'PENDING' ? 'Esperando' : activeProposal.status === 'ACCEPTED' ? 'Aceptada' : 'Contrapropuesta'}
-                </Badge>
-              )}
+              <div className="flex items-center gap-1.5 shrink-0">
+                {activeProposal.status === 'PENDING' && activeProposal.proposerId !== user?.id ? (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setCounterFormOpen((prev) => !prev)}
+                      className="h-8 px-2.5 text-[11px] font-bold rounded-xl"
+                    >
+                      {activeProposal.scheduledAt ? 'Cambiar hora' : 'Proponer hora'}
+                    </Button>
+                    <Button size="sm" onClick={() => acceptProposal.mutate(activeProposal.id)} className="h-8 px-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[11px] font-bold rounded-xl">
+                      Aceptar
+                    </Button>
+                  </>
+                ) : (
+                  <Badge className="shrink-0 text-[10px] bg-[#e11d48]/15 text-[#e11d48] border border-[#e11d48]/30">
+                    {activeProposal.status === 'PENDING' ? 'Esperando' : activeProposal.status === 'ACCEPTED' ? 'Aceptada' : 'Contrapropuesta'}
+                  </Badge>
+                )}
+                <button
+                  type="button"
+                  onClick={() => dismissProposalCard(activeProposal.id)}
+                  className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
+                    isLight ? 'text-gray-400 hover:text-[#e11d48] hover:bg-black/5' : 'text-white/40 hover:text-[#fb7185] hover:bg-white/10'
+                  }`}
+                  aria-label="Ocultar tarjeta de próxima cita"
+                  title="Ocultar"
+                >
+                  <span className="material-symbols-outlined text-[15px]">close</span>
+                </button>
+              </div>
             </div>
 
             {counterFormOpen && (
@@ -990,9 +1071,16 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 </Button>
               ))}
             </div>
-            <Button variant="ghost" size="icon" onClick={() => setActiveMediaTray(null)} className="h-8 w-8 rounded-full text-gray-400 shrink-0" aria-label="Cerrar">
-              <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
-            </Button>
+            <div className="flex items-center gap-0.5 shrink-0">
+              {activeMediaTray === 'emojis' && (
+                <Button variant="ghost" size="icon" onClick={handleBackspaceEmoji} className="h-8 w-8 rounded-full text-gray-400" aria-label="Borrar último carácter">
+                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">backspace</span>
+                </Button>
+              )}
+              <Button variant="ghost" size="icon" onClick={() => setActiveMediaTray(null)} className="h-8 w-8 rounded-full text-gray-400" aria-label="Cerrar">
+                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
+              </Button>
+            </div>
           </div>
 
           {activeMediaTray === 'sparks' && (
@@ -1052,6 +1140,20 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
           {activeMediaTray === 'emojis' && (
             <div className="flex-1 overflow-y-auto p-3 no-scrollbar space-y-3">
+              <div>
+                <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1.5 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>🕒 Recientes</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {(recentEmojis.length > 0 ? recentEmojis : DEFAULT_FREQUENT_EMOJIS).map((emoji, i) => (
+                    <button
+                      key={`recent-${i}`}
+                      onClick={() => handleInsertEmoji(emoji)}
+                      className="w-8 h-8 rounded-xl border flex items-center justify-center text-[18px] hover:scale-125 transition-transform bg-white dark:bg-[#1a0c13] border-[#fecdd3] dark:border-[#e11d48]/20"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
               {EMOJI_CATEGORIES.map((cat) => (
                 <div key={cat.name}>
                   <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1.5 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>{cat.icon} {cat.name}</span>
@@ -1059,7 +1161,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     {cat.emojis.map((emoji, i) => (
                       <button
                         key={`${cat.name}-${i}`}
-                        onClick={() => { sounds.playClick(); setInputText((prev) => prev + emoji); inputRef.current?.focus(); }}
+                        onClick={() => handleInsertEmoji(emoji)}
                         className="w-8 h-8 rounded-xl border flex items-center justify-center text-[18px] hover:scale-125 transition-transform bg-white dark:bg-[#1a0c13] border-[#fecdd3] dark:border-[#e11d48]/20"
                       >
                         {emoji}

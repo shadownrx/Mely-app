@@ -42,3 +42,13 @@ export function pass(userId: string) {
 export function superLike(userId: string) {
   return apiRequest<SwipeResult>(`/discover/super/${userId}`, { method: 'POST' });
 }
+
+export type WhoLikedMe = {
+  count: number;
+  unlocked: boolean;
+  profiles: Profile[];
+};
+
+export function getWhoLikedMe() {
+  return apiRequest<WhoLikedMe>('/discover/likes');
+}

@@ -6,6 +6,8 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useShop, usePurchase } from '../hooks/useShop';
 import { useCoinPacks, useRecharge, useRedeemCode, useWallet, useWalletHistory } from '../hooks/useWallet';
+import { useWhoLikedMe } from '../hooks/useDiscover';
+import { WhoLikedYouModal } from './WhoLikedYouModal';
 import type { ShopItem } from '../types';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -20,7 +22,11 @@ const ITEM_PRESENTATION: Record<string, { icon: string; color: string; badge?: s
   EXTRA_PROFILES: { icon: 'visibility', color: '#fda4af' },
   SUPER_INVITE: { icon: 'star', color: '#ffd700' },
   REACTIVATE_MATCH: { icon: 'favorite', color: '#e11d48' },
+  BOOST: { icon: 'bolt', color: '#f59e0b' },
+  LIKES_UNLOCK: { icon: 'visibility', color: '#e11d48' },
 };
+
+const MOST_POPULAR_KEY = 'MEMBERSHIP_PREMIUM';
 
 const CONTEXTUAL_ITEMS = new Set(['SUPER_INVITE', 'REACTIVATE_MATCH']);
 const CONTEXTUAL_HINT: Record<string, string> = {
@@ -28,13 +34,19 @@ const CONTEXTUAL_HINT: Record<string, string> = {
   REACTIVATE_MATCH: 'Se usa desde Matches, sobre un match inactivo.',
 };
 
+function minutesLeft(iso: string | null): number {
+  if (!iso) return 0;
+  return Math.max(0, Math.ceil((new Date(iso).getTime() - Date.now()) / 60000));
+}
+
 export const StoreView: React.FC = () => {
   const { isLight } = useTheme();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { data: shopItems = [], isLoading: isLoadingShop } = useShop();
   const { data: wallet } = useWallet();
   const { data: history } = useWalletHistory();
   const { data: coinPacks = [] } = useCoinPacks();
+  const { data: whoLikedMe } = useWhoLikedMe();
   const purchase = usePurchase();
   const recharge = useRecharge();
   const redeemCode = useRedeemCode();
@@ -43,9 +55,14 @@ export const StoreView: React.FC = () => {
   const [promoCode, setPromoCode] = useState('');
   const [receipt, setReceipt] = useState<string | null>(null);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
+  const [whoLikedOpen, setWhoLikedOpen] = useState(false);
 
   const walletBalance = wallet?.balance ?? 0;
   const membershipTier = user?.membership.tier ?? 'STANDARD';
+  const boostActiveMinutes = minutesLeft(user?.boostedUntil ?? null);
+  const likesUnlockActiveMinutes = minutesLeft(user?.likesUnlockedUntil ?? null);
+  const likesAlreadyIncluded = membershipTier !== 'STANDARD';
+  const likesUnlockItem = shopItems.find((i) => i.key === 'LIKES_UNLOCK');
 
   const celebrate = () => {
     try {
@@ -70,6 +87,11 @@ export const StoreView: React.FC = () => {
           celebrate();
           setReceipt(selectedItem.name);
           setSelectedItem(null);
+          // Sin esto, membresía/boost/likes quedaban comprados en el server pero la UI
+          // (isCurrent, cuenta regresiva de boost, etc.) seguía mostrando el estado viejo
+          // hasta el próximo refresh manual — usePurchase invalida react-query, pero
+          // AuthContext.user vive aparte y necesita su propio refreshUser().
+          refreshUser();
         },
         onError: (err: any) => setPurchaseError(err?.message ?? 'No se pudo completar la compra'),
       },
@@ -145,6 +167,35 @@ export const StoreView: React.FC = () => {
         </div>
       </section>
 
+      {/* WHO LIKED YOU TEASER */}
+      {whoLikedMe && whoLikedMe.count > 0 && (
+        <button
+          type="button"
+          onClick={() => {
+            sounds.playClick();
+            setWhoLikedOpen(true);
+          }}
+          className={`flex items-center gap-3 p-3.5 rounded-2xl border text-left transition-transform active:scale-[0.98] ${
+            isLight
+              ? 'bg-gradient-to-r from-[#fff1f3] to-white border-[#fecdd3]'
+              : 'bg-gradient-to-r from-[#2b0c16] to-[#150a0e] border-[#e11d48]/30'
+          }`}
+        >
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] flex items-center justify-center text-white shrink-0 shadow-elevation-md">
+            <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h4 className={`font-headline-md text-[13.5px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+              {whoLikedMe.count} {whoLikedMe.count === 1 ? 'persona te dio like' : 'personas te dieron like'}
+            </h4>
+            <p className={`text-[11px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+              {whoLikedMe.unlocked ? 'Tocá para verlas y responder' : 'Tocá para ver quiénes son'}
+            </p>
+          </div>
+          <span className="material-symbols-outlined text-[20px] text-[#e11d48] shrink-0">chevron_right</span>
+        </button>
+      )}
+
       {isLoadingShop && shopItems.length === 0 && (
         <div className="flex flex-col gap-3">
           <Skeleton className="h-24 w-full rounded-2xl" />
@@ -165,6 +216,11 @@ export const StoreView: React.FC = () => {
               const isCurrent = membershipTier === item.key.replace('MEMBERSHIP_', '');
               return (
                 <div key={item.key} className={`relative rounded-2xl p-4 flex items-center justify-between gap-3 border ${cardClass} ${isCurrent ? 'ring-2 ring-[#e11d48]' : ''}`}>
+                  {item.key === MOST_POPULAR_KEY && !isCurrent && (
+                    <span className="absolute -top-2 left-4 px-2 py-0.5 rounded-full text-[8.5px] font-bold uppercase tracking-wide bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-sm">
+                      Más popular
+                    </span>
+                  )}
                   <div className="flex items-center gap-3 min-w-0">
                     <div
                       className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
@@ -205,6 +261,9 @@ export const StoreView: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             {boosts.map((item) => {
               const presentation = ITEM_PRESENTATION[item.key] ?? { icon: 'bolt', color: '#e11d48' };
+              const isBoostActive = item.key === 'BOOST' && boostActiveMinutes > 0;
+              const isLikesActive = item.key === 'LIKES_UNLOCK' && (likesAlreadyIncluded || likesUnlockActiveMinutes > 0);
+              const isActive = isBoostActive || isLikesActive;
               return (
                 <div key={item.key} className={`rounded-2xl p-3.5 flex flex-col justify-between gap-2.5 border ${cardClass}`}>
                   <div>
@@ -218,15 +277,22 @@ export const StoreView: React.FC = () => {
                     <p className={`text-[10.5px] leading-snug mt-0.5 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>{item.description}</p>
                   </div>
                   <Button
-                    variant="cherry"
+                    variant={isActive ? 'secondary' : 'cherry'}
                     size="sm"
+                    disabled={isActive}
                     onClick={() => {
                       sounds.playClick();
                       setSelectedItem(item);
                     }}
                     className="h-auto px-2.5 py-1.5 rounded-xl text-[9.5px] tracking-wider"
                   >
-                    {item.price} coins
+                    {isBoostActive
+                      ? `Activo · ${boostActiveMinutes}m`
+                      : isLikesActive
+                        ? likesAlreadyIncluded
+                          ? 'Incluido'
+                          : `Activo · ${likesUnlockActiveMinutes}m`
+                        : `${item.price} coins`}
                   </Button>
                 </div>
               );
@@ -265,20 +331,29 @@ export const StoreView: React.FC = () => {
             MODO DEMO · SIN COBRO REAL
           </span>
         </div>
-        <div className="grid grid-cols-3 gap-2.5">
-          {coinPacks.map((pack) => (
-            <Button
-              key={pack.key}
-              variant="outline"
-              onClick={() => handleRecharge(pack.key)}
-              disabled={recharge.isPending}
-              className={`h-auto rounded-2xl p-3 flex-col items-center gap-1 normal-case font-normal tracking-normal ${cardClass}`}
-            >
-              <span className="material-symbols-outlined text-[22px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>toll</span>
-              <span className={`font-headline-md text-[15px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{pack.coins.toLocaleString()}</span>
-              <span className={`text-[9px] text-center ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>{pack.label}</span>
-            </Button>
-          ))}
+        <div className="grid grid-cols-2 gap-2.5">
+          {coinPacks.map((pack, idx) => {
+            const isBiggest = idx === coinPacks.length - 1 && coinPacks.length > 1;
+            return (
+              <div key={pack.key} className="relative">
+                {isBiggest && (
+                  <span className="absolute -top-2 right-2 px-1.5 py-0.5 rounded-full text-[7.5px] font-bold uppercase tracking-wide bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-elevation-sm z-10">
+                    Más coins
+                  </span>
+                )}
+                <Button
+                  variant="outline"
+                  onClick={() => handleRecharge(pack.key)}
+                  disabled={recharge.isPending}
+                  className={`w-full h-auto rounded-2xl p-3 flex-col items-center gap-1 normal-case font-normal tracking-normal ${cardClass}`}
+                >
+                  <span className="material-symbols-outlined text-[22px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>toll</span>
+                  <span className={`font-headline-md text-[15px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{pack.coins.toLocaleString()}</span>
+                  <span className={`text-[9px] text-center ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>{pack.label}</span>
+                </Button>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -390,6 +465,12 @@ export const StoreView: React.FC = () => {
           </Button>
         </DialogContent>
       </Dialog>
+
+      <WhoLikedYouModal
+        open={whoLikedOpen}
+        onOpenChange={setWhoLikedOpen}
+        likesUnlockPrice={likesUnlockItem?.price ?? 60}
+      />
     </div>
   );
 };

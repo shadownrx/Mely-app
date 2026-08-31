@@ -92,6 +92,8 @@ export interface MeProfile extends Profile {
   onboardingCompleted: boolean;
   hasLocation: boolean;
   lastActiveAt: string | null;
+  boostedUntil: string | null;
+  likesUnlockedUntil: string | null;
 }
 
 export interface Match {

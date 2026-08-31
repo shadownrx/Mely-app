@@ -15,6 +15,7 @@ export function usePurchase() {
       queryClient.invalidateQueries({ queryKey: ['me'] });
       queryClient.invalidateQueries({ queryKey: ['matches'] });
       queryClient.invalidateQueries({ queryKey: ['discoverQuota'] });
+      queryClient.invalidateQueries({ queryKey: ['whoLikedMe'] });
     },
   });
 }

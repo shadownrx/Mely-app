@@ -30,6 +30,7 @@ export function useSwipe() {
     queryClient.invalidateQueries({ queryKey: ['discover'] });
     queryClient.invalidateQueries({ queryKey: ['matches'] });
     queryClient.invalidateQueries({ queryKey: ['discoverQuota'] });
+    queryClient.invalidateQueries({ queryKey: ['whoLikedMe'] });
   };
 
   const like = useMutation({ mutationFn: discoverApi.like, onSuccess: invalidate });
@@ -41,4 +42,8 @@ export function useSwipe() {
 
 export function useDiscoverQuota() {
   return useQuery({ queryKey: ['discoverQuota'], queryFn: discoverApi.getDiscoverQuota });
+}
+
+export function useWhoLikedMe() {
+  return useQuery({ queryKey: ['whoLikedMe'], queryFn: discoverApi.getWhoLikedMe });
 }

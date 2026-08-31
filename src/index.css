@@ -21,11 +21,19 @@
     font-size: 16px !important;
   }
 
+  /* "contain" (nunca "none") para no matar el pull-to-refresh nativo sin romper
+     el scroll táctil real de las listas — "none" en la raíz tiene un bug conocido
+     en Chrome Android que anula el paneo táctil de TODO, no solo el refresh. */
+  html {
+    overscroll-behavior-y: contain;
+  }
+
   body {
     font-family: var(--font-sans);
     background-color: #0b090a;
     color: #fdf2f4;
     overflow-x: hidden;
+    overscroll-behavior-y: contain;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 

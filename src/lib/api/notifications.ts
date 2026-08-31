@@ -22,6 +22,14 @@ export function markAllNotificationsRead() {
   return apiRequest<{ ok: true }>('/me/notifications/read-all', { method: 'POST' });
 }
 
+export function deleteNotification(id: string) {
+  return apiRequest<{ ok: true }>(`/me/notifications/${id}`, { method: 'DELETE' });
+}
+
+export function deleteAllNotifications() {
+  return apiRequest<{ ok: true }>('/me/notifications', { method: 'DELETE' });
+}
+
 export function saveWebPushSubscription(subscription: PushSubscriptionJSON) {
   return apiRequest<{ ok: true }>('/me/web-push-subscription', { method: 'POST', body: subscription });
 }

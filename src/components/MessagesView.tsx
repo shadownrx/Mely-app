@@ -96,8 +96,8 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
     name: 'Minimalista & Blanco Puro',
     description: 'Limpio, sobrio y con máxima legibilidad',
     accentColor: '#475569',
-    userBubbleLight: 'bg-[#1e293b] text-white border border-gray-300',
-    userBubbleDark: 'bg-[#334155] text-white border border-slate-600',
+    userBubbleLight: 'bg-slate-800 text-white',
+    userBubbleDark: 'bg-slate-200 text-slate-900',
     wallpaperPattern: 'clean',
     previewBadge: '◻️ Minimal',
   },
@@ -246,6 +246,24 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
+
+  // Mantenía dos botones (reaccionar + opciones) siempre visibles al lado de CADA mensaje
+  // — mucho ruido comparado con WhatsApp/Telegram, que no muestran nada hasta que mantenés
+  // presionado. Acá se reemplaza por un long-press real que abre las dos cosas juntas.
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressFiredRef = useRef(false);
+  const startLongPress = (msgId: string) => {
+    longPressFiredRef.current = false;
+    longPressTimerRef.current = setTimeout(() => {
+      longPressFiredRef.current = true;
+      sounds.playClick();
+      setActiveReactionMenuMsgId(msgId);
+      setActiveOptionsMenuMsgId(msgId);
+    }, 420);
+  };
+  const cancelLongPress = () => {
+    if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+  };
 
   const { data: matches = [], isLoading: isLoadingMatches } = useMatches();
   const activeMatch: Match | null = matches.find((m) => m.id === activeConnectionId) ?? null;
@@ -622,7 +640,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             se comprimía a 0px de ancho en pantallas angostas y quedaba pegado al avatar. */}
         <div className="flex items-center gap-1 shrink-0">
           {onOpenProposeModal && (
-            <Button size="sm" onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }} className="h-8 px-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full font-label-caps text-[10px] font-bold uppercase flex items-center gap-1 shadow-elevation-sm shrink-0">
+            <Button size="sm" onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }} className="h-8 px-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full text-[11px] font-bold flex items-center gap-1 shadow-elevation-sm shrink-0">
               <span className="material-symbols-outlined text-[15px]">local_cafe</span>
               <span>Cita</span>
             </Button>
@@ -630,7 +648,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           {onOpenDateQR && (activeMatch.status === 'DATE_AGREED' || activeMatch.status === 'DATE_VERIFIED' || activeMatch.status === 'SECOND_DATE') && (
             <button
               onClick={() => { sounds.playScanBeep(); onOpenDateQR(activeMatch.id, partner.displayName, partner.photos[0]?.url ?? ''); }}
-              className={`px-2 py-1 rounded-xl text-[9px] font-label-caps uppercase font-bold flex items-center gap-1 border transition-all shrink-0 ${
+              className={`px-2 py-1 rounded-xl text-[10px] font-bold flex items-center gap-1 border transition-all shrink-0 ${
                 activeMatch.status === 'DATE_VERIFIED' || activeMatch.status === 'SECOND_DATE' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' : 'bg-[#e11d48]/10 text-[#e11d48] border-[#e11d48]/30 animate-pulse'
               }`}
               title="Ver Pase QR"
@@ -764,7 +782,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {/* Messages */}
       {/* justify-end: con pocos mensajes, se pegan abajo (como cualquier chat real) en vez
           de quedar arriba con un hueco vacío antes del input. */}
-      <div className="flex-1 overflow-y-auto p-3 flex flex-col justify-end gap-2 relative z-10 no-scrollbar select-text transition-all duration-300" style={getWallpaperStyle()}>
+      <div className="flex-1 min-h-0 overflow-y-auto p-3 flex flex-col justify-end gap-2 relative z-10 no-scrollbar select-text transition-all duration-300" style={getWallpaperStyle()}>
         <div className="flex justify-center my-1">
           <div className={`max-w-xs px-3 py-1.5 rounded-xl border text-center text-[10px] leading-tight shadow-elevation-sm backdrop-blur-md ${isLight ? 'bg-white/80 border-[#fecdd3] text-[#475569]' : 'bg-[#180c13]/80 border-[#e11d48]/30 text-[#fda4af]/80'}`}>
             <span className="inline-flex items-center gap-1 font-bold text-[#e11d48] mb-0.5">
@@ -785,7 +803,20 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             <div key={msg.id} className={`flex flex-col group relative ${isUser ? 'items-end' : 'items-start'}`}>
               <div className={`max-w-[85%] relative flex items-end gap-1.5 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
                 {sticker ? (
-                  <div onClick={() => { sounds.playClick(); setSelectedStickerDetail(sticker); }} className="relative cursor-pointer transition-transform hover:scale-105 active:scale-95 py-1">
+                  <div
+                    onClick={() => {
+                      if (longPressFiredRef.current) return;
+                      sounds.playClick();
+                      setSelectedStickerDetail(sticker);
+                    }}
+                    onTouchStart={() => startLongPress(msg.id)}
+                    onTouchEnd={cancelLongPress}
+                    onTouchMove={cancelLongPress}
+                    onMouseDown={() => startLongPress(msg.id)}
+                    onMouseUp={cancelLongPress}
+                    onMouseLeave={cancelLongPress}
+                    className="relative cursor-pointer transition-transform hover:scale-105 active:scale-95 py-1"
+                  >
                     <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-[#fff1f3] to-white dark:from-[#200d16] dark:to-[#12070c] border-2 border-[#e11d48]/40 shadow-xl flex flex-col items-center justify-center p-3 text-center relative overflow-hidden">
                       <span className="text-5xl select-none">{sticker.emoji}</span>
                       <span className="font-label-caps text-[9px] font-bold uppercase tracking-wider text-[#e11d48] mt-2 line-clamp-2 px-1">{sticker.badgeText || sticker.title}</span>
@@ -797,7 +828,16 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     {isStarred && <span className="absolute -top-1 -right-1 text-amber-400 text-[13px]">⭐</span>}
                   </div>
                 ) : (
-                  <div style={isUser && customColor ? { backgroundColor: customColor } : undefined} className={`p-2.5 sm:p-3 relative transition-all shadow-elevation-md rounded-[20px] ${isUser ? getUserBubbleClass() : getPartnerBubbleClass()}`}>
+                  <div
+                    style={isUser && customColor ? { backgroundColor: customColor } : undefined}
+                    onTouchStart={() => startLongPress(msg.id)}
+                    onTouchEnd={cancelLongPress}
+                    onTouchMove={cancelLongPress}
+                    onMouseDown={() => startLongPress(msg.id)}
+                    onMouseUp={cancelLongPress}
+                    onMouseLeave={cancelLongPress}
+                    className={`p-2.5 sm:p-3 relative transition-all shadow-elevation-md rounded-[20px] select-none ${isUser ? getUserBubbleClass() : getPartnerBubbleClass()}`}
+                  >
                     {msg.replyTo && (
                       <div className={`mb-1.5 pl-2 pr-1 py-1 rounded-lg border-l-2 max-w-[220px] ${
                         isUser ? 'border-l-white/50 bg-black/10' : isLight ? 'border-l-[#e11d48] bg-black/[0.03]' : 'border-l-[#e11d48] bg-white/5'
@@ -837,15 +877,6 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   </div>
                 )}
 
-                {/* Visibles siempre a media opacidad (no solo con hover, que en touch no existe) */}
-                <div className="opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                  <button type="button" onClick={() => setActiveReactionMenuMsgId(activeReactionMenuMsgId === msg.id ? null : msg.id)} className="h-8 w-8 flex items-center justify-center rounded-full bg-white dark:bg-[#160a10] border border-[#e11d48]/30 text-[#e11d48] shadow-elevation-sm" aria-label="Reaccionar" title="Reaccionar">
-                    <span className="material-symbols-outlined text-[13px] block" aria-hidden="true">add_reaction</span>
-                  </button>
-                  <button type="button" onClick={() => setActiveOptionsMenuMsgId(activeOptionsMenuMsgId === msg.id ? null : msg.id)} className="h-8 w-8 flex items-center justify-center rounded-full bg-white dark:bg-[#160a10] border border-gray-200 dark:border-white/10 text-gray-500" aria-label="Más opciones" title="Opciones">
-                    <span className="material-symbols-outlined text-[13px] block" aria-hidden="true">expand_more</span>
-                  </button>
-                </div>
               </div>
 
               {activeReactionMenuMsgId === msg.id && (
@@ -882,6 +913,16 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             </div>
           );
         })}
+
+        {(activeReactionMenuMsgId || activeOptionsMenuMsgId) && (
+          <div
+            className="fixed inset-0 z-20"
+            onClick={() => {
+              setActiveReactionMenuMsgId(null);
+              setActiveOptionsMenuMsgId(null);
+            }}
+          />
+        )}
 
         {isPartnerTyping && (
           <div className="flex items-end gap-1.5 self-start animate-fadeIn">

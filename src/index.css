@@ -21,19 +21,11 @@
     font-size: 16px !important;
   }
 
-  /* Sin esto, un swipe hacia abajo al tope de cualquier lista (el chat, sobre todo)
-     lo agarra el gesto nativo de "pull to refresh" del navegador/PWA en vez del
-     scroll interno, y recarga toda la página en lugar de mover los mensajes. */
-  html {
-    overscroll-behavior-y: none;
-  }
-
   body {
     font-family: var(--font-sans);
     background-color: #0b090a;
     color: #fdf2f4;
     overflow-x: hidden;
-    overscroll-behavior-y: none;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
@@ -58,6 +50,15 @@
     background-attachment: fixed;
     color: #0f172a;
   }
+}
+
+/* `overscroll-behavior-y: none` en html/body bloqueaba el "pull to refresh" pero
+   también se comía el scroll táctil real dentro de las listas en Chrome Android/PWA
+   instalada — bug conocido de esa combinación. `contain` en el contenedor que sí
+   scrollea es la forma correcta: deja que la lista scrollee normal, pero no deja
+   que el rebote al llegar al tope se propague hacia el navegador y dispare el reload. */
+[class*="overflow-y-auto"] {
+  overscroll-behavior-y: contain;
 }
 
 /* Custom font utilities — la dirección visual aprobada usa DM Sans para todo

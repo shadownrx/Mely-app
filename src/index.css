@@ -21,11 +21,19 @@
     font-size: 16px !important;
   }
 
+  /* Sin esto, un swipe hacia abajo al tope de cualquier lista (el chat, sobre todo)
+     lo agarra el gesto nativo de "pull to refresh" del navegador/PWA en vez del
+     scroll interno, y recarga toda la página en lugar de mover los mensajes. */
+  html {
+    overscroll-behavior-y: none;
+  }
+
   body {
     font-family: var(--font-sans);
     background-color: #0b090a;
     color: #fdf2f4;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 

@@ -53,6 +53,11 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
       badge: unreadMessagesCount,
     },
     {
+      id: 'tienda',
+      label: 'Tienda',
+      icon: 'local_mall',
+    },
+    {
       id: 'perfil',
       label: 'Perfil',
       icon: 'person',

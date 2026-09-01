@@ -33,9 +33,18 @@ const MOST_POPULAR_KEY = 'MEMBERSHIP_PREMIUM';
 // ITEM_PRESENTATION) en vez de parsear la descripción del backend, para poder mostrarlas
 // como checklist en vez de una sola oración larga.
 const MEMBERSHIP_BENEFITS: Record<string, string[]> = {
-  MEMBERSHIP_PREMIUM: ['Perfil siempre destacado en Descubrir', '+20 perfiles extra por día', 'Válida 30 días'],
+  MEMBERSHIP_PREMIUM: ['Perfil siempre destacado en Descubrir', '+20 perfiles extra por día', 'Válida 2 días'],
   MEMBERSHIP_FOUNDING: ['Perfil siempre destacado en Descubrir', '+20 perfiles extra por día', 'Para siempre, no vence'],
   MEMBERSHIP_VIP: ['Perfil siempre destacado en Descubrir', 'Prácticamente sin límite diario de perfiles', 'Válida 30 días'],
+};
+
+// La duración real de cada membresía difiere entre tiers (Premium: 2 días para
+// incentivar recompra frecuente; VIP: 30; Founding: para siempre) — el listShop() del
+// backend no expone durationDays, así que se mantiene a mano acá igual que los beneficios.
+const MEMBERSHIP_DURATION_LABEL: Record<string, string> = {
+  MEMBERSHIP_PREMIUM: '2 días',
+  MEMBERSHIP_FOUNDING: 'para siempre',
+  MEMBERSHIP_VIP: '30 días',
 };
 
 const CONTEXTUAL_ITEMS = new Set(['SUPER_INVITE', 'REACTIVATE_MATCH']);
@@ -310,7 +319,6 @@ export const StoreView: React.FC = () => {
                 const isCurrent = membershipTier === item.key.replace('MEMBERSHIP_', '');
                 const isFeatured = item.key === MOST_POPULAR_KEY;
                 const benefits = MEMBERSHIP_BENEFITS[item.key] ?? [];
-                const isLifetime = item.key === 'MEMBERSHIP_FOUNDING';
                 return (
                   <div
                     key={item.key}
@@ -349,7 +357,7 @@ export const StoreView: React.FC = () => {
                       <div className="min-w-0">
                         <h4 className={`font-headline-md text-[16px] font-bold truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{item.name}</h4>
                         <span className="text-[11.5px] font-bold text-[#e11d48]">
-                          {item.price} coins · {isLifetime ? 'para siempre' : '30 días'}
+                          {item.price} coins · {MEMBERSHIP_DURATION_LABEL[item.key] ?? '30 días'}
                         </span>
                       </div>
                     </div>

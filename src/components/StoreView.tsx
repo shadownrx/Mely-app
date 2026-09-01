@@ -39,6 +39,42 @@ function minutesLeft(iso: string | null): number {
   return Math.max(0, Math.ceil((new Date(iso).getTime() - Date.now()) / 60000));
 }
 
+const REWARD_REASON_LABELS: Record<string, { icon: string; label: string }> = {
+  match: { icon: 'favorite', label: 'Nuevo match' },
+  conversation: { icon: 'chat_bubble', label: 'Charla iniciada' },
+  date_accepted: { icon: 'event_available', label: 'Cita aceptada' },
+  date_verified: { icon: 'verified', label: 'Cita verificada' },
+  second_date_verified: { icon: 'workspace_premium', label: 'Segunda cita verificada' },
+};
+
+/**
+ * El historial de coins venía mostrando el `reason` interno tal cual llega del server
+ * (ej: "shop_BOOST", "recharge_PACK_LARGE") en vez de algo legible — y con un ícono de
+ * "toll" que no tenía nada que ver con el resto de los íconos de coins/recompensas de
+ * la app (monetization_on). Esto arma un ícono + texto en español a partir del reason,
+ * reusando el nombre real del ítem de la tienda cuando corresponde.
+ */
+function describeLedgerReason(reason: string, shopItems: ShopItem[]): { icon: string; label: string } {
+  if (reason in REWARD_REASON_LABELS) return REWARD_REASON_LABELS[reason];
+  if (reason.startsWith('shop_refund_')) {
+    const itemKey = reason.replace('shop_refund_', '');
+    const item = shopItems.find((i) => i.key === itemKey);
+    return { icon: 'undo', label: `Reembolso · ${item?.name ?? itemKey}` };
+  }
+  if (reason.startsWith('shop_')) {
+    const itemKey = reason.replace('shop_', '');
+    const item = shopItems.find((i) => i.key === itemKey);
+    return { icon: ITEM_PRESENTATION[itemKey]?.icon ?? 'shopping_bag', label: item?.name ?? itemKey };
+  }
+  if (reason.startsWith('recharge_')) {
+    return { icon: 'monetization_on', label: 'Recarga de coins' };
+  }
+  if (reason.startsWith('promo_')) {
+    return { icon: 'redeem', label: `Código ${reason.replace('promo_', '')}` };
+  }
+  return { icon: 'receipt_long', label: reason };
+}
+
 export const StoreView: React.FC = () => {
   const { isLight } = useTheme();
   const { user, refreshUser } = useAuth();
@@ -347,7 +383,7 @@ export const StoreView: React.FC = () => {
                   disabled={recharge.isPending}
                   className={`w-full h-auto rounded-2xl p-3 flex-col items-center gap-1 normal-case font-normal tracking-normal ${cardClass}`}
                 >
-                  <span className="material-symbols-outlined text-[22px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>toll</span>
+                  <span className="material-symbols-outlined text-[22px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
                   <span className={`font-headline-md text-[15px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{pack.coins.toLocaleString()}</span>
                   <span className={`text-[9px] text-center ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>{pack.label}</span>
                 </Button>
@@ -383,14 +419,22 @@ export const StoreView: React.FC = () => {
             Movimientos recientes
           </h3>
           <div className={`rounded-2xl border divide-y ${isLight ? 'bg-white border-[#fecdd3] divide-[#fecdd3]' : 'bg-[#150a0e] border-[#e11d48]/25 divide-[#e11d48]/15'}`}>
-            {history.entries.slice(0, 6).map((entry) => (
-              <div key={entry.id} className="p-3 flex items-center justify-between text-[11px]">
-                <span className={isLight ? 'text-[#475569]' : 'text-[#fda4af]/80'}>{entry.reason}</span>
-                <span className={`font-mono font-bold ${entry.direction === 'CREDIT' ? 'text-emerald-500' : 'text-[#e11d48]'}`}>
-                  {entry.direction === 'CREDIT' ? '+' : '-'}{entry.amount}
-                </span>
-              </div>
-            ))}
+            {history.entries.slice(0, 6).map((entry) => {
+              const described = describeLedgerReason(entry.reason, shopItems);
+              return (
+                <div key={entry.id} className="p-3 flex items-center gap-2.5 text-[11px]">
+                  <span
+                    className={`material-symbols-outlined text-[16px] shrink-0 ${entry.direction === 'CREDIT' ? 'text-emerald-500' : 'text-[#e11d48]'}`}
+                  >
+                    {described.icon}
+                  </span>
+                  <span className={`flex-1 min-w-0 truncate ${isLight ? 'text-[#475569]' : 'text-[#fda4af]/80'}`}>{described.label}</span>
+                  <span className={`font-mono font-bold shrink-0 ${entry.direction === 'CREDIT' ? 'text-emerald-500' : 'text-[#e11d48]'}`}>
+                    {entry.direction === 'CREDIT' ? '+' : '-'}{entry.amount}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </section>
       )}

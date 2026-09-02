@@ -7,6 +7,8 @@ import { useAuth } from '../context/AuthContext';
 import { updateProfile, replacePrompts, uploadPhoto, listInterests } from '../lib/api/profile';
 import { redeemCode } from '../lib/api/wallet';
 import { ApiError } from '../lib/apiClient';
+import { isPasswordValid } from '../lib/passwordRules';
+import { PasswordStrengthChecklist } from './PasswordStrengthChecklist';
 import type { Gender } from '../types';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -168,6 +170,14 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
     // sin decir qué campo era ni volver al paso donde se puede corregir.
     if (name.trim().length < 2) {
       setStep1Error('El nombre tiene que tener al menos 2 caracteres.');
+      return;
+    }
+    // Mismo problema que el nombre: la contraseña también tiene reglas del backend
+    // (assertPassword en sanitize.ts) que acá no se chequeaban antes de avanzar — el
+    // checklist visual de abajo ya las muestra en vivo, esto solo bloquea "Continuar"
+    // si todavía falta alguna.
+    if (!googleData && !isPasswordValid(password, email)) {
+      setStep1Error('Completá los requisitos de la contraseña.');
       return;
     }
     if (!isAdult(dateOfBirth)) {
@@ -424,6 +434,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Mínimo 8 caracteres, letras y números"
                 />
+                <PasswordStrengthChecklist password={password} email={email} />
               </div>
             )}
 

@@ -33,7 +33,13 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
   return (
     <header
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
-      className={`fixed top-0 w-full z-50 transition-colors duration-200 border-b backdrop-blur-md glass-surface shadow-elevation-sm ${
+      // backdrop-blur-sm en vez de -md: el fondo ya es casi opaco (bg-white/95,
+      // bg-[#0d070a]/90) así que el blur aporta poco visualmente, pero en un header fixed
+      // que siempre está recompositando (sobre todo con las cartas de Descubrir
+      // arrastrándose debajo) puede disparar el bug de Chrome Android que deja pegado
+      // un frame viejo de otra pestaña detrás del blur — bajar la intensidad reduce esa
+      // chance sin cambiar cómo se ve.
+      className={`fixed top-0 w-full z-50 transition-colors duration-200 border-b backdrop-blur-sm glass-surface shadow-elevation-sm ${
         isLight ? 'bg-white/95 border-[#ffe4e6]' : 'bg-[#0d070a]/90 border-[#e11d48]/20'
       }`}
     >

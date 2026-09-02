@@ -29,6 +29,36 @@ const GENDER_OPTIONS: { value: Gender; label: string }[] = [
   { value: 'OTHER', label: 'Otro' },
 ];
 
+const FIELD_LABELS: Record<string, string> = {
+  displayName: 'nombre',
+  bio: 'bio',
+  city: 'ciudad',
+  job: 'trabajo',
+  seeking: 'a quién te gustaría conocer',
+  interestIds: 'intereses',
+  email: 'correo',
+  password: 'contraseña',
+  dateOfBirth: 'fecha de nacimiento',
+};
+
+/**
+ * Cuando el backend rechaza el registro por validación (código VALIDATION), la API
+ * manda el detalle campo por campo (zod .flatten()) pero acá solo se mostraba el
+ * mensaje genérico "Datos inválidos" — sin decir cuál campo ni por qué, así que quien
+ * lo veía no tenía forma de corregirlo. Esto arma un mensaje concreto a partir de esos
+ * detalles cuando existen, y si no, cae al mensaje del server tal cual.
+ */
+function describeValidationError(err: ApiError): string {
+  const details = err.details as { fieldErrors?: Record<string, string[]> } | undefined;
+  const firstField = details?.fieldErrors ? Object.keys(details.fieldErrors)[0] : undefined;
+  const firstMessage = firstField ? details?.fieldErrors?.[firstField]?.[0] : undefined;
+  if (firstField && firstMessage) {
+    const label = FIELD_LABELS[firstField] ?? firstField;
+    return `Revisá el campo "${label}": ${firstMessage}`;
+  }
+  return err.message;
+}
+
 function isAdult(dateOfBirth: string): boolean {
   if (!dateOfBirth) return false;
   const dob = new Date(dateOfBirth);
@@ -132,6 +162,14 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
       setStep1Error('Completá todos los campos obligatorios.');
       return;
     }
+    // El backend exige mínimo 2 caracteres (displayName: z.string().min(2)) pero acá
+    // solo se chequeaba que no estuviera vacío — con un nombre de una sola letra dejaba
+    // avanzar hasta el paso 3 y recién ahí fallaba con un "Datos inválidos" genérico,
+    // sin decir qué campo era ni volver al paso donde se puede corregir.
+    if (name.trim().length < 2) {
+      setStep1Error('El nombre tiene que tener al menos 2 caracteres.');
+      return;
+    }
     if (!isAdult(dateOfBirth)) {
       setStep1Error('MELY es exclusivamente para mayores de 18 años.');
       return;
@@ -195,7 +233,9 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
         err instanceof ApiError
           ? err.code === 'EMAIL_TAKEN'
             ? 'Ese correo ya tiene una cuenta registrada. Iniciá sesión.'
-            : err.message
+            : err.code === 'VALIDATION'
+              ? describeValidationError(err)
+              : err.message
           : 'No pudimos completar el registro. Probá de nuevo.';
       setSubmitError(message);
       setIsIssuing(false);

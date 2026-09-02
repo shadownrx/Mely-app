@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import confetti from 'canvas-confetti';
 import { Profile } from '../types';
 import { sounds } from '../utils/audio';
 
 interface MatchCelebrationModalProps {
   profile: Profile | null;
+  coinsEarned?: number;
   myAvatar?: string;
   onSendMessage: () => void;
   onClose: () => void;
@@ -12,10 +14,44 @@ interface MatchCelebrationModalProps {
 
 export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
   profile,
+  coinsEarned = 0,
   myAvatar,
   onSendMessage,
   onClose,
 }) => {
+  const firedFor = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!profile || firedFor.current === profile.id) return;
+    firedFor.current = profile.id;
+    const colors = ['#e11d48', '#ff4d67', '#fda4af', '#ffffff'];
+    const burst = (originX: number) =>
+      confetti({
+        particleCount: 60,
+        angle: originX < 0.5 ? 60 : 120,
+        spread: 65,
+        startVelocity: 45,
+        origin: { x: originX, y: 0.65 },
+        colors,
+        zIndex: 110,
+        disableForReducedMotion: true,
+      });
+    burst(0.15);
+    burst(0.85);
+    const fallTimer = window.setTimeout(() => {
+      confetti({
+        particleCount: 90,
+        spread: 100,
+        startVelocity: 30,
+        origin: { x: 0.5, y: 0.3 },
+        colors,
+        zIndex: 110,
+        disableForReducedMotion: true,
+      });
+    }, 200);
+    return () => window.clearTimeout(fallTimer);
+  }, [profile]);
+
   return (
     <AnimatePresence>
       {profile && (
@@ -54,6 +90,20 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
             >
               A vos y a {profile.displayName} les gustaron mutuamente
             </motion.p>
+
+            {coinsEarned > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.85 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.55, type: 'spring', stiffness: 340, damping: 20 }}
+                className="mt-3 flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-3.5 py-1.5"
+              >
+                <span className="material-symbols-outlined text-[16px] text-amber-300" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  monetization_on
+                </span>
+                <span className="text-[13px] font-bold text-white">+{coinsEarned} monedas</span>
+              </motion.div>
+            )}
 
             <div className="relative flex items-center justify-center mt-8 mb-9 h-[104px] w-[176px]">
               <motion.div

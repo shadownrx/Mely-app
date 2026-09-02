@@ -51,10 +51,10 @@ export function scanCheckIn(dateId: string, code: string, coords: { latitude: nu
 }
 
 export function confirmDate(dateId: string, sawEachOther: boolean) {
-  return apiRequest<{ verified: boolean; waiting: boolean; status?: string }>(`/dates/${dateId}/confirm`, {
-    method: 'POST',
-    body: { sawEachOther },
-  });
+  return apiRequest<{ verified: boolean; waiting: boolean; status?: string; coinsEarned: number }>(
+    `/dates/${dateId}/confirm`,
+    { method: 'POST', body: { sawEachOther } },
+  );
 }
 
 export function reportNoShow(dateId: string, appeared: boolean) {

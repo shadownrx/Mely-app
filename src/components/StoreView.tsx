@@ -6,7 +6,7 @@ import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useShop, usePurchase } from '../hooks/useShop';
-import { useCoinPacks, useRecharge, useRedeemCode, useWallet, useWalletHistory } from '../hooks/useWallet';
+import { useClaimDailyBonus, useCoinPacks, useRecharge, useRedeemCode, useWallet, useWalletHistory } from '../hooks/useWallet';
 import { useWhoLikedMe } from '../hooks/useDiscover';
 import { WhoLikedYouModal } from './WhoLikedYouModal';
 import type { ShopItem } from '../types';
@@ -77,6 +77,7 @@ const REWARD_REASON_LABELS: Record<string, { icon: string; label: string }> = {
   date_accepted: { icon: 'event_available', label: 'Cita aceptada' },
   date_verified: { icon: 'verified', label: 'Cita verificada' },
   second_date_verified: { icon: 'workspace_premium', label: 'Segunda cita verificada' },
+  daily_bonus: { icon: 'today', label: 'Bono diario' },
 };
 
 /**
@@ -118,6 +119,7 @@ export const StoreView: React.FC = () => {
   const purchase = usePurchase();
   const recharge = useRecharge();
   const redeemCode = useRedeemCode();
+  const claimDailyBonus = useClaimDailyBonus();
 
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const [promoCode, setPromoCode] = useState('');
@@ -174,6 +176,18 @@ export const StoreView: React.FC = () => {
         celebrate();
         setReceipt(`+${res.amount} Mely Coins (demo)`);
       },
+    });
+  };
+
+  const handleClaimDailyBonus = () => {
+    if (claimDailyBonus.isPending) return;
+    sounds.playCoins();
+    claimDailyBonus.mutate(undefined, {
+      onSuccess: (res) => {
+        celebrate();
+        toast.success(`¡Bono diario reclamado! +${res.amount} Mely Coins.`);
+      },
+      onError: (err: any) => toast.error(err?.message ?? 'No se pudo reclamar el bono'),
     });
   };
 
@@ -235,6 +249,44 @@ export const StoreView: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* DAILY BONUS */}
+      <div
+        className={`flex items-center gap-3 p-3.5 rounded-2xl border ${
+          wallet?.dailyBonusAvailable
+            ? isLight
+              ? 'bg-gradient-to-r from-amber-50 to-white border-amber-300'
+              : 'bg-gradient-to-r from-amber-500/15 to-[#150a0e] border-amber-400/40'
+            : cardClass
+        }`}
+      >
+        <div
+          className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 text-white shadow-elevation-md ${
+            wallet?.dailyBonusAvailable ? 'bg-gradient-to-tr from-amber-400 to-amber-500' : 'bg-gradient-to-tr from-slate-400 to-slate-500'
+          }`}
+        >
+          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+            {wallet?.dailyBonusAvailable ? 'today' : 'check_circle'}
+          </span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className={`font-headline-md text-[13.5px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+            {wallet?.dailyBonusAvailable ? 'Bono diario disponible' : 'Ya reclamaste tu bono de hoy'}
+          </h4>
+          <p className={`text-[11px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+            {wallet?.dailyBonusAvailable ? 'Entrá todos los días y sumá coins gratis.' : 'Volvé mañana por más.'}
+          </p>
+        </div>
+        <Button
+          variant={wallet?.dailyBonusAvailable ? 'cherry' : 'secondary'}
+          size="sm"
+          disabled={!wallet?.dailyBonusAvailable || claimDailyBonus.isPending}
+          onClick={handleClaimDailyBonus}
+          className="h-9 px-3.5 rounded-xl text-[10.5px] shrink-0"
+        >
+          {wallet?.dailyBonusAvailable ? 'Reclamar' : 'Mañana'}
+        </Button>
+      </div>
 
       {/* WHO LIKED YOU TEASER */}
       {whoLikedMe && whoLikedMe.count > 0 && (

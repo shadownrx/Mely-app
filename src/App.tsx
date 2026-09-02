@@ -67,7 +67,9 @@ function AppContent() {
   const [selectedStamp, setSelectedStamp] = useState<Stamp | null>(null);
   const [dateQRModal, setDateQRModal] = useState<DateQRModalState>(null);
   const [icebreaker, setIcebreaker] = useState<IcebreakerState>(null);
-  const [matchCelebration, setMatchCelebration] = useState<{ profile: Profile; connectionId: string } | null>(null);
+  const [matchCelebration, setMatchCelebration] = useState<{ profile: Profile; connectionId: string; coinsEarned: number } | null>(
+    null,
+  );
   const [activeConnectionId, setActiveConnectionId] = useState<string | null>(null);
 
   const [discoveryFilters, setDiscoveryFilters] = useState<DiscoveryFilters>(DEFAULT_DISCOVERY_FILTERS);
@@ -189,7 +191,7 @@ function AppContent() {
       onSuccess: (res) => {
         if (res.match) {
           sounds.playHeart();
-          setMatchCelebration({ profile, connectionId: res.match.id });
+          setMatchCelebration({ profile, connectionId: res.match.id, coinsEarned: res.match.coinsEarned });
         }
       },
     });
@@ -205,7 +207,7 @@ function AppContent() {
       onSuccess: (res) => {
         if (res.match) {
           sounds.playHeart();
-          setMatchCelebration({ profile, connectionId: res.match.id });
+          setMatchCelebration({ profile, connectionId: res.match.id, coinsEarned: res.match.coinsEarned });
         }
       },
     });
@@ -384,6 +386,7 @@ function AppContent() {
       {/* Modals */}
       <MatchCelebrationModal
         profile={matchCelebration?.profile ?? null}
+        coinsEarned={matchCelebration?.coinsEarned ?? 0}
         myAvatar={user.photos[0]?.url}
         onSendMessage={() => {
           if (!matchCelebration) return;

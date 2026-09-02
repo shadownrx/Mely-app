@@ -2,7 +2,13 @@ import { apiRequest } from '../apiClient';
 import type { CoinPack, LedgerEntry } from '../../types';
 
 export function getWallet() {
-  return apiRequest<{ balance: number }>('/wallet');
+  return apiRequest<{ balance: number; dailyBonusAvailable: boolean }>('/wallet');
+}
+
+export function claimDailyBonus() {
+  return apiRequest<{ granted: boolean; amount: number; balance: number }>('/wallet/daily-bonus', {
+    method: 'POST',
+  });
 }
 
 export function getLedger(cursor?: string) {

@@ -11,7 +11,7 @@ export type DiscoverQuota = {
 
 export type SwipeResult = {
   action: 'LIKE' | 'PASS' | 'SUPER_INVITE';
-  match: { id: string; status: string; superInvite: boolean } | null;
+  match: { id: string; status: string; superInvite: boolean; coinsEarned: number } | null;
 };
 
 export function listDiscover(opts: { limit?: number; onlyVerified?: boolean; interests?: string[] } = {}) {

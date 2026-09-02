@@ -30,3 +30,8 @@ export function useRedeemCode() {
   const invalidate = useInvalidateWallet();
   return useMutation({ mutationFn: walletApi.redeemCode, onSuccess: invalidate });
 }
+
+export function useClaimDailyBonus() {
+  const invalidate = useInvalidateWallet();
+  return useMutation({ mutationFn: walletApi.claimDailyBonus, onSuccess: invalidate });
+}

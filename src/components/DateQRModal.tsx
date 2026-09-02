@@ -76,6 +76,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
   const [scanError, setScanError] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [verificationSuccess, setVerificationSuccess] = useState(false);
+  const [coinsEarned, setCoinsEarned] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const scannerRef = useRef<QrScanner | null>(null);
 
@@ -118,6 +119,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
     setScanError(null);
     setLocationError(null);
     setVerificationSuccess(status === 'VERIFIED');
+    setCoinsEarned(0);
     if (status === 'CANCELLED' || status === 'VERIFIED') return;
     startQrGeneration(dateId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -201,6 +203,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
         onSuccess: (res) => {
           if (res.verified) {
             sounds.playVerified();
+            setCoinsEarned(res.coinsEarned);
             setVerificationSuccess(true);
           }
         },
@@ -447,6 +450,27 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 El sello de {PLAN_LABELS[planType]} en {zone} se estampó en tu pasaporte MELY.
               </p>
             </div>
+            {coinsEarned > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: 0.3, type: 'spring', stiffness: 340, damping: 20 }}
+                onAnimationStart={() => window.setTimeout(() => sounds.playCoins(), 250)}
+                className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 border ${
+                  isLight ? 'bg-amber-50 border-amber-200' : 'bg-amber-500/10 border-amber-400/30'
+                }`}
+              >
+                <span
+                  className="material-symbols-outlined text-[18px] text-amber-500"
+                  style={{ fontVariationSettings: "'FILL' 1" }}
+                >
+                  monetization_on
+                </span>
+                <span className={`text-[14px] font-bold ${isLight ? 'text-amber-700' : 'text-amber-300'}`}>
+                  +{coinsEarned} monedas
+                </span>
+              </motion.div>
+            )}
             <Button
               onClick={() => {
                 sounds.playClick();

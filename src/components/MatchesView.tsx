@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Match } from '../types';
 import { sounds } from '../utils/audio';
@@ -19,6 +19,30 @@ interface MatchesViewProps {
 type FilterType = 'all' | 'online' | 'verified' | 'vip';
 type ViewLayout = 'grid' | 'list';
 
+/**
+ * markInactiveMatches() en el backend "enfría" un match sin mensajes después de
+ * matchInactiveHours — antes esa cuenta regresiva era invisible para el usuario. Este
+ * hook fuerza un re-render cada minuto para que las etiquetas de tiempo restante
+ * (calculadas en el render a partir de match.expiresAt) se mantengan al día.
+ */
+function useMinuteTick() {
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => setTick((t) => t + 1), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+}
+
+function matchCountdown(expiresAt: string | null): { label: string; urgent: boolean } | null {
+  if (!expiresAt) return null;
+  const diffMs = new Date(expiresAt).getTime() - Date.now();
+  if (diffMs <= 0) return null;
+  const hours = Math.floor(diffMs / (60 * 60 * 1000));
+  const minutes = Math.floor((diffMs % (60 * 60 * 1000)) / (60 * 1000));
+  const label = hours > 0 ? `${hours}h` : `${Math.max(1, minutes)}m`;
+  return { label, urgent: diffMs < 6 * 60 * 60 * 1000 };
+}
+
 export const MatchesView: React.FC<MatchesViewProps> = ({
   matches,
   isLoading = false,
@@ -27,6 +51,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
   onExploreMore,
 }) => {
   const { isLight } = useTheme();
+  useMinuteTick();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [layoutMode, setLayoutMode] = useState<ViewLayout>('grid');
@@ -228,7 +253,9 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col gap-2"
             >
-              {filteredMatches.map((match, idx) => (
+              {filteredMatches.map((match, idx) => {
+                const countdown = matchCountdown(match.expiresAt);
+                return (
                 <motion.div
                   key={match.id}
                   initial={{ opacity: 0, y: 10 }}
@@ -275,6 +302,16 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       <p className={`text-[11px] truncate ${isLight ? 'text-gray-500' : 'text-[#fda4af]/70'}`}>
                         {match.other.city || 'Buenos Aires'}
                       </p>
+                      {countdown && (
+                        <span
+                          className={`inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
+                            countdown.urgent ? 'bg-amber-500/15 text-amber-500' : isLight ? 'bg-[#fff1f3] text-[#e11d48]' : 'bg-[#e11d48]/15 text-[#fb7185]'
+                          }`}
+                        >
+                          <span className="material-symbols-outlined text-[10px]">schedule</span>
+                          Quedan {countdown.label}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -314,7 +351,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     </motion.button>
                   </div>
                 </motion.div>
-              ))}
+                );
+              })}
 
               {onExploreMore && (
                 <motion.button
@@ -347,7 +385,9 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               className="grid grid-cols-2 gap-3"
             >
-              {filteredMatches.map((match, idx) => (
+              {filteredMatches.map((match, idx) => {
+                const countdown = matchCountdown(match.expiresAt);
+                return (
                 <motion.div
                   key={match.id}
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -372,6 +412,16 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     />
                     {match.other.lastActive === 'En línea' && (
                       <span className="absolute top-2.5 right-2.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#0b090a]" />
+                    )}
+                    {countdown && (
+                      <span
+                        className={`absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
+                          countdown.urgent ? 'bg-amber-500/90 text-white' : 'bg-black/60 text-white'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[10px]">schedule</span>
+                        {countdown.label}
+                      </span>
                     )}
                     <motion.button
                       whileHover={{ scale: 1.08 }}
@@ -402,7 +452,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     <span className="text-[11px] text-slate-500 dark:text-[#a89a9e]">{match.other.city || 'Buenos Aires'}</span>
                   </div>
                 </motion.div>
-              ))}
+                );
+              })}
 
               {/* Tile final para seguir explorando: con pocos matches, el grid dejaba
                   mucho espacio vacío debajo en vez de invitar a la próxima acción. */}
@@ -566,6 +617,26 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
 
               {/* Scrollable Content */}
               <div className="p-3.5 overflow-y-auto flex flex-col gap-3">
+                {(() => {
+                  const countdown = matchCountdown(selectedMatch.expiresAt);
+                  if (!countdown) return null;
+                  return (
+                    <div
+                      className={`p-2.5 rounded-xl border flex items-center gap-2 ${
+                        countdown.urgent
+                          ? 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400'
+                          : isLight
+                            ? 'bg-[#fff1f3] border-[#fecdd3] text-[#e11d48]'
+                            : 'bg-[#e11d48]/10 border-[#e11d48]/30 text-[#fb7185]'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-[18px] shrink-0">schedule</span>
+                      <p className="text-[11px] font-bold leading-snug">
+                        Te quedan {countdown.label} para escribirle antes de que el match se enfríe.
+                      </p>
+                    </div>
+                  );
+                })()}
                 {/* Bio */}
                 <div className={`p-2.5 rounded-xl border ${isLight ? 'bg-[#fff1f3]/50 border-[#fecdd3]' : 'bg-white/5 border-white/10'}`}>
                   <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#e11d48] mb-0.5">

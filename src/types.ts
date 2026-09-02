@@ -102,6 +102,7 @@ export interface Match {
   label: string;
   matchedAt: string;
   lastMessageAt: string | null;
+  expiresAt: string | null;
   unread: number;
   verifiedDateCount: number;
   other: Profile;

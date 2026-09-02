@@ -297,10 +297,14 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               }`}
             >
               {/* Dynamic Live Stamp Indicators on Drag */}
+              {/* Sin backdrop-blur acá: con el fondo ya 80-85% opaco el blur aportaba poco
+                  visualmente, pero recalcularlo en cada frame del drag (junto con la opacity
+                  que sigue en vivo al gesto) es la combinación que más dispara el glitch de
+                  Chrome Android que deja "pegado" un frame viejo (reportado por usuarios). */}
               {/* LIKE Stamp (Drag Right) */}
               <motion.div
                 style={{ opacity: likeOpacity }}
-                className="absolute top-8 left-6 z-30 pointer-events-none -rotate-12 border-3 border-emerald-500 bg-emerald-950/80 backdrop-blur-xs text-emerald-300 px-4 py-1.5 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                className="absolute top-8 left-6 z-30 pointer-events-none -rotate-12 border-3 border-emerald-500 bg-emerald-950/80 text-emerald-300 px-4 py-1.5 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.4)]"
               >
                 <div className="flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -315,7 +319,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               {/* PASS Stamp (Drag Left) */}
               <motion.div
                 style={{ opacity: passOpacity }}
-                className="absolute top-8 right-6 z-30 pointer-events-none rotate-12 border-3 border-rose-500 bg-rose-950/80 backdrop-blur-xs text-rose-300 px-4 py-1.5 rounded-2xl shadow-[0_0_20px_rgba(225,29,72,0.4)]"
+                className="absolute top-8 right-6 z-30 pointer-events-none rotate-12 border-3 border-rose-500 bg-rose-950/80 text-rose-300 px-4 py-1.5 rounded-2xl shadow-[0_0_20px_rgba(225,29,72,0.4)]"
               >
                 <div className="flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-[20px]">close</span>
@@ -328,7 +332,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               {/* SUPER LIKE Stamp (Drag Up) */}
               <motion.div
                 style={{ opacity: superLikeOpacity }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none border-3 border-amber-400 bg-amber-950/85 backdrop-blur-xs text-amber-300 px-5 py-2.5 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.5)]"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none border-3 border-amber-400 bg-amber-950/85 text-amber-300 px-5 py-2.5 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.5)]"
               >
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>

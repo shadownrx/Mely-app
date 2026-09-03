@@ -21,13 +21,11 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
 }) => {
   const { isLight } = useTheme();
 
-  // 5 Main Tabs with MATCH in the Center
   const tabs: {
     id: TabType;
     label: string;
     icon: string;
     badge?: number;
-    isCenter?: boolean;
   }[] = [
     {
       id: 'descubrir',
@@ -44,7 +42,6 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
       id: 'matches',
       label: 'Match',
       icon: 'favorite',
-      isCenter: true,
     },
     {
       id: 'mensajes',
@@ -89,59 +86,10 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
         {tabs.map((tab) => {
           const isActive = currentTab === tab.id;
 
-          // Special Center Hero Button (MATCH)
-          if (tab.isCenter) {
-            return (
-              <motion.button
-                key={tab.id}
-                id={`nav-btn-${tab.id}`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => {
-                  sounds.playHeart();
-                  onTabChange(tab.id);
-                }}
-                className="group relative flex flex-col items-center justify-center -mt-4 focus:outline-none"
-                title="Ver tus Matches y Conexiones"
-              >
-                {/* Elevated Circular Action */}
-                <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center shadow-elevation-md transition-all duration-300 ${
-                    isActive
-                      ? 'bg-gradient-to-tr from-[#e11d48] via-[#f43f5e] to-[#fb7185] text-white ring-4 ring-[#e11d48]/25 scale-110 shadow-[#e11d48]/40'
-                      : isLight
-                      ? 'bg-gradient-to-tr from-[#fff1f3] to-white text-[#e11d48] border-2 border-[#fecdd3] hover:scale-105 shadow-elevation-md'
-                      : 'bg-gradient-to-tr from-[#220d17] to-[#14080e] text-[#fda4af] border-2 border-[#e11d48]/50 hover:scale-105 shadow-elevation-md'
-                  }`}
-                >
-                  <span
-                    className={`material-symbols-outlined text-[24px] transition-transform ${
-                      isActive ? 'animate-pulse' : 'group-hover:scale-110'
-                    }`}
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    favorite
-                  </span>
-                </div>
-
-                <span
-                  className={`font-label-caps text-[9px] tracking-wider uppercase font-bold mt-0.5 transition-colors ${
-                    isActive
-                      ? 'text-[#e11d48]'
-                      : isLight
-                      ? 'text-[#64748b] group-hover:text-[#e11d48]'
-                      : 'text-[#fda4af]/70 group-hover:text-[#fda4af]'
-                  }`}
-                >
-                  {tab.label}
-                </span>
-              </motion.button>
-            );
-          }
-
-          // Regular Tabs (Descubrir, Citas, Mensajes, Perfil) — el ícono vive en su propia
-          // pastilla circular (como el botón central de Match, pero más chico) en vez de
-          // resaltar todo el bloque ícono+label con una caja rectangular.
+          // Cada ícono vive en su propia pastilla circular que se desliza entre tabs. El
+          // tab de Match tenía antes un botón circular elevado (-mt-4) distinto al resto —
+          // con 6 tabs en vez de 5 ya no quedaba espacio y se pisaba con Mensajes, así que
+          // pasa a ser un tab más, igual que Descubrir/Citas/Mensajes/Tienda/Perfil.
           return (
             <motion.button
               key={tab.id}

@@ -411,6 +411,11 @@ export const StoreView: React.FC = () => {
                         <span className="text-[11.5px] font-bold text-[#e11d48]">
                           {item.price} coins · {MEMBERSHIP_DURATION_LABEL[item.key] ?? '30 días'}
                         </span>
+                        {item.priceUsd != null && (
+                          <span className={`block text-[10px] ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
+                            ≈ ${item.priceUsd.toFixed(2)} USD
+                          </span>
+                        )}
                       </div>
                     </div>
                     <ul className="flex flex-col gap-1.5">
@@ -538,7 +543,7 @@ export const StoreView: React.FC = () => {
                         disabled={recharge.isPending}
                         className="w-full h-8 rounded-xl text-[10.5px]"
                       >
-                        Obtener
+                        ${pack.priceUsd.toFixed(2)}
                       </Button>
                     </div>
                   );

@@ -177,12 +177,14 @@ export interface ShopItem {
   name: string;
   description: string;
   price: number;
+  priceUsd: number | null;
 }
 
 export interface CoinPack {
   key: string;
   coins: number;
   label: string;
+  priceUsd: number;
 }
 
 export interface Stamp {

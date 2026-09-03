@@ -472,7 +472,20 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                         {currentProfile.displayName}, {currentProfile.age}
                       </h2>
                       {currentProfile.badges.trusted && (
-                        <span className="material-symbols-outlined text-[20px] text-sky-400 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>
+                        <span
+                          className="material-symbols-outlined text-[20px] text-[#e11d48] shrink-0"
+                          style={{ fontVariationSettings: "'FILL' 1" }}
+                          title="Citas verificadas"
+                        >
+                          verified
+                        </span>
+                      )}
+                      {currentProfile.badges.verified && (
+                        <span
+                          className="material-symbols-outlined text-[20px] text-sky-400 shrink-0"
+                          style={{ fontVariationSettings: "'FILL' 1" }}
+                          title="Identidad verificada"
+                        >
                           verified
                         </span>
                       )}

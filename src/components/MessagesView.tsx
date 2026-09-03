@@ -615,7 +615,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     <div className="flex justify-between items-baseline gap-2 mb-0.5">
                       <div className="flex items-center gap-1.5 min-w-0">
                         <h3 className={`font-headline-md text-[14.5px] font-bold truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{match.other.displayName}</h3>
-                        {match.other.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#e11d48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>}
+                        {match.other.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#e11d48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">verified</span>}
+                        {match.other.badges.verified && <span className="material-symbols-outlined text-[13px] text-sky-400 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Identidad verificada">verified</span>}
                       </div>
                       {match.lastMessageAt && <span className={`font-meta-data text-[10px] shrink-0 ${isLight ? 'text-gray-400' : 'text-[#fda4af]/60'}`}>{formatTime(match.lastMessageAt)}</span>}
                     </div>
@@ -673,7 +674,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           <div className="flex flex-col cursor-pointer min-w-0 flex-1" onClick={() => setShowContactInfoDrawer(true)}>
             <div className="flex items-center gap-1 min-w-0">
               <h2 className={`font-headline-md text-[13.5px] font-bold tracking-wide truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{partner.displayName}</h2>
-              {partner.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#e11d48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>}
+              {partner.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#e11d48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">verified</span>}
+              {partner.badges.verified && <span className="material-symbols-outlined text-[13px] text-sky-400 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Identidad verificada">verified</span>}
             </div>
             <div className="text-[10.5px] leading-tight truncate">
               {isPartnerTyping ? (
@@ -1294,7 +1296,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 </Avatar>
                 <div className="flex items-center gap-1.5">
                   <h2 className="font-headline-md text-xl font-bold">{partner.displayName}, {partner.age}</h2>
-                  {partner.badges.trusted && <span className="material-symbols-outlined text-[#e11d48] text-[18px]">verified</span>}
+                  {partner.badges.trusted && <span className="material-symbols-outlined text-[#e11d48] text-[18px]" title="Citas verificadas">verified</span>}
+                  {partner.badges.verified && <span className="material-symbols-outlined text-sky-400 text-[18px]" title="Identidad verificada">verified</span>}
                 </div>
                 <p className="text-[11px] text-[#e11d48] font-bold">{partner.city}</p>
               </div>

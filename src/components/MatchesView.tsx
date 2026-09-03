@@ -294,7 +294,12 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                           {match.other.displayName}, {match.other.age}
                         </h4>
                         {match.other.badges.trusted && (
-                          <span className="material-symbols-outlined text-[13px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                          <span className="material-symbols-outlined text-[13px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">
+                            verified
+                          </span>
+                        )}
+                        {match.other.badges.verified && (
+                          <span className="material-symbols-outlined text-[13px] text-sky-400" style={{ fontVariationSettings: "'FILL' 1" }} title="Identidad verificada">
                             verified
                           </span>
                         )}
@@ -444,7 +449,12 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                         {match.other.displayName}, {match.other.age}
                       </h3>
                       {match.other.badges.trusted && (
-                        <span className="material-symbols-outlined text-[13px] text-sky-400 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>
+                        <span className="material-symbols-outlined text-[13px] text-[#e11d48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">
+                          verified
+                        </span>
+                      )}
+                      {match.other.badges.verified && (
+                        <span className="material-symbols-outlined text-[13px] text-sky-400 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Identidad verificada">
                           verified
                         </span>
                       )}
@@ -604,7 +614,12 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       {selectedMatch.other.displayName}, {selectedMatch.other.age}
                     </h2>
                     {selectedMatch.other.badges.trusted && (
-                      <span className="material-symbols-outlined text-[#e11d48] text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                      <span className="material-symbols-outlined text-[#e11d48] text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">
+                        verified
+                      </span>
+                    )}
+                    {selectedMatch.other.badges.verified && (
+                      <span className="material-symbols-outlined text-sky-400 text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }} title="Identidad verificada">
                         verified
                       </span>
                     )}

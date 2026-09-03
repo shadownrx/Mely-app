@@ -29,6 +29,10 @@ export function useUploadAudioBio() {
   return useMutation({ mutationFn: profileApi.uploadAudioBio });
 }
 
+export function useSubmitVerificationSelfie() {
+  return useMutation({ mutationFn: profileApi.submitVerificationSelfie });
+}
+
 export function useUpdateNotificationPrefs() {
   return useMutation({ mutationFn: profileApi.updateNotificationPrefs });
 }

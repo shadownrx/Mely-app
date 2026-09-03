@@ -6,7 +6,7 @@ import { sounds } from '../utils/audio';
 import { useAuth } from '../context/AuthContext';
 import { useStamps } from '../hooks/useStamps';
 import { useWallet } from '../hooks/useWallet';
-import { useUploadAudioBio } from '../hooks/useProfile';
+import { useSubmitVerificationSelfie, useUploadAudioBio } from '../hooks/useProfile';
 import { Button } from './ui/button';
 
 interface ProfileViewProps {
@@ -26,7 +26,9 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const { data: stamps = [] } = useStamps();
   const { data: wallet } = useWallet();
   const uploadAudioBio = useUploadAudioBio();
+  const submitVerificationSelfie = useSubmitVerificationSelfie();
   const audioInputRef = useRef<HTMLInputElement>(null);
+  const selfieInputRef = useRef<HTMLInputElement>(null);
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -44,6 +46,20 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         refreshUser();
       },
       onError: (err: any) => toast.error(err?.message ?? 'No se pudo subir el audio'),
+    });
+    e.target.value = '';
+  };
+
+  const handleSelfieFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    submitVerificationSelfie.mutate(file, {
+      onSuccess: () => {
+        sounds.playNotification();
+        toast.success('Selfie enviada — la revisamos y te avisamos.');
+        refreshUser();
+      },
+      onError: (err: any) => toast.error(err?.message ?? 'No se pudo enviar la selfie'),
     });
     e.target.value = '';
   };
@@ -93,7 +109,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             {user.displayName}, {user.age}
           </h2>
           {user.badges.verified && (
-            <span className="material-symbols-outlined text-[17px] text-sky-400" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <span className="material-symbols-outlined text-[17px] text-sky-400" style={{ fontVariationSettings: "'FILL' 1" }} title="Identidad verificada">
               verified
             </span>
           )}
@@ -191,6 +207,54 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           </>
         )}
       </motion.section>
+
+      {/* Verificación de identidad: motiva a subir una selfie real mostrando el
+          tilde azul que va a aparecer en todo el perfil una vez aprobada. */}
+      {user.badges.verification !== 'VERIFIED' && (
+        <motion.section
+          variants={item}
+          className="rounded-2xl p-3.5 border border-slate-100 dark:border-white/10 bg-white dark:bg-[#150f11] flex items-center gap-3"
+        >
+          {user.badges.verification === 'PHOTO' ? (
+            <>
+              <div className="w-11 h-11 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-[20px] text-amber-500">hourglass_top</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="block text-[13px] font-bold">Selfie en revisión</span>
+                <span className="block text-[11px] text-slate-500 dark:text-[#a89a9e]">Te avisamos apenas la revisemos</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-11 h-11 rounded-full bg-sky-500/10 flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-[20px] text-sky-500">verified</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="block text-[13px] font-bold">Verificá tu perfil</span>
+                <span className="block text-[11px] text-slate-500 dark:text-[#a89a9e]">Una selfie rápida y sumás el tilde azul</span>
+              </div>
+              <input
+                ref={selfieInputRef}
+                type="file"
+                accept="image/*"
+                capture="user"
+                className="hidden"
+                onChange={handleSelfieFileChange}
+              />
+              <Button
+                variant="cherry"
+                size="sm"
+                onClick={() => selfieInputRef.current?.click()}
+                disabled={submitVerificationSelfie.isPending}
+                className="rounded-full shrink-0 normal-case tracking-normal"
+              >
+                {submitVerificationSelfie.isPending ? 'Enviando...' : 'Verificar'}
+              </Button>
+            </>
+          )}
+        </motion.section>
+      )}
 
       {/* Bio */}
       {user.bio && (

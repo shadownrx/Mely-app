@@ -1,6 +1,6 @@
 import { apiRequest, API_BASE_URL } from '../apiClient';
 import { tokenStore } from '../tokenStore';
-import type { Gender, LookingFor, MeProfile, Photo, Prompt, Stamp } from '../../types';
+import type { Gender, LookingFor, MeProfile, Photo, Prompt, Stamp, VerificationLevel } from '../../types';
 
 export function getMe() {
   return apiRequest<MeProfile>('/me');
@@ -57,6 +57,12 @@ export function uploadPhoto(file: File) {
   const formData = new FormData();
   formData.append('photo', file);
   return uploadMultipart<Photo>('/me/photos', formData);
+}
+
+export function submitVerificationSelfie(file: File) {
+  const formData = new FormData();
+  formData.append('photo', file);
+  return uploadMultipart<{ ok: true; verification: VerificationLevel }>('/me/verify-photo', formData);
 }
 
 export function deletePhoto(photoId: string) {

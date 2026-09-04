@@ -17,7 +17,7 @@ import { Skeleton } from './ui/skeleton';
 
 const ITEM_PRESENTATION: Record<string, { icon: string; color: string; badge?: string }> = {
   MEMBERSHIP_PREMIUM: { icon: 'workspace_premium', color: '#e11d48', badge: '👑 MEMBRESÍA' },
-  MEMBERSHIP_FOUNDING: { icon: 'military_tech', color: '#ffd700', badge: '✨ VITALICIO' },
+  MEMBERSHIP_FOUNDING: { icon: 'military_tech', color: '#ffd700', badge: '✨ MEJOR PRECIO' },
   MEMBERSHIP_VIP: { icon: 'diamond', color: '#f43f5e', badge: '💎 GOLD' },
   UNDO_PASS: { icon: 'replay', color: '#fb7185' },
   EXTRA_PROFILES: { icon: 'visibility', color: '#fda4af' },
@@ -33,17 +33,20 @@ const MOST_POPULAR_KEY = 'MEMBERSHIP_PREMIUM';
 // ITEM_PRESENTATION) en vez de parsear la descripción del backend, para poder mostrarlas
 // como checklist en vez de una sola oración larga.
 const MEMBERSHIP_BENEFITS: Record<string, string[]> = {
-  MEMBERSHIP_PREMIUM: ['Perfil siempre destacado en Descubrir', '+20 perfiles extra por día', 'Válida 2 días'],
-  MEMBERSHIP_FOUNDING: ['Perfil siempre destacado en Descubrir', '+20 perfiles extra por día', 'Para siempre, no vence'],
+  MEMBERSHIP_PREMIUM: ['Perfil siempre destacado en Descubrir', '+20 perfiles extra por día', 'Válida 7 días'],
+  MEMBERSHIP_FOUNDING: ['Perfil siempre destacado en Descubrir', 'Prácticamente sin límite diario de perfiles', 'Válida 90 días · el mejor precio por día'],
   MEMBERSHIP_VIP: ['Perfil siempre destacado en Descubrir', 'Prácticamente sin límite diario de perfiles', 'Válida 30 días'],
 };
 
-// La duración real de cada membresía difiere entre tiers (Premium: 2 días para
-// incentivar recompra frecuente; VIP: 30; Founding: para siempre) — el listShop() del
-// backend no expone durationDays, así que se mantiene a mano acá igual que los beneficios.
+// La duración real de cada membresía difiere entre tiers (Plus: semanal; Gold: mensual;
+// Black: trimestral, con mejor precio por día que pagar Gold 3 meses seguidos) — todas
+// vencen y hay que renovarlas, ninguna es "para siempre" (una membresía de por vida por
+// un pago único dejaba de generar ingresos después del primer par de meses). El
+// listShop() del backend no expone durationDays, así que se mantiene a mano acá igual
+// que los beneficios.
 const MEMBERSHIP_DURATION_LABEL: Record<string, string> = {
-  MEMBERSHIP_PREMIUM: '2 días',
-  MEMBERSHIP_FOUNDING: 'para siempre',
+  MEMBERSHIP_PREMIUM: '7 días',
+  MEMBERSHIP_FOUNDING: '90 días',
   MEMBERSHIP_VIP: '30 días',
 };
 

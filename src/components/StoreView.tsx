@@ -18,7 +18,7 @@ import { Skeleton } from './ui/skeleton';
 const ITEM_PRESENTATION: Record<string, { icon: string; color: string; badge?: string }> = {
   MEMBERSHIP_PREMIUM: { icon: 'workspace_premium', color: '#e11d48', badge: '👑 MEMBRESÍA' },
   MEMBERSHIP_FOUNDING: { icon: 'military_tech', color: '#ffd700', badge: '✨ VITALICIO' },
-  MEMBERSHIP_VIP: { icon: 'diamond', color: '#f43f5e', badge: '💎 VIP' },
+  MEMBERSHIP_VIP: { icon: 'diamond', color: '#f43f5e', badge: '💎 GOLD' },
   UNDO_PASS: { icon: 'replay', color: '#fb7185' },
   EXTRA_PROFILES: { icon: 'visibility', color: '#fda4af' },
   SUPER_INVITE: { icon: 'star', color: '#ffd700' },

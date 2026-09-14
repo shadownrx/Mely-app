@@ -3,7 +3,6 @@ import { Match, Message } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
-import { useMatches } from '../hooks/useMatches';
 import { useMarkRead, useMessages, useSendMessage, useSendPhoto, useTypingIndicator, useTypingPing } from '../hooks/useChat';
 import { useAcceptProposal, useCounterProposal, useProposals } from '../hooks/useDates';
 import { Button } from './ui/button';
@@ -13,6 +12,8 @@ import { Input } from './ui/input';
 import { Skeleton } from './ui/skeleton';
 
 interface MessagesViewProps {
+  matches: Match[];
+  isLoadingMatches?: boolean;
   activeConnectionId: string | null;
   onSelectConnection: (connectionId: string | null) => void;
   onOpenProposeModal?: (connectionId: string) => void;
@@ -190,6 +191,8 @@ function formatTime(iso: string): string {
 }
 
 export const MessagesView: React.FC<MessagesViewProps> = ({
+  matches,
+  isLoadingMatches = false,
   activeConnectionId,
   onSelectConnection,
   onOpenProposeModal,
@@ -299,7 +302,6 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
   };
 
-  const { data: matches = [], isLoading: isLoadingMatches } = useMatches();
   const activeMatch: Match | null = matches.find((m) => m.id === activeConnectionId) ?? null;
 
   const { data: messagesData } = useMessages(activeConnectionId);

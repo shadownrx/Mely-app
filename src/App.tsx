@@ -92,10 +92,10 @@ function AppContent() {
   const swipe = useSwipe();
   const matchesQuery = useMatches();
   const walletQuery = useWallet();
-  const { items: dateItems } = useAllDateProposals();
   const icebreakerSendMessage = useSendMessage(icebreaker?.connectionId ?? '');
 
   const matches: Match[] = matchesQuery.data ?? [];
+  const { items: dateItems } = useAllDateProposals(matches);
   const walletBalance = walletQuery.data?.balance ?? 0;
   const unreadMessagesCount = matches.reduce((sum, m) => sum + m.unread, 0);
   const pendingDatesCount = dateItems.filter(
@@ -337,6 +337,8 @@ function AppContent() {
 
             {currentTab === 'mensajes' && (
               <MessagesView
+                matches={matches}
+                isLoadingMatches={matchesQuery.isLoading || matchesQuery.isFetching}
                 activeConnectionId={activeConnectionId}
                 onSelectConnection={setActiveConnectionId}
                 onOpenProposeModal={(connectionId) => {
@@ -357,6 +359,7 @@ function AppContent() {
 
             {currentTab === 'citas' && (
               <DatesView
+                matches={matches}
                 onOpenChat={handleOpenChat}
                 onOpenDateQR={(connectionId, partnerName, partnerAvatar) => {
                   setDateQRModal({ connectionId, partnerName, partnerAvatar });

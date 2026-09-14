@@ -1,20 +1,18 @@
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as datesApi from '../lib/api/dates';
-import { useMatches } from './useMatches';
-import type { ConnectionStatus } from '../types';
+import type { ConnectionStatus, Match } from '../types';
 
 const DATE_ACTIVE_STATUSES: ConnectionStatus[] = ['PROPOSAL', 'DATE_AGREED', 'DATE_VERIFIED', 'SECOND_DATE'];
 
 /** No hay un GET /dates global: se arma listando matches con un ciclo de cita activo y trayendo su cita vigente. */
-export function useAllDateProposals() {
-  const matchesQuery = useMatches();
-  const relevantMatches = (matchesQuery.data ?? []).filter((m) => DATE_ACTIVE_STATUSES.includes(m.status));
+export function useAllDateProposals(matches: Match[]) {
+  const relevantMatches = matches.filter((m) => DATE_ACTIVE_STATUSES.includes(m.status));
 
   const dateMeetQueries = useQueries({
     queries: relevantMatches.map((m) => ({
       queryKey: ['dateMeet', m.id],
       queryFn: () => datesApi.getCurrentDateMeet(m.id),
-      enabled: matchesQuery.isSuccess,
+      enabled: true,
     })),
   });
 
@@ -26,7 +24,7 @@ export function useAllDateProposals() {
 
   return {
     items,
-    isLoading: matchesQuery.isLoading || dateMeetQueries.some((q) => q.isLoading),
+    isLoading: dateMeetQueries.some((q) => q.isLoading),
   };
 }
 

@@ -38,13 +38,14 @@ function formatDateTime(iso: string | null) {
 }
 
 interface DatesViewProps {
+  matches: Match[];
   onOpenChat: (connectionId: string) => void;
   onOpenDateQR: (connectionId: string, partnerName: string, partnerAvatar: string) => void;
 }
 
-export const DatesView: React.FC<DatesViewProps> = ({ onOpenChat, onOpenDateQR }) => {
+export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpenDateQR }) => {
   const { isLight } = useTheme();
-  const { items, isLoading } = useAllDateProposals();
+  const { items, isLoading } = useAllDateProposals(matches);
 
   return (
     <div className="flex flex-col gap-6 pb-12 animate-fadeIn">

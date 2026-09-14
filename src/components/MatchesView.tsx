@@ -106,7 +106,22 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
       )}
       {/* Minimal header — TopAppBar already shows the page title, this is just the icon controls */}
       <div className="flex flex-col gap-3 px-0.5">
-        <div className="flex justify-end items-center">
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'}`}>
+              Tus conexiones
+            </p>
+            <div className="mt-0.5 flex items-baseline gap-2">
+              <h2 className={`text-[21px] font-bold tracking-tight ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+                {matches.length} {matches.length === 1 ? 'match' : 'matches'}
+              </h2>
+              {activeFilter !== 'all' || searchQuery ? (
+                <span className={`text-[11px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                  {filteredMatches.length} visibles
+                </span>
+              ) : null}
+            </div>
+          </div>
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => {
@@ -227,7 +242,9 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     return (
                       <motion.button
                         key={f.id}
+                        type="button"
                         whileTap={{ scale: 0.95 }}
+                        aria-pressed={isSelected}
                         onClick={() => {
                           sounds.playClick();
                           setActiveFilter(f.id as FilterType);

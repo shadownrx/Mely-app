@@ -285,7 +285,15 @@ function AppContent() {
           showBackButton={currentTab === 'ajustes'}
           onBack={() => setCurrentTab(previousTab)}
           customTitle={
-            currentTab === 'ajustes' ? 'Ajustes' : currentTab === 'tienda' ? 'Tienda' : currentTab === 'mensajes' ? 'Mensajes' : 'MELY'
+            currentTab === 'ajustes'
+              ? 'Ajustes'
+              : currentTab === 'tienda'
+                ? 'Tienda'
+                : currentTab === 'mensajes'
+                  ? 'Mensajes'
+                  : currentTab === 'matches'
+                    ? 'Matches'
+                    : 'MELY'
           }
         />
       )}

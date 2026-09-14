@@ -11,8 +11,10 @@ import { Skeleton } from './ui/skeleton';
 interface MatchesViewProps {
   matches: Match[];
   isLoading?: boolean;
+  error?: unknown;
   onOpenChat: (connectionId: string) => void;
   onProposeDate: (match: Match) => void;
+  onRetry?: () => void;
   onExploreMore?: () => void;
 }
 
@@ -46,8 +48,10 @@ function matchCountdown(expiresAt: string | null): { label: string; urgent: bool
 export const MatchesView: React.FC<MatchesViewProps> = ({
   matches,
   isLoading = false,
+  error,
   onOpenChat,
   onProposeDate,
+  onRetry,
   onExploreMore,
 }) => {
   const { isLight } = useTheme();
@@ -58,6 +62,12 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [selectedGalleryIdx, setSelectedGalleryIdx] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    if (selectedMatch && !matches.some((match) => match.id === selectedMatch.id)) {
+      setSelectedMatch(null);
+    }
+  }, [matches, selectedMatch]);
 
   // Filter matches based on search & category
   const filteredMatches = matches.filter((match) => {
@@ -79,6 +89,21 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
 
   return (
     <div className="flex flex-col gap-4 pb-20 select-none">
+      {error && matches.length > 0 && (
+        <div
+          role="status"
+          className={`flex items-center justify-between gap-3 rounded-xl border px-3 py-2 text-[11px] ${
+            isLight ? 'border-amber-200 bg-amber-50 text-amber-800' : 'border-amber-500/30 bg-amber-500/10 text-amber-200'
+          }`}
+        >
+          <span>No se pudo actualizar la lista. Estás viendo datos anteriores.</span>
+          {onRetry && (
+            <button type="button" onClick={onRetry} className="shrink-0 font-bold underline underline-offset-2">
+              Reintentar
+            </button>
+          )}
+        </div>
+      )}
       {/* Minimal header — TopAppBar already shows the page title, this is just the icon controls */}
       <div className="flex flex-col gap-3 px-0.5">
         <div className="flex justify-end items-center">
@@ -232,7 +257,34 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
       {/* ------------------------------------------------------------- */}
       {/* MATCHES LIST / GRID LAYOUT                                   */}
       {/* ------------------------------------------------------------- */}
-      {isLoading && matches.length === 0 ? (
+      {error && matches.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`flex flex-col items-center justify-center py-12 px-6 text-center rounded-2xl border border-dashed ${
+            isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'
+          }`}
+        >
+          <div className="w-12 h-12 rounded-full bg-[#e11d48]/10 text-[#e11d48] flex items-center justify-center mb-2.5">
+            <span className="material-symbols-outlined text-[26px]">cloud_off</span>
+          </div>
+          <h3 className={`font-headline-md text-[15px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+            No se pudieron cargar tus matches
+          </h3>
+          <p className={`font-body-sm text-[11.5px] max-w-xs mt-1 mb-4 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+            Comprueba tu conexión e inténtalo de nuevo.
+          </p>
+          {onRetry && (
+            <Button
+              size="sm"
+              onClick={onRetry}
+              className="bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full px-4 h-8 text-[11px] font-bold"
+            >
+              Reintentar
+            </Button>
+          )}
+        </motion.div>
+      ) : isLoading && matches.length === 0 ? (
         <div className="grid grid-cols-2 gap-3">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="flex flex-col gap-2">

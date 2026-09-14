@@ -24,6 +24,7 @@ import { useSendMessage } from './hooks/useChat';
 import { subscribeUserNotifications } from './lib/realtime';
 import { resolveNotificationTarget } from './lib/notificationRouting';
 import { useQueryClient } from '@tanstack/react-query';
+import { ApiError } from './lib/apiClient';
 import type { Stamp } from './types';
 
 // Todo lo que no hace falta en el primer paint (pantallas fuera de Descubrir, y los
@@ -100,6 +101,11 @@ function AppContent() {
   const pendingDatesCount = dateItems.filter(
     (it) => it.dateMeet.status === 'AGREED' || it.dateMeet.status === 'CHECKED_IN',
   ).length;
+
+  useEffect(() => {
+    if (!(matchesQuery.error instanceof ApiError) || matchesQuery.error.status !== 401) return;
+    void logout();
+  }, [matchesQuery.error, logout]);
 
   const activeFiltersCount =
     (discoveryFilters.onlyVerifiedMembers ? 1 : 0) +
@@ -320,9 +326,11 @@ function AppContent() {
             {currentTab === 'matches' && (
               <MatchesView
                 matches={matches}
-                isLoading={matchesQuery.isLoading}
+                isLoading={matchesQuery.isLoading || matchesQuery.isFetching}
+                error={matchesQuery.error}
                 onOpenChat={handleOpenChat}
                 onProposeDate={handleProposeDate}
+                onRetry={() => matchesQuery.refetch()}
                 onExploreMore={() => handleTabChange('descubrir')}
               />
             )}

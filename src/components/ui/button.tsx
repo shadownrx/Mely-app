@@ -4,18 +4,18 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-2xl text-sm font-medium transition-all focus-glow disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] select-none cursor-pointer',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-2xl text-sm font-semibold transition-all focus-glow disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] select-none cursor-pointer',
   {
     variants: {
       variant: {
         default:
-          'bg-gradient-to-r from-rose-600 to-rose-500 text-white shadow-elevation-sm hover:from-rose-700 hover:to-rose-600 hover:shadow-elevation-md font-semibold',
+          'bg-[#d91f4f] text-white shadow-elevation-sm hover:bg-[#b81742] hover:shadow-elevation-md',
         cherry:
-          'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-md hover:opacity-95 hover:shadow-elevation-lg font-semibold',
+          'bg-[#d91f4f] text-white shadow-elevation-md hover:bg-[#b81742] hover:shadow-elevation-lg',
         destructive:
           'bg-red-500 text-white shadow-elevation-sm hover:bg-red-600 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800',
         outline:
-          'border border-rose-200 bg-white text-slate-800 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-900/40 dark:bg-[#140b0f] dark:text-rose-100 dark:hover:bg-rose-950/40',
+          'border border-black/10 bg-white text-slate-800 hover:bg-[#fff1f4] hover:text-[#b81742] dark:border-white/10 dark:bg-[#140b0f] dark:text-rose-100 dark:hover:bg-rose-950/40',
         secondary:
           'bg-rose-100 text-rose-900 hover:bg-rose-200 dark:bg-rose-950/60 dark:text-rose-200 dark:hover:bg-rose-900/60',
         ghost:

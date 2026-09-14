@@ -50,9 +50,10 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
   return (
     <div className="flex flex-col gap-6 pb-12 animate-fadeIn">
       {/* Header Info */}
-      <div className="flex justify-between items-baseline px-1">
+      <div className="flex items-end justify-between gap-3 px-1">
         <div>
-          <h2 className={`font-headline-md text-[22px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+          <p className="section-kicker">Tu agenda</p>
+          <h2 className={`mt-1 font-headline-md text-[22px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
             Itinerario de Citas
           </h2>
           <p className={`font-body-sm text-[13px] mt-0.5 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>

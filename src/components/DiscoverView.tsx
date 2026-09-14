@@ -168,8 +168,16 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
 
   return (
     <div className="flex flex-col gap-4 pb-8 select-none">
-      {/* Minimal top chrome — TopAppBar already shows the page title, this is just the filter icons */}
-      <div className="flex justify-end items-center px-1">
+      <div className="flex items-end justify-between gap-3 px-1">
+        <div className="min-w-0">
+          <p className="section-kicker">Descubrir</p>
+          <h2 className={`mt-1 text-[22px] font-bold tracking-tight ${isLight ? 'text-[#171316]' : 'text-[#fff1f2]'}`}>
+            Una conexión a la vez
+          </h2>
+          <p className={`mt-1 max-w-[250px] text-[12px] leading-relaxed ${isLight ? 'text-[#6f6870]' : 'text-[#fda4af]/70'}`}>
+            Conocé la historia antes de decidir si hay chispa.
+          </p>
+        </div>
 
         <div className="flex items-center gap-1.5">
           {onOpenVerifiedSpots && (
@@ -189,6 +197,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           )}
 
           <button
+            type="button"
             onClick={() => {
               sounds.playClick();
               setIsBlindMode(!isBlindMode);
@@ -202,6 +211,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
             }`}
             title="Modo Cita a Ciegas"
             aria-label="Modo Cita a Ciegas"
+            aria-pressed={isBlindMode}
           >
             <span className="material-symbols-outlined text-[16px]">{isBlindMode ? 'visibility' : 'visibility_off'}</span>
           </button>

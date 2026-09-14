@@ -697,7 +697,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             se comprimía a 0px de ancho en pantallas angostas y quedaba pegado al avatar. */}
         <div className="flex items-center gap-1 shrink-0">
           {onOpenProposeModal && (
-            <Button size="sm" onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }} className="h-8 px-2.5 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full text-[11px] font-bold flex items-center gap-1 shadow-elevation-sm shrink-0">
+            <Button size="sm" onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }} className="h-8 px-2.5 rounded-full text-[11px] flex items-center gap-1 shrink-0">
               <span className="material-symbols-outlined text-[15px]">local_cafe</span>
               <span>Cita</span>
             </Button>
@@ -806,7 +806,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     >
                       {activeProposal.scheduledAt ? 'Cambiar hora' : 'Proponer hora'}
                     </Button>
-                    <Button size="sm" onClick={() => acceptProposal.mutate(activeProposal.id)} className="h-8 px-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[11px] font-bold rounded-xl">
+                    <Button size="sm" onClick={() => acceptProposal.mutate(activeProposal.id)} className="h-8 px-3 text-[11px] rounded-xl">
                       Aceptar
                     </Button>
                   </>
@@ -854,7 +854,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   type="submit"
                   size="sm"
                   disabled={counterProposal.isPending}
-                  className="h-8 px-3 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[11px] font-bold rounded-xl shrink-0"
+                  className="h-8 px-3 text-[11px] rounded-xl shrink-0"
                 >
                   Enviar
                 </Button>

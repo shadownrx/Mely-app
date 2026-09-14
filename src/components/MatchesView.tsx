@@ -5,7 +5,6 @@ import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Dialog, DialogContent } from './ui/dialog';
 import { Skeleton } from './ui/skeleton';
 
 interface MatchesViewProps {
@@ -339,6 +338,15 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   {/* Left: Avatar + Info */}
                   <div
                     className="flex items-center gap-3 cursor-pointer min-w-0 flex-1"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                      if (event.key !== 'Enter' && event.key !== ' ') return;
+                      event.preventDefault();
+                      sounds.playClick();
+                      setSelectedMatch(match);
+                      setSelectedGalleryIdx(0);
+                    }}
                     onClick={() => {
                       sounds.playClick();
                       setSelectedMatch(match);
@@ -376,6 +384,9 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       <p className={`text-[11px] truncate ${isLight ? 'text-gray-500' : 'text-[#fda4af]/70'}`}>
                         {match.other.city || 'Buenos Aires'}
                       </p>
+                      <p className={`mt-1 text-[10px] font-semibold truncate ${isLight ? 'text-[#d91f4f]' : 'text-[#fb7185]'}`}>
+                        {match.unread > 0 ? `${match.unread} mensajes sin leer` : match.label}
+                      </p>
                       {countdown && (
                         <span
                           className={`inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
@@ -392,7 +403,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   {/* Right: Sleek Compact Action Buttons */}
                   <div className="flex items-center gap-1.5 shrink-0">
                     {/* Chat Icon Button */}
-                    <motion.button
+                        <motion.button
+                          type="button"
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.92 }}
                       onClick={() => {
@@ -410,7 +422,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     </motion.button>
 
                     {/* Date Pill Button */}
-                    <motion.button
+                        <motion.button
+                          type="button"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.92 }}
                       onClick={() => {
@@ -471,6 +484,15 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   {/* Instagram-grid weight: square photo, minimal chrome, name below not on top */}
                   <div
                     className="relative aspect-[1/1.15] rounded-2xl overflow-hidden cursor-pointer bg-[#0b0507] group"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                      if (event.key !== 'Enter' && event.key !== ' ') return;
+                      event.preventDefault();
+                      sounds.playClick();
+                      setSelectedMatch(match);
+                      setSelectedGalleryIdx(0);
+                    }}
                     onClick={() => {
                       sounds.playClick();
                       setSelectedMatch(match);
@@ -529,6 +551,9 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       )}
                     </div>
                     <span className="text-[11px] text-slate-500 dark:text-[#a89a9e]">{match.other.city || 'Buenos Aires'}</span>
+                    <span className={`mt-0.5 block text-[10px] font-semibold truncate ${isLight ? 'text-[#d91f4f]' : 'text-[#fb7185]'}`}>
+                      {match.unread > 0 ? `${match.unread} sin leer` : match.label}
+                    </span>
                   </div>
                 </motion.div>
                 );

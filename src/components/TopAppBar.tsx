@@ -40,7 +40,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
       // un frame viejo de otra pestaña detrás del blur — bajar la intensidad reduce esa
       // chance sin cambiar cómo se ve.
       className={`fixed top-0 w-full z-50 transition-colors duration-200 border-b backdrop-blur-sm glass-surface shadow-elevation-sm ${
-        isLight ? 'bg-white/95 border-[#ffe4e6]' : 'bg-[#0d070a]/90 border-[#e11d48]/20'
+        isLight ? 'bg-[#fbfaf9]/90 border-black/8' : 'bg-[#0d070a]/90 border-[#e11d48]/20'
       }`}
     >
       <div className="flex justify-between items-center h-16 px-3 max-w-[440px] mx-auto gap-2">

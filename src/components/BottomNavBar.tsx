@@ -68,21 +68,21 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
     // descentrado en algunos navegadores móviles aunque la matemática fuera correcta.
     <div
       style={{
-        paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))',
-        paddingLeft: '0.75rem',
-        paddingRight: '0.75rem',
+        paddingBottom: 'calc(0.625rem + env(safe-area-inset-bottom))',
+        paddingLeft: '0.625rem',
+        paddingRight: '0.625rem',
       }}
       className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none"
     >
       <nav
         id="bottom-navigation-bar"
-        className={`pointer-events-auto w-full max-w-[416px] rounded-[28px] border liquid-glass transition-colors duration-300 ${
+        className={`pointer-events-auto w-full max-w-[416px] rounded-[24px] border liquid-glass transition-colors duration-300 ${
           isLight
             ? 'bg-white/75 border-white/60 shadow-elevation-lg'
             : 'bg-[#0d070a]/65 border-white/10 shadow-elevation-lg'
         }`}
       >
-      <div className="flex justify-around items-center py-1.5 px-2 w-full max-w-full">
+      <div className="flex justify-around items-center py-1 px-1.5 w-full max-w-full">
         {tabs.map((tab) => {
           const isActive = currentTab === tab.id;
 
@@ -100,7 +100,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                 sounds.playClick();
                 onTabChange(tab.id);
               }}
-              className="flex flex-col items-center justify-center gap-0.5 py-1 px-1.5 min-w-[56px] focus:outline-none"
+              className="flex flex-col items-center justify-center gap-0.5 py-1 px-1 min-w-0 flex-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#e11d48]/40"
             >
               <span className="relative flex items-center justify-center w-10 h-10 rounded-full">
                 {/* Pastilla circular que se desliza entre tabs (layoutId compartido: motion

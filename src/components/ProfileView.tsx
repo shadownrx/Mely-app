@@ -93,6 +93,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
       {/* Header: avatar in gradient ring, name + verified, one-line meta, membership pill */}
       <motion.section variants={item} className="flex flex-col items-center text-center">
+        <p className="section-kicker mb-3">Tu espacio</p>
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

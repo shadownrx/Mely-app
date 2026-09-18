@@ -5,20 +5,253 @@
    tema de la app (no el del sistema operativo) sea el que manda. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ============================================================
+   Mely — sistema de color de marca (azul medianoche + coral suave)
+   Redefine las paletas nombradas de Tailwind (rose, slate, gray, amber,
+   orange, yellow, emerald, sky, red, purple/violet/indigo/fuchsia) para que
+   TODA la app — que ya usaba `rose` como su color de marca (shadcn
+   baseColor: "rose") — herede la nueva identidad sin tocar cada componente.
+   ============================================================ */
+@theme {
+  /* Marca — coral (antes "rose", que coincidía con el cherry #e11d48) */
+  --color-rose-50: #FFF6F0;
+  --color-rose-100: #FFE8DA;
+  --color-rose-200: #FFD3B8;
+  --color-rose-300: #FFB295;
+  --color-rose-400: #FF9C7D;
+  --color-rose-500: #FF8A65;
+  --color-rose-600: #F16B48;
+  --color-rose-700: #D4552F;
+  --color-rose-800: #A8431F;
+  --color-rose-900: #7A3016;
+  --color-rose-950: #451A0B;
+
+  /* Neutros cálidos (antes "slate" / "gray") — mismo tinte para ambos */
+  --color-slate-50: #F7F4EE;
+  --color-slate-100: #EFE7D8;
+  --color-slate-200: #D9D4C8;
+  --color-slate-300: #A9B2C9;
+  --color-slate-400: #8A93A8;
+  --color-slate-500: #6E7891;
+  --color-slate-600: #5B6478;
+  --color-slate-700: #3E4759;
+  --color-slate-800: #2A3448;
+  --color-slate-900: #16223B;
+  --color-slate-950: #0A1120;
+  --color-gray-50: #F7F4EE;
+  --color-gray-100: #EFE7D8;
+  --color-gray-200: #D9D4C8;
+  --color-gray-300: #A9B2C9;
+  --color-gray-400: #8A93A8;
+  --color-gray-500: #6E7891;
+  --color-gray-600: #5B6478;
+  --color-gray-700: #3E4759;
+  --color-gray-800: #2A3448;
+  --color-gray-900: #16223B;
+  --color-gray-950: #0A1120;
+
+  /* Dorado / tibio (antes "amber", "orange", "yellow") — Gold membership, VIP, ratings */
+  --color-amber-50: #FFF8E8;
+  --color-amber-100: #F3E4BE;
+  --color-amber-200: #E9CE8E;
+  --color-amber-300: #E3B873;
+  --color-amber-400: #D9B45C;
+  --color-amber-500: #C89A3E;
+  --color-amber-600: #A97D2E;
+  --color-amber-700: #8A5A28;
+  --color-amber-800: #6B4420;
+  --color-amber-900: #4A3115;
+  --color-amber-950: #2E1D0B;
+  --color-orange-50: #FFF8E8;
+  --color-orange-100: #F3E4BE;
+  --color-orange-200: #E9CE8E;
+  --color-orange-300: #E3B873;
+  --color-orange-400: #D9B45C;
+  --color-orange-500: #C89A3E;
+  --color-orange-600: #A97D2E;
+  --color-orange-700: #8A5A28;
+  --color-orange-800: #6B4420;
+  --color-orange-900: #4A3115;
+  --color-orange-950: #2E1D0B;
+  --color-yellow-50: #FFF8E8;
+  --color-yellow-100: #F3E4BE;
+  --color-yellow-200: #E9CE8E;
+  --color-yellow-300: #E3B873;
+  --color-yellow-400: #D9B45C;
+  --color-yellow-500: #C89A3E;
+  --color-yellow-600: #A97D2E;
+  --color-yellow-700: #8A5A28;
+  --color-yellow-800: #6B4420;
+  --color-yellow-900: #4A3115;
+  --color-yellow-950: #2E1D0B;
+
+  /* Éxito (antes "emerald", "green") */
+  --color-emerald-50: #EFF8F1;
+  --color-emerald-100: #DCF0E4;
+  --color-emerald-200: #BEE0CC;
+  --color-emerald-300: #9CD0B4;
+  --color-emerald-400: #7FBFA0;
+  --color-emerald-500: #5FA184;
+  --color-emerald-600: #4A8A6C;
+  --color-emerald-700: #3F7A5C;
+  --color-emerald-800: #2E5C45;
+  --color-emerald-900: #1F4030;
+  --color-emerald-950: #12271D;
+  --color-green-50: #EFF8F1;
+  --color-green-100: #DCF0E4;
+  --color-green-200: #BEE0CC;
+  --color-green-300: #9CD0B4;
+  --color-green-400: #7FBFA0;
+  --color-green-500: #5FA184;
+  --color-green-600: #4A8A6C;
+  --color-green-700: #3F7A5C;
+  --color-green-800: #2E5C45;
+  --color-green-900: #1F4030;
+  --color-green-950: #12271D;
+
+  /* Información / verificación (antes "sky", "blue", "cyan", "teal") */
+  --color-sky-50: #F0F7FB;
+  --color-sky-100: #D8ECF5;
+  --color-sky-200: #B6DCEA;
+  --color-sky-300: #93CBDE;
+  --color-sky-400: #6FA8C9;
+  --color-sky-500: #5A94B6;
+  --color-sky-600: #487B9B;
+  --color-sky-700: #2E5570;
+  --color-sky-800: #223F54;
+  --color-sky-900: #172B3A;
+  --color-sky-950: #0D1922;
+  --color-blue-50: #F0F7FB;
+  --color-blue-100: #D8ECF5;
+  --color-blue-200: #B6DCEA;
+  --color-blue-300: #93CBDE;
+  --color-blue-400: #6FA8C9;
+  --color-blue-500: #5A94B6;
+  --color-blue-600: #487B9B;
+  --color-blue-700: #2E5570;
+  --color-blue-800: #223F54;
+  --color-blue-900: #172B3A;
+  --color-blue-950: #0D1922;
+
+  /* Riesgo / peligro (antes "red") */
+  --color-red-50: #FDF1EF;
+  --color-red-100: #FBE1DD;
+  --color-red-200: #F6C4BB;
+  --color-red-300: #EFA599;
+  --color-red-400: #E2695F;
+  --color-red-500: #D65145;
+  --color-red-600: #B93E33;
+  --color-red-700: #942F27;
+  --color-red-800: #6E231D;
+  --color-red-900: #481712;
+  --color-red-950: #2A0B08;
+
+  /* VIP (antes "purple", "violet", "indigo", "fuchsia") */
+  --color-purple-50: #F8F1FA;
+  --color-purple-100: #F1E4F7;
+  --color-purple-200: #E1C7ED;
+  --color-purple-300: #CDA8DF;
+  --color-purple-400: #B98FD1;
+  --color-purple-500: #A377BE;
+  --color-purple-600: #8A5FA5;
+  --color-purple-700: #5B3B75;
+  --color-purple-800: #422B56;
+  --color-purple-900: #2C1C3A;
+  --color-purple-950: #17101F;
+  --color-violet-50: #F8F1FA;
+  --color-violet-100: #F1E4F7;
+  --color-violet-200: #E1C7ED;
+  --color-violet-300: #CDA8DF;
+  --color-violet-400: #B98FD1;
+  --color-violet-500: #A377BE;
+  --color-violet-600: #8A5FA5;
+  --color-violet-700: #5B3B75;
+  --color-violet-800: #422B56;
+  --color-violet-900: #2C1C3A;
+  --color-violet-950: #17101F;
+  --color-indigo-50: #F8F1FA;
+  --color-indigo-100: #F1E4F7;
+  --color-indigo-200: #E1C7ED;
+  --color-indigo-300: #CDA8DF;
+  --color-indigo-400: #B98FD1;
+  --color-indigo-500: #A377BE;
+  --color-indigo-600: #8A5FA5;
+  --color-indigo-700: #5B3B75;
+  --color-indigo-800: #422B56;
+  --color-indigo-900: #2C1C3A;
+  --color-indigo-950: #17101F;
+  --color-fuchsia-50: #F8F1FA;
+  --color-fuchsia-100: #F1E4F7;
+  --color-fuchsia-200: #E1C7ED;
+  --color-fuchsia-300: #CDA8DF;
+  --color-fuchsia-400: #B98FD1;
+  --color-fuchsia-500: #A377BE;
+  --color-fuchsia-600: #8A5FA5;
+  --color-fuchsia-700: #5B3B75;
+  --color-fuchsia-800: #422B56;
+  --color-fuchsia-900: #2C1C3A;
+  --color-fuchsia-950: #17101F;
+
+  --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --font-body: 'Manrope', -apple-system, 'Segoe UI', sans-serif;
+}
+
 @layer base {
   :root {
-    --font-serif: 'Literata', Georgia, serif;
-    --font-mono: 'Space Mono', monospace;
-    --font-sans: 'DM Sans', system-ui, sans-serif;
-    --color-ink: #171316;
-    --color-muted: #6f6870;
-    --color-cherry: #d91f4f;
-    --color-cherry-deep: #a9143a;
-    --color-rose-soft: #fff1f4;
-    --color-canvas: #fbfaf9;
-    --color-line: rgb(23 19 22 / 0.09);
+    /* Superficies — azul medianoche en profundidad creciente */
+    --midnight-950: #0A1120;
+    --midnight-900: #0F1A2E;
+    --midnight-850: #131F36;
+    --midnight-800: #17233D;
+    --midnight-700: #1F2E4C;
+    --midnight-600: #2A3B5C;
+    --midnight-500: #3C4F73;
+    --hairline: rgba(233, 238, 250, 0.08);
+    --hairline-strong: rgba(233, 238, 250, 0.14);
+
+    /* Acento — coral suave */
+    --coral-100: #FFE3D3;
+    --coral-300: #FFB295;
+    --coral-500: #FF8A65;
+    --coral-600: #F16B48;
+    --coral-700: #D4552F;
+    --ink-on-coral: #341005;
+
+    /* Texto sobre medianoche (dark) */
+    --text-primary: #F5F1E8;
+    --text-secondary: #A9B2C9;
+    --text-tertiary: #6E7891;
+
+    /* Texto y superficies sobre fondo claro (light) */
+    --text-on-light: #16223B;
+    --text-on-light-muted: #5B6478;
+    --color-ink: #16223B;
+    --color-muted: #5B6478;
+    --color-cherry: #FF8A65;
+    --color-cherry-deep: #D4552F;
+    --color-rose-soft: #FFF6F0;
+    --color-canvas: #FCF9F2;
+    --color-line: rgb(22 34 59 / 0.08);
+
+    /* Cálidos claros (tarjetas invertidas / modo claro) */
+    --cream-050: #F7F2E9;
+    --cream-100: #EFE7D8;
+
+    /* Semánticos */
+    --success-500: #7FBFA0;
+    --success-100: #DCF0E4;
+    --warning-500: #E3B873;
+    --danger-500: #E2695F;
+    --danger-100: #FBE1DD;
+
+    --focus-ring: #FFC9AC;
+
     --radius-panel: 24px;
-    --shadow-panel: 0 18px 45px -28px rgb(62 27 39 / 0.28);
+    --shadow-panel: 0 18px 45px -28px rgb(10 17 32 / 0.35);
+
+    --font-serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+    --font-mono: 'Space Mono', monospace;
+    --font-sans: 'Manrope', -apple-system, 'Segoe UI', sans-serif;
   }
 
   /* Safari hace zoom automático (y no vuelve a des-zoomear) al enfocar un campo
@@ -48,22 +281,22 @@
 
   body.theme-dark,
   html.theme-dark body {
-    background-color: #0b090a;
-    background-image: 
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 29, 72, 0.18), transparent 70%),
-      radial-gradient(ellipse 60% 40% at 90% 100%, rgba(251, 113, 133, 0.12), transparent 60%),
-      radial-gradient(ellipse 60% 40% at 10% 90%, rgba(136, 19, 55, 0.15), transparent 60%);
+    background-color: #0A1120;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 138, 101, 0.14), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 90% 100%, rgba(255, 178, 149, 0.10), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 10% 90%, rgba(122, 48, 22, 0.16), transparent 60%);
     background-attachment: fixed;
-    color: #fdf2f4;
+    color: #F5F1E8;
   }
 
   body.theme-light,
   html.theme-light body {
     background-color: var(--color-canvas);
-    background-image: 
-      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(255, 77, 103, 0.08), transparent 65%),
-      radial-gradient(ellipse 60% 30% at 90% 90%, rgba(255, 77, 103, 0.05), transparent 60%),
-      radial-gradient(ellipse 50% 30% at 10% 80%, rgba(255, 181, 192, 0.06), transparent 50%);
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(255, 138, 101, 0.07), transparent 65%),
+      radial-gradient(ellipse 60% 30% at 90% 90%, rgba(255, 138, 101, 0.045), transparent 60%),
+      radial-gradient(ellipse 50% 30% at 10% 80%, rgba(255, 178, 149, 0.06), transparent 50%);
     background-attachment: fixed;
     color: var(--color-ink);
   }
@@ -77,7 +310,7 @@
   }
 
   .section-kicker {
-    color: var(--color-cherry);
+    color: var(--coral-600);
     font-size: 0.68rem;
     font-weight: 800;
     letter-spacing: 0.14em;
@@ -127,40 +360,46 @@
   overscroll-behavior-y: contain;
 }
 
-/* Custom font utilities — la dirección visual aprobada usa DM Sans para todo
-   y reserva Literata (serif) exclusivamente para el wordmark "MELY", no para
-   títulos ni nombres de perfil como antes. */
+/* Tipografía — Manrope para todo el cuerpo, Fraunces reservado para el
+   wordmark "MELY" y los títulos display (font-serif), igual que antes pero
+   con la nueva pareja tipográfica. */
 .font-headline-md, .font-display-lg, .font-display-lg-mobile,
 .font-label-caps, .font-meta-data,
 .font-body-sm, .font-body-lg {
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Manrope', -apple-system, 'Segoe UI', sans-serif;
 }
 
-/* Los bordes rosa/rojo saturados (border-[#fecdd3], border-[#e11d48]/NN) eran
-   el color de borde "default" de casi toda tarjeta, input y chip de la app —
-   parte de la estética de ticket/pasaporte descartada. Se neutralizan acá a
-   nivel global (en vez de tocar los ~280 usos dispersos en los componentes)
-   por bordes casi invisibles, como en la dirección aprobada. Los bordes rojos
-   SIN alpha (border-[#e11d48] a secas) quedan intactos a propósito: son estado
+/* El wordmark "MELY" es el único lugar que usa la serif display (Fraunces) —
+   todo lo demás (títulos de sección, nombres, ítems) se queda en Manrope. */
+.font-wordmark {
+  font-family: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  letter-spacing: 0.01em;
+}
+
+/* Los bordes coral saturados eran el color de borde "default" de casi toda
+   tarjeta, input y chip de la app. Se neutralizan acá a nivel global por
+   bordes casi invisibles, coherente con la dirección editorial aprobada. Los
+   bordes de acento SIN alpha quedan intactos a propósito: son estado
    activo/seleccionado/hover, no el reposo decorativo. */
-[class*="border-[#fecdd3]"],
-[class*="divide-[#fecdd3]"] {
-  border-color: rgb(0 0 0 / 0.07);
+[class*="border-[#ffe3d3]"],
+[class*="divide-[#ffe3d3]"] {
+  border-color: rgb(22 34 59 / 0.07);
 }
-.dark [class*="border-[#fecdd3]"],
-.dark [class*="divide-[#fecdd3]"] {
-  border-color: rgb(255 255 255 / 0.09);
+.dark [class*="border-[#ffe3d3]"],
+.dark [class*="divide-[#ffe3d3]"] {
+  border-color: var(--hairline-strong);
 }
-[class*="border-[#e11d48]/"],
-[class*="divide-[#e11d48]/"] {
-  border-color: rgb(0 0 0 / 0.07);
+[class*="border-[#f16b48]/"],
+[class*="divide-[#f16b48]/"] {
+  border-color: rgb(22 34 59 / 0.07);
 }
-.dark [class*="border-[#e11d48]/"],
-.dark [class*="divide-[#e11d48]/"] {
-  border-color: rgb(255 255 255 / 0.09);
+.dark [class*="border-[#f16b48]/"],
+.dark [class*="divide-[#f16b48]/"] {
+  border-color: var(--hairline-strong);
 }
 
-/* Tactile Skeuomorphism & Ticket Edge Masks */
+/* Tactile Skeuomorphism & Ticket Edge Masks — se mantiene la metáfora de
+   "pasaporte de conexiones" (sellos, tickets) pero reteñida en coral. */
 .ticket-stub {
   position: relative;
 }
@@ -172,7 +411,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  border-bottom: 2px dashed rgba(251, 113, 133, 0.25);
+  border-bottom: 2px dashed rgba(255, 178, 149, 0.3);
 }
 
 .perforation-line {
@@ -197,12 +436,12 @@
 
 .theme-dark .stamp-ink {
   mix-blend-mode: screen;
-  filter: drop-shadow(0px 0px 4px rgba(225, 29, 72, 0.5));
+  filter: drop-shadow(0px 0px 4px rgba(255, 138, 101, 0.5));
 }
 
 .theme-light .stamp-ink {
   mix-blend-mode: multiply;
-  filter: drop-shadow(0px 1px 3px rgba(225, 29, 72, 0.3));
+  filter: drop-shadow(0px 1px 3px rgba(212, 85, 47, 0.3));
 }
 
 .ink-stamp-pressed {
@@ -224,26 +463,26 @@
   }
 }
 
-/* Security Tint Pattern - Cherry & Rose Gold */
+/* Security Tint Pattern — QR / check-in */
 .qr-pattern {
-  background-color: #140d10;
-  background-image: radial-gradient(#e11d48 1px, transparent 1px);
+  background-color: #0F1A2E;
+  background-image: radial-gradient(#F16B48 1px, transparent 1px);
   background-size: 10px 10px;
 }
 
 .theme-light .qr-pattern {
-  background-color: #ffffff;
-  background-image: radial-gradient(#ff4d67 1px, transparent 1px);
+  background-color: #FCF9F2;
+  background-image: radial-gradient(#FF8A65 1px, transparent 1px);
   background-size: 10px 10px;
 }
 
 .security-tint-gold {
-  background-image: radial-gradient(#fb7185 1px, transparent 1px);
+  background-image: radial-gradient(#FFB295 1px, transparent 1px);
   background-size: 10px 10px;
 }
 
 .security-tint-cherry {
-  background-image: radial-gradient(#e11d48 1.2px, transparent 1.2px);
+  background-image: radial-gradient(#F16B48 1.2px, transparent 1.2px);
   background-size: 12px 12px;
 }
 
@@ -320,47 +559,47 @@
   animation: pulseGlow 2s ease-in-out infinite;
 }
 
-/* Glowing Cherry Accents */
+/* Glowing Coral Accents */
 .glow-cherry {
-  box-shadow: 0 0 20px -3px rgba(225, 29, 72, 0.35);
+  box-shadow: 0 0 20px -3px rgba(255, 138, 101, 0.4);
 }
 
 .glow-rose {
-  box-shadow: 0 0 20px -3px rgba(251, 113, 133, 0.35);
+  box-shadow: 0 0 20px -3px rgba(255, 178, 149, 0.4);
 }
 
-/* Elevación premium: en vez de un solo box-shadow plano, se apilan una sombra de
-   contacto (ajustada, oscura) y una sombra ambiental más difusa con el tinte de
-   marca — así las superficies se sienten "físicas" en vez de pegadas con CSS. */
+/* Elevación premium: una sombra de contacto (ajustada, oscura) y una sombra
+   ambiental más difusa con el tinte de marca — así las superficies se sienten
+   "físicas" en vez de pegadas con CSS. */
 .shadow-elevation-sm {
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 14px -6px rgba(225, 29, 72, 0.12);
+  box-shadow: 0 1px 2px rgba(10, 17, 32, 0.06), 0 4px 14px -6px rgba(255, 138, 101, 0.14);
 }
 .shadow-elevation-md {
   box-shadow:
-    0 2px 4px rgba(15, 23, 42, 0.04),
-    0 14px 30px -10px rgba(225, 29, 72, 0.16),
-    0 32px 56px -32px rgba(225, 29, 72, 0.12);
+    0 2px 4px rgba(10, 17, 32, 0.06),
+    0 14px 30px -10px rgba(255, 138, 101, 0.18),
+    0 32px 56px -32px rgba(255, 138, 101, 0.14);
 }
 .shadow-elevation-lg {
   box-shadow:
-    0 4px 8px rgba(15, 23, 42, 0.05),
-    0 22px 46px -14px rgba(225, 29, 72, 0.2),
-    0 52px 84px -40px rgba(225, 29, 72, 0.16);
+    0 4px 8px rgba(10, 17, 32, 0.07),
+    0 22px 46px -14px rgba(255, 138, 101, 0.22),
+    0 52px 84px -40px rgba(255, 138, 101, 0.18);
 }
 .theme-dark .shadow-elevation-sm {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 16px -6px rgba(225, 29, 72, 0.22);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px -6px rgba(255, 138, 101, 0.24);
 }
 .theme-dark .shadow-elevation-md {
   box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.4),
-    0 16px 36px -10px rgba(225, 29, 72, 0.28),
-    0 36px 64px -32px rgba(225, 29, 72, 0.22);
+    0 2px 6px rgba(0, 0, 0, 0.45),
+    0 16px 36px -10px rgba(255, 138, 101, 0.3),
+    0 36px 64px -32px rgba(255, 138, 101, 0.24);
 }
 .theme-dark .shadow-elevation-lg {
   box-shadow:
-    0 4px 10px rgba(0, 0, 0, 0.45),
-    0 26px 56px -16px rgba(225, 29, 72, 0.34),
-    0 56px 96px -40px rgba(225, 29, 72, 0.26);
+    0 4px 10px rgba(0, 0, 0, 0.5),
+    0 26px 56px -16px rgba(255, 138, 101, 0.36),
+    0 56px 96px -40px rgba(255, 138, 101, 0.28);
 }
 
 /* Resalte interior sutil en superficies de vidrio (glass) — simula el borde superior
@@ -375,7 +614,7 @@
 /* Foco premium: un halo suave con el color de marca en vez del ring duro por defecto. */
 .focus-glow:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.16), 0 0 0 1.5px rgba(225, 29, 72, 0.55);
+  box-shadow: 0 0 0 4px rgba(255, 138, 101, 0.18), 0 0 0 1.5px rgba(255, 138, 101, 0.6);
 }
 
 /* "Liquid Glass": vidrio con refracción — no solo blur, sino un borde con degradé de
@@ -384,13 +623,6 @@
 .liquid-glass {
   position: relative;
   isolation: isolate;
-  /* 28px de blur + saturate en una superficie fixed que siempre está recompositando
-     (nav de abajo, header) es carísimo para la GPU — en Chrome Android, sobre todo
-     mientras hay algo animándose debajo (el drag de las cartas en Descubrir), eso puede
-     hacer que el compositor no invalide bien la textura del blur y deje pegado un frame
-     de OTRA pestaña/app ("fantasmas" reportados por usuarios). Bajar la intensidad no lo
-     garantiza al 100% (es un bug del navegador, no de acá), pero reduce mucho la carga
-     que lo dispara. */
   backdrop-filter: blur(14px) saturate(1.6);
   -webkit-backdrop-filter: blur(14px) saturate(1.6);
 }
@@ -431,23 +663,23 @@
 }
 
 .theme-dark ::-webkit-scrollbar-track {
-  background: #0b090a;
+  background: #0A1120;
 }
 .theme-dark ::-webkit-scrollbar-thumb {
-  background: #33131d;
+  background: #1F2E4C;
   border-radius: 4px;
 }
 .theme-dark ::-webkit-scrollbar-thumb:hover {
-  background: #e11d48;
+  background: #F16B48;
 }
 
 .theme-light ::-webkit-scrollbar-track {
-  background: #f8fafc;
+  background: #F7F2E9;
 }
 .theme-light ::-webkit-scrollbar-thumb {
-  background: #fecdd3;
+  background: #FFE3D3;
   border-radius: 4px;
 }
 .theme-light ::-webkit-scrollbar-thumb:hover {
-  background: #ff4d67;
+  background: #FF8A65;
 }

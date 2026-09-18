@@ -271,7 +271,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className={`w-full max-w-[420px] mx-auto min-h-screen py-6 px-6 flex flex-col pb-12 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}
+      className={`w-full max-w-[420px] mx-auto min-h-screen py-6 px-6 flex flex-col pb-12 ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}
     >
       {/* Back + step dots, onboarding chrome */}
       <div className="flex items-center gap-3.5 mb-6">
@@ -286,16 +286,16 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             }
           }}
           className={`w-9 h-9 -ml-1.5 rounded-full flex items-center justify-center focus:outline-none cursor-pointer ${
-            isLight ? 'text-[#0f172a] hover:bg-[#f2f2f4]' : 'text-[#fff1f2] hover:bg-white/8'
+            isLight ? 'text-[#16223b] hover:bg-[#efe7d8]' : 'text-[#f5f1e8] hover:bg-white/8'
           }`}
           aria-label="Volver"
         >
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
         </button>
         <div className="flex items-center gap-1.5">
-          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 1 ? 'w-[22px] bg-[#e11d48]' : `w-[22px] ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`}`} />
-          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 2 ? 'w-[22px] bg-[#e11d48]' : `w-[22px] ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`}`} />
-          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 3 ? 'w-[22px] bg-[#e11d48]' : `w-[22px] ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/12'}`}`} />
+          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 1 ? 'w-[22px] bg-[#f16b48]' : `w-[22px] ${isLight ? 'bg-[#efe7d8]' : 'bg-white/12'}`}`} />
+          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 2 ? 'w-[22px] bg-[#f16b48]' : `w-[22px] ${isLight ? 'bg-[#efe7d8]' : 'bg-white/12'}`}`} />
+          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 3 ? 'w-[22px] bg-[#f16b48]' : `w-[22px] ${isLight ? 'bg-[#efe7d8]' : 'bg-white/12'}`}`} />
         </div>
       </div>
 
@@ -309,7 +309,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
           transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
         >
           <span className="font-headline-md text-[22px] font-bold block">{stepTitle}</span>
-          <p className={`text-[13.5px] mt-1.5 mb-7 leading-relaxed ${isLight ? 'text-[#64748b]' : 'text-[#a89a9e]'}`}>{stepSubtitle}</p>
+          <p className={`text-[13.5px] mt-1.5 mb-7 leading-relaxed ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>{stepSubtitle}</p>
         </motion.div>
       </AnimatePresence>
 
@@ -393,10 +393,10 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                       onClick={() => toggleSeeking(g.value)}
                       className={`px-3 py-1.5 rounded-full text-[12px] transition-all border cursor-pointer ${
                         isSelected
-                          ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent'
+                          ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold border-transparent'
                           : isLight
-                          ? 'bg-[#f7f7f8] text-[#475569] border-[#e7e7ea] hover:border-[#e11d48]/40'
-                          : 'bg-white/5 text-[#a89a9e] border-white/10 hover:border-[#e11d48]/40'
+                          ? 'bg-[#fcf9f2] text-[#2e5570] border-[#efe7d8] hover:border-[#f16b48]/40'
+                          : 'bg-white/5 text-[#8a93a8] border-white/10 hover:border-[#f16b48]/40'
                       }`}
                     >
                       {g.label}
@@ -420,7 +420,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             </div>
 
             {googleData ? (
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#10b981]/10 border border-[#10b981]/30 text-[#059669] text-[11px]">
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#3f7a5c]/10 border border-[#3f7a5c]/30 text-[#3f7a5c] text-[11px]">
                 <span className="material-symbols-outlined text-[16px]">verified</span>
                 <span>Cuenta verificada con Google. No necesitás contraseña.</span>
               </div>
@@ -445,9 +445,9 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             {!googleData && (
               <>
                 <div className="flex items-center gap-3 mt-1">
-                  <span className={`flex-1 h-px ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/10'}`} />
-                  <span className={`text-[12px] ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>o continuá con</span>
-                  <span className={`flex-1 h-px ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/10'}`} />
+                  <span className={`flex-1 h-px ${isLight ? 'bg-[#efe7d8]' : 'bg-white/10'}`} />
+                  <span className={`text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>o continuá con</span>
+                  <span className={`flex-1 h-px ${isLight ? 'bg-[#efe7d8]' : 'bg-white/10'}`} />
                 </div>
                 <GoogleAuthButton onCredential={handleGoogleCredential} text="signup_with" />
               </>
@@ -467,22 +467,22 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             className="flex flex-col gap-4"
           >
             <div className="flex flex-col items-center gap-3 py-2">
-              <div className={`w-28 h-28 rounded-full overflow-hidden border ${isLight ? 'border-[#e7e7ea] bg-[#f7f7f8]' : 'border-white/10 bg-white/5'} flex items-center justify-center`}>
+              <div className={`w-28 h-28 rounded-full overflow-hidden border ${isLight ? 'border-[#efe7d8] bg-[#fcf9f2]' : 'border-white/10 bg-white/5'} flex items-center justify-center`}>
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover rounded-full" />
                 ) : (
-                  <span className="material-symbols-outlined text-[44px] text-[#e11d48]">person</span>
+                  <span className="material-symbols-outlined text-[44px] text-[#f16b48]">person</span>
                 )}
               </div>
               <label
                 className={`px-4 py-2 rounded-full border cursor-pointer text-[13px] font-bold ${
-                  isLight ? 'bg-[#f7f7f8] border-[#e7e7ea] text-[#e11d48]' : 'bg-white/5 border-white/10 text-[#fb7185]'
+                  isLight ? 'bg-[#fcf9f2] border-[#efe7d8] text-[#f16b48]' : 'bg-white/5 border-white/10 text-[#ffb295]'
                 }`}
               >
                 {avatarFile ? 'Cambiar foto' : 'Subir foto'}
                 <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarChange} />
               </label>
-              <p className={`text-[11.5px] text-center max-w-[280px] ${isLight ? 'text-[#64748b]' : 'text-[#a89a9e]'}`}>
+              <p className={`text-[11.5px] text-center max-w-[280px] ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>
                 Podés subirla ahora o después desde tu perfil.
               </p>
             </div>
@@ -538,10 +538,10 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                       onClick={() => toggleInterest(interest.id)}
                       className={`px-3 py-1 rounded-full text-[11.5px] transition-all border cursor-pointer ${
                         isSelected
-                          ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold border-transparent'
+                          ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold border-transparent'
                           : isLight
-                          ? 'bg-[#f7f7f8] text-[#475569] border-[#e7e7ea] hover:border-[#e11d48]/40'
-                          : 'bg-white/5 text-[#a89a9e] border-white/10 hover:border-[#e11d48]/40'
+                          ? 'bg-[#fcf9f2] text-[#2e5570] border-[#efe7d8] hover:border-[#f16b48]/40'
+                          : 'bg-white/5 text-[#8a93a8] border-white/10 hover:border-[#f16b48]/40'
                       }`}
                     >
                       {interest.name}
@@ -557,18 +557,18 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                 type="text"
                 value={promptQ}
                 onChange={(e) => setPromptQ(e.target.value)}
-                className="mb-1.5 font-medium text-[#e11d48] dark:text-[#fb7185]"
+                className="mb-1.5 font-medium text-[#f16b48] dark:text-[#ffb295]"
               />
               <Input type="text" value={promptA} onChange={(e) => setPromptA(e.target.value)} placeholder="Tu respuesta..." />
             </div>
 
             {/* Single combined consent block, not a wall of checkboxes */}
             <div className="flex flex-col gap-2.5">
-              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-slate-600 dark:text-[#a89a9e]">
+              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-slate-600 dark:text-[#8a93a8]">
                 <Checkbox required checked={acceptTerms} onCheckedChange={(v) => setAcceptTerms(v === true)} className="mt-0.5 shrink-0" />
                 <span>Acepto los <strong>Términos y condiciones</strong> de MELY.</span>
               </Label>
-              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-slate-600 dark:text-[#a89a9e]">
+              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-slate-600 dark:text-[#8a93a8]">
                 <Checkbox required checked={acceptPrivacy} onCheckedChange={(v) => setAcceptPrivacy(v === true)} className="mt-0.5 shrink-0" />
                 <span>Acepto la <strong>Política de privacidad</strong> y la verificación presencial en cada encuentro.</span>
               </Label>
@@ -597,14 +597,14 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
       </form>
 
       <div className="mt-8 flex items-center justify-center gap-1.5">
-        <span className={`text-[13.5px] ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>¿Ya tenés cuenta?</span>
+        <span className={`text-[13.5px] ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>¿Ya tenés cuenta?</span>
         <button
           type="button"
           onClick={() => {
             sounds.playClick();
             onGoToLogin();
           }}
-          className="text-[13.5px] font-bold text-[#e11d48] hover:underline cursor-pointer"
+          className="text-[13.5px] font-bold text-[#f16b48] hover:underline cursor-pointer"
         >
           Iniciá sesión
         </button>

@@ -50,9 +50,9 @@ export const WhoLikedYouModal: React.FC<WhoLikedYouModalProps> = ({ open, onOpen
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[calc(100%-2rem)] max-w-[420px] max-h-[80vh] p-0 gap-0 overflow-hidden flex flex-col">
-        <DialogHeader className={`p-4 border-b flex-row items-center gap-2 space-y-0 ${isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-gradient-to-r from-[#2b0c16] to-[#170a0f] border-[#e11d48]/30'}`}>
-          <span className="material-symbols-outlined text-[#e11d48] text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
-          <DialogTitle className={`font-headline-md text-[16px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+        <DialogHeader className={`p-4 border-b flex-row items-center gap-2 space-y-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-gradient-to-r from-[#0a1120] to-[#0f1a2e] border-[#f16b48]/30'}`}>
+          <span className="material-symbols-outlined text-[#f16b48] text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
+          <DialogTitle className={`font-headline-md text-[16px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
             Quién te dio like
           </DialogTitle>
         </DialogHeader>
@@ -70,7 +70,7 @@ export const WhoLikedYouModal: React.FC<WhoLikedYouModalProps> = ({ open, onOpen
               <span className={`material-symbols-outlined text-[36px] ${isLight ? 'text-gray-300' : 'text-white/20'}`}>
                 favorite_border
               </span>
-              <p className={`text-[13px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+              <p className={`text-[13px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                 Todavía nadie te dio like. Seguí explorando en Descubrir.
               </p>
             </div>
@@ -82,19 +82,19 @@ export const WhoLikedYouModal: React.FC<WhoLikedYouModalProps> = ({ open, onOpen
                 {Array.from({ length: Math.min(data.count, 9) }).map((_, i) => (
                   <div
                     key={i}
-                    className={`aspect-[3/4] rounded-2xl flex items-center justify-center ${isLight ? 'bg-[#fff1f3]' : 'bg-[#1a0c13]'}`}
+                    className={`aspect-[3/4] rounded-2xl flex items-center justify-center ${isLight ? 'bg-[#fcf9f2]' : 'bg-[#131f36]'}`}
                   >
-                    <span className="material-symbols-outlined text-[28px] text-[#e11d48]/40" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    <span className="material-symbols-outlined text-[28px] text-[#f16b48]/40" style={{ fontVariationSettings: "'FILL' 1" }}>
                       person
                     </span>
                   </div>
                 ))}
               </div>
-              <div className={`p-3.5 rounded-2xl border text-center ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0e0508] border-[#e11d48]/30'}`}>
-                <p className={`text-[13px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+              <div className={`p-3.5 rounded-2xl border text-center ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/30'}`}>
+                <p className={`text-[13px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                   {data.count} {data.count === 1 ? 'persona te dio like' : 'personas te dieron like'}
                 </p>
-                <p className={`text-[11px] mt-1 mb-3 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                <p className={`text-[11px] mt-1 mb-3 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                   Desbloqueá para ver quiénes son y darles like de vuelta.
                 </p>
                 <Button variant="cherry" onClick={handleUnlock} disabled={purchase.isPending} className="w-full gap-1.5">
@@ -108,8 +108,8 @@ export const WhoLikedYouModal: React.FC<WhoLikedYouModalProps> = ({ open, onOpen
           {!isLoading && data && data.unlocked && data.profiles.length > 0 && (
             <div className="grid grid-cols-2 gap-3">
               {data.profiles.map((p) => (
-                <div key={p.id} className={`relative rounded-2xl overflow-hidden border ${isLight ? 'border-[#fecdd3]' : 'border-[#e11d48]/25'}`}>
-                  <div className="aspect-[3/4] w-full bg-[#1a0c13]">
+                <div key={p.id} className={`relative rounded-2xl overflow-hidden border ${isLight ? 'border-[#ffe3d3]' : 'border-[#f16b48]/25'}`}>
+                  <div className="aspect-[3/4] w-full bg-[#131f36]">
                     {p.photos[0]?.url && (
                       <img src={p.photos[0].url} alt={p.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     )}

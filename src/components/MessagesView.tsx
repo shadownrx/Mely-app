@@ -46,9 +46,9 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
     id: 'mely-cherry',
     name: 'MELY Carmesí & Cereza',
     description: 'El estilo original y apasionado de MELY',
-    accentColor: '#e11d48',
-    userBubbleLight: 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white border border-[#fda4af]/30',
-    userBubbleDark: 'bg-gradient-to-r from-[#be123c] to-[#e11d48] text-white border border-[#e11d48]/40',
+    accentColor: '#f16b48',
+    userBubbleLight: 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white border border-[#ffb295]/30',
+    userBubbleDark: 'bg-gradient-to-r from-[#d4552f] to-[#f16b48] text-white border border-[#f16b48]/40',
     wallpaperPattern: 'dots',
     previewBadge: '🌹 Cereza',
   },
@@ -56,9 +56,9 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
     id: 'lavender-cyber',
     name: 'Lavanda & Cyber Romance',
     description: 'Tonos violetas, misterio y poesía contemporánea',
-    accentColor: '#9333ea',
-    userBubbleLight: 'bg-gradient-to-r from-[#7c3aed] to-[#a855f7] text-white border border-[#d8b4fe]/30',
-    userBubbleDark: 'bg-gradient-to-r from-[#581c87] to-[#7e22ce] text-white border border-[#9333ea]/40',
+    accentColor: '#b98fd1',
+    userBubbleLight: 'bg-gradient-to-r from-[#b98fd1] to-[#b98fd1] text-white border border-[#f1e4f7]/30',
+    userBubbleDark: 'bg-gradient-to-r from-[#5b3b75] to-[#b98fd1] text-white border border-[#b98fd1]/40',
     wallpaperPattern: 'stars',
     previewBadge: '🔮 Lavanda',
   },
@@ -66,9 +66,9 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
     id: 'emerald-san-telmo',
     name: 'Esmeralda & San Telmo',
     description: 'Frescura botánica y elegancia porteña',
-    accentColor: '#059669',
-    userBubbleLight: 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white border border-[#a7f3d0]/30',
-    userBubbleDark: 'bg-gradient-to-r from-[#064e3b] to-[#047857] text-white border border-[#059669]/40',
+    accentColor: '#3f7a5c',
+    userBubbleLight: 'bg-gradient-to-r from-[#3f7a5c] to-[#3f7a5c] text-white border border-[#dcf0e4]/30',
+    userBubbleDark: 'bg-gradient-to-r from-[#3f7a5c] to-[#3f7a5c] text-white border border-[#3f7a5c]/40',
     wallpaperPattern: 'grid',
     previewBadge: '🌿 Esmeralda',
   },
@@ -76,9 +76,9 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
     id: 'amber-espresso',
     name: 'Café de Especialidad & Caramelo',
     description: 'Cálido, tostado y perfecto para planear una cita',
-    accentColor: '#d97706',
-    userBubbleLight: 'bg-gradient-to-r from-[#b45309] to-[#d97706] text-white border border-[#fde68a]/30',
-    userBubbleDark: 'bg-gradient-to-r from-[#78350f] to-[#92400e] text-white border border-[#d97706]/40',
+    accentColor: '#e3b873',
+    userBubbleLight: 'bg-gradient-to-r from-[#8a5a28] to-[#e3b873] text-white border border-[#f3e4be]/30',
+    userBubbleDark: 'bg-gradient-to-r from-[#8a5a28] to-[#8a5a28] text-white border border-[#e3b873]/40',
     wallpaperPattern: 'warm',
     previewBadge: '☕ Caramelo',
   },
@@ -86,9 +86,9 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
     id: 'midnight-sapphire',
     name: 'Zafiro & Noche de Jazz',
     description: 'Azul profundo, introspección y serenidad',
-    accentColor: '#0284c7',
-    userBubbleLight: 'bg-gradient-to-r from-[#0284c7] to-[#38bdf8] text-white border border-[#bae6fd]/30',
-    userBubbleDark: 'bg-gradient-to-r from-[#0c4a6e] to-[#0369a1] text-white border border-[#0284c7]/40',
+    accentColor: '#2e5570',
+    userBubbleLight: 'bg-gradient-to-r from-[#2e5570] to-[#6fa8c9] text-white border border-[#d8ecf5]/30',
+    userBubbleDark: 'bg-gradient-to-r from-[#2e5570] to-[#2e5570] text-white border border-[#2e5570]/40',
     wallpaperPattern: 'stars',
     previewBadge: '🌌 Zafiro',
   },
@@ -96,7 +96,7 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
     id: 'minimal-clean',
     name: 'Minimalista & Blanco Puro',
     description: 'Limpio, sobrio y con máxima legibilidad',
-    accentColor: '#475569',
+    accentColor: '#2e5570',
     userBubbleLight: 'bg-slate-800 text-white',
     userBubbleDark: 'bg-slate-200 text-slate-900',
     wallpaperPattern: 'clean',
@@ -354,32 +354,32 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       case 'grid':
         return {
           backgroundImage: isLight
-            ? `linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, #f8fafc 1px)`
-            : `linear-gradient(to right, rgba(225,29,72,0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(225,29,72,0.12) 1px, #0a0507 1px)`,
+            ? `linear-gradient(to right, #efe7d8 1px, transparent 1px), linear-gradient(to bottom, #efe7d8 1px, #fcf9f2 1px)`
+            : `linear-gradient(to right, rgba(225,29,72,0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(225,29,72,0.12) 1px, #0a1120 1px)`,
           backgroundSize: '24px 24px',
         };
       case 'stars':
         return {
           backgroundImage: isLight
-            ? `radial-gradient(${accent} 0.5px, transparent 0.5px), radial-gradient(#cbd5e1 0.5px, #faf5ff 0.5px)`
-            : `radial-gradient(#d8b4fe 0.6px, transparent 0.6px), radial-gradient(#3b0764 0.6px, #07030a 0.6px)`,
+            ? `radial-gradient(${accent} 0.5px, transparent 0.5px), radial-gradient(#d8ecf5 0.5px, #fcf9f2 0.5px)`
+            : `radial-gradient(#f1e4f7 0.6px, transparent 0.6px), radial-gradient(#5b3b75 0.6px, #0a1120 0.6px)`,
           backgroundSize: '28px 28px, 14px 14px',
         };
       case 'warm':
         return {
           backgroundImage: isLight
-            ? `radial-gradient(${accent} 0.5px, #faf6f0 0.5px)`
-            : `radial-gradient(#92400e 0.6px, #0d0603 0.6px)`,
+            ? `radial-gradient(${accent} 0.5px, #efe7d8 0.5px)`
+            : `radial-gradient(#8a5a28 0.6px, #0a1120 0.6px)`,
           backgroundSize: '22px 22px',
         };
       case 'clean':
-        return { backgroundColor: isLight ? '#f8fafc' : '#0a0608' };
+        return { backgroundColor: isLight ? '#fcf9f2' : '#0a1120' };
       case 'dots':
       default:
         return {
           backgroundImage: isLight
-            ? `radial-gradient(${accent} 0.45px, transparent 0.45px), radial-gradient(#cbd5e1 0.45px, #fcf8f6 0.45px)`
-            : `radial-gradient(${accent} 0.5px, transparent 0.5px), radial-gradient(#26121b 0.5px, #0e070a 0.5px)`,
+            ? `radial-gradient(${accent} 0.45px, transparent 0.45px), radial-gradient(#d8ecf5 0.45px, #fcf9f2 0.45px)`
+            : `radial-gradient(${accent} 0.5px, transparent 0.5px), radial-gradient(#17233d 0.5px, #0a1120 0.5px)`,
           backgroundSize: '20px 20px',
           backgroundPosition: '0 0, 10px 10px',
         };
@@ -394,8 +394,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     customColor ? 'text-white shadow-elevation-md border border-white/20' : isLight ? currentTheme.userBubbleLight : currentTheme.userBubbleDark;
   const getPartnerBubbleClass = () =>
     isLight
-      ? 'bg-white text-[#0f172a] border border-[#fecdd3] shadow-elevation-sm'
-      : 'bg-[#1a0e15] text-[#fff1f2] border border-[#e11d48]/25 shadow-elevation-sm';
+      ? 'bg-white text-[#16223b] border border-[#ffe3d3] shadow-elevation-sm'
+      : 'bg-[#131f36] text-[#f5f1e8] border border-[#f16b48]/25 shadow-elevation-sm';
 
   const handleApplyTheme = (themeId: string) => {
     sounds.playClick();
@@ -535,7 +535,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             repetir el título "MELY Chat" que ya muestra el TopAppBar de la app. */}
         <div className="shrink-0 pb-3">
           <div className="relative flex items-center mb-2.5">
-            <span className={`material-symbols-outlined absolute left-3.5 text-[18px] pointer-events-none ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>search</span>
+            <span className={`material-symbols-outlined absolute left-3.5 text-[18px] pointer-events-none ${isLight ? 'text-[#6fa8c9]' : 'text-[#ffb295]/50'}`}>search</span>
             <Input
               type="text"
               value={searchQuery}
@@ -561,10 +561,10 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   }}
                   className={`px-2.5 py-1.5 rounded-full text-[10.5px] font-bold flex items-center gap-1 whitespace-nowrap transition-all border shadow-elevation-sm ${
                     isSelected
-                      ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white border-transparent'
+                      ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white border-transparent'
                       : isLight
-                      ? 'bg-white text-[#475569] border-[#fecdd3]'
-                      : 'bg-white/5 text-[#fda4af]/80 border-[#e11d48]/20'
+                      ? 'bg-white text-[#2e5570] border-[#ffe3d3]'
+                      : 'bg-white/5 text-[#ffb295]/80 border-[#f16b48]/20'
                   }`}
                 >
                   <span>{chip.label}</span>
@@ -590,7 +590,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 ))}
               </div>
             ) : filteredMatches.length === 0 ? (
-              <div className={`p-8 text-center font-body-sm text-[13px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+              <div className={`p-8 text-center font-body-sm text-[13px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                 {matches.length === 0
                   ? 'Todavía no tenés matches. Andá a Descubrir para empezar a conectar.'
                   : 'No se encontraron conversaciones con ese filtro.'}
@@ -601,33 +601,33 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   key={match.id}
                   onClick={() => handleOpenConversation(match.id)}
                   className={`relative w-full pl-4 pr-2.5 py-3 rounded-2xl flex items-center gap-3 transition-colors text-left group ${
-                    isLight ? 'hover:bg-[#fff5f6]' : 'hover:bg-[#160a10]'
+                    isLight ? 'hover:bg-[#fcf9f2]' : 'hover:bg-[#0f1a2e]'
                   }`}
                 >
                   {/* Barra de acento en vez de una caja entera resaltada: menos "chip
                       dentro de chip", el color hace todo el trabajo de indicar no leído. */}
                   {match.unread > 0 && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-7 w-[3px] rounded-full bg-gradient-to-b from-[#e11d48] to-[#ff4d67]" />
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-7 w-[3px] rounded-full bg-gradient-to-b from-[#f16b48] to-[#ff8a65]" />
                   )}
                   <div className="relative w-13 h-13 rounded-full overflow-hidden shrink-0 shadow-elevation-sm">
                     <img src={match.other.photos[0]?.url} alt={match.other.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                    {match.other.lastActive === 'En línea' && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#10b981] border-2 border-white rounded-full" />}
+                    {match.other.lastActive === 'En línea' && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#3f7a5c] border-2 border-white rounded-full" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-baseline gap-2 mb-0.5">
                       <div className="flex items-center gap-1.5 min-w-0">
-                        <h3 className={`font-headline-md text-[14.5px] font-bold truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{match.other.displayName}</h3>
-                        {match.other.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#e11d48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">verified</span>}
+                        <h3 className={`font-headline-md text-[14.5px] font-bold truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{match.other.displayName}</h3>
+                        {match.other.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#f16b48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">verified</span>}
                         {match.other.badges.verified && <span className="material-symbols-outlined text-[13px] text-sky-400 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Identidad verificada">verified</span>}
                       </div>
-                      {match.lastMessageAt && <span className={`font-meta-data text-[10px] shrink-0 ${isLight ? 'text-gray-400' : 'text-[#fda4af]/60'}`}>{formatTime(match.lastMessageAt)}</span>}
+                      {match.lastMessageAt && <span className={`font-meta-data text-[10px] shrink-0 ${isLight ? 'text-gray-400' : 'text-[#ffb295]/60'}`}>{formatTime(match.lastMessageAt)}</span>}
                     </div>
                     <div className="flex items-center justify-between gap-2">
-                      <p className={`text-[12.5px] truncate ${match.unread > 0 ? 'font-semibold text-[#e11d48]' : isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
+                      <p className={`text-[12.5px] truncate ${match.unread > 0 ? 'font-semibold text-[#f16b48]' : isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
                         {match.status === 'MATCH' ? '¡Comenzá la conversación!' : match.label}
                       </p>
                       {match.unread > 0 && (
-                        <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[10px] font-bold flex items-center justify-center shrink-0 shadow-elevation-sm">
+                        <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white text-[10px] font-bold flex items-center justify-center shrink-0 shadow-elevation-sm">
                           {match.unread}
                         </span>
                       )}
@@ -653,39 +653,39 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     // (WhatsApp/Telegram/iMessage) — quedaba flotando como una tarjeta si se lo bordeaba.
     <div
       className={`flex flex-col h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full overflow-hidden relative animate-fadeIn ${
-        isLight ? 'bg-[#f4efe8]' : 'bg-[#0b090a]'
+        isLight ? 'bg-[#efe7d8]' : 'bg-[#0a1120]'
       }`}
     >
       <input ref={photoInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePhotoSelected} />
 
       {/* Header */}
-      <div className={`px-3 py-2 border-b flex items-center justify-between shrink-0 relative z-30 shadow-elevation-sm liquid-glass min-h-[56px] ${isLight ? 'bg-white/60 border-[#fecdd3]/60' : 'bg-[#140b0f]/60 border-[#e11d48]/25'}`}>
+      <div className={`px-3 py-2 border-b flex items-center justify-between shrink-0 relative z-30 shadow-elevation-sm liquid-glass min-h-[56px] ${isLight ? 'bg-white/60 border-[#ffe3d3]/60' : 'bg-[#0f1a2e]/60 border-[#f16b48]/25'}`}>
         <div className="flex items-center gap-2 min-w-0 flex-1 mr-1">
-          <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); setViewMode('inbox'); setActiveMediaTray(null); onSelectConnection(null); }} className="h-8 w-8 -ml-1 rounded-full text-[#64748b] hover:text-[#e11d48] shrink-0" title="Volver">
+          <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); setViewMode('inbox'); setActiveMediaTray(null); onSelectConnection(null); }} className="h-8 w-8 -ml-1 rounded-full text-[#5b6478] hover:text-[#f16b48] shrink-0" title="Volver">
             <span className="material-symbols-outlined text-[22px]">arrow_back</span>
           </Button>
 
           <div className="relative cursor-pointer group shrink-0" onClick={() => setShowContactInfoDrawer(true)}>
-            <Avatar className="w-9 h-9 border border-[#e11d48] group-hover:scale-105 transition-transform">
+            <Avatar className="w-9 h-9 border border-[#f16b48] group-hover:scale-105 transition-transform">
               <AvatarImage src={partner.photos[0]?.url} alt={partner.displayName} />
               <AvatarFallback>{partner.displayName.slice(0, 2)}</AvatarFallback>
             </Avatar>
-            {partner.lastActive === 'En línea' && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#10b981] border-2 border-white rounded-full" />}
+            {partner.lastActive === 'En línea' && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#3f7a5c] border-2 border-white rounded-full" />}
           </div>
 
           <div className="flex flex-col cursor-pointer min-w-0 flex-1" onClick={() => setShowContactInfoDrawer(true)}>
             <div className="flex items-center gap-1 min-w-0">
-              <h2 className={`font-headline-md text-[13.5px] font-bold tracking-wide truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{partner.displayName}</h2>
-              {partner.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#e11d48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">verified</span>}
+              <h2 className={`font-headline-md text-[13.5px] font-bold tracking-wide truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{partner.displayName}</h2>
+              {partner.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#f16b48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">verified</span>}
               {partner.badges.verified && <span className="material-symbols-outlined text-[13px] text-sky-400 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Identidad verificada">verified</span>}
             </div>
             <div className="text-[10.5px] leading-tight truncate">
               {isPartnerTyping ? (
-                <span className="text-[#e11d48] font-medium animate-pulse flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-[#e11d48] rounded-full animate-bounce" />escribiendo...
+                <span className="text-[#f16b48] font-medium animate-pulse flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-[#f16b48] rounded-full animate-bounce" />escribiendo...
                 </span>
               ) : (
-                <span className={`truncate ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>{partner.lastActive === 'En línea' ? 'en línea' : partner.lastActive}</span>
+                <span className={`truncate ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>{partner.lastActive === 'En línea' ? 'en línea' : partner.lastActive}</span>
               )}
             </div>
           </div>
@@ -706,7 +706,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             <button
               onClick={() => { sounds.playScanBeep(); onOpenDateQR(activeMatch.id, partner.displayName, partner.photos[0]?.url ?? ''); }}
               className={`px-2 py-1 rounded-xl text-[10px] font-bold flex items-center gap-1 border transition-all shrink-0 ${
-                activeMatch.status === 'DATE_VERIFIED' || activeMatch.status === 'SECOND_DATE' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' : 'bg-[#e11d48]/10 text-[#e11d48] border-[#e11d48]/30 animate-pulse'
+                activeMatch.status === 'DATE_VERIFIED' || activeMatch.status === 'SECOND_DATE' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' : 'bg-[#f16b48]/10 text-[#f16b48] border-[#f16b48]/30 animate-pulse'
               }`}
               title="Ver Pase QR"
             >
@@ -715,23 +715,23 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             </button>
           )}
           <div className="relative shrink-0">
-            <Button variant="ghost" size="icon" onClick={() => setShowHeaderMenu(!showHeaderMenu)} className={`h-8 w-8 rounded-full ${isLight ? 'text-[#475569]' : 'text-[#fda4af]/80'}`} title="Más opciones">
+            <Button variant="ghost" size="icon" onClick={() => setShowHeaderMenu(!showHeaderMenu)} className={`h-8 w-8 rounded-full ${isLight ? 'text-[#2e5570]' : 'text-[#ffb295]/80'}`} title="Más opciones">
               <span className="material-symbols-outlined text-[19px]">more_vert</span>
             </Button>
             {showHeaderMenu && (
               <>
                 <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setShowHeaderMenu(false)} />
-                <div className={`absolute right-0 top-10 w-56 rounded-2xl shadow-2xl border p-1.5 z-50 animate-scaleUp ${isLight ? 'bg-white border-[#fecdd3] text-[#0f172a]' : 'bg-[#180b12] border-[#e11d48]/40 text-[#fff1f2]'}`}>
+                <div className={`absolute right-0 top-10 w-56 rounded-2xl shadow-2xl border p-1.5 z-50 animate-scaleUp ${isLight ? 'bg-white border-[#ffe3d3] text-[#16223b]' : 'bg-[#0f1a2e] border-[#f16b48]/40 text-[#f5f1e8]'}`}>
                   <button onClick={() => { setShowHeaderMenu(false); setShowContactInfoDrawer(true); }} className="w-full text-left px-3 py-2 text-[12px] font-medium rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[16px] text-[#e11d48]">account_circle</span>
+                    <span className="material-symbols-outlined text-[16px] text-[#f16b48]">account_circle</span>
                     <span>Ver perfil de {partner.displayName}</span>
                   </button>
                   <button onClick={() => { setShowHeaderMenu(false); setInChatSearchOpen(!inChatSearchOpen); }} className="w-full text-left px-3 py-2 text-[12px] font-medium rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[16px] text-[#e11d48]">search</span>
+                    <span className="material-symbols-outlined text-[16px] text-[#f16b48]">search</span>
                     <span>Buscar en este chat</span>
                   </button>
                   <button onClick={() => { setShowHeaderMenu(false); setActiveMediaTray('stickers'); }} className="w-full text-left px-3 py-2 text-[12px] font-medium rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[16px] text-[#e11d48]">auto_awesome</span>
+                    <span className="material-symbols-outlined text-[16px] text-[#f16b48]">auto_awesome</span>
                     <span>Panel de Stickers</span>
                   </button>
                   {onOpenIcebreaker && (
@@ -741,7 +741,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     </button>
                   )}
                   <button onClick={() => { setShowHeaderMenu(false); setShowThemeCustomizer(true); }} className="w-full text-left px-3 py-2 text-[12px] font-medium rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[16px] text-[#e11d48]">palette</span>
+                    <span className="material-symbols-outlined text-[16px] text-[#f16b48]">palette</span>
                     <span>Personalizar tema</span>
                   </button>
                 </div>
@@ -752,14 +752,14 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       </div>
 
       {inChatSearchOpen && (
-        <div className={`px-3 py-2 border-b flex items-center gap-2 animate-fadeIn z-20 ${isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#160a10] border-[#e11d48]/30'}`}>
-          <span className="material-symbols-outlined text-[18px] text-[#e11d48]">search</span>
+        <div className={`px-3 py-2 border-b flex items-center gap-2 animate-fadeIn z-20 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'}`}>
+          <span className="material-symbols-outlined text-[18px] text-[#f16b48]">search</span>
           <input
             type="text"
             value={inChatSearchTerm}
             onChange={(e) => setInChatSearchTerm(e.target.value)}
             placeholder="Buscar en este chat..."
-            className={`flex-1 text-[12.5px] bg-transparent border-0 focus:outline-none ${isLight ? 'text-[#0f172a] placeholder:text-gray-400' : 'text-white placeholder:text-[#fda4af]/40'}`}
+            className={`flex-1 text-[12.5px] bg-transparent border-0 focus:outline-none ${isLight ? 'text-[#16223b] placeholder:text-gray-400' : 'text-white placeholder:text-[#ffb295]/40'}`}
             autoFocus
           />
           <Button variant="ghost" size="sm" onClick={() => setInChatSearchOpen(false)} className="h-7 px-2 text-[11px]">Listo</Button>
@@ -768,12 +768,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
       {/* Active proposal sticky card */}
       {activeProposal && hiddenProposalIds.includes(activeProposal.id) && (
-        <div className={`px-3 pt-2 shrink-0 ${isLight ? 'bg-[#f4efe8]' : 'bg-[#0b090a]'}`}>
+        <div className={`px-3 pt-2 shrink-0 ${isLight ? 'bg-[#efe7d8]' : 'bg-[#0a1120]'}`}>
           <button
             type="button"
             onClick={() => restoreProposalCard(activeProposal.id)}
             className={`w-full flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[11px] font-bold transition-colors ${
-              isLight ? 'bg-white border-[#fecdd3] text-[#e11d48] hover:border-[#e11d48]' : 'bg-[#1a0c13] border-[#e11d48]/30 text-[#fda4af] hover:border-[#e11d48]/60'
+              isLight ? 'bg-white border-[#ffe3d3] text-[#f16b48] hover:border-[#f16b48]' : 'bg-[#131f36] border-[#f16b48]/30 text-[#ffb295] hover:border-[#f16b48]/60'
             }`}
           >
             <span className="material-symbols-outlined text-[14px]">event</span>
@@ -783,12 +783,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
         </div>
       )}
       {activeProposal && !hiddenProposalIds.includes(activeProposal.id) && (
-        <div className={`px-3 pt-2 shrink-0 ${isLight ? 'bg-[#f4efe8]' : 'bg-[#0b090a]'}`}>
-          <div className={`p-3 rounded-2xl border-2 flex flex-col gap-2 ${isLight ? 'bg-[#fff5f6] border-[#e11d48]/40' : 'bg-[#1a0c13] border-[#e11d48]/50'}`}>
+        <div className={`px-3 pt-2 shrink-0 ${isLight ? 'bg-[#efe7d8]' : 'bg-[#0a1120]'}`}>
+          <div className={`p-3 rounded-2xl border-2 flex flex-col gap-2 ${isLight ? 'bg-[#fcf9f2] border-[#f16b48]/40' : 'bg-[#131f36] border-[#f16b48]/50'}`}>
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
-                <span className="text-[10px] uppercase tracking-wide block font-bold text-[#e11d48]">Próxima cita</span>
-                <p className={`text-[12px] truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+                <span className="text-[10px] uppercase tracking-wide block font-bold text-[#f16b48]">Próxima cita</span>
+                <p className={`text-[12px] truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                   {activeProposal.scheduledAt
                     ? new Date(activeProposal.scheduledAt).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' })
                     : 'A coordinar por chat'}{' '}
@@ -811,7 +811,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     </Button>
                   </>
                 ) : (
-                  <Badge className="shrink-0 text-[10px] bg-[#e11d48]/15 text-[#e11d48] border border-[#e11d48]/30">
+                  <Badge className="shrink-0 text-[10px] bg-[#f16b48]/15 text-[#f16b48] border border-[#f16b48]/30">
                     {activeProposal.status === 'PENDING' ? 'Esperando' : activeProposal.status === 'ACCEPTED' ? 'Aceptada' : 'Contrapropuesta'}
                   </Badge>
                 )}
@@ -819,7 +819,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   type="button"
                   onClick={() => dismissProposalCard(activeProposal.id)}
                   className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
-                    isLight ? 'text-gray-400 hover:text-[#e11d48] hover:bg-black/5' : 'text-white/40 hover:text-[#fb7185] hover:bg-white/10'
+                    isLight ? 'text-gray-400 hover:text-[#f16b48] hover:bg-black/5' : 'text-white/40 hover:text-[#ffb295] hover:bg-white/10'
                   }`}
                   aria-label="Ocultar tarjeta de próxima cita"
                   title="Ocultar"
@@ -839,7 +839,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     { onSuccess: () => setCounterFormOpen(false) },
                   );
                 }}
-                className="flex items-center gap-1.5 pt-1 border-t border-[#e11d48]/20"
+                className="flex items-center gap-1.5 pt-1 border-t border-[#f16b48]/20"
               >
                 <input
                   type="datetime-local"
@@ -847,7 +847,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   onChange={(e) => setCounterAt(e.target.value)}
                   required
                   className={`flex-1 min-w-0 border rounded-xl px-2.5 py-1.5 text-[12px] focus:outline-none ${
-                    isLight ? 'bg-white border-[#fecdd3] text-[#0f172a]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fff1f2]'
+                    isLight ? 'bg-white border-[#ffe3d3] text-[#16223b]' : 'bg-[#0a1120] border-[#f16b48]/25 text-[#f5f1e8]'
                   }`}
                 />
                 <Button
@@ -872,8 +872,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           pero nunca se movía ni un píxel. */}
       <div className="flex-1 min-h-0 overflow-y-auto p-3 flex flex-col gap-2 relative z-10 no-scrollbar select-text transition-all duration-300" style={getWallpaperStyle()}>
         <div className="flex justify-center mb-1 mt-auto">
-          <div className={`max-w-xs px-3 py-1.5 rounded-xl border text-center text-[10px] leading-tight shadow-elevation-sm backdrop-blur-md ${isLight ? 'bg-white/80 border-[#fecdd3] text-[#475569]' : 'bg-[#180c13]/80 border-[#e11d48]/30 text-[#fda4af]/80'}`}>
-            <span className="inline-flex items-center gap-1 font-bold text-[#e11d48] mb-0.5">
+          <div className={`max-w-xs px-3 py-1.5 rounded-xl border text-center text-[10px] leading-tight shadow-elevation-sm backdrop-blur-md ${isLight ? 'bg-white/80 border-[#ffe3d3] text-[#2e5570]' : 'bg-[#131f36]/80 border-[#f16b48]/30 text-[#ffb295]/80'}`}>
+            <span className="inline-flex items-center gap-1 font-bold text-[#f16b48] mb-0.5">
               <span className="material-symbols-outlined text-[12px]">lock</span>Conexión Privada MELY
             </span>
           </div>
@@ -905,12 +905,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     onMouseLeave={cancelLongPress}
                     className="relative cursor-pointer transition-transform hover:scale-105 active:scale-95 py-1"
                   >
-                    <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-[#fff1f3] to-white dark:from-[#200d16] dark:to-[#12070c] border-2 border-[#e11d48]/40 shadow-xl flex flex-col items-center justify-center p-3 text-center relative overflow-hidden">
+                    <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-[#fcf9f2] to-white dark:from-[#131f36] dark:to-[#0f1a2e] border-2 border-[#f16b48]/40 shadow-xl flex flex-col items-center justify-center p-3 text-center relative overflow-hidden">
                       <span className="text-5xl select-none">{sticker.emoji}</span>
-                      <span className="font-label-caps text-[9px] font-bold uppercase tracking-wider text-[#e11d48] mt-2 line-clamp-2 px-1">{sticker.badgeText || sticker.title}</span>
+                      <span className="font-label-caps text-[9px] font-bold uppercase tracking-wider text-[#f16b48] mt-2 line-clamp-2 px-1">{sticker.badgeText || sticker.title}</span>
                       <div className="absolute bottom-1 right-1.5 flex items-center gap-0.5 bg-black/40 text-white px-1.5 py-0.5 rounded-full text-[8.5px]">
                         <span>{formatTime(msg.createdAt)}</span>
-                        {isUser && msg.readAt && <span className="material-symbols-outlined text-[10px] text-[#53bdeb]">done_all</span>}
+                        {isUser && msg.readAt && <span className="material-symbols-outlined text-[10px] text-[#6fa8c9]">done_all</span>}
                       </div>
                     </div>
                     {isStarred && <span className="absolute -top-1 -right-1 text-amber-400 text-[13px]">⭐</span>}
@@ -928,12 +928,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   >
                     {msg.replyTo && (
                       <div className={`mb-1.5 pl-2 pr-1 py-1 rounded-lg border-l-2 max-w-[220px] ${
-                        isUser ? 'border-l-white/50 bg-black/10' : isLight ? 'border-l-[#e11d48] bg-black/[0.03]' : 'border-l-[#e11d48] bg-white/5'
+                        isUser ? 'border-l-white/50 bg-black/10' : isLight ? 'border-l-[#f16b48] bg-black/[0.03]' : 'border-l-[#f16b48] bg-white/5'
                       }`}>
-                        <span className={`block text-[9.5px] font-bold ${isUser ? 'text-white/80' : 'text-[#e11d48]'}`}>
+                        <span className={`block text-[9.5px] font-bold ${isUser ? 'text-white/80' : 'text-[#f16b48]'}`}>
                           {msg.replyTo.senderId === msg.senderId ? 'Se respondió a sí mismo' : msg.replyTo.senderId === user?.id ? 'Vos' : partner.displayName}
                         </span>
-                        <span className={`block text-[11px] truncate ${isUser ? 'text-white/70' : isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                        <span className={`block text-[11px] truncate ${isUser ? 'text-white/70' : isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                           {msg.replyTo.type === 'IMAGE' ? '📷 Foto' : msg.replyTo.body}
                         </span>
                       </div>
@@ -955,10 +955,10 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     <div className="flex items-center justify-end gap-1 mt-0.5 select-none text-[9.5px] opacity-75">
                       {isStarred && <span>⭐</span>}
                       <span>{formatTime(msg.createdAt)}</span>
-                      {isUser && msg.readAt && <span className="material-symbols-outlined text-[13px] text-[#53bdeb]" title="Leído">done_all</span>}
+                      {isUser && msg.readAt && <span className="material-symbols-outlined text-[13px] text-[#6fa8c9]" title="Leído">done_all</span>}
                     </div>
                     {msgReaction && (
-                      <button onClick={() => handleToggleReaction(msg.id, msgReaction)} className={`absolute -bottom-2 ${isUser ? 'left-2' : 'right-2'} px-1.5 py-0.5 rounded-full text-[11px] shadow-elevation-md flex items-center gap-1 ${isLight ? 'bg-white border border-[#fecdd3]' : 'bg-[#180b12] border border-[#e11d48]/40'}`}>
+                      <button onClick={() => handleToggleReaction(msg.id, msgReaction)} className={`absolute -bottom-2 ${isUser ? 'left-2' : 'right-2'} px-1.5 py-0.5 rounded-full text-[11px] shadow-elevation-md flex items-center gap-1 ${isLight ? 'bg-white border border-[#ffe3d3]' : 'bg-[#0f1a2e] border border-[#f16b48]/40'}`}>
                         <span>{msgReaction}</span>
                       </button>
                     )}
@@ -968,7 +968,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               </div>
 
               {activeReactionMenuMsgId === msg.id && (
-                <div className={`mt-1 z-30 p-1.5 rounded-full shadow-2xl flex items-center gap-1 animate-fadeIn border ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/40'} ${isUser ? 'self-end mr-2' : 'self-start ml-2'}`}>
+                <div className={`mt-1 z-30 p-1.5 rounded-full shadow-2xl flex items-center gap-1 animate-fadeIn border ${isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/40'} ${isUser ? 'self-end mr-2' : 'self-start ml-2'}`}>
                   {['👍', '❤️', '😂', '😮', '😢', '🙏', '☕', '🔥'].map((emoji) => (
                     <button key={emoji} onClick={() => handleToggleReaction(msg.id, emoji)} className="p-1 text-[15px] hover:scale-125 transition-transform rounded-full hover:bg-black/5 dark:hover:bg-white/10">
                       {emoji}
@@ -978,7 +978,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               )}
 
               {activeOptionsMenuMsgId === msg.id && (
-                <div className={`mt-1 z-30 p-1.5 rounded-2xl shadow-2xl flex flex-col gap-1 animate-fadeIn border text-[11px] font-medium ${isLight ? 'bg-white border-[#fecdd3] text-[#0f172a]' : 'bg-[#140b0f] border-[#e11d48]/40 text-[#fff1f2]'} ${isUser ? 'self-end mr-2' : 'self-start ml-2'}`}>
+                <div className={`mt-1 z-30 p-1.5 rounded-2xl shadow-2xl flex flex-col gap-1 animate-fadeIn border text-[11px] font-medium ${isLight ? 'bg-white border-[#ffe3d3] text-[#16223b]' : 'bg-[#0f1a2e] border-[#f16b48]/40 text-[#f5f1e8]'} ${isUser ? 'self-end mr-2' : 'self-start ml-2'}`}>
                   <button
                     onClick={() => { setReplyingTo(msg); setActiveOptionsMenuMsgId(null); sounds.playClick(); inputRef.current?.focus(); }}
                     className="px-2.5 py-1 text-left rounded-lg hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-1.5"
@@ -1014,14 +1014,14 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
         {isPartnerTyping && (
           <div className="flex items-end gap-1.5 self-start animate-fadeIn">
-            <Avatar className="w-7 h-7 border border-[#e11d48]/30">
+            <Avatar className="w-7 h-7 border border-[#f16b48]/30">
               <AvatarImage src={partner.photos[0]?.url} alt={partner.displayName} />
               <AvatarFallback>{partner.displayName.slice(0, 2)}</AvatarFallback>
             </Avatar>
-            <div className={`px-3 py-2 rounded-[20px] flex items-center gap-1 shadow-elevation-sm border ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#202c33] border-[#e11d48]/20'}`}>
-              <span className="w-1.5 h-1.5 bg-[#e11d48] rounded-full animate-bounce [animation-delay:-0.3s]" />
-              <span className="w-1.5 h-1.5 bg-[#ff4d67] rounded-full animate-bounce [animation-delay:-0.15s]" />
-              <span className="w-1.5 h-1.5 bg-[#e11d48] rounded-full animate-bounce" />
+            <div className={`px-3 py-2 rounded-[20px] flex items-center gap-1 shadow-elevation-sm border ${isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#2e5570] border-[#f16b48]/20'}`}>
+              <span className="w-1.5 h-1.5 bg-[#f16b48] rounded-full animate-bounce [animation-delay:-0.3s]" />
+              <span className="w-1.5 h-1.5 bg-[#ff8a65] rounded-full animate-bounce [animation-delay:-0.15s]" />
+              <span className="w-1.5 h-1.5 bg-[#f16b48] rounded-full animate-bounce" />
             </div>
           </div>
         )}
@@ -1030,40 +1030,40 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
       {/* Attachment menu */}
       {showAttachmentMenu && (
-        <div className={`border-t p-3.5 grid grid-cols-3 gap-3 animate-fadeIn relative z-20 shrink-0 ${isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
+        <div className={`border-t p-3.5 grid grid-cols-3 gap-3 animate-fadeIn relative z-20 shrink-0 ${isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'}`}>
           <button onClick={() => photoInputRef.current?.click()} className="flex flex-col items-center gap-1 text-center group">
             <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
               <span className="material-symbols-outlined text-[22px]">image</span>
             </div>
-            <span className={`text-[11px] font-medium ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>Fotos</span>
+            <span className={`text-[11px] font-medium ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>Fotos</span>
           </button>
           <button onClick={() => { setShowAttachmentMenu(false); onOpenProposeModal?.(activeMatch.id); }} className="flex flex-col items-center gap-1 text-center group">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
               <span className="material-symbols-outlined text-[22px]">local_cafe</span>
             </div>
-            <span className={`text-[11px] font-medium ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>Cita MELY</span>
+            <span className={`text-[11px] font-medium ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>Cita MELY</span>
           </button>
           {onOpenIcebreaker && (
             <button onClick={() => { setShowAttachmentMenu(false); onOpenIcebreaker(partner.displayName); }} className="flex flex-col items-center gap-1 text-center group">
               <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
                 <span className="material-symbols-outlined text-[22px]">casino</span>
               </div>
-              <span className={`text-[11px] font-medium ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>Ruleta 🎲</span>
+              <span className={`text-[11px] font-medium ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>Ruleta 🎲</span>
             </button>
           )}
           <button onClick={() => { setShowAttachmentMenu(false); setActiveMediaTray('stickers'); }} className="flex flex-col items-center gap-1 text-center group">
             <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-600 text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
               <span className="material-symbols-outlined text-[22px]">auto_awesome</span>
             </div>
-            <span className={`text-[11px] font-medium ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>Stickers</span>
+            <span className={`text-[11px] font-medium ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>Stickers</span>
           </button>
         </div>
       )}
 
       {/* Media tray */}
       {activeMediaTray && (
-        <div className={`border-t flex flex-col h-64 max-h-[45vh] animate-fadeIn relative z-20 shrink-0 ${isLight ? 'bg-[#fffafb] border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'}`}>
-          <div className={`px-3 py-1.5 border-b flex items-center justify-between shrink-0 ${isLight ? 'bg-[#fff1f3]' : 'bg-[#1a0c13]'}`}>
+        <div className={`border-t flex flex-col h-64 max-h-[45vh] animate-fadeIn relative z-20 shrink-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'}`}>
+          <div className={`px-3 py-1.5 border-b flex items-center justify-between shrink-0 ${isLight ? 'bg-[#fcf9f2]' : 'bg-[#131f36]'}`}>
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
               {(['sparks', 'emojis', 'stickers', 'gifs'] as const).map((tab) => (
                 <Button
@@ -1071,7 +1071,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => setActiveMediaTray(tab)}
-                  className={`h-7 px-3 rounded-full text-[11px] font-bold flex items-center gap-1 shrink-0 ${activeMediaTray === tab ? 'bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white shadow-elevation-sm' : isLight ? 'text-gray-600' : 'text-gray-300'}`}
+                  className={`h-7 px-3 rounded-full text-[11px] font-bold flex items-center gap-1 shrink-0 ${activeMediaTray === tab ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white shadow-elevation-sm' : isLight ? 'text-gray-600' : 'text-gray-300'}`}
                 >
                   <span>{tab === 'sparks' ? '💡' : tab === 'emojis' ? '😊' : tab === 'stickers' ? '👾' : '🎬'}</span>
                   <span>{tab === 'sparks' ? 'Ideas' : tab === 'emojis' ? 'Emojis' : tab === 'stickers' ? 'Stickers' : 'GIFs'}</span>
@@ -1098,7 +1098,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   type="button"
                   onClick={() => { sounds.playClick(); sendMessage.mutate({ body: spark }); setActiveMediaTray(null); }}
                   className={`px-3 py-2 border rounded-2xl text-[12.5px] font-body-sm text-left transition-colors ${
-                    isLight ? 'bg-white border-[#fecdd3] text-[#475569] hover:border-[#e11d48] hover:text-[#e11d48]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fda4af] hover:border-[#e11d48]/60'
+                    isLight ? 'bg-white border-[#ffe3d3] text-[#2e5570] hover:border-[#f16b48] hover:text-[#f16b48]' : 'bg-[#0a1120] border-[#f16b48]/25 text-[#ffb295] hover:border-[#f16b48]/60'
                   }`}
                 >
                   {spark}
@@ -1112,7 +1112,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               <div className="flex items-center gap-1.5 px-3 py-1.5 overflow-x-auto no-scrollbar border-b border-black/5 dark:border-white/5 shrink-0">
                 <button
                   onClick={() => setSelectedStickerPackId('favorites')}
-                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 border transition-all ${selectedStickerPackId === 'favorites' ? 'bg-[#e11d48] text-white border-[#e11d48]' : isLight ? 'bg-white border-[#fecdd3] text-gray-700' : 'bg-[#1e0b14] border-[#e11d48]/30 text-gray-300'}`}
+                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 border transition-all ${selectedStickerPackId === 'favorites' ? 'bg-[#f16b48] text-white border-[#f16b48]' : isLight ? 'bg-white border-[#ffe3d3] text-gray-700' : 'bg-[#131f36] border-[#f16b48]/30 text-gray-300'}`}
                 >
                   ⭐ Favoritos ({favoriteStickers.length})
                 </button>
@@ -1120,7 +1120,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   <button
                     key={pack.id}
                     onClick={() => setSelectedStickerPackId(pack.id)}
-                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 border transition-all ${selectedStickerPackId === pack.id ? 'bg-[#e11d48] text-white border-[#e11d48]' : isLight ? 'bg-white border-[#fecdd3] text-gray-700' : 'bg-[#1e0b14] border-[#e11d48]/30 text-gray-300'}`}
+                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold shrink-0 border transition-all ${selectedStickerPackId === pack.id ? 'bg-[#f16b48] text-white border-[#f16b48]' : isLight ? 'bg-white border-[#ffe3d3] text-gray-700' : 'bg-[#131f36] border-[#f16b48]/30 text-gray-300'}`}
                   >
                     {pack.icon} {pack.name}
                   </button>
@@ -1133,11 +1133,11 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                       key={sticker.id}
                       onClick={() => handleSendSticker(sticker)}
                       className="flex flex-col items-center p-2 rounded-2xl border transition-all hover:scale-110 active:scale-95 group relative shadow-elevation-sm"
-                      style={{ background: isLight ? '#ffffff' : '#1a0c13', borderColor: isLight ? '#fecdd3' : 'rgba(225,29,72,0.25)' }}
+                      style={{ background: isLight ? '#ffffff' : '#131f36', borderColor: isLight ? '#ffe3d3' : 'rgba(225,29,72,0.25)' }}
                       title={`Enviar ${sticker.title}`}
                     >
                       <span className="text-3xl select-none group-hover:scale-110 transition-transform">{sticker.emoji}</span>
-                      <span className="text-[9px] font-bold text-[#e11d48] uppercase tracking-wider mt-1 truncate max-w-full">{sticker.badgeText || sticker.title}</span>
+                      <span className="text-[9px] font-bold text-[#f16b48] uppercase tracking-wider mt-1 truncate max-w-full">{sticker.badgeText || sticker.title}</span>
                     </button>
                   ))}
                 </div>
@@ -1154,7 +1154,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     <button
                       key={`recent-${i}`}
                       onClick={() => handleInsertEmoji(emoji)}
-                      className="w-8 h-8 rounded-xl border flex items-center justify-center text-[18px] hover:scale-125 transition-transform bg-white dark:bg-[#1a0c13] border-[#fecdd3] dark:border-[#e11d48]/20"
+                      className="w-8 h-8 rounded-xl border flex items-center justify-center text-[18px] hover:scale-125 transition-transform bg-white dark:bg-[#131f36] border-[#ffe3d3] dark:border-[#f16b48]/20"
                     >
                       {emoji}
                     </button>
@@ -1169,7 +1169,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                       <button
                         key={`${cat.name}-${i}`}
                         onClick={() => handleInsertEmoji(emoji)}
-                        className="w-8 h-8 rounded-xl border flex items-center justify-center text-[18px] hover:scale-125 transition-transform bg-white dark:bg-[#1a0c13] border-[#fecdd3] dark:border-[#e11d48]/20"
+                        className="w-8 h-8 rounded-xl border flex items-center justify-center text-[18px] hover:scale-125 transition-transform bg-white dark:bg-[#131f36] border-[#ffe3d3] dark:border-[#f16b48]/20"
                       >
                         {emoji}
                       </button>
@@ -1183,7 +1183,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           {activeMediaTray === 'gifs' && (
             <div className="flex-1 overflow-y-auto p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 no-scrollbar">
               {QUICK_GIFS.map((gif) => (
-                <div key={gif.id} onClick={() => handleSendGif(gif)} className="rounded-2xl overflow-hidden border border-[#fecdd3] dark:border-[#e11d48]/30 cursor-pointer group relative shadow-elevation-md">
+                <div key={gif.id} onClick={() => handleSendGif(gif)} className="rounded-2xl overflow-hidden border border-[#ffe3d3] dark:border-[#f16b48]/30 cursor-pointer group relative shadow-elevation-md">
                   <img src={gif.url} alt={gif.title} className="w-full h-24 object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
                   <div className="absolute bottom-0 inset-x-0 p-1 bg-gradient-to-t from-black/80 to-transparent text-white text-[10px] font-bold truncate text-center">{gif.tag}</div>
                 </div>
@@ -1194,23 +1194,23 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       )}
 
       {/* Input bar */}
-      <div className={`border-t p-2 relative z-30 shrink-0 liquid-glass ${isLight ? 'bg-white/55 border-[#fecdd3]/60' : 'bg-[#140b0f]/55 border-[#e11d48]/20'}`}>
+      <div className={`border-t p-2 relative z-30 shrink-0 liquid-glass ${isLight ? 'bg-white/55 border-[#ffe3d3]/60' : 'bg-[#0f1a2e]/55 border-[#f16b48]/20'}`}>
         {replyingTo && (
           <div className={`flex items-center gap-2 mb-1.5 pl-3 pr-1.5 py-1.5 rounded-2xl border-l-4 border animate-fadeIn ${
-            isLight ? 'bg-white border-l-[#e11d48] border-[#fecdd3]' : 'bg-[#1e0c15] border-l-[#e11d48] border-[#e11d48]/25'
+            isLight ? 'bg-white border-l-[#f16b48] border-[#ffe3d3]' : 'bg-[#131f36] border-l-[#f16b48] border-[#f16b48]/25'
           }`}>
             <div className="flex-1 min-w-0">
-              <span className="block text-[10.5px] font-bold text-[#e11d48]">
+              <span className="block text-[10.5px] font-bold text-[#f16b48]">
                 Respondiendo a {replyingTo.senderId === user?.id ? 'vos' : partner.displayName}
               </span>
-              <span className={`block text-[12px] truncate ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
+              <span className={`block text-[12px] truncate ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
                 {replyingTo.type === 'IMAGE' ? '📷 Foto' : replyingTo.body}
               </span>
             </div>
             <button
               type="button"
               onClick={() => { setReplyingTo(null); sounds.playClick(); }}
-              className={`h-7 w-7 shrink-0 flex items-center justify-center rounded-full ${isLight ? 'text-gray-400 hover:text-[#e11d48] hover:bg-[#fff1f3]' : 'text-[#fda4af]/60 hover:text-[#fb7185] hover:bg-white/5'}`}
+              className={`h-7 w-7 shrink-0 flex items-center justify-center rounded-full ${isLight ? 'text-gray-400 hover:text-[#f16b48] hover:bg-[#fcf9f2]' : 'text-[#ffb295]/60 hover:text-[#ffb295] hover:bg-white/5'}`}
               aria-label="Cancelar respuesta"
               title="Cancelar respuesta"
             >
@@ -1219,11 +1219,11 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           </div>
         )}
         <form onSubmit={handleSendText} className="flex items-center gap-1.5" autoComplete="off">
-          <div className={`flex-1 flex items-center gap-1.5 px-3 py-1.5 rounded-full border shadow-elevation-sm transition-colors ${isLight ? 'bg-white border-[#fecdd3] focus-within:border-[#e11d48]' : 'bg-[#1e0c15] border-[#e11d48]/30 focus-within:border-[#fb7185]'}`}>
+          <div className={`flex-1 flex items-center gap-1.5 px-3 py-1.5 rounded-full border shadow-elevation-sm transition-colors ${isLight ? 'bg-white border-[#ffe3d3] focus-within:border-[#f16b48]' : 'bg-[#131f36] border-[#f16b48]/30 focus-within:border-[#ffb295]'}`}>
             <button
               type="button"
               onClick={() => { sounds.playClick(); setActiveMediaTray(activeMediaTray ? null : 'stickers'); setShowAttachmentMenu(false); }}
-              className={`text-[#64748b] hover:text-[#e11d48] transition-colors focus:outline-none ${activeMediaTray ? 'text-[#e11d48]' : ''}`}
+              className={`text-[#5b6478] hover:text-[#f16b48] transition-colors focus:outline-none ${activeMediaTray ? 'text-[#f16b48]' : ''}`}
               title="Stickers y Emojis"
             >
               <span className="material-symbols-outlined text-[21px] block">{activeMediaTray ? 'keyboard' : 'sentiment_satisfied'}</span>
@@ -1235,12 +1235,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               onChange={(e) => { setInputText(e.target.value); pingTyping(); }}
               onFocus={() => { if (activeMediaTray) setActiveMediaTray(null); }}
               placeholder="Mensaje"
-              className={`flex-1 bg-transparent text-[13px] font-body-sm focus:outline-none ${isLight ? 'text-[#0f172a] placeholder:text-gray-400' : 'text-[#fff1f2] placeholder:text-[#fda4af]/40'}`}
+              className={`flex-1 bg-transparent text-[13px] font-body-sm focus:outline-none ${isLight ? 'text-[#16223b] placeholder:text-gray-400' : 'text-[#f5f1e8] placeholder:text-[#ffb295]/40'}`}
             />
             <button
               type="button"
               onClick={() => { sounds.playClick(); setShowAttachmentMenu(!showAttachmentMenu); setActiveMediaTray(null); }}
-              className={`text-[#64748b] hover:text-[#e11d48] transition-colors focus:outline-none ${showAttachmentMenu ? 'text-[#e11d48]' : ''}`}
+              className={`text-[#5b6478] hover:text-[#f16b48] transition-colors focus:outline-none ${showAttachmentMenu ? 'text-[#f16b48]' : ''}`}
               title="Adjuntar"
             >
               <span className="material-symbols-outlined text-[20px] block">attach_file</span>
@@ -1250,7 +1250,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           <button
             type="submit"
             disabled={!inputText.trim()}
-            className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#ff4d67] text-white flex items-center justify-center tactile-btn shadow-elevation-md hover:brightness-105 transition-transform active:scale-95 shrink-0 disabled:opacity-40"
+            className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] text-white flex items-center justify-center tactile-btn shadow-elevation-md hover:brightness-105 transition-transform active:scale-95 shrink-0 disabled:opacity-40"
             title="Enviar mensaje"
           >
             <span className="material-symbols-outlined text-[19px]" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
@@ -1261,13 +1261,13 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {/* Sticker detail modal */}
       {selectedStickerDetail && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-          <div className={`w-full max-w-xs rounded-3xl p-5 border shadow-2xl flex flex-col items-center text-center animate-scaleUp ${isLight ? 'bg-white border-[#fecdd3] text-[#0f172a]' : 'bg-[#180b12] border-[#e11d48]/40 text-[#fff1f2]'}`}>
-            <div className="w-28 h-28 rounded-3xl bg-gradient-to-tr from-[#fff1f3] to-white dark:from-[#2a0e1b] dark:to-[#180710] border-2 border-[#e11d48]/40 shadow-xl flex items-center justify-center text-6xl mb-3">
+          <div className={`w-full max-w-xs rounded-3xl p-5 border shadow-2xl flex flex-col items-center text-center animate-scaleUp ${isLight ? 'bg-white border-[#ffe3d3] text-[#16223b]' : 'bg-[#0f1a2e] border-[#f16b48]/40 text-[#f5f1e8]'}`}>
+            <div className="w-28 h-28 rounded-3xl bg-gradient-to-tr from-[#fcf9f2] to-white dark:from-[#17233d] dark:to-[#0f1a2e] border-2 border-[#f16b48]/40 shadow-xl flex items-center justify-center text-6xl mb-3">
               {selectedStickerDetail.emoji}
             </div>
             <h3 className="font-headline-md text-[16px] font-bold mb-3">{selectedStickerDetail.title}</h3>
             <div className="flex flex-col gap-2 w-full">
-              <Button onClick={() => { handleSendSticker(selectedStickerDetail); setSelectedStickerDetail(null); }} className="w-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold h-9 rounded-2xl shadow-elevation-md">
+              <Button onClick={() => { handleSendSticker(selectedStickerDetail); setSelectedStickerDetail(null); }} className="w-full bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold h-9 rounded-2xl shadow-elevation-md">
                 Enviar Sticker al chat
               </Button>
               <Button variant="outline" onClick={() => handleToggleFavoriteSticker(selectedStickerDetail.id)} className="w-full h-9 rounded-2xl flex items-center justify-center gap-1.5 text-[12px]">
@@ -1283,7 +1283,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {/* Contact info drawer */}
       {showContactInfoDrawer && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end animate-fadeIn">
-          <div className={`w-full max-w-sm h-full overflow-y-auto p-5 border-l flex flex-col justify-between animate-slideLeft ${isLight ? 'bg-white border-[#fecdd3] text-[#0f172a]' : 'bg-[#140b0f] border-[#e11d48]/40 text-[#fff1f2]'}`}>
+          <div className={`w-full max-w-sm h-full overflow-y-auto p-5 border-l flex flex-col justify-between animate-slideLeft ${isLight ? 'bg-white border-[#ffe3d3] text-[#16223b]' : 'bg-[#0f1a2e] border-[#f16b48]/40 text-[#f5f1e8]'}`}>
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-headline-md text-[16px] font-bold">Info. del contacto</h3>
@@ -1292,24 +1292,24 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 </Button>
               </div>
               <div className="flex flex-col items-center text-center mb-6">
-                <Avatar className="w-24 h-24 border-2 border-[#e11d48] shadow-xl mb-3">
+                <Avatar className="w-24 h-24 border-2 border-[#f16b48] shadow-xl mb-3">
                   <AvatarImage src={partner.photos[0]?.url} alt={partner.displayName} />
                   <AvatarFallback>{partner.displayName.slice(0, 2)}</AvatarFallback>
                 </Avatar>
                 <div className="flex items-center gap-1.5">
                   <h2 className="font-headline-md text-xl font-bold">{partner.displayName}, {partner.age}</h2>
-                  {partner.badges.trusted && <span className="material-symbols-outlined text-[#e11d48] text-[18px]" title="Citas verificadas">verified</span>}
+                  {partner.badges.trusted && <span className="material-symbols-outlined text-[#f16b48] text-[18px]" title="Citas verificadas">verified</span>}
                   {partner.badges.verified && <span className="material-symbols-outlined text-sky-400 text-[18px]" title="Identidad verificada">verified</span>}
                 </div>
-                <p className="text-[11px] text-[#e11d48] font-bold">{partner.city}</p>
+                <p className="text-[11px] text-[#f16b48] font-bold">{partner.city}</p>
               </div>
-              <div className={`p-3 rounded-2xl border mb-4 ${isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#1e0c15] border-[#e11d48]/30'}`}>
-                <span className="font-label-caps text-[9px] text-[#e11d48] font-bold uppercase tracking-wider block mb-1">ESTADO EN MELY</span>
+              <div className={`p-3 rounded-2xl border mb-4 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'}`}>
+                <span className="font-label-caps text-[9px] text-[#f16b48] font-bold uppercase tracking-wider block mb-1">ESTADO EN MELY</span>
                 <p className="text-[12.5px] italic">"{partner.bio || 'Sin bio todavía.'}"</p>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-4">
                 <div className="p-3 rounded-2xl border text-center border-black/10 dark:border-white/10">
-                  <span className="text-xl font-bold text-[#e11d48] block">{partner.membership.tierLabel}</span>
+                  <span className="text-xl font-bold text-[#f16b48] block">{partner.membership.tierLabel}</span>
                   <span className="text-[10px] uppercase font-bold opacity-70">Membresía</span>
                 </div>
                 <div className="p-3 rounded-2xl border text-center border-black/10 dark:border-white/10">
@@ -1318,7 +1318,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 </div>
               </div>
             </div>
-            <Button onClick={() => { setShowContactInfoDrawer(false); onOpenProposeModal?.(activeMatch.id); }} className="w-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold h-10 rounded-2xl shadow-elevation-md">
+            <Button onClick={() => { setShowContactInfoDrawer(false); onOpenProposeModal?.(activeMatch.id); }} className="w-full bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold h-10 rounded-2xl shadow-elevation-md">
               Proponer Cita a {partner.displayName}
             </Button>
           </div>
@@ -1328,7 +1328,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {/* Theme customizer */}
       {showThemeCustomizer && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn">
-          <div className={`w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-t-3xl sm:rounded-3xl p-5 border shadow-2xl flex flex-col justify-between animate-scaleUp no-scrollbar ${isLight ? 'bg-white border-[#fecdd3] text-[#0f172a]' : 'bg-[#140a10] border-[#e11d48]/40 text-[#fff1f2]'}`}>
+          <div className={`w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-t-3xl sm:rounded-3xl p-5 border shadow-2xl flex flex-col justify-between animate-scaleUp no-scrollbar ${isLight ? 'bg-white border-[#ffe3d3] text-[#16223b]' : 'bg-[#0f1a2e] border-[#f16b48]/40 text-[#f5f1e8]'}`}>
             <div>
               <div className="flex items-center justify-between pb-3 border-b border-black/10 dark:border-white/10 mb-4">
                 <h3 className="font-headline-md text-[16px] font-bold">Personalizar Chat</h3>
@@ -1338,7 +1338,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               </div>
 
               <div className="mb-5">
-                <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#e11d48] block mb-2">VISTA PREVIA EN VIVO</span>
+                <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#f16b48] block mb-2">VISTA PREVIA EN VIVO</span>
                 <div className="p-3.5 rounded-2xl border transition-all duration-300 relative overflow-hidden flex flex-col gap-2.5 shadow-inner" style={getWallpaperStyle()}>
                   <div className="flex justify-start">
                     <div className={`p-2.5 max-w-[80%] rounded-[20px] ${getPartnerBubbleClass()}`}>
@@ -1354,7 +1354,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               </div>
 
               <div className="mb-5">
-                <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#e11d48] block mb-2">PALETAS & TEMAS MELY</span>
+                <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#f16b48] block mb-2">PALETAS & TEMAS MELY</span>
                 <div className="grid grid-cols-2 gap-2">
                   {CHAT_THEME_PRESETS.map((preset) => {
                     const isSelected = selectedThemeId === preset.id && !customColor;
@@ -1363,7 +1363,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                         key={preset.id}
                         onClick={() => handleApplyTheme(preset.id)}
                         className={`p-2.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between gap-1.5 ${
-                          isSelected ? isLight ? 'border-[#e11d48] bg-[#fff1f3] ring-2 ring-[#e11d48]/30' : 'border-[#e11d48] bg-[#220d18] ring-2 ring-[#e11d48]/40' : isLight ? 'border-gray-200 bg-gray-50/50' : 'border-white/10 bg-white/5'
+                          isSelected ? isLight ? 'border-[#f16b48] bg-[#fcf9f2] ring-2 ring-[#f16b48]/30' : 'border-[#f16b48] bg-[#17233d] ring-2 ring-[#f16b48]/40' : isLight ? 'border-gray-200 bg-gray-50/50' : 'border-white/10 bg-white/5'
                         }`}
                       >
                         <div className="flex items-center justify-between w-full">
@@ -1378,7 +1378,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               </div>
 
               <div className="mb-5">
-                <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#e11d48] block mb-2">TEXTURA Y PATRÓN DE FONDO</span>
+                <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#f16b48] block mb-2">TEXTURA Y PATRÓN DE FONDO</span>
                 <div className="grid grid-cols-5 gap-1.5">
                   {[
                     { id: 'dots', label: 'Puntos', icon: 'blur_on' },
@@ -1391,7 +1391,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                       key={pat.id}
                       onClick={() => handleApplyPattern(pat.id as 'dots' | 'grid' | 'stars' | 'clean' | 'warm')}
                       className={`p-2 rounded-xl border flex flex-col items-center gap-1 transition-all text-center ${
-                        customPattern === pat.id ? 'border-[#e11d48] bg-[#e11d48]/10 text-[#e11d48] font-bold' : 'border-black/10 dark:border-white/10 opacity-70'
+                        customPattern === pat.id ? 'border-[#f16b48] bg-[#f16b48]/10 text-[#f16b48] font-bold' : 'border-black/10 dark:border-white/10 opacity-70'
                       }`}
                     >
                       <span className="material-symbols-outlined text-[18px]">{pat.icon}</span>
@@ -1402,18 +1402,18 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               </div>
 
               <div className="mb-4">
-                <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#e11d48] block mb-2">COLOR PERSONALIZADO DE BURBUJAS</span>
+                <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#f16b48] block mb-2">COLOR PERSONALIZADO DE BURBUJAS</span>
                 <div className="flex items-center gap-2 flex-wrap">
-                  {['#e11d48', '#be123c', '#9333ea', '#7c3aed', '#059669', '#0d9488', '#0284c7', '#d97706', '#ea580c', '#ec4899', '#334155'].map((hex) => (
+                  {['#f16b48', '#d4552f', '#b98fd1', '#b98fd1', '#3f7a5c', '#2e5570', '#2e5570', '#e3b873', '#e3b873', '#ff8a65', '#2e5570'].map((hex) => (
                     <button
                       key={hex}
                       onClick={() => handleApplyCustomColor(hex)}
-                      className={`w-7 h-7 rounded-full transition-transform border-2 flex items-center justify-center ${customColor.toLowerCase() === hex.toLowerCase() ? 'scale-125 border-white ring-2 ring-[#e11d48]' : 'border-white/30'}`}
+                      className={`w-7 h-7 rounded-full transition-transform border-2 flex items-center justify-center ${customColor.toLowerCase() === hex.toLowerCase() ? 'scale-125 border-white ring-2 ring-[#f16b48]' : 'border-white/30'}`}
                       style={{ backgroundColor: hex }}
                       title={hex}
                     />
                   ))}
-                  <label className="relative w-7 h-7 rounded-full border-2 border-dashed border-gray-400 hover:border-[#e11d48] flex items-center justify-center cursor-pointer" title="Elegir color exacto">
+                  <label className="relative w-7 h-7 rounded-full border-2 border-dashed border-gray-400 hover:border-[#f16b48] flex items-center justify-center cursor-pointer" title="Elegir color exacto">
                     <span className="material-symbols-outlined text-[14px] opacity-70">colorize</span>
                     <input type="color" value={customColor || currentTheme.accentColor} onChange={(e) => handleApplyCustomColor(e.target.value)} className="sr-only" />
                   </label>
@@ -1423,7 +1423,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
             <div className="flex gap-2 pt-3 border-t border-black/10 dark:border-white/10 mt-3">
               <Button variant="outline" onClick={() => { sounds.playClick(); handleApplyTheme('mely-cherry'); }} className="flex-1 h-9 rounded-2xl text-[11.5px]">Por Defecto</Button>
-              <Button onClick={() => { sounds.playStamp(); setShowThemeCustomizer(false); }} className="flex-1 bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white font-bold h-9 rounded-2xl shadow-elevation-md text-[11.5px]">Aplicar y Guardar</Button>
+              <Button onClick={() => { sounds.playStamp(); setShowThemeCustomizer(false); }} className="flex-1 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold h-9 rounded-2xl shadow-elevation-md text-[11.5px]">Aplicar y Guardar</Button>
             </div>
           </div>
         </div>

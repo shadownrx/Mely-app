@@ -107,15 +107,15 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
       <div className="flex flex-col gap-3 px-0.5">
         <div className="flex items-end justify-between gap-3">
           <div className="min-w-0">
-            <p className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'}`}>
+            <p className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}>
               Tus conexiones
             </p>
             <div className="mt-0.5 flex items-baseline gap-2">
-              <h2 className={`text-[21px] font-bold tracking-tight ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+              <h2 className={`text-[21px] font-bold tracking-tight ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                 {matches.length} {matches.length === 1 ? 'match' : 'matches'}
               </h2>
               {activeFilter !== 'all' || searchQuery ? (
-                <span className={`text-[11px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                <span className={`text-[11px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                   {filteredMatches.length} visibles
                 </span>
               ) : null}
@@ -128,7 +128,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 setSearchOpen((v) => !v);
               }}
               className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-                searchOpen ? 'bg-[#e11d48] text-white' : isLight ? 'bg-[#f2f2f4] text-[#0f172a] hover:bg-[#e7e7ea]' : 'bg-white/8 text-[#fff1f2] hover:bg-white/14'
+                searchOpen ? 'bg-[#f16b48] text-white' : isLight ? 'bg-[#efe7d8] text-[#16223b] hover:bg-[#efe7d8]' : 'bg-white/8 text-[#f5f1e8] hover:bg-white/14'
               }`}
               aria-label="Buscar y filtrar"
               title="Buscar y filtrar"
@@ -141,7 +141,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 setLayoutMode(layoutMode === 'grid' ? 'list' : 'grid');
               }}
               className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-                isLight ? 'bg-[#f2f2f4] text-[#0f172a] hover:bg-[#e7e7ea]' : 'bg-white/8 text-[#fff1f2] hover:bg-white/14'
+                isLight ? 'bg-[#efe7d8] text-[#16223b] hover:bg-[#efe7d8]' : 'bg-white/8 text-[#f5f1e8] hover:bg-white/14'
               }`}
               aria-label={layoutMode === 'grid' ? 'Ver como lista' : 'Ver como cuadrícula'}
               title={layoutMode === 'grid' ? 'Ver como lista' : 'Ver como cuadrícula'}
@@ -169,24 +169,24 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   title={`Ver perfil de ${m.other.displayName}`}
                 >
                   <div className="relative">
-                    <div className="w-[50px] h-[50px] rounded-full p-[2px] bg-gradient-to-tr from-[#e11d48] via-[#fb7185] to-[#f43f5e] shadow-elevation-sm transition-transform">
+                    <div className="w-[50px] h-[50px] rounded-full p-[2px] bg-gradient-to-tr from-[#f16b48] via-[#ffb295] to-[#ff8a65] shadow-elevation-sm transition-transform">
                       <img
                         src={m.other.photos[0]?.url}
                         alt={m.other.displayName}
                         referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover rounded-full border border-white dark:border-[#0d070a]"
+                        className="w-full h-full object-cover rounded-full border border-white dark:border-[#0a1120]"
                       />
                     </div>
                     {m.other.lastActive === 'En línea' && (
-                      <span className="absolute bottom-0 right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#0d070a]" />
+                      <span className="absolute bottom-0 right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#0a1120]" />
                     )}
                     {m.unread > 0 && (
-                      <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#e11d48] text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0d070a]">
+                      <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#f16b48] text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-[#0a1120]">
                         {m.unread}
                       </span>
                     )}
                   </div>
-                  <span className={`text-[10px] font-semibold truncate max-w-[54px] ${isLight ? 'text-[#1e293b]' : 'text-[#fce7eb]'}`}>
+                  <span className={`text-[10px] font-semibold truncate max-w-[54px] ${isLight ? 'text-[#2e5570]' : 'text-[#ffe3d3]'}`}>
                     {m.other.displayName.split(' ')[0]}
                   </span>
                 </motion.button>
@@ -207,7 +207,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
             >
               <div className="flex flex-col gap-1.5 pt-0.5">
                 <div className="relative flex items-center">
-                  <span className={`material-symbols-outlined absolute left-3 text-[17px] pointer-events-none ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
+                  <span className={`material-symbols-outlined absolute left-3 text-[17px] pointer-events-none ${isLight ? 'text-[#6fa8c9]' : 'text-[#ffb295]/50'}`}>
                     search
                   </span>
                   <Input
@@ -250,10 +250,10 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                         }}
                         className={`px-2.5 py-1 rounded-full text-[10.5px] font-semibold flex items-center gap-1 whitespace-nowrap transition-all shrink-0 ${
                           isSelected
-                            ? 'bg-[#e11d48] text-white'
+                            ? 'bg-[#f16b48] text-white'
                             : isLight
-                            ? 'bg-[#f7f7f8] text-[#475569] hover:text-[#e11d48]'
-                            : 'bg-white/5 text-[#a89a9e] hover:text-[#fb7185]'
+                            ? 'bg-[#fcf9f2] text-[#2e5570] hover:text-[#f16b48]'
+                            : 'bg-white/5 text-[#8a93a8] hover:text-[#ffb295]'
                         }`}
                       >
                         <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: isSelected ? "'FILL' 1" : "'FILL' 0" }}>
@@ -278,23 +278,23 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           className={`flex flex-col items-center justify-center py-12 px-6 text-center rounded-2xl border border-dashed ${
-            isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'
+            isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'
           }`}
         >
-          <div className="w-12 h-12 rounded-full bg-[#e11d48]/10 text-[#e11d48] flex items-center justify-center mb-2.5">
+          <div className="w-12 h-12 rounded-full bg-[#f16b48]/10 text-[#f16b48] flex items-center justify-center mb-2.5">
             <span className="material-symbols-outlined text-[26px]">cloud_off</span>
           </div>
-          <h3 className={`font-headline-md text-[15px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+          <h3 className={`font-headline-md text-[15px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
             No se pudieron cargar tus matches
           </h3>
-          <p className={`font-body-sm text-[11.5px] max-w-xs mt-1 mb-4 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+          <p className={`font-body-sm text-[11.5px] max-w-xs mt-1 mb-4 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
             Comprueba tu conexión e inténtalo de nuevo.
           </p>
           {onRetry && (
             <Button
               size="sm"
               onClick={onRetry}
-              className="bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full px-4 h-8 text-[11px] font-bold"
+              className="bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white rounded-full px-4 h-8 text-[11px] font-bold"
             >
               Reintentar
             </Button>
@@ -331,8 +331,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   transition={{ delay: idx * 0.04, duration: 0.25 }}
                   className={`p-2.5 rounded-2xl border flex items-center justify-between gap-3 transition-colors ${
                     isLight
-                      ? 'bg-white border-[#fecdd3]/70 hover:border-[#e11d48] shadow-elevation-sm'
-                      : 'bg-[#140b0f] border-[#e11d48]/25 hover:border-[#e11d48]/60'
+                      ? 'bg-white border-[#ffe3d3]/70 hover:border-[#f16b48] shadow-elevation-sm'
+                      : 'bg-[#0f1a2e] border-[#f16b48]/25 hover:border-[#f16b48]/60'
                   }`}
                 >
                   {/* Left: Avatar + Info */}
@@ -358,10 +358,10 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                         src={match.other.photos[0]?.url}
                         alt={match.other.displayName}
                         referrerPolicy="no-referrer"
-                        className="w-12 h-12 rounded-xl object-cover border border-[#fecdd3]/60 dark:border-white/10"
+                        className="w-12 h-12 rounded-xl object-cover border border-[#ffe3d3]/60 dark:border-white/10"
                       />
                       {match.other.lastActive === 'En línea' && (
-                        <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#140b0f]" />
+                        <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#0f1a2e]" />
                       )}
                     </div>
 
@@ -371,7 +371,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                           {match.other.displayName}, {match.other.age}
                         </h4>
                         {match.other.badges.trusted && (
-                          <span className="material-symbols-outlined text-[13px] text-[#e11d48]" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">
+                          <span className="material-symbols-outlined text-[13px] text-[#f16b48]" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">
                             verified
                           </span>
                         )}
@@ -381,16 +381,16 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                           </span>
                         )}
                       </div>
-                      <p className={`text-[11px] truncate ${isLight ? 'text-gray-500' : 'text-[#fda4af]/70'}`}>
+                      <p className={`text-[11px] truncate ${isLight ? 'text-gray-500' : 'text-[#ffb295]/70'}`}>
                         {match.other.city || 'Buenos Aires'}
                       </p>
-                      <p className={`mt-1 text-[10px] font-semibold truncate ${isLight ? 'text-[#d91f4f]' : 'text-[#fb7185]'}`}>
+                      <p className={`mt-1 text-[10px] font-semibold truncate ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}>
                         {match.unread > 0 ? `${match.unread} mensajes sin leer` : match.label}
                       </p>
                       {countdown && (
                         <span
                           className={`inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
-                            countdown.urgent ? 'bg-amber-500/15 text-amber-500' : isLight ? 'bg-[#fff1f3] text-[#e11d48]' : 'bg-[#e11d48]/15 text-[#fb7185]'
+                            countdown.urgent ? 'bg-amber-500/15 text-amber-500' : isLight ? 'bg-[#fcf9f2] text-[#f16b48]' : 'bg-[#f16b48]/15 text-[#ffb295]'
                           }`}
                         >
                           <span className="material-symbols-outlined text-[10px]">schedule</span>
@@ -413,8 +413,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       }}
                       className={`h-8 w-8 rounded-xl flex items-center justify-center border transition-colors ${
                         isLight
-                          ? 'bg-[#fff1f3] border-[#fecdd3] text-[#e11d48] hover:bg-[#ffe4e6]'
-                          : 'bg-white/5 border-white/10 text-[#fda4af] hover:bg-[#e11d48]/20'
+                          ? 'bg-[#fcf9f2] border-[#ffe3d3] text-[#f16b48] hover:bg-[#efe7d8]'
+                          : 'bg-white/5 border-white/10 text-[#ffb295] hover:bg-[#f16b48]/20'
                       }`}
                       title="Abrir Chat"
                     >
@@ -430,7 +430,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                         sounds.playStamp();
                         onProposeDate(match);
                       }}
-                      className="h-8 px-2.5 rounded-xl bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[10.5px] font-bold flex items-center gap-1 shadow-elevation-sm hover:brightness-105 transition-all"
+                      className="h-8 px-2.5 rounded-xl bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white text-[10.5px] font-bold flex items-center gap-1 shadow-elevation-sm hover:brightness-105 transition-all"
                       title="Proponer Cita"
                     >
                       <span className="material-symbols-outlined text-[14px]">local_cafe</span>
@@ -453,8 +453,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   }}
                   className={`p-3 rounded-2xl border-2 border-dashed flex items-center justify-center gap-2 transition-colors ${
                     isLight
-                      ? 'border-[#fecdd3] hover:border-[#e11d48] text-[#e11d48] hover:bg-[#fff1f3]'
-                      : 'border-[#e11d48]/30 hover:border-[#e11d48]/60 text-[#fda4af] hover:bg-white/5'
+                      ? 'border-[#ffe3d3] hover:border-[#f16b48] text-[#f16b48] hover:bg-[#fcf9f2]'
+                      : 'border-[#f16b48]/30 hover:border-[#f16b48]/60 text-[#ffb295] hover:bg-white/5'
                   }`}
                 >
                   <span className="material-symbols-outlined text-[16px]">explore</span>
@@ -483,7 +483,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 >
                   {/* Instagram-grid weight: square photo, minimal chrome, name below not on top */}
                   <div
-                    className="relative aspect-[1/1.15] rounded-2xl overflow-hidden cursor-pointer bg-[#0b0507] group"
+                    className="relative aspect-[1/1.15] rounded-2xl overflow-hidden cursor-pointer bg-[#0a1120] group"
                     role="button"
                     tabIndex={0}
                     onKeyDown={(event) => {
@@ -507,7 +507,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       referrerPolicy="no-referrer"
                     />
                     {match.other.lastActive === 'En línea' && (
-                      <span className="absolute top-2.5 right-2.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#0b090a]" />
+                      <span className="absolute top-2.5 right-2.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#0a1120]" />
                     )}
                     {countdown && (
                       <span
@@ -527,7 +527,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                         sounds.playClick();
                         onOpenChat(match.id);
                       }}
-                      className="absolute bottom-2.5 right-2.5 w-9 h-9 rounded-full bg-white/95 shadow-elevation-sm flex items-center justify-center text-[#e11d48]"
+                      className="absolute bottom-2.5 right-2.5 w-9 h-9 rounded-full bg-white/95 shadow-elevation-sm flex items-center justify-center text-[#f16b48]"
                       title="Abrir chat"
                       aria-label="Abrir chat"
                     >
@@ -540,7 +540,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                         {match.other.displayName}, {match.other.age}
                       </h3>
                       {match.other.badges.trusted && (
-                        <span className="material-symbols-outlined text-[13px] text-[#e11d48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">
+                        <span className="material-symbols-outlined text-[13px] text-[#f16b48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">
                           verified
                         </span>
                       )}
@@ -550,8 +550,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] text-slate-500 dark:text-[#a89a9e]">{match.other.city || 'Buenos Aires'}</span>
-                    <span className={`mt-0.5 block text-[10px] font-semibold truncate ${isLight ? 'text-[#d91f4f]' : 'text-[#fb7185]'}`}>
+                    <span className="text-[11px] text-slate-500 dark:text-[#8a93a8]">{match.other.city || 'Buenos Aires'}</span>
+                    <span className={`mt-0.5 block text-[10px] font-semibold truncate ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}>
                       {match.unread > 0 ? `${match.unread} sin leer` : match.label}
                     </span>
                   </div>
@@ -575,11 +575,11 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     }}
                     className={`w-full h-full min-h-[212px] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-2 text-center p-4 transition-colors ${
                       isLight
-                        ? 'border-[#fecdd3] hover:border-[#e11d48] text-[#e11d48] hover:bg-[#fff1f3]'
-                        : 'border-[#e11d48]/30 hover:border-[#e11d48]/60 text-[#fda4af] hover:bg-white/5'
+                        ? 'border-[#ffe3d3] hover:border-[#f16b48] text-[#f16b48] hover:bg-[#fcf9f2]'
+                        : 'border-[#f16b48]/30 hover:border-[#f16b48]/60 text-[#ffb295] hover:bg-white/5'
                     }`}
                   >
-                    <span className="w-10 h-10 rounded-full bg-[#e11d48]/10 flex items-center justify-center">
+                    <span className="w-10 h-10 rounded-full bg-[#f16b48]/10 flex items-center justify-center">
                       <span className="material-symbols-outlined text-[22px]">explore</span>
                     </span>
                     <span className="text-[12px] font-bold leading-tight">Seguir descubriendo</span>
@@ -596,16 +596,16 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           className={`flex flex-col items-center justify-center py-12 px-6 text-center rounded-2xl border border-dashed ${
-            isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/30'
+            isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'
           }`}
         >
-          <div className="w-12 h-12 rounded-full bg-[#e11d48]/10 text-[#e11d48] flex items-center justify-center mb-2.5">
+          <div className="w-12 h-12 rounded-full bg-[#f16b48]/10 text-[#f16b48] flex items-center justify-center mb-2.5">
             <span className="material-symbols-outlined text-[26px]">favorite_border</span>
           </div>
-          <h3 className={`font-headline-md text-[15px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+          <h3 className={`font-headline-md text-[15px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
             {searchQuery ? 'Sin coincidencias' : 'Sin sparks en este filtro'}
           </h3>
-          <p className={`font-body-sm text-[11.5px] max-w-xs mt-1 mb-4 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+          <p className={`font-body-sm text-[11.5px] max-w-xs mt-1 mb-4 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
             {searchQuery
               ? 'Prueba buscando con otro término.'
               : 'Explora perfiles en el radar para generar nuevas conexiones.'}
@@ -619,7 +619,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 setSearchQuery('');
                 setActiveFilter('all');
               }}
-              className="rounded-full px-3.5 h-7.5 text-[11px] font-bold border-[#e11d48] text-[#e11d48]"
+              className="rounded-full px-3.5 h-7.5 text-[11px] font-bold border-[#f16b48] text-[#f16b48]"
             >
               Limpiar búsqueda
             </Button>
@@ -630,7 +630,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 sounds.playHeart();
                 onExploreMore();
               }}
-              className="bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white rounded-full px-4 h-8 text-[11px] font-bold shadow-elevation-sm hover:brightness-105 flex items-center gap-1.5"
+              className="bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white rounded-full px-4 h-8 text-[11px] font-bold shadow-elevation-sm hover:brightness-105 flex items-center gap-1.5"
             >
               <span className="material-symbols-outlined text-[15px]">explore</span>
               <span>Seguir Descubriendo</span>
@@ -659,7 +659,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
               exit={{ opacity: 0, scale: 0.92, y: 14 }}
               transition={{ type: 'spring', stiffness: 360, damping: 28 }}
               className={`relative z-10 w-full max-w-md max-h-[88vh] rounded-2xl overflow-hidden flex flex-col shadow-2xl border ${
-                isLight ? 'bg-white border-[#fecdd3]' : 'bg-[#140b0f] border-[#e11d48]/40 text-[#fff1f2]'
+                isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/40 text-[#f5f1e8]'
               }`}
             >
               {/* Modal Header Gallery */}
@@ -694,7 +694,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       >
                         <span
                           className={`h-1.5 rounded-full transition-all duration-200 block ${
-                            selectedGalleryIdx === idx ? 'w-5 bg-[#e11d48]' : 'w-2 bg-white/60'
+                            selectedGalleryIdx === idx ? 'w-5 bg-[#f16b48]' : 'w-2 bg-white/60'
                           }`}
                         />
                       </button>
@@ -708,7 +708,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       {selectedMatch.other.displayName}, {selectedMatch.other.age}
                     </h2>
                     {selectedMatch.other.badges.trusted && (
-                      <span className="material-symbols-outlined text-[#e11d48] text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">
+                      <span className="material-symbols-outlined text-[#f16b48] text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">
                         verified
                       </span>
                     )}
@@ -718,7 +718,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       </span>
                     )}
                   </div>
-                  <p className="text-[#fda4af] text-[12px] font-medium">
+                  <p className="text-[#ffb295] text-[12px] font-medium">
                     {selectedMatch.other.city}
                   </p>
                 </div>
@@ -735,8 +735,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                         countdown.urgent
                           ? 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400'
                           : isLight
-                            ? 'bg-[#fff1f3] border-[#fecdd3] text-[#e11d48]'
-                            : 'bg-[#e11d48]/10 border-[#e11d48]/30 text-[#fb7185]'
+                            ? 'bg-[#fcf9f2] border-[#ffe3d3] text-[#f16b48]'
+                            : 'bg-[#f16b48]/10 border-[#f16b48]/30 text-[#ffb295]'
                       }`}
                     >
                       <span className="material-symbols-outlined text-[18px] shrink-0">schedule</span>
@@ -747,11 +747,11 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   );
                 })()}
                 {/* Bio */}
-                <div className={`p-2.5 rounded-xl border ${isLight ? 'bg-[#fff1f3]/50 border-[#fecdd3]' : 'bg-white/5 border-white/10'}`}>
-                  <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#e11d48] mb-0.5">
+                <div className={`p-2.5 rounded-xl border ${isLight ? 'bg-[#fcf9f2]/50 border-[#ffe3d3]' : 'bg-white/5 border-white/10'}`}>
+                  <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#f16b48] mb-0.5">
                     Sobre {selectedMatch.other.displayName}
                   </h4>
-                  <p className={`text-[12px] leading-relaxed ${isLight ? 'text-[#334155]' : 'text-[#fce7eb]'}`}>
+                  <p className={`text-[12px] leading-relaxed ${isLight ? 'text-[#2e5570]' : 'text-[#ffe3d3]'}`}>
                     {selectedMatch.other.bio}
                   </p>
                 </div>
@@ -759,7 +759,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 {/* Interests */}
                 {selectedMatch.other.interests.length > 0 && (
                   <div>
-                    <h4 className={`text-[10px] font-bold uppercase tracking-wider mb-1.5 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                    <h4 className={`text-[10px] font-bold uppercase tracking-wider mb-1.5 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                       Intereses
                     </h4>
                     <div className="flex flex-wrap gap-1">
@@ -768,8 +768,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                           key={interest.id}
                           className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-medium border ${
                             isLight
-                              ? 'bg-[#fff1f3] text-[#e11d48] border-[#fecdd3]'
-                              : 'bg-[#e11d48]/15 text-[#fda4af] border-[#e11d48]/30'
+                              ? 'bg-[#fcf9f2] text-[#f16b48] border-[#ffe3d3]'
+                              : 'bg-[#f16b48]/15 text-[#ffb295] border-[#f16b48]/30'
                           }`}
                         >
                           #{interest.name}
@@ -782,7 +782,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 {/* Prompts Q&A */}
                 {selectedMatch.other.prompts.length > 0 && (
                   <div className="flex flex-col gap-2">
-                    <h4 className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                    <h4 className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                       Icebreakers
                     </h4>
                     {selectedMatch.other.prompts.map((p) => (
@@ -792,7 +792,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                           isLight ? 'bg-gray-50 border-gray-200' : 'bg-white/5 border-white/10'
                         }`}
                       >
-                        <p className="text-[10.5px] font-bold text-[#e11d48] mb-0.5">
+                        <p className="text-[10.5px] font-bold text-[#f16b48] mb-0.5">
                           {p.question}
                         </p>
                         <p className={`text-[11.5px] ${isLight ? 'text-gray-700' : 'text-gray-200'}`}>
@@ -807,7 +807,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
               {/* Modal Actions Footer - Compact & Elegant */}
               <div
                 className={`p-3 border-t flex items-center gap-2 shrink-0 ${
-                  isLight ? 'bg-gray-50 border-gray-200' : 'bg-[#180b12] border-[#e11d48]/30'
+                  isLight ? 'bg-gray-50 border-gray-200' : 'bg-[#0f1a2e] border-[#f16b48]/30'
                 }`}
               >
                 <motion.button
@@ -821,8 +821,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   }}
                   className={`flex-1 h-8.5 text-[11px] font-bold rounded-xl border flex items-center justify-center gap-1.5 transition-colors ${
                     isLight
-                      ? 'bg-white border-[#fecdd3] text-[#e11d48] hover:bg-[#fff1f3]'
-                      : 'bg-white/5 border-white/10 text-[#fda4af] hover:bg-white/10'
+                      ? 'bg-white border-[#ffe3d3] text-[#f16b48] hover:bg-[#fcf9f2]'
+                      : 'bg-white/5 border-white/10 text-[#ffb295] hover:bg-white/10'
                   }`}
                 >
                   <span className="material-symbols-outlined text-[15px]">chat</span>
@@ -838,7 +838,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     setSelectedMatch(null);
                     onProposeDate(target);
                   }}
-                  className="flex-1 h-8.5 bg-gradient-to-r from-[#e11d48] via-[#f43f5e] to-[#ff4d67] text-white text-[11px] font-bold rounded-xl shadow-elevation-sm flex items-center justify-center gap-1.5 hover:brightness-105 transition-all"
+                  className="flex-1 h-8.5 bg-gradient-to-r from-[#f16b48] via-[#ff8a65] to-[#ff8a65] text-white text-[11px] font-bold rounded-xl shadow-elevation-sm flex items-center justify-center gap-1.5 hover:brightness-105 transition-all"
                 >
                   <span className="material-symbols-outlined text-[15px]">local_cafe</span>
                   <span>Proponer Cita</span>

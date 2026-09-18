@@ -18,7 +18,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   render() {
     if (this.state.error) {
       return (
-        <div style={{ padding: 20, fontFamily: 'monospace', whiteSpace: 'pre-wrap', color: '#fff', background: '#1a0509' }}>
+        <div style={{ padding: 20, fontFamily: 'monospace', whiteSpace: 'pre-wrap', color: '#fff', background: '#0a1120' }}>
           <h2>Algo salió mal</h2>
           <p>{this.state.error.message}</p>
           <pre>{this.state.error.stack}</pre>

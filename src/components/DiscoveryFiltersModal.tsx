@@ -66,18 +66,18 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
       <DialogContent className="w-[calc(100%-1.5rem)] max-w-[420px] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden">
         <DialogHeader
           className={`p-4 sm:p-5 border-b flex-row justify-between items-center shrink-0 space-y-0 ${
-            isLight ? 'bg-white border-black/8' : 'bg-[#1c0d15] border-white/10'
+            isLight ? 'bg-white border-black/8' : 'bg-[#131f36] border-white/10'
           }`}
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#d91f4f] flex items-center justify-center text-white shadow-elevation-md shadow-[#e11d48]/20">
+            <div className="w-8 h-8 rounded-xl bg-[#f16b48] flex items-center justify-center text-white shadow-elevation-md shadow-[#f16b48]/20">
               <span className="material-symbols-outlined text-[18px]">tune</span>
             </div>
             <div>
-              <span className="font-label-caps text-[9px] uppercase tracking-widest text-[#e11d48] font-bold block">
+              <span className="font-label-caps text-[9px] uppercase tracking-widest text-[#f16b48] font-bold block">
                 RADAR EDITORIAL
               </span>
-              <h3 className={`font-headline-md text-[18px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+              <h3 className={`font-headline-md text-[18px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                 Filtros de Descubrimiento
               </h3>
             </div>
@@ -90,7 +90,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
           <div>
             <div className="flex justify-between items-center mb-2">
               <Label>Distancia Máxima</Label>
-              <span className="font-mono text-[11px] font-bold text-[#e11d48]">
+              <span className="font-mono text-[11px] font-bold text-[#f16b48]">
                 {localFilters.maxDistanceKm} km
               </span>
             </div>
@@ -101,7 +101,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
               value={[localFilters.maxDistanceKm]}
               onValueChange={([v]) => setLocalFilters((prev) => ({ ...prev, maxDistanceKm: v }))}
             />
-            <div className={`flex justify-between text-[9px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'} mt-1.5 font-mono`}>
+            <div className={`flex justify-between text-[9px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'} mt-1.5 font-mono`}>
               <span>1 km (Mismo barrio)</span>
               <span>50 km (Metropolitano)</span>
             </div>
@@ -111,13 +111,13 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
           <div>
             <div className="flex justify-between items-center mb-1.5">
               <Label>Rango de Edad</Label>
-              <span className="font-mono text-[11px] font-bold text-[#e11d48]">
+              <span className="font-mono text-[11px] font-bold text-[#f16b48]">
                 {localFilters.minAge} - {localFilters.maxAge} años
               </span>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <span className={`text-[9px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'} block mb-0.5 font-label-caps`}>Mínimo</span>
+                <span className={`text-[9px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'} block mb-0.5 font-label-caps`}>Mínimo</span>
                 <Input
                   type="number"
                   min={18}
@@ -128,7 +128,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
                 />
               </div>
               <div>
-                <span className={`text-[9px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'} block mb-0.5 font-label-caps`}>Máximo</span>
+                <span className={`text-[9px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'} block mb-0.5 font-label-caps`}>Máximo</span>
                 <Input
                   type="number"
                   min={localFilters.minAge}
@@ -144,16 +144,16 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
           {/* Verified Only Toggle */}
           <div
             className={`p-3.5 rounded-2xl border flex items-center justify-between transition-colors ${
-              isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#180d14] border-[#e11d48]/30'
+              isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <span className="material-symbols-outlined text-[20px] text-[#e11d48]">verified</span>
+              <span className="material-symbols-outlined text-[20px] text-[#f16b48]">verified</span>
               <div>
-                <span className={`font-label-caps text-[10px] uppercase font-bold block ${isLight ? 'text-[#0f172a]' : 'text-white'}`}>
+                <span className={`font-label-caps text-[10px] uppercase font-bold block ${isLight ? 'text-[#16223b]' : 'text-white'}`}>
                   Citas Verificadas en Pasaporte
                 </span>
-                <span className={`text-[10px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                <span className={`text-[10px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                   Solo miembros con al menos 1 encuentro real comprobado.
                 </span>
               </div>
@@ -170,16 +170,16 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
           {/* Audio Bio Toggle */}
           <div
             className={`p-3.5 rounded-2xl border flex items-center justify-between transition-colors ${
-              isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#180d14] border-[#e11d48]/30'
+              isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'
             }`}
           >
             <div className="flex items-center gap-2.5">
               <span className="material-symbols-outlined text-[20px] text-amber-500">mic</span>
               <div>
-                <span className={`font-label-caps text-[10px] uppercase font-bold block ${isLight ? 'text-[#0f172a]' : 'text-white'}`}>
+                <span className={`font-label-caps text-[10px] uppercase font-bold block ${isLight ? 'text-[#16223b]' : 'text-white'}`}>
                   Audio-Bio Activa 🎙️
                 </span>
-                <span className={`text-[10px] ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                <span className={`text-[10px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                   Perfiles que tienen una nota de voz grabada.
                 </span>
               </div>
@@ -208,10 +208,10 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
                     onClick={() => toggleInterest(interest.slug)}
                     className={`px-2.5 py-1 rounded-full text-[11px] font-body-sm transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-[#d91f4f] text-white font-bold shadow-elevation-sm'
+                        ? 'bg-[#f16b48] text-white font-bold shadow-elevation-sm'
                         : isLight
-                        ? 'bg-white border border-[#fecdd3] text-[#475569] hover:bg-[#fff5f6]'
-                        : 'bg-[#180c12] border border-[#e11d48]/20 text-[#fda4af]/70 hover:border-[#e11d48]/50'
+                        ? 'bg-white border border-[#ffe3d3] text-[#2e5570] hover:bg-[#fcf9f2]'
+                        : 'bg-[#131f36] border border-[#f16b48]/20 text-[#ffb295]/70 hover:border-[#f16b48]/50'
                     }`}
                   >
                     {interest.name}
@@ -225,7 +225,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
         {/* Footer Actions */}
         <div
           className={`p-4 border-t flex justify-between items-center gap-3 shrink-0 ${
-            isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#1a0c13] border-[#e11d48]/30'
+            isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'
           }`}
         >
           <Button variant="ghost" onClick={handleReset} className="text-[10px] tracking-wider">

@@ -8,15 +8,21 @@ interface BottomNavBarProps {
   currentTab: TabType;
   onTabChange: (tab: TabType) => void;
   unreadMessagesCount: number;
-  pendingDatesCount: number;
+  newLikesCount: number;
   userAvatar?: string;
 }
 
+// Barra chata de 4 tabs (Descubrir / Me gusta / Chats / Perfil), pegada al borde
+// inferior — igual a Discover.dc.html y Likes.dc.html del diseño aprobado. Antes
+// era una tarjeta "liquid glass" flotante con 6 tabs (incluía Citas y Tienda, que
+// ahora viven en el menú hamburguesa) y una píldora sólida degradada detrás del
+// ícono activo; ahora el ícono activo queda con solo un trazo coral sobre una
+// píldora translúcida, sin el glassmorphism ni el flotado con margen.
 export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   currentTab,
   onTabChange,
   unreadMessagesCount,
-  pendingDatesCount,
+  newLikesCount,
   userAvatar,
 }) => {
   const { isLight } = useTheme();
@@ -33,26 +39,16 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
       icon: 'explore',
     },
     {
-      id: 'citas',
-      label: 'Citas',
-      icon: 'event_available',
-      badge: pendingDatesCount,
-    },
-    {
-      id: 'matches',
-      label: 'Match',
+      id: 'likes',
+      label: 'Me gusta',
       icon: 'favorite',
+      badge: newLikesCount,
     },
     {
       id: 'mensajes',
-      label: 'Mensajes',
+      label: 'Chats',
       icon: 'chat_bubble',
       badge: unreadMessagesCount,
-    },
-    {
-      id: 'tienda',
-      label: 'Tienda',
-      icon: 'local_mall',
     },
     {
       id: 'perfil',
@@ -62,79 +58,57 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   ];
 
   return (
-    // Envoltorio fixed con inset:0 puro (sin cálculos) que sí cubre el viewport real de forma
-    // confiable, y centra el nav adentro con flexbox — en vez de depender de left/right +
-    // margin:auto sobre el propio elemento fixed, que en la práctica seguía saliendo
-    // descentrado en algunos navegadores móviles aunque la matemática fuera correcta.
-    <div
+    <nav
+      id="bottom-navigation-bar"
       style={{
-        paddingBottom: 'calc(0.625rem + env(safe-area-inset-bottom))',
-        paddingLeft: '0.625rem',
-        paddingRight: '0.625rem',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        background: isLight ? '#FCF9F2' : 'var(--midnight-950)',
+        borderTop: `1px solid ${isLight ? 'rgba(22,34,59,0.08)' : 'var(--hairline)'}`,
       }}
-      className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none"
+      className="fixed inset-x-0 bottom-0 z-50"
     >
-      <nav
-        id="bottom-navigation-bar"
-        className={`pointer-events-auto w-full max-w-[416px] rounded-[24px] border liquid-glass transition-colors duration-300 ${
-          isLight
-            ? 'bg-white/75 border-white/60 shadow-elevation-lg'
-            : 'bg-[#0a1120]/65 border-white/10 shadow-elevation-lg'
-        }`}
-      >
-      <div className="flex justify-around items-center py-1 px-1.5 w-full max-w-full">
+      <div className="flex justify-around items-stretch w-full max-w-[440px] mx-auto h-[78px] pb-[14px]">
         {tabs.map((tab) => {
           const isActive = currentTab === tab.id;
 
-          // Cada ícono vive en su propia pastilla circular que se desliza entre tabs. El
-          // tab de Match tenía antes un botón circular elevado (-mt-4) distinto al resto —
-          // con 6 tabs en vez de 5 ya no quedaba espacio y se pisaba con Mensajes, así que
-          // pasa a ser un tab más, igual que Descubrir/Citas/Mensajes/Tienda/Perfil.
           return (
             <motion.button
               key={tab.id}
               id={`nav-btn-${tab.id}`}
-              whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.92 }}
               onClick={() => {
                 sounds.playClick();
                 onTabChange(tab.id);
               }}
-              className="flex flex-col items-center justify-center gap-0.5 py-1 px-1 min-w-0 flex-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f16b48]/40"
+              className="flex flex-col items-center justify-center gap-1 flex-1 min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]/50"
             >
-              <span className="relative flex items-center justify-center w-10 h-10 rounded-full">
-                {/* Pastilla circular que se desliza entre tabs (layoutId compartido: motion
-                    la anima automáticamente de una posición a otra). */}
+              <span className="relative flex items-center justify-center w-10 h-7 rounded-[var(--radius-pill)]">
                 {isActive && (
                   <motion.div
                     layoutId="bottomNavActivePill"
                     layout="position"
                     transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                    className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#f16b48] via-[#ff8a65] to-[#ffb295] shadow-elevation-sm"
+                    className="absolute inset-0 rounded-[var(--radius-pill)]"
+                    style={{
+                      background: 'rgba(255, 138, 101, 0.14)',
+                      border: '1px solid var(--coral-500)',
+                    }}
                   />
                 )}
 
-                {/* Badge for Notifications / Pending Counts */}
                 {tab.badge !== undefined && tab.badge > 0 && (
                   <span
-                    className={`absolute -top-0.5 -right-0.5 z-10 min-w-[16px] h-4 px-1 rounded-full text-[9px] font-bold flex items-center justify-center text-white ring-2 animate-pulseGlow ${
-                      isLight ? 'bg-[#f16b48] ring-white' : 'bg-[#f16b48] ring-[#0a1120]'
-                    }`}
+                    className="absolute -top-1.5 -right-1 z-10 min-w-[16px] h-4 px-1 rounded-[var(--radius-pill)] text-[9px] font-bold flex items-center justify-center text-white ring-2 animate-pulseGlow"
+                    style={{ background: 'var(--coral-600)', ringColor: isLight ? '#FCF9F2' : 'var(--midnight-950)' } as React.CSSProperties}
                   >
                     {tab.badge}
                   </span>
                 )}
 
-                {/* Tab Icon or Profile Avatar */}
                 {tab.id === 'perfil' && userAvatar ? (
                   <span
-                    className={`relative z-10 w-6 h-6 rounded-full overflow-hidden transition-all p-0.5 border ${
-                      isActive
-                        ? 'border-white/80'
-                        : isLight
-                        ? 'border-gray-300'
-                        : 'border-[#ffb295]/40'
-                    }`}
+                    className="relative z-10 w-6 h-6 rounded-[var(--radius-pill)] overflow-hidden transition-all p-0.5 border"
+                    style={{ borderColor: isActive ? 'var(--coral-500)' : isLight ? 'rgba(22,34,59,0.15)' : 'var(--hairline-strong)' }}
                   >
                     <img
                       src={userAvatar}
@@ -145,25 +119,22 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                   </span>
                 ) : (
                   <span
-                    className={`relative z-10 material-symbols-outlined text-[21px] transition-colors ${
-                      isActive ? 'text-white' : isLight ? 'text-[#5b6478]' : 'text-[#ffb295]'
-                    }`}
-                    style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+                    className="relative z-10 material-symbols-outlined text-[21px] transition-colors"
+                    style={{
+                      color: isActive ? 'var(--coral-500)' : isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)',
+                      fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
+                    }}
                   >
                     {tab.icon}
                   </span>
                 )}
               </span>
               <span
-                className={`font-label-caps text-[9px] tracking-wider uppercase font-medium transition-colors ${
-                  isActive
-                    ? isLight
-                      ? 'text-[#f16b48] font-bold'
-                      : 'text-[#ffb295] font-bold'
-                    : isLight
-                    ? 'text-[#5b6478]'
-                    : 'text-[#ffb295] opacity-65'
-                }`}
+                className="font-label-caps text-[9px] tracking-wider uppercase font-medium transition-colors"
+                style={{
+                  color: isActive ? 'var(--coral-500)' : isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)',
+                  fontWeight: isActive ? 700 : 500,
+                }}
               >
                 {tab.label}
               </span>
@@ -171,7 +142,6 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
           );
         })}
       </div>
-      </nav>
-    </div>
+    </nav>
   );
 };

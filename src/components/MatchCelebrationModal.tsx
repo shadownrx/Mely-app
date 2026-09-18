@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Profile } from '../types';
 import { sounds } from '../utils/audio';
+import { useAuth } from '../context/AuthContext';
 
 interface MatchCelebrationModalProps {
   profile: Profile | null;
@@ -20,6 +21,15 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
   onClose,
 }) => {
   const firedFor = useRef<string | null>(null);
+  const { user } = useAuth();
+
+  // Chip de "interés en común" que faltaba (Match.dc.html): el primer interés que
+  // aparece tanto en el perfil propio como en el del match.
+  const sharedInterest = useMemo(() => {
+    if (!profile || !user) return null;
+    const mine = new Set(user.interests.map((i) => i.id));
+    return profile.interests.find((i) => mine.has(i.id)) ?? null;
+  }, [profile, user]);
 
   useEffect(() => {
     if (!profile || firedFor.current === profile.id) return;
@@ -72,15 +82,28 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
             transition={{ type: 'spring', stiffness: 320, damping: 26 }}
             className="relative z-10 w-full max-w-[340px] flex flex-col items-center text-center"
           >
+            <button
+              type="button"
+              onClick={() => {
+                sounds.playClick();
+                onClose();
+              }}
+              aria-label="Cerrar"
+              className="absolute -top-2 right-0 w-9 h-9 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/80 hover:bg-white/20 transition-colors"
+            >
+              <span className="material-symbols-outlined text-[18px]">close</span>
+            </button>
+
             <span className="text-[13px] font-bold tracking-wide text-white/80 uppercase">MELY</span>
 
             <motion.h2
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.3 }}
-              className="font-headline-md text-[32px] font-extrabold text-white mt-2"
+              className="text-[34px] italic font-semibold text-white mt-2"
+              style={{ fontFamily: 'var(--font-display)' }}
             >
-              ¡Es un match!
+              Es un match
             </motion.h2>
             <motion.p
               initial={{ opacity: 0 }}
@@ -90,6 +113,22 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
             >
               A vos y a {profile.displayName} les gustaron mutuamente
             </motion.p>
+
+            {sharedInterest && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45, duration: 0.3 }}
+                className="mt-3 flex items-center gap-1.5 rounded-[var(--radius-pill)] bg-white/10 border border-white/15 px-3.5 py-1.5 max-w-[280px]"
+              >
+                <span className="material-symbols-outlined text-[16px] text-[var(--coral-300)]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  favorite
+                </span>
+                <span className="text-[12.5px] font-medium text-white/90 truncate">
+                  A ambos les gusta {sharedInterest.name.toLowerCase()}
+                </span>
+              </motion.div>
+            )}
 
             {coinsEarned > 0 && (
               <motion.div
@@ -155,7 +194,8 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
                   sounds.playClick();
                   onSendMessage();
                 }}
-                className="w-full h-13 rounded-full bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white text-[15px] font-bold shadow-[0_10px_24px_-8px_rgba(225,29,72,0.6)]"
+                className="w-full h-13 rounded-[var(--radius-pill)] bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-[15px] font-bold shadow-[0_10px_24px_-8px_rgba(225,29,72,0.6)]"
+                style={{ color: 'var(--ink-on-coral)' }}
               >
                 Enviar mensaje
               </button>
@@ -165,9 +205,9 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
                   sounds.playClick();
                   onClose();
                 }}
-                className="w-full h-13 rounded-full text-white/80 text-[14px] font-bold"
+                className="w-full h-13 rounded-[var(--radius-pill)] border border-white/25 text-white/85 text-[14px] font-bold"
               >
-                Seguir viendo perfiles
+                Seguir explorando
               </button>
             </motion.div>
           </motion.div>

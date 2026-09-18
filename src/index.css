@@ -249,6 +249,23 @@
     --radius-panel: 24px;
     --shadow-panel: 0 18px 45px -28px rgb(10 17 32 / 0.35);
 
+    /* Escala de radios del diseño — antes solo existía --radius-panel y cada
+       componente improvisaba su propio valor de Tailwind (rounded-xl, rounded-2xl,
+       rounded-[20px]...), lo que generaba pequeñas inconsistencias pantalla a
+       pantalla. Se agrega la escala completa para unificar. */
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --radius-pill: 999px;
+
+    /* Sombras del diseño — tintadas de medianoche, nunca negro puro. */
+    --shadow-sm: 0 1px 2px rgba(4, 8, 18, 0.45);
+    --shadow-md: 0 12px 28px -10px rgba(4, 8, 18, 0.55);
+    --shadow-lg: 0 28px 56px -18px rgba(4, 8, 18, 0.65);
+    --shadow-coral: 0 14px 30px -12px rgba(255, 138, 101, 0.45);
+    --shadow-inset-top: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
     --font-serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
     --font-mono: 'Space Mono', monospace;
     --font-sans: 'Manrope', -apple-system, 'Segoe UI', sans-serif;
@@ -599,7 +616,7 @@
   box-shadow:
     0 4px 10px rgba(0, 0, 0, 0.5),
     0 26px 56px -16px rgba(255, 138, 101, 0.36),
-    0 56px 96px -40px rgba(255, 138, 101, 0.28);
+    0 56px 84px -40px rgba(255, 138, 101, 0.28);
 }
 
 /* Resalte interior sutil en superficies de vidrio (glass) — simula el borde superior

@@ -8,7 +8,6 @@ import { useAuth } from '../context/AuthContext';
 import { useShop, usePurchase } from '../hooks/useShop';
 import { useClaimDailyBonus, useCoinPacks, useRecharge, useRedeemCode, useWallet, useWalletHistory } from '../hooks/useWallet';
 import { useWhoLikedMe } from '../hooks/useDiscover';
-import { WhoLikedYouModal } from './WhoLikedYouModal';
 import type { ShopItem } from '../types';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -111,7 +110,11 @@ function describeLedgerReason(reason: string, shopItems: ShopItem[]): { icon: st
   return { icon: 'receipt_long', label: reason };
 }
 
-export const StoreView: React.FC = () => {
+interface StoreViewProps {
+  onOpenLikes?: () => void;
+}
+
+export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
   const { isLight } = useTheme();
   const { user, refreshUser } = useAuth();
   const { data: shopItems = [], isLoading: isLoadingShop } = useShop();
@@ -128,7 +131,6 @@ export const StoreView: React.FC = () => {
   const [promoCode, setPromoCode] = useState('');
   const [receipt, setReceipt] = useState<string | null>(null);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
-  const [whoLikedOpen, setWhoLikedOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<StoreTab>('membresias');
 
   const walletBalance = wallet?.balance ?? 0;
@@ -136,7 +138,6 @@ export const StoreView: React.FC = () => {
   const boostActiveMinutes = minutesLeft(user?.boostedUntil ?? null);
   const likesUnlockActiveMinutes = minutesLeft(user?.likesUnlockedUntil ?? null);
   const likesAlreadyIncluded = membershipTier !== 'STANDARD';
-  const likesUnlockItem = shopItems.find((i) => i.key === 'LIKES_UNLOCK');
 
   const celebrate = () => {
     try {
@@ -297,7 +298,7 @@ export const StoreView: React.FC = () => {
           type="button"
           onClick={() => {
             sounds.playClick();
-            setWhoLikedOpen(true);
+            onOpenLikes?.();
           }}
           className={`flex items-center gap-3 p-3.5 rounded-2xl border text-left transition-transform active:scale-[0.98] ${
             isLight
@@ -673,12 +674,6 @@ export const StoreView: React.FC = () => {
           </Button>
         </DialogContent>
       </Dialog>
-
-      <WhoLikedYouModal
-        open={whoLikedOpen}
-        onOpenChange={setWhoLikedOpen}
-        likesUnlockPrice={likesUnlockItem?.price ?? 60}
-      />
     </div>
   );
 };

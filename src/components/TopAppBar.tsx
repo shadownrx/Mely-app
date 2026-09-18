@@ -34,13 +34,13 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
     <header
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
       // backdrop-blur-sm en vez de -md: el fondo ya es casi opaco (bg-white/95,
-      // bg-[#0d070a]/90) así que el blur aporta poco visualmente, pero en un header fixed
+      // bg-[#0a1120]/90) así que el blur aporta poco visualmente, pero en un header fixed
       // que siempre está recompositando (sobre todo con las cartas de Descubrir
       // arrastrándose debajo) puede disparar el bug de Chrome Android que deja pegado
       // un frame viejo de otra pestaña detrás del blur — bajar la intensidad reduce esa
       // chance sin cambiar cómo se ve.
       className={`fixed top-0 w-full z-50 transition-colors duration-200 border-b backdrop-blur-sm glass-surface shadow-elevation-sm ${
-        isLight ? 'bg-[#fbfaf9]/90 border-black/8' : 'bg-[#0d070a]/90 border-[#e11d48]/20'
+        isLight ? 'bg-[#fcf9f2]/90 border-black/8' : 'bg-[#0a1120]/90 border-[#f16b48]/20'
       }`}
     >
       <div className="flex justify-between items-center h-16 px-3 max-w-[440px] mx-auto gap-2">
@@ -56,8 +56,8 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
             }}
             className={`rounded-full transition-colors ${
               isLight
-                ? 'text-[#0f172a] hover:text-[#e11d48] hover:bg-[#fff1f3]'
-                : 'text-[#fda4af] hover:text-[#e11d48] hover:bg-white/5'
+                ? 'text-[#16223b] hover:text-[#f16b48] hover:bg-[#fcf9f2]'
+                : 'text-[#ffb295] hover:text-[#f16b48] hover:bg-white/5'
             }`}
             aria-label="Volver"
           >
@@ -74,8 +74,8 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
             }}
             className={`rounded-full transition-colors ${
               isLight
-                ? 'text-[#0f172a] hover:text-[#e11d48] hover:bg-[#fff1f3]'
-                : 'text-[#fda4af] hover:text-[#e11d48] hover:bg-white/5'
+                ? 'text-[#16223b] hover:text-[#f16b48] hover:bg-[#fcf9f2]'
+                : 'text-[#ffb295] hover:text-[#f16b48] hover:bg-white/5'
             }`}
             aria-label="Menú principal"
           >
@@ -88,9 +88,9 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
           className="flex flex-col items-center justify-center cursor-pointer select-none"
           onClick={() => onTabChange('descubrir')}
         >
-          <h1 className="font-headline-md text-[17px] font-bold text-[#e11d48]">{customTitle || 'MELY'}</h1>
+          <h1 className={`text-[17px] font-bold text-[#f16b48] ${customTitle ? 'font-headline-md' : 'font-wordmark'}`}>{customTitle || 'MELY'}</h1>
           {customSubtitle && (
-            <span className={`text-[10px] -mt-0.5 ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>{customSubtitle}</span>
+            <span className={`text-[10px] -mt-0.5 ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>{customSubtitle}</span>
           )}
         </div>
 
@@ -109,21 +109,21 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
             }}
             className={`relative h-8 px-2.5 rounded-2xl active:scale-95 flex items-center gap-1.5 group border transition-all duration-200 shadow-elevation-sm hover:shadow-elevation-md ${
               isLight
-                ? 'bg-[#ffffff] text-[#0f172a] border-[#fecdd3] hover:border-[#e11d48]'
-                : 'bg-[#1c0b11] text-[#fda4af] hover:text-[#fb7185] border-[#e11d48]/30'
+                ? 'bg-[#ffffff] text-[#16223b] border-[#ffe3d3] hover:border-[#f16b48]'
+                : 'bg-[#131f36] text-[#ffb295] hover:text-[#ffb295] border-[#f16b48]/30'
             }`}
             aria-label="Tienda y saldo Mely Coins"
             title="Ver Tienda & Monedas"
           >
             <span
-              className="material-symbols-outlined text-[18px] text-[#e11d48] group-hover:scale-110 transition-transform"
+              className="material-symbols-outlined text-[18px] text-[#f16b48] group-hover:scale-110 transition-transform"
               style={{ fontVariationSettings: "'FILL' 1" }}
             >
               monetization_on
             </span>
             <span
               className={`font-meta-data text-[11px] font-bold px-0.5 ${
-                isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'
+                isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'
               }`}
             >
               {walletBalance.toLocaleString()}

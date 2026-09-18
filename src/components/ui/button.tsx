@@ -9,13 +9,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-[#d91f4f] text-white shadow-elevation-sm hover:bg-[#b81742] hover:shadow-elevation-md',
+          'bg-[#f16b48] text-white shadow-elevation-sm hover:bg-[#d4552f] hover:shadow-elevation-md',
         cherry:
-          'bg-[#d91f4f] text-white shadow-elevation-md hover:bg-[#b81742] hover:shadow-elevation-lg',
+          'bg-[#f16b48] text-white shadow-elevation-md hover:bg-[#d4552f] hover:shadow-elevation-lg',
         destructive:
           'bg-red-500 text-white shadow-elevation-sm hover:bg-red-600 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800',
         outline:
-          'border border-black/10 bg-white text-slate-800 hover:bg-[#fff1f4] hover:text-[#b81742] dark:border-white/10 dark:bg-[#140b0f] dark:text-rose-100 dark:hover:bg-rose-950/40',
+          'border border-black/10 bg-white text-slate-800 hover:bg-[#fcf9f2] hover:text-[#d4552f] dark:border-white/10 dark:bg-[#0f1a2e] dark:text-rose-100 dark:hover:bg-rose-950/40',
         secondary:
           'bg-rose-100 text-rose-900 hover:bg-rose-200 dark:bg-rose-950/60 dark:text-rose-200 dark:hover:bg-rose-900/60',
         ghost:

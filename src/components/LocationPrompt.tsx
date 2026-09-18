@@ -39,20 +39,20 @@ export const LocationPrompt: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, height: 0, marginBottom: 0 }}
         transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className="rounded-2xl p-3.5 border border-slate-100 dark:border-white/10 bg-white dark:bg-[#150f11] flex items-center gap-3 mb-1"
+        className="rounded-2xl p-3.5 border border-slate-100 dark:border-white/10 bg-white dark:bg-[#131f36] flex items-center gap-3 mb-1"
       >
-        <div className="w-10 h-10 rounded-full bg-[#fff1f3] dark:bg-[#e11d48]/15 flex items-center justify-center shrink-0">
-          <span className="material-symbols-outlined text-[19px] text-[#e11d48]">location_on</span>
+        <div className="w-10 h-10 rounded-full bg-[#fcf9f2] dark:bg-[#f16b48]/15 flex items-center justify-center shrink-0">
+          <span className="material-symbols-outlined text-[19px] text-[#f16b48]">location_on</span>
         </div>
         <div className="flex-1 min-w-0">
           <span className="block text-[13px] font-bold">Activá tu ubicación</span>
-          <span className="block text-[11px] text-slate-500 dark:text-[#a89a9e]">Así te mostramos gente cerca tuyo, no de cualquier ciudad</span>
+          <span className="block text-[11px] text-slate-500 dark:text-[#8a93a8]">Así te mostramos gente cerca tuyo, no de cualquier ciudad</span>
         </div>
         <button
           type="button"
           onClick={handleActivate}
           disabled={updateLocation.isPending}
-          className="shrink-0 h-9 px-3.5 rounded-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[12.5px] font-bold disabled:opacity-60"
+          className="shrink-0 h-9 px-3.5 rounded-full bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white text-[12.5px] font-bold disabled:opacity-60"
         >
           {updateLocation.isPending ? '...' : 'Activar'}
         </button>

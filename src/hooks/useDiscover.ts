@@ -12,7 +12,9 @@ export function useDiscover(filters: DiscoveryFilters) {
         interests: filters.selectedInterests,
       }),
     select: (data) => ({
-      ...data,
+      // El endpoint /discover ya devuelve la cuota diaria junto con los perfiles en la
+      // misma respuesta — antes se descartaba acá y la UI nunca mostraba el límite.
+      quota: data.quota,
       // minAge/maxAge/withAudioBioOnly no tienen query param en el backend (son preferencia
       // del viewer, no del request) — se refinan acá sobre la página ya traída del server.
       profiles: data.profiles.filter((p) => {
@@ -21,6 +23,17 @@ export function useDiscover(filters: DiscoveryFilters) {
         return true;
       }),
     }),
+  });
+}
+
+// "Persona del día": una selección editorial diaria, separada del mazo normal de
+// /discover — el backend ya la expone en /discover/person-of-the-day pero nada en la
+// UI la pedía ni la mostraba todavía.
+export function usePersonOfTheDay() {
+  return useQuery({
+    queryKey: ['personOfTheDay'],
+    queryFn: discoverApi.getPersonOfTheDay,
+    staleTime: 10 * 60 * 1000,
   });
 }
 

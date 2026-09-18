@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import { sounds } from './utils/audio';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { useAuth } from './context/AuthContext';
-import { useDiscover, useSwipe } from './hooks/useDiscover';
+import { useDiscover, usePersonOfTheDay, useSwipe } from './hooks/useDiscover';
 import { useMatches } from './hooks/useMatches';
 import { useWallet } from './hooks/useWallet';
 import { useAllDateProposals } from './hooks/useDates';
@@ -45,7 +45,7 @@ const DateQRModal = lazy(() => import('./components/DateQRModal').then((m) => ({
 
 const TabFallback: React.FC = () => (
   <div className="w-full flex-1 flex items-center justify-center py-20">
-    <span className="material-symbols-outlined text-[32px] text-[#e11d48] animate-pulse">favorite</span>
+    <span className="material-symbols-outlined text-[32px] text-[#f16b48] animate-pulse">favorite</span>
   </div>
 );
 
@@ -89,6 +89,7 @@ function AppContent() {
   }, [user?.minAge, user?.maxAge, user?.maxDistanceKm]);
 
   const discoverQuery = useDiscover(discoveryFilters);
+  const personOfTheDayQuery = usePersonOfTheDay();
   const swipe = useSwipe();
   const matchesQuery = useMatches();
   const walletQuery = useWallet();
@@ -236,14 +237,14 @@ function AppContent() {
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <span className="material-symbols-outlined text-[36px] text-[#e11d48] animate-pulse">favorite</span>
+        <span className="material-symbols-outlined text-[36px] text-[#f16b48] animate-pulse">favorite</span>
       </div>
     );
   }
 
   if (status === 'unauthenticated' || !user) {
     return (
-      <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'} antialiased flex flex-col items-center justify-center selection:bg-[#e11d48] selection:text-white p-2`}>
+      <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-center selection:bg-[#f16b48] selection:text-white p-2`}>
         <Suspense fallback={<TabFallback />}>
           {authScreen === 'login' ? (
             <LoginView
@@ -274,7 +275,7 @@ function AppContent() {
   const isChatDetail = currentTab === 'mensajes' && Boolean(activeConnectionId);
 
   return (
-    <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'} antialiased flex flex-col items-center justify-start selection:bg-[#e11d48] selection:text-white`}>
+    <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-start selection:bg-[#f16b48] selection:text-white`}>
       {!isChatDetail && (
         <TopAppBar
           currentTab={currentTab}
@@ -321,12 +322,15 @@ function AppContent() {
               <DiscoverView
                 profiles={discoverQuery.data?.profiles ?? []}
                 isLoading={discoverQuery.isLoading || discoverQuery.isFetching}
+                quota={discoverQuery.data?.quota}
+                personOfTheDay={personOfTheDayQuery.data?.person ?? null}
                 onLike={handleLike}
                 onPass={handlePass}
                 onSuperLike={handleSuperLike}
                 onOpenFilters={() => setIsFiltersOpen(true)}
                 activeFiltersCount={activeFiltersCount}
                 onOpenVerifiedSpots={() => setIsVerifiedSpotsOpen(true)}
+                onOpenStore={() => handleTabChange('tienda')}
                 onReload={() => discoverQuery.refetch()}
               />
             )}

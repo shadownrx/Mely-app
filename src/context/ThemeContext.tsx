@@ -63,17 +63,17 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       root.classList.remove('theme-dark', 'dark');
       body.classList.add('theme-light');
       body.classList.remove('theme-dark', 'dark');
-      body.style.backgroundColor = '#ffffff';
-      body.style.color = '#0f172a';
-      themeColorMeta?.setAttribute('content', '#ffffff');
+      body.style.backgroundColor = '#FCF9F2';
+      body.style.color = '#16223b';
+      themeColorMeta?.setAttribute('content', '#FCF9F2');
     } else {
       root.classList.add('theme-dark', 'dark');
       root.classList.remove('theme-light');
       body.classList.add('theme-dark', 'dark');
       body.classList.remove('theme-light');
-      body.style.backgroundColor = '#0b090a';
-      body.style.color = '#fdf2f4';
-      themeColorMeta?.setAttribute('content', '#0b090a');
+      body.style.backgroundColor = '#0a1120';
+      body.style.color = '#f5f1e8';
+      themeColorMeta?.setAttribute('content', '#0a1120');
     }
   }, [theme]);
 
@@ -92,4 +92,3 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 };
 
 export const useTheme = () => useContext(ThemeContext);
-

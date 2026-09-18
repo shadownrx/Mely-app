@@ -16,8 +16,9 @@ import { toast } from 'sonner';
 import { sounds } from './utils/audio';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { useAuth } from './context/AuthContext';
-import { useDiscover, usePersonOfTheDay, useSwipe } from './hooks/useDiscover';
+import { useDiscover, usePersonOfTheDay, useSwipe, useWhoLikedMe } from './hooks/useDiscover';
 import { useMatches } from './hooks/useMatches';
+import { useShop } from './hooks/useShop';
 import { useWallet } from './hooks/useWallet';
 import { useAllDateProposals } from './hooks/useDates';
 import { useSendMessage } from './hooks/useChat';
@@ -30,12 +31,14 @@ import type { Stamp } from './types';
 // Todo lo que no hace falta en el primer paint (pantallas fuera de Descubrir, y los
 // modales que solo se abren con una acción explícita) se carga bajo demanda: reduce
 // bastante el bundle inicial, sobre todo DateQRModal (arrastra qr-scanner + qrcode).
+const LikesView = lazy(() => import('./components/LikesView').then((m) => ({ default: m.LikesView })));
 const MatchesView = lazy(() => import('./components/MatchesView').then((m) => ({ default: m.MatchesView })));
 const MessagesView = lazy(() => import('./components/MessagesView').then((m) => ({ default: m.MessagesView })));
 const StoreView = lazy(() => import('./components/StoreView').then((m) => ({ default: m.StoreView })));
 const DatesView = lazy(() => import('./components/DatesView').then((m) => ({ default: m.DatesView })));
 const ProfileView = lazy(() => import('./components/ProfileView').then((m) => ({ default: m.ProfileView })));
 const SettingsView = lazy(() => import('./components/SettingsView').then((m) => ({ default: m.SettingsView })));
+const WelcomeView = lazy(() => import('./components/WelcomeView').then((m) => ({ default: m.WelcomeView })));
 const LoginView = lazy(() => import('./components/LoginView').then((m) => ({ default: m.LoginView })));
 const RegisterView = lazy(() => import('./components/RegisterView').then((m) => ({ default: m.RegisterView })));
 const IcebreakerWheelModal = lazy(() =>
@@ -57,7 +60,11 @@ function AppContent() {
   const { isLight } = useTheme();
   const { status, user, logout } = useAuth();
   const queryClient = useQueryClient();
-  const [authScreen, setAuthScreen] = useState<'login' | 'register'>('login');
+  // Antes el login arrancaba directo en el formulario, sin ningún momento de marca
+  // (Main.dc.html define una pantalla de bienvenida hero con headline editorial y 2
+  // CTAs antes de llegar ahí). 'welcome' es la pantalla inicial; login/register se
+  // acceden desde sus CTAs.
+  const [authScreen, setAuthScreen] = useState<'welcome' | 'login' | 'register'>('welcome');
   const [googlePrefill, setGooglePrefill] = useState<GooglePrefill | null>(null);
 
   const [currentTab, setCurrentTab] = useState<TabType>('descubrir');
@@ -93,6 +100,8 @@ function AppContent() {
   const swipe = useSwipe();
   const matchesQuery = useMatches();
   const walletQuery = useWallet();
+  const whoLikedMeQuery = useWhoLikedMe();
+  const shopQuery = useShop();
   const icebreakerSendMessage = useSendMessage(icebreaker?.connectionId ?? '');
 
   const matches: Match[] = matchesQuery.data ?? [];
@@ -102,6 +111,11 @@ function AppContent() {
   const pendingDatesCount = dateItems.filter(
     (it) => it.dateMeet.status === 'AGREED' || it.dateMeet.status === 'CHECKED_IN',
   ).length;
+  // Sólo cuenta como "nuevo" para el badge de la tab si todavía no se desbloqueó la
+  // lista — una vez desbloqueada, el usuario ya la vio, así que no tiene sentido
+  // seguir mostrando el número en rojo indefinidamente.
+  const newLikesCount = whoLikedMeQuery.data && !whoLikedMeQuery.data.unlocked ? whoLikedMeQuery.data.count : 0;
+  const likesUnlockPrice = shopQuery.data?.find((i) => i.key === 'LIKES_UNLOCK')?.price ?? 60;
 
   useEffect(() => {
     if (!(matchesQuery.error instanceof ApiError) || matchesQuery.error.status !== 401) return;
@@ -246,7 +260,9 @@ function AppContent() {
     return (
       <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-center selection:bg-[#f16b48] selection:text-white p-2`}>
         <Suspense fallback={<TabFallback />}>
-          {authScreen === 'login' ? (
+          {authScreen === 'welcome' ? (
+            <WelcomeView onCreateAccount={() => setAuthScreen('register')} onGoToLogin={() => setAuthScreen('login')} />
+          ) : authScreen === 'login' ? (
             <LoginView
               onGoToRegister={() => setAuthScreen('register')}
               onGoogleNeedsProfile={(data) => {
@@ -273,6 +289,12 @@ function AppContent() {
   // navegación de la app (header + tab bar) se saca por completo — el chat ya tiene su
   // propio header con botón de volver, y así aprovecha toda la altura de la pantalla.
   const isChatDetail = currentTab === 'mensajes' && Boolean(activeConnectionId);
+  // Descubrir / Me gusta / Chats / Perfil son las 4 tabs de primer nivel de la bottom
+  // nav (per Discover.dc.html/Likes.dc.html). Matches, Tienda y Citas se sacaron de la
+  // bottom nav y ahora se llega a ellas solo desde el menú hamburguesa — como son
+  // pantallas "secundarias" empujadas desde el menú, se tratan igual que Ajustes: header
+  // con flecha de volver en vez de la bottom nav de 4 tabs.
+  const isSecondaryScreen = currentTab === 'ajustes' || currentTab === 'matches' || currentTab === 'tienda' || currentTab === 'citas';
 
   return (
     <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-start selection:bg-[#f16b48] selection:text-white`}>
@@ -283,7 +305,7 @@ function AppContent() {
           onTabChange={handleTabChange}
           onNavigateNotification={handleNotificationNavigate}
           onOpenMenu={() => setIsMenuOpen(true)}
-          showBackButton={currentTab === 'ajustes'}
+          showBackButton={isSecondaryScreen}
           onBack={() => setCurrentTab(previousTab)}
           customTitle={
             currentTab === 'ajustes'
@@ -294,7 +316,9 @@ function AppContent() {
                   ? 'Mensajes'
                   : currentTab === 'matches'
                     ? 'Matches'
-                    : 'MELY'
+                    : currentTab === 'likes'
+                      ? 'Me gusta'
+                      : 'MELY'
           }
         />
       )}
@@ -302,9 +326,14 @@ function AppContent() {
       <main
         style={{
           paddingTop: isChatDetail ? 'env(safe-area-inset-top)' : `calc(${currentTab === 'mensajes' ? '4rem' : '5rem'} + env(safe-area-inset-top))`,
-          // +0.75rem: el nav ahora flota con margen respecto al borde inferior en vez de
-          // quedar pegado (ver BottomNavBar), así el contenido no queda tapado por ese hueco.
-          paddingBottom: isChatDetail ? 'env(safe-area-inset-bottom)' : `calc(${currentTab === 'mensajes' ? '4.75rem' : '5.75rem'} + env(safe-area-inset-bottom))`,
+          // La bottom nav ahora queda pegada al borde inferior (78px + safe-area) en vez de
+          // flotar con margen — el padding se ajusta a esa altura real. En las pantallas
+          // secundarias (Ajustes/Matches/Tienda/Citas) la nav no se muestra, así que ahí
+          // alcanza con el safe-area, igual que en el detalle de un chat.
+          paddingBottom:
+            isChatDetail || isSecondaryScreen
+              ? 'env(safe-area-inset-bottom)'
+              : `calc(${currentTab === 'mensajes' ? '4.25rem' : '5rem'} + env(safe-area-inset-bottom))`,
         }}
         className={`app-page ${isChatDetail ? '' : currentTab === 'mensajes' ? 'px-2 sm:px-3' : 'px-4'} flex-1 flex flex-col min-h-0`}
       >
@@ -332,6 +361,14 @@ function AppContent() {
                 onOpenVerifiedSpots={() => setIsVerifiedSpotsOpen(true)}
                 onOpenStore={() => handleTabChange('tienda')}
                 onReload={() => discoverQuery.refetch()}
+              />
+            )}
+
+            {currentTab === 'likes' && (
+              <LikesView
+                likesUnlockPrice={likesUnlockPrice}
+                onOpenChat={handleOpenChat}
+                onExploreMore={() => handleTabChange('descubrir')}
               />
             )}
 
@@ -367,7 +404,7 @@ function AppContent() {
               />
             )}
 
-            {currentTab === 'tienda' && <StoreView />}
+            {currentTab === 'tienda' && <StoreView onOpenLikes={() => handleTabChange('likes')} />}
 
             {currentTab === 'citas' && (
               <DatesView
@@ -396,12 +433,12 @@ function AppContent() {
         </AnimatePresence>
       </main>
 
-      {currentTab !== 'ajustes' && !isChatDetail && (
+      {!isSecondaryScreen && !isChatDetail && (
         <BottomNavBar
           currentTab={currentTab}
           onTabChange={handleTabChange}
           unreadMessagesCount={unreadMessagesCount}
-          pendingDatesCount={pendingDatesCount}
+          newLikesCount={newLikesCount}
           userAvatar={user.photos[0]?.url}
         />
       )}
@@ -437,6 +474,7 @@ function AppContent() {
         onNavigate={handleTabChange}
         onSignOut={handleSignOut}
         user={user}
+        badges={{ citas: pendingDatesCount }}
       />
 
       <DiscoveryFiltersModal

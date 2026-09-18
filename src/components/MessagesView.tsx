@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Match, Message } from '../types';
+import { ConnectionStatus, Match, Message } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -172,6 +172,30 @@ const CONVERSATION_SPARKS = [
   '🎨 ¿Conocés la muestra nueva del MALBA?',
 ];
 
+// Progreso de la conexión — del diseño Premium aprobado (Conversation.dc.html): una
+// barra de 6 etapas que le muestra a la pareja en qué punto está la conexión, del
+// primer match a la segunda cita. No existía en el chat implementado; se agrega acá
+// sin tocar el resto de la lógica.
+const CONNECTION_STAGE_ORDER: ConnectionStatus[] = ['MATCH', 'TALKING', 'PROPOSAL', 'DATE_AGREED', 'DATE_VERIFIED', 'SECOND_DATE'];
+const CONNECTION_STAGE_NAMES: Record<ConnectionStatus, string> = {
+  MATCH: 'Match',
+  TALKING: 'Hablando',
+  PROPOSAL: 'Propuesta',
+  DATE_AGREED: 'Cita acordada',
+  DATE_VERIFIED: 'Cita verificada',
+  SECOND_DATE: 'Segunda cita',
+  INACTIVE: 'Inactiva',
+};
+
+const SAFETY_TIPS = [
+  { icon: 'groups', text: 'Elegí siempre un lugar público para la primera cita — nunca tu casa ni la de tu match.' },
+  { icon: 'share_location', text: 'Contale a un amigo o familiar dónde y con quién vas a estar.' },
+  { icon: 'videocam', text: 'Hacé una videollamada antes de encontrarte en persona, para confirmar que es quien dice ser.' },
+  { icon: 'qr_code_2', text: 'Usá el check-in con QR de MELY al llegar: así verificamos que la cita fue real y segura.' },
+  { icon: 'payments', text: 'Nunca envíes dinero ni datos bancarios a alguien que conociste en la app.' },
+  { icon: 'favorite', text: 'Si algo no te cierra, confiá en tu instinto — podés terminar la charla o la cita cuando quieras.' },
+];
+
 const STICKER_MARK = '::sticker::';
 const GIF_MARK = '::gif::';
 
@@ -221,6 +245,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const [showHeaderMenu, setShowHeaderMenu] = useState(false);
   const [showContactInfoDrawer, setShowContactInfoDrawer] = useState(false);
   const [showThemeCustomizer, setShowThemeCustomizer] = useState(false);
+  const [showSafetyTips, setShowSafetyTips] = useState(false);
 
   const [selectedThemeId, setSelectedThemeId] = useState<string>(() => {
     try {
@@ -646,6 +671,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   // VIEW: ACTIVE CHAT
   // =========================================================================
   const partner = activeMatch.other;
+  const connectionStageIndex = Math.max(0, CONNECTION_STAGE_ORDER.indexOf(activeMatch.status));
+  const conversationSparkChips = CONVERSATION_SPARKS.slice(0, 2);
 
   return (
     // Sin rounded/border/shadow acá: en isChatDetail (App.tsx) se saca la topbar/navbar y el
@@ -696,6 +723,19 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             abajo. Antes, con las 4 juntas + badge + menú, el nombre/estado de la izquierda
             se comprimía a 0px de ancho en pantallas angostas y quedaba pegado al avatar. */}
         <div className="flex items-center gap-1 shrink-0">
+          {/* Consejos de seguridad — del diseño Premium aprobado: un botón siempre visible
+              en el header del chat (antes esta info de confianza no existía en ningún lado
+              de la conversación). */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => { sounds.playClick(); setShowSafetyTips(true); }}
+            className={`h-8 w-8 rounded-full ${isLight ? 'text-[#2e5570]' : 'text-[#ffb295]/80'}`}
+            title="Consejos de seguridad"
+            aria-label="Consejos de seguridad"
+          >
+            <span className="material-symbols-outlined text-[18px]">shield</span>
+          </Button>
           {onOpenProposeModal && (
             <Button size="sm" onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }} className="h-8 px-2.5 rounded-full text-[11px] flex items-center gap-1 shrink-0">
               <span className="material-symbols-outlined text-[15px]">local_cafe</span>
@@ -749,6 +789,22 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             )}
           </div>
         </div>
+      </div>
+
+      {/* Progreso de la conexión — barra de 6 etapas del diseño Premium aprobado. */}
+      <div className={`px-3.5 pt-2 pb-1.5 shrink-0 flex flex-col gap-1.5 relative z-20 ${isLight ? 'bg-[#efe7d8]' : 'bg-[#0a1120]'}`}>
+        <div className="flex gap-1">
+          {CONNECTION_STAGE_ORDER.map((stage, i) => (
+            <span
+              key={stage}
+              className="flex-1 h-1 rounded-full transition-colors"
+              style={{ background: i <= connectionStageIndex ? 'var(--coral-500)' : isLight ? 'rgba(22,34,59,0.12)' : 'var(--midnight-700)' }}
+            />
+          ))}
+        </div>
+        <span className={`text-[10.5px] font-bold ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/60'}`}>
+          {CONNECTION_STAGE_NAMES[activeMatch.status]} · paso {connectionStageIndex + 1} de {CONNECTION_STAGE_ORDER.length}
+        </span>
       </div>
 
       {inChatSearchOpen && (
@@ -828,6 +884,22 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 </button>
               </div>
             </div>
+
+            {/* Acción de check-in — del diseño Premium aprobado: una vez que la cita está
+                acordada, el atajo para verificar con QR aparece directo en la tarjeta,
+                además del badge "Pase QR" que ya vive en el header. */}
+            {activeProposal.status === 'ACCEPTED' && onOpenDateQR && (
+              <button
+                type="button"
+                onClick={() => { sounds.playScanBeep(); onOpenDateQR(activeMatch.id, partner.displayName, partner.photos[0]?.url ?? ''); }}
+                className={`flex items-center justify-center gap-1.5 h-8 rounded-xl border text-[11px] font-bold transition-colors ${
+                  isLight ? 'border-[#f16b48]/30 text-[#f16b48] hover:bg-[#f16b48]/5' : 'border-[#f16b48]/30 text-[#ffb295] hover:bg-white/5'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[14px]">qr_code_2</span>
+                Ya estamos ahí · Verificar con QR
+              </button>
+            )}
 
             {counterFormOpen && (
               <form
@@ -1193,6 +1265,41 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
         </div>
       )}
 
+      {/* Proponer cita + icebreakers — del diseño Premium aprobado: en vez de esconder
+          "proponer cita" solo en el header/menú de adjuntos, y las ideas de conversación
+          solo en la bandeja "Ideas", se muestra un atajo persistente arriba del input
+          (igual que Conversation.dc.html), sin sacar los accesos que ya existían. */}
+      {!activeMediaTray && !showAttachmentMenu && !inChatSearchOpen && (
+        <div className="shrink-0 flex flex-col gap-2 px-3 pt-2 relative z-10">
+          {onOpenProposeModal && (
+            <button
+              type="button"
+              onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }}
+              className={`flex items-center justify-center gap-1.5 h-9 rounded-full border-[1.5px] text-[12.5px] font-bold transition-colors ${
+                isLight ? 'border-[#f16b48] text-[#f16b48] hover:bg-[#f16b48]/5' : 'border-[#f16b48] text-[#ffb295] hover:bg-white/5'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[16px]">local_cafe</span>
+              Proponer cita
+            </button>
+          )}
+          <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+            {conversationSparkChips.map((spark, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => { sounds.playClick(); setInputText(spark); inputRef.current?.focus(); }}
+                className={`shrink-0 h-[30px] px-3 rounded-full border text-[11.5px] font-semibold whitespace-nowrap transition-colors ${
+                  isLight ? 'bg-white border-[#ffe3d3] text-[#f16b48]' : 'bg-[#131f36] border-[#f16b48]/25 text-[#ffb295]'
+                }`}
+              >
+                {spark}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Input bar */}
       <div className={`border-t p-2 relative z-30 shrink-0 liquid-glass ${isLight ? 'bg-white/55 border-[#ffe3d3]/60' : 'bg-[#0f1a2e]/55 border-[#f16b48]/20'}`}>
         {replyingTo && (
@@ -1425,6 +1532,39 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               <Button variant="outline" onClick={() => { sounds.playClick(); handleApplyTheme('mely-cherry'); }} className="flex-1 h-9 rounded-2xl text-[11.5px]">Por Defecto</Button>
               <Button onClick={() => { sounds.playStamp(); setShowThemeCustomizer(false); }} className="flex-1 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold h-9 rounded-2xl shadow-elevation-md text-[11.5px]">Aplicar y Guardar</Button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Consejos de seguridad — del diseño Premium aprobado. */}
+      {showSafetyTips && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn">
+          <div className={`w-full max-w-sm max-h-[85dvh] overflow-y-auto rounded-t-3xl sm:rounded-3xl p-5 border shadow-2xl animate-scaleUp no-scrollbar ${isLight ? 'bg-white border-[#ffe3d3] text-[#16223b]' : 'bg-[#0f1a2e] border-[#f16b48]/40 text-[#f5f1e8]'}`}>
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[20px] text-[#f16b48]">shield</span>
+                <h3 className="font-headline-md text-[16px] font-bold">Consejos de seguridad</h3>
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => setShowSafetyTips(false)} className="rounded-full h-8 w-8" aria-label="Cerrar">
+                <span className="material-symbols-outlined text-[20px]" aria-hidden="true">close</span>
+              </Button>
+            </div>
+            <p className={`text-[12px] mb-4 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+              Antes de encontrarte con {partner.displayName}, tené en cuenta estas recomendaciones de MELY.
+            </p>
+            <div className="flex flex-col gap-3 mb-2">
+              {SAFETY_TIPS.map((tip, i) => (
+                <div key={i} className="flex items-start gap-2.5">
+                  <span className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isLight ? 'bg-[#fcf9f2]' : 'bg-[#131f36]'}`}>
+                    <span className="material-symbols-outlined text-[16px] text-[#f16b48]">{tip.icon}</span>
+                  </span>
+                  <p className="text-[12.5px] leading-relaxed pt-1.5">{tip.text}</p>
+                </div>
+              ))}
+            </div>
+            <Button onClick={() => setShowSafetyTips(false)} className="w-full mt-2 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold h-10 rounded-2xl shadow-elevation-md">
+              Entendido
+            </Button>
           </div>
         </div>
       )}

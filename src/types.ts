@@ -260,5 +260,5 @@ export interface VerifiedSpot {
 }
 
 export type ThemeMode = 'dark' | 'light';
-export type TabType = 'descubrir' | 'matches' | 'mensajes' | 'tienda' | 'citas' | 'perfil' | 'ajustes';
+export type TabType = 'descubrir' | 'likes' | 'matches' | 'mensajes' | 'tienda' | 'citas' | 'perfil' | 'ajustes';
 export type AuthScreenType = 'login' | 'register' | 'forgot_password';

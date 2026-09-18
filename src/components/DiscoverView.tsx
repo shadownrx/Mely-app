@@ -9,6 +9,15 @@ import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 import { Skeleton } from './ui/skeleton';
 import { LocationPrompt } from './LocationPrompt';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 interface DiscoverViewProps {
   profiles: Profile[];
@@ -106,7 +115,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
     return (
       <div className="flex flex-col gap-4">
         <Skeleton className="h-8 w-40" />
-        <div className="w-full min-h-[560px] rounded-3xl overflow-hidden flex flex-col gap-3 p-0">
+        <div className="w-full min-h-[560px] rounded-[var(--radius-lg)] overflow-hidden flex flex-col gap-3 p-0">
           <Skeleton className="h-[380px] w-full rounded-none" />
           <div className="p-5 flex flex-col gap-3">
             <Skeleton className="h-4 w-full" />
@@ -271,66 +280,76 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
         </div>
 
         <div className="flex items-center gap-1.5">
-          {onOpenVerifiedSpots && (
-            <button
-              onClick={() => {
-                sounds.playClick();
-                onOpenVerifiedSpots();
-              }}
-              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-                isLight ? 'bg-[#efe7d8] text-[#16223b] hover:bg-[#efe7d8]' : 'bg-white/8 text-[#f5f1e8] hover:bg-white/14'
-              }`}
-              title="Rincones & Beneficios"
-              aria-label="Rincones & Beneficios"
-            >
-              <span className="material-symbols-outlined text-[16px]">storefront</span>
-            </button>
-          )}
-
-          <button
-            type="button"
-            onClick={() => {
-              sounds.playClick();
-              setIsBlindMode(!isBlindMode);
-            }}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-              isBlindMode
-                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
-                : isLight
-                ? 'bg-[#efe7d8] text-[#16223b] hover:bg-[#efe7d8]'
-                : 'bg-white/8 text-[#f5f1e8] hover:bg-white/14'
-            }`}
-            title="Modo Cita a Ciegas"
-            aria-label="Modo Cita a Ciegas"
-            aria-pressed={isBlindMode}
-          >
-            <span className="material-symbols-outlined text-[16px]">{isBlindMode ? 'visibility' : 'visibility_off'}</span>
-          </button>
-
-          {onOpenFilters && (
-            <button
-              onClick={() => {
-                sounds.playClick();
-                onOpenFilters();
-              }}
-              className={`relative w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-                activeFiltersCount > 0
-                  ? 'bg-[#f16b48] text-white'
-                  : isLight
-                  ? 'bg-[#efe7d8] text-[#16223b] hover:bg-[#efe7d8]'
-                  : 'bg-white/8 text-[#f5f1e8] hover:bg-white/14'
-              }`}
-              title="Filtros"
-              aria-label="Filtros"
-            >
-              <span className="material-symbols-outlined text-[16px]">tune</span>
-              {activeFiltersCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 text-black font-mono text-[9px] font-bold rounded-full flex items-center justify-center">
-                  {activeFiltersCount}
-                </span>
+          {/* Rincones & Beneficios, Modo Cita a Ciegas y Filtros son funcionalidad real que
+              antes vivía como 3 íconos sueltos compitiendo con la card — el mockup aprobado
+              (Discover.dc.html) solo deja un ícono de ajustes en la cabecera. Se mantiene todo,
+              pero re-acomodado detrás de un único trigger colapsado; un puntito coral avisa
+              cuando hay algo activo (cita a ciegas o filtros) sin ocupar más espacio visual. */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                onClick={() => sounds.playClick()}
+                className={`relative w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+                  isLight ? 'bg-[#efe7d8] text-[#16223b] hover:bg-[#efe7d8]' : 'bg-white/8 text-[#f5f1e8] hover:bg-white/14'
+                }`}
+                title="Más opciones de Descubrir"
+                aria-label="Más opciones de Descubrir"
+              >
+                <span className="material-symbols-outlined text-[16px]">tune</span>
+                {(isBlindMode || activeFiltersCount > 0) && (
+                  <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#f16b48] border-2 border-[var(--midnight-900)]" />
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Opciones de Descubrir</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {onOpenVerifiedSpots && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    sounds.playClick();
+                    onOpenVerifiedSpots();
+                  }}
+                  className="gap-2"
+                >
+                  <span className="material-symbols-outlined text-[16px] text-[#f16b48]">storefront</span>
+                  Rincones & Beneficios
+                </DropdownMenuItem>
               )}
-            </button>
-          )}
+              <DropdownMenuCheckboxItem
+                checked={isBlindMode}
+                onCheckedChange={() => {
+                  sounds.playClick();
+                  setIsBlindMode(!isBlindMode);
+                }}
+                onSelect={(e) => e.preventDefault()}
+                className="gap-2"
+              >
+                <span className="material-symbols-outlined text-[16px] text-[#f16b48]">
+                  {isBlindMode ? 'visibility' : 'visibility_off'}
+                </span>
+                Modo Cita a Ciegas
+              </DropdownMenuCheckboxItem>
+              {onOpenFilters && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    sounds.playClick();
+                    onOpenFilters();
+                  }}
+                  className="gap-2"
+                >
+                  <span className="material-symbols-outlined text-[16px] text-[#f16b48]">tune</span>
+                  <span className="flex-1">Filtros</span>
+                  {activeFiltersCount > 0 && (
+                    <span className="w-4 h-4 bg-[#f16b48] text-white font-mono text-[9px] font-bold rounded-full flex items-center justify-center">
+                      {activeFiltersCount}
+                    </span>
+                  )}
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -342,7 +361,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
           onClick={handleOpenPersonOfDay}
-          className={`flex items-center gap-3 rounded-2xl border p-2.5 text-left tactile-btn shadow-elevation-sm ${
+          className={`flex items-center gap-3 rounded-[var(--radius-md)] border p-2.5 text-left tactile-btn shadow-elevation-sm ${
             isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/25'
           }`}
         >
@@ -379,7 +398,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
         {/* Next Card in Background (Smooth Depth Stack) */}
         {nextProfile && (
           <div
-            className={`absolute inset-0 rounded-3xl border overflow-hidden pointer-events-none transition-transform duration-300 shadow-elevation-sm ${
+            className={`absolute inset-0 rounded-[var(--radius-lg)] border overflow-hidden pointer-events-none transition-transform duration-300 shadow-elevation-sm ${
               isLight ? 'bg-white border-[#ffe3d3]/60' : 'bg-[#0f1a2e] border-[#f16b48]/20'
             }`}
             style={{
@@ -431,7 +450,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
             className="w-full touch-pan-y cursor-grab active:cursor-grabbing"
           >
             <Card
-              className={`rounded-3xl border overflow-hidden relative shadow-elevation-lg transition-shadow duration-300 ${
+              className={`rounded-[var(--radius-lg)] border overflow-hidden relative shadow-elevation-lg transition-shadow duration-300 ${
                 isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'
               }`}
             >
@@ -443,7 +462,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               {/* LIKE Stamp (Drag Right) */}
               <motion.div
                 style={{ opacity: likeOpacity }}
-                className="absolute top-8 left-6 z-30 pointer-events-none -rotate-12 border-3 border-emerald-500 bg-emerald-950/80 text-emerald-300 px-4 py-1.5 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                className="absolute top-8 left-6 z-30 pointer-events-none -rotate-12 border-3 border-emerald-500 bg-emerald-950/80 text-emerald-300 px-4 py-1.5 rounded-[var(--radius-md)] shadow-[0_0_20px_rgba(16,185,129,0.4)]"
               >
                 <div className="flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -458,7 +477,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               {/* PASS Stamp (Drag Left) */}
               <motion.div
                 style={{ opacity: passOpacity }}
-                className="absolute top-8 right-6 z-30 pointer-events-none rotate-12 border-3 border-rose-500 bg-rose-950/80 text-rose-300 px-4 py-1.5 rounded-2xl shadow-[0_0_20px_rgba(225,29,72,0.4)]"
+                className="absolute top-8 right-6 z-30 pointer-events-none rotate-12 border-3 border-rose-500 bg-rose-950/80 text-rose-300 px-4 py-1.5 rounded-[var(--radius-md)] shadow-[0_0_20px_rgba(225,29,72,0.4)]"
               >
                 <div className="flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-[20px]">close</span>
@@ -471,7 +490,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               {/* SUPER LIKE Stamp (Drag Up) */}
               <motion.div
                 style={{ opacity: superLikeOpacity }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none border-3 border-amber-400 bg-amber-950/85 text-amber-300 px-5 py-2.5 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.5)]"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none border-3 border-amber-400 bg-amber-950/85 text-amber-300 px-5 py-2.5 rounded-[var(--radius-md)] shadow-[0_0_30px_rgba(251,191,36,0.5)]"
               >
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -680,7 +699,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
 
                       {currentProfile.audioBio && (
                         <div
-                          className={`p-3.5 rounded-2xl flex items-center gap-3 transition-all ${
+                          className={`p-3.5 rounded-[var(--radius-md)] flex items-center gap-3 transition-all ${
                             isLight ? 'bg-[#fcf9f2]' : 'bg-[#131f36]'
                           }`}
                         >
@@ -715,7 +734,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: pIdx * 0.08 }}
-                          className={`p-3.5 rounded-2xl ${isLight ? 'bg-[#fcf9f2]' : 'bg-[#0a1120]'}`}
+                          className={`p-3.5 rounded-[var(--radius-md)] ${isLight ? 'bg-[#fcf9f2]' : 'bg-[#0a1120]'}`}
                         >
                           <span className="text-[11px] font-bold text-[#f16b48] block mb-1">{prompt.question}</span>
                           <p className={`text-[13px] ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{prompt.answer}</p>

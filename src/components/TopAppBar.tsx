@@ -88,7 +88,17 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
           className="flex flex-col items-center justify-center cursor-pointer select-none"
           onClick={() => onTabChange('descubrir')}
         >
-          <h1 className={`text-[17px] font-bold text-[#f16b48] ${customTitle ? 'font-headline-md' : 'font-wordmark'}`}>{customTitle || 'MELY'}</h1>
+          {/* Los títulos de pantalla (Recompensas, Ajustes, Matches...) usaban font-headline-md
+              (Manrope) — el resto del rediseño ya pasó los titulares editoriales a Fraunces
+              itálica (per Store.dc.html: `font-family:var(--font-display)`), así que se
+              alinean acá para no quedar como el único texto grande en Manrope de la app. El
+              wordmark "MELY" (sin customTitle) ya usaba Fraunces vía .font-wordmark. */}
+          <h1
+            className={`font-bold text-[#f16b48] ${customTitle ? 'text-[18px] italic font-semibold' : 'text-[17px] font-wordmark'}`}
+            style={customTitle ? { fontFamily: 'var(--font-display)' } : undefined}
+          >
+            {customTitle || 'MELY'}
+          </h1>
           {customSubtitle && (
             <span className={`text-[10px] -mt-0.5 ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>{customSubtitle}</span>
           )}
@@ -107,7 +117,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
               sounds.playCoins();
               onTabChange('tienda');
             }}
-            className={`relative h-8 px-2.5 rounded-2xl active:scale-95 flex items-center gap-1.5 group border transition-all duration-200 shadow-elevation-sm hover:shadow-elevation-md ${
+            className={`relative h-8 px-2.5 rounded-[var(--radius-md)] active:scale-95 flex items-center gap-1.5 group border transition-all duration-200 shadow-elevation-sm hover:shadow-elevation-md ${
               isLight
                 ? 'bg-[#ffffff] text-[#16223b] border-[#ffe3d3] hover:border-[#f16b48]'
                 : 'bg-[#131f36] text-[#ffb295] hover:text-[#ffb295] border-[#f16b48]/30'

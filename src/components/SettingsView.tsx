@@ -52,15 +52,13 @@ interface RowProps {
   isLight: boolean;
 }
 
-const SettingsRow: React.FC<RowProps> = ({ icon, label, description, onClick, trailing, danger, isLight }) => {
+// El ícono líder por fila (icon) se dejó de renderizar acá: Settings.dc.html no lleva
+// ningún ícono al inicio de las filas, salvo un caso puntual (verificación de perfil)
+// que se resuelve en su propio row en vez de vía este prop genérico. Se mantiene `icon`
+// en las props para no tener que tocar cada llamado — simplemente ya no se pinta.
+const SettingsRow: React.FC<RowProps> = ({ label, description, onClick, trailing, danger, isLight }) => {
   const content = (
     <>
-      <span
-        className={`material-symbols-outlined text-[20px] shrink-0 ${danger ? 'text-red-500' : 'text-[#f16b48]'}`}
-        aria-hidden="true"
-      >
-        {icon}
-      </span>
       <div className="flex-1 min-w-0 text-left">
         <span className={`block text-[13px] font-semibold ${danger ? 'text-red-500' : isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
           {label}
@@ -105,9 +103,13 @@ const SettingsGroup: React.FC<{ title?: string; children: React.ReactNode; isLig
         {title}
       </span>
     )}
+    {/* Settings.dc.html usa un borde hairline sin sombra (tarjeta chata), no el
+        border-[#ffe3d3]/shadow-xl que quedaba de la paleta cherry vieja. --hairline es
+        claro (pensado para fondos oscuros), así que en modo claro se usa el equivalente
+        oscuro-translúcido (--color-line) que ya usa surface-panel. */}
     <div
-      className={`rounded-3xl border shadow-xl overflow-hidden divide-y ${
-        isLight ? 'bg-white border-[#ffe3d3] divide-[#ffe3d3]/70' : 'bg-[#0f1a2e] border-[#f16b48]/30 divide-[#f16b48]/15'
+      className={`rounded-[var(--radius-lg)] border overflow-hidden divide-y ${
+        isLight ? 'bg-white border-[var(--color-line)] divide-[var(--color-line)]' : 'bg-[#0f1a2e] border-[var(--hairline)] divide-[var(--hairline)]'
       }`}
     >
       {children}
@@ -475,7 +477,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
 
       {/* --- PANEL: Editar Perfil --- */}
       <Sheet open={activeSheet === 'profile'} onOpenChange={(open) => !open && setActiveSheet(null)}>
-        <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-3xl flex flex-col gap-4 p-5">
+        <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-[var(--radius-lg)] flex flex-col gap-4 p-5">
           <SheetHeader>
             <SheetTitle>Editar Perfil</SheetTitle>
           </SheetHeader>
@@ -626,7 +628,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
 
       {/* --- PANEL: Prompts e Icebreakers --- */}
       <Sheet open={activeSheet === 'prompts'} onOpenChange={(open) => !open && setActiveSheet(null)}>
-        <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-3xl flex flex-col gap-4 p-5">
+        <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-[var(--radius-lg)] flex flex-col gap-4 p-5">
           <SheetHeader>
             <SheetTitle>Prompts e Icebreakers</SheetTitle>
           </SheetHeader>
@@ -717,7 +719,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
 
       {/* --- PANEL: Preferencias de Descubrimiento --- */}
       <Sheet open={activeSheet === 'discovery'} onOpenChange={(open) => !open && setActiveSheet(null)}>
-        <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-3xl flex flex-col gap-4 p-5">
+        <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-[var(--radius-lg)] flex flex-col gap-4 p-5">
           <SheetHeader>
             <SheetTitle>Preferencias de Descubrimiento</SheetTitle>
           </SheetHeader>
@@ -725,7 +727,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
             Estos valores son tu punto de partida cada vez que abrís los filtros de Descubrir.
           </p>
 
-          <div className={`p-3.5 rounded-2xl border flex items-center gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
+          <div className={`p-3.5 rounded-[var(--radius-md)] border flex items-center gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
             <span className="material-symbols-outlined text-[19px] text-[#f16b48] shrink-0">location_on</span>
             <div className="flex-1 min-w-0">
               <span className="block text-[13px] font-bold">Mi ubicación</span>
@@ -738,14 +740,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
             </Button>
           </div>
 
-          <div className={`p-4 rounded-2xl border flex flex-col gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
+          <div className={`p-4 rounded-[var(--radius-md)] border flex flex-col gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
             <div className="flex justify-between items-center">
               <span className="font-label-caps text-[10px] uppercase font-bold">Distancia Máxima</span>
               <span className="font-headline-md text-[16px] text-[#f16b48] font-bold">{maxDistanceKm} km</span>
             </div>
             <Slider min={1} max={500} step={1} value={[maxDistanceKm]} onValueChange={([v]) => setMaxDistanceKm(v)} />
           </div>
-          <div className={`p-4 rounded-2xl border flex flex-col gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
+          <div className={`p-4 rounded-[var(--radius-md)] border flex flex-col gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
             <div className="flex justify-between items-center">
               <span className="font-label-caps text-[10px] uppercase font-bold">Rango de Edad</span>
               <span className="font-headline-md text-[16px] text-[#f16b48] font-bold">
@@ -771,7 +773,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
 
       {/* --- PANEL: Verificar Teléfono --- */}
       <Sheet open={activeSheet === 'phone'} onOpenChange={(open) => !open && setActiveSheet(null)}>
-        <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-3xl flex flex-col gap-4 p-5">
+        <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-[var(--radius-lg)] flex flex-col gap-4 p-5">
           <SheetHeader>
             <SheetTitle>Verificar Teléfono</SheetTitle>
           </SheetHeader>

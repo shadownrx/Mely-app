@@ -112,7 +112,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
       variants={container}
       initial="hidden"
       animate="show"
-      className={`w-full max-w-[420px] mx-auto min-h-screen py-10 px-6 flex flex-col justify-center ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}
+      className={`w-full max-w-[420px] mx-auto min-h-screen py-10 px-6 flex flex-col justify-center ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}
     >
       {/* Theme toggle, unobtrusive corner control */}
       <motion.button
@@ -124,7 +124,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
           toggleTheme();
         }}
         className={`self-end w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
-          isLight ? 'bg-[#f2f2f4] text-[#0f172a] hover:bg-[#e7e7ea]' : 'bg-white/8 text-[#fff1f2] hover:bg-white/14'
+          isLight ? 'bg-[#efe7d8] text-[#16223b] hover:bg-[#efe7d8]' : 'bg-white/8 text-[#f5f1e8] hover:bg-white/14'
         }`}
         title="Cambiar tema de color"
         aria-label="Cambiar tema de color"
@@ -142,8 +142,8 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
 
       {/* Wordmark + one-line promise */}
       <motion.div variants={item} className="mt-2 mb-9">
-        <span className="font-headline-md text-[30px] font-bold text-[#e11d48]">MELY</span>
-        <p className={`text-[14px] mt-2 leading-relaxed ${isLight ? 'text-[#64748b]' : 'text-[#a89a9e]'}`}>
+        <span className="font-wordmark text-[30px] font-bold text-[#f16b48]">MELY</span>
+        <p className={`text-[14px] mt-2 leading-relaxed ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>
           Bienvenida de vuelta. Iniciá sesión para seguir tus citas y conversaciones.
         </p>
       </motion.div>
@@ -158,7 +158,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
             className="overflow-hidden"
           >
             <div className="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-[12px] flex items-start gap-2">
-              <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5 text-[#e11d48]">error</span>
+              <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5 text-[#f16b48]">error</span>
               <span>{errorMsg}</span>
             </div>
           </motion.div>
@@ -187,7 +187,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
                 sounds.playClick();
                 setShowRecoveryModal(true);
               }}
-              className="text-[12.5px] font-bold text-[#e11d48] hover:underline cursor-pointer normal-case tracking-normal"
+              className="text-[12.5px] font-bold text-[#f16b48] hover:underline cursor-pointer normal-case tracking-normal"
             >
               ¿Olvidaste tu contraseña?
             </button>
@@ -205,7 +205,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className={`absolute right-3 p-1 focus:outline-none cursor-pointer ${isLight ? 'text-gray-400 hover:text-[#0f172a]' : 'text-[#a89a9e] hover:text-[#fff1f2]'}`}
+              className={`absolute right-3 p-1 focus:outline-none cursor-pointer ${isLight ? 'text-gray-400 hover:text-[#16223b]' : 'text-[#8a93a8] hover:text-[#f5f1e8]'}`}
               aria-label="Ver u ocultar contraseña"
             >
               <span className="material-symbols-outlined text-[18px]">{showPassword ? 'visibility_off' : 'visibility'}</span>
@@ -213,7 +213,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
           </div>
         </div>
 
-        <Label className="flex items-center gap-2 cursor-pointer select-none normal-case tracking-normal text-[12.5px] font-normal text-slate-500 dark:text-[#a89a9e]">
+        <Label className="flex items-center gap-2 cursor-pointer select-none normal-case tracking-normal text-[12.5px] font-normal text-slate-500 dark:text-[#8a93a8]">
           <Checkbox checked={rememberMe} onCheckedChange={(v) => setRememberMe(v === true)} />
           Recordar mi sesión
         </Label>
@@ -240,9 +240,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
       </motion.form>
 
       <motion.div variants={item} className="flex items-center gap-3 my-6">
-        <span className={`flex-1 h-px ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/10'}`} />
-        <span className={`text-[12px] ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>o continuá con</span>
-        <span className={`flex-1 h-px ${isLight ? 'bg-[#e7e7ea]' : 'bg-white/10'}`} />
+        <span className={`flex-1 h-px ${isLight ? 'bg-[#efe7d8]' : 'bg-white/10'}`} />
+        <span className={`text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>o continuá con</span>
+        <span className={`flex-1 h-px ${isLight ? 'bg-[#efe7d8]' : 'bg-white/10'}`} />
       </motion.div>
 
       <motion.div variants={item}>
@@ -250,7 +250,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
       </motion.div>
 
       <motion.div variants={item} className="mt-8 flex items-center justify-center gap-1.5">
-        <span className={`text-[13.5px] ${isLight ? 'text-[#6b7280]' : 'text-[#a89a9e]'}`}>¿No tenés cuenta?</span>
+        <span className={`text-[13.5px] ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>¿No tenés cuenta?</span>
         <button
           id="btn-switch-register"
           type="button"
@@ -258,7 +258,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
             sounds.playClick();
             onGoToRegister();
           }}
-          className="text-[13.5px] font-bold text-[#e11d48] hover:underline cursor-pointer"
+          className="text-[13.5px] font-bold text-[#f16b48] hover:underline cursor-pointer"
         >
           Registrate
         </button>
@@ -267,15 +267,15 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
       {/* Password Recovery Modal */}
       <Dialog open={showRecoveryModal} onOpenChange={setShowRecoveryModal}>
         <DialogContent className="w-[calc(100%-2rem)] max-w-[360px] p-6 rounded-3xl">
-          <h3 className={`font-headline-md text-[18px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+          <h3 className={`font-headline-md text-[18px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
             Recuperar contraseña
           </h3>
-          <p className={`text-[12.5px] ${isLight ? 'text-[#64748b]' : 'text-[#a89a9e]'}`}>
+          <p className={`text-[12.5px] ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>
             Ingresá el correo asociado a tu cuenta para recibir un enlace seguro de restablecimiento.
           </p>
 
           {recoverySent ? (
-            <div className="p-3 bg-[#10b981]/15 border border-[#10b981]/40 rounded-2xl text-[#059669] text-[12.5px] text-center font-medium">
+            <div className="p-3 bg-[#3f7a5c]/15 border border-[#3f7a5c]/40 rounded-2xl text-[#3f7a5c] text-[12.5px] text-center font-medium">
               Si el correo existe, te enviamos un enlace de restablecimiento. Revisá tu bandeja.
             </div>
           ) : (

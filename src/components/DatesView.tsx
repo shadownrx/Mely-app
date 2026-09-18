@@ -53,16 +53,16 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
       <div className="flex items-end justify-between gap-3 px-1">
         <div>
           <p className="section-kicker">Tu agenda</p>
-          <h2 className={`mt-1 font-headline-md text-[22px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+          <h2 className={`mt-1 font-headline-md text-[22px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
             Itinerario de Citas
           </h2>
-          <p className={`font-body-sm text-[13px] mt-0.5 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/80'}`}>
+          <p className={`font-body-sm text-[13px] mt-0.5 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
             Tus encuentros acordados y listos para verificar en persona.
           </p>
         </div>
         <span
           className={`font-meta-data text-[12px] font-bold px-2.5 py-0.5 rounded-full border ${
-            isLight ? 'text-[#e11d48] bg-[#fff1f3] border-[#fecdd3]' : 'text-[#fb7185] bg-[#e11d48]/15 border-[#e11d48]/30'
+            isLight ? 'text-[#f16b48] bg-[#fcf9f2] border-[#ffe3d3]' : 'text-[#ffb295] bg-[#f16b48]/15 border-[#f16b48]/30'
           }`}
         >
           {items.length} Registros
@@ -94,29 +94,29 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
               key={dateMeet.id}
               className={`border rounded-3xl overflow-hidden relative shadow-2xl ${
                 isLight
-                  ? 'bg-white border-[#fecdd3] shadow-[0_10px_30px_rgba(225,29,72,0.08)]'
-                  : 'bg-[#140b0f] border-[#e11d48]/30 shadow-[0_0_30px_rgba(225,29,72,0.12)]'
+                  ? 'bg-white border-[#ffe3d3] shadow-[0_10px_30px_rgba(225,29,72,0.08)]'
+                  : 'bg-[#0f1a2e] border-[#f16b48]/30 shadow-[0_0_30px_rgba(225,29,72,0.12)]'
               }`}
             >
               <div
                 className={`absolute left-0 top-1/2 -translate-y-1/2 w-3.5 h-7 rounded-r-full border-r border-t border-b ${
-                  isLight ? 'bg-[#fafafa] border-[#fecdd3]' : 'bg-[#0b090a] border-[#e11d48]/30'
+                  isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/30'
                 }`}
               />
               <div
                 className={`absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-7 rounded-l-full border-l border-t border-b ${
-                  isLight ? 'bg-[#fafafa] border-[#fecdd3]' : 'bg-[#0b090a] border-[#e11d48]/30'
+                  isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/30'
                 }`}
               />
 
               {/* Ticket Top Banner */}
               <div
                 className={`p-4 border-b border-dashed flex items-center justify-between ${
-                  isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#1b0d13] border-[#e11d48]/30'
+                  isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#e11d48] shrink-0 shadow-elevation-md">
+                  <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#f16b48] shrink-0 shadow-elevation-md">
                     <img
                       src={match.other.photos[0]?.url}
                       alt={match.other.displayName}
@@ -125,10 +125,10 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
                     />
                   </div>
                   <div>
-                    <span className="font-label-caps text-[9px] text-[#e11d48] uppercase tracking-widest block font-bold">
+                    <span className="font-label-caps text-[9px] text-[#f16b48] uppercase tracking-widest block font-bold">
                       CITA CON {match.other.displayName.toUpperCase()}
                     </span>
-                    <h3 className={`font-headline-md text-[17px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+                    <h3 className={`font-headline-md text-[17px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                       {PLAN_LABELS[dateMeet.planType]}
                     </h3>
                   </div>
@@ -138,14 +138,14 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
                   <span
                     className={`font-label-caps text-[9px] uppercase px-3 py-1 rounded-full font-bold border ${
                       isVerified
-                        ? 'bg-[#10b981]/15 text-[#059669] border-[#10b981]/40'
+                        ? 'bg-[#3f7a5c]/15 text-[#3f7a5c] border-[#3f7a5c]/40'
                         : isAgreed
                         ? isLight
-                          ? 'bg-[#fff1f3] text-[#e11d48] border-[#fecdd3]'
-                          : 'bg-[#e11d48]/20 text-[#fb7185] border-[#e11d48]/40'
+                          ? 'bg-[#fcf9f2] text-[#f16b48] border-[#ffe3d3]'
+                          : 'bg-[#f16b48]/20 text-[#ffb295] border-[#f16b48]/40'
                         : isLight
                         ? 'bg-gray-100 text-gray-700 border-gray-200'
-                        : 'bg-[#fb7185]/20 text-[#fda4af] border-[#fb7185]/40'
+                        : 'bg-[#ffb295]/20 text-[#ffb295] border-[#ffb295]/40'
                     }`}
                   >
                     {STATUS_LABEL[dateMeet.status]}
@@ -156,22 +156,22 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
               {/* Ticket Content */}
               <div className="p-4 sm:p-5 flex flex-col gap-3.5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
-                  <div className={`p-3.5 rounded-2xl border ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0e070a] border-[#e11d48]/20'}`}>
-                    <span className={`font-label-caps text-[9px] uppercase block mb-1 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                  <div className={`p-3.5 rounded-2xl border ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
+                    <span className={`font-label-caps text-[9px] uppercase block mb-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                       LUGAR & DIRECCIÓN
                     </span>
-                    <p className={`font-body-sm text-[13px] font-medium flex items-center gap-1.5 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                      <span className="material-symbols-outlined text-[16px] text-[#e11d48]">location_on</span>
+                    <p className={`font-body-sm text-[13px] font-medium flex items-center gap-1.5 ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
+                      <span className="material-symbols-outlined text-[16px] text-[#f16b48]">location_on</span>
                       {dateMeet.zone}
                     </p>
                   </div>
 
-                  <div className={`p-3.5 rounded-2xl border ${isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0e070a] border-[#e11d48]/20'}`}>
-                    <span className={`font-label-caps text-[9px] uppercase block mb-1 ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                  <div className={`p-3.5 rounded-2xl border ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
+                    <span className={`font-label-caps text-[9px] uppercase block mb-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                       HORARIO
                     </span>
-                    <p className={`font-body-sm text-[13px] font-medium flex items-center gap-1.5 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
-                      <span className="material-symbols-outlined text-[16px] text-[#e11d48]">schedule</span>
+                    <p className={`font-body-sm text-[13px] font-medium flex items-center gap-1.5 ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
+                      <span className="material-symbols-outlined text-[16px] text-[#f16b48]">schedule</span>
                       {formatDateTime(dateMeet.scheduledAt)}
                     </p>
                   </div>
@@ -179,7 +179,7 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
 
                 <div
                   className={`flex items-center justify-end pt-3 border-t perforation-line gap-2 ${
-                    isLight ? 'border-[#fecdd3]' : 'border-[#e11d48]/20'
+                    isLight ? 'border-[#ffe3d3]' : 'border-[#f16b48]/20'
                   }`}
                 >
                   <div className="flex gap-2">

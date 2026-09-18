@@ -46,7 +46,7 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
   const quickVenues: { zone: string; planType: PlanType; daysAhead: number; hour: number }[] = [
     { zone: 'The Roastery, Palermo Soho', planType: 'COFFEE', daysAhead: 3, hour: 16 },
     { zone: 'Bistró Rosetta, Recoleta', planType: 'FOOD', daysAhead: 4, hour: 20 },
-    { zone: 'Speakeasy Florería Atlántico', planType: 'BAR', daysAhead: 5, hour: 21 },
+    { zone: 'Speakeasy Floréria Atlántico', planType: 'BAR', daysAhead: 5, hour: 21 },
     { zone: 'Café & Libros El Ateneo', planType: 'CHILL', daysAhead: 6, hour: 17 },
   ];
 
@@ -75,14 +75,14 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="w-[calc(100%-2rem)] max-w-[420px] p-0 gap-0 rounded-3xl overflow-hidden max-h-[90dvh] flex flex-col">
         <DialogHeader
-          className={`p-5 border-b space-y-0 ${isLight ? 'bg-[#fff1f3] border-[#fecdd3]' : 'bg-[#1c0d15] border-[#e11d48]/20'}`}
+          className={`p-5 border-b space-y-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/20'}`}
         >
-          <span className={`font-label-caps text-[9px] uppercase tracking-widest block font-bold ${isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'}`}>
+          <span className={`font-label-caps text-[9px] uppercase tracking-widest block font-bold ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}>
             PROPUESTA DE ENCUENTRO PRESENCIAL
           </span>
           <h3
             className={`font-headline-md text-[18px] font-black ${
-              isLight ? 'text-[#0f172a]' : 'text-transparent dark:text-transparent bg-clip-text bg-gradient-to-r from-[#fb7185] to-[#fff1f2]'
+              isLight ? 'text-[#16223b]' : 'text-transparent dark:text-transparent bg-clip-text bg-gradient-to-r from-[#ffb295] to-[#f5f1e8]'
             }`}
           >
             Invitar a {partnerName}
@@ -107,17 +107,17 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
                   className={`p-2.5 rounded-2xl text-left border text-[11px] transition-all font-body-sm cursor-pointer ${
                     zone === qv.zone
                       ? isLight
-                        ? 'bg-[#fff1f3] border-[#e11d48] text-[#e11d48] font-bold shadow-elevation-sm'
-                        : 'bg-[#2b1019] border-[#fb7185] text-[#fff1f2] font-bold shadow-elevation-md'
+                        ? 'bg-[#fcf9f2] border-[#f16b48] text-[#f16b48] font-bold shadow-elevation-sm'
+                        : 'bg-[#17233d] border-[#ffb295] text-[#f5f1e8] font-bold shadow-elevation-md'
                       : isLight
-                      ? 'bg-white border-[#fecdd3] text-[#475569] hover:bg-[#fff5f6]'
-                      : 'bg-[#0b0507] border-[#e11d48]/20 text-[#fda4af]/70 hover:border-[#e11d48]/50'
+                      ? 'bg-white border-[#ffe3d3] text-[#2e5570] hover:bg-[#fcf9f2]'
+                      : 'bg-[#0a1120] border-[#f16b48]/20 text-[#ffb295]/70 hover:border-[#f16b48]/50'
                   }`}
                 >
-                  <span className={`font-bold block truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+                  <span className={`font-bold block truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                     {meta?.planTypes.find((p) => p.value === qv.planType)?.label ?? qv.planType}
                   </span>
-                  <span className={`text-[9px] truncate block ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/70'}`}>
+                  <span className={`text-[9px] truncate block ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                     {qv.zone}
                   </span>
                 </button>
@@ -175,7 +175,7 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
             {coordinateByChat ? (
               <p
                 className={`font-body-sm text-[11.5px] rounded-2xl px-3.5 py-2.5 border ${
-                  isLight ? 'bg-[#fff5f6] border-[#fecdd3] text-[#64748b]' : 'bg-[#0b0507] border-[#e11d48]/25 text-[#fda4af]/80'
+                  isLight ? 'bg-[#fcf9f2] border-[#ffe3d3] text-[#5b6478]' : 'bg-[#0a1120] border-[#f16b48]/25 text-[#ffb295]/80'
                 }`}
               >
                 No fijás un horario: le mandás la propuesta con el lugar y plan, y se ponen de acuerdo con la hora charlando en el chat.
@@ -234,55 +234,55 @@ export const StampModal: React.FC<StampModalProps> = ({ stamp, onClose }) => {
         {stamp && (
           <>
             <div
-              className={`w-24 h-24 rounded-full border-4 border-[#e11d48] text-[#e11d48] flex items-center justify-center stamp-ink mb-4 shadow-xl relative ${
-                isLight ? 'bg-[#fff5f6]' : 'bg-[#0b0507]'
+              className={`w-24 h-24 rounded-full border-4 border-[#f16b48] text-[#f16b48] flex items-center justify-center stamp-ink mb-4 shadow-xl relative ${
+                isLight ? 'bg-[#fcf9f2]' : 'bg-[#0a1120]'
               }`}
             >
-              <div className="absolute inset-1.5 border border-[#e11d48]/40 rounded-full" />
+              <div className="absolute inset-1.5 border border-[#f16b48]/40 rounded-full" />
               <span className="material-symbols-outlined text-[42px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                 {stamp.iconName}
               </span>
             </div>
 
-            <span className={`font-label-caps text-[10px] uppercase tracking-widest mb-1 font-bold ${isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'}`}>
+            <span className={`font-label-caps text-[10px] uppercase tracking-widest mb-1 font-bold ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}>
               {stamp.unlocked ? 'SELLO OFICIAL DE CONEXIÓN' : 'SELLO POR DESBLOQUEAR'}
             </span>
-            <h3 className={`font-headline-md text-[22px] font-bold mb-1 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+            <h3 className={`font-headline-md text-[22px] font-bold mb-1 ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
               {stamp.title}
             </h3>
-            <span className={`font-meta-data text-[12px] mb-4 font-semibold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]'}`}>
+            <span className={`font-meta-data text-[12px] mb-4 font-semibold ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]'}`}>
               {stamp.unlockedAt ? `Fecha: ${new Date(stamp.unlockedAt).toLocaleDateString('es-AR')}` : stamp.description}
             </span>
 
             <div
               className={`rounded-2xl p-4 border w-full text-left flex flex-col gap-2.5 mb-5 ${
-                isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/20'
+                isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'
               }`}
             >
               {stamp.location && (
                 <div>
-                  <span className={`font-label-caps text-[9px] uppercase block font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>
+                  <span className={`font-label-caps text-[9px] uppercase block font-bold ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/60'}`}>
                     LUGAR
                   </span>
-                  <p className={`font-body-sm text-[13px] ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{stamp.location}</p>
+                  <p className={`font-body-sm text-[13px] ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{stamp.location}</p>
                 </div>
               )}
 
               {stamp.partnerName && (
                 <div>
-                  <span className={`font-label-caps text-[9px] uppercase block font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>
+                  <span className={`font-label-caps text-[9px] uppercase block font-bold ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/60'}`}>
                     ENCUENTRO CON
                   </span>
-                  <p className={`font-body-sm text-[13px] ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{stamp.partnerName}</p>
+                  <p className={`font-body-sm text-[13px] ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{stamp.partnerName}</p>
                 </div>
               )}
 
               {stamp.notes && (
                 <div>
-                  <span className={`font-label-caps text-[9px] uppercase block font-bold ${isLight ? 'text-[#64748b]' : 'text-[#fda4af]/60'}`}>
+                  <span className={`font-label-caps text-[9px] uppercase block font-bold ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/60'}`}>
                     MEMORIA / DETALLES
                   </span>
-                  <p className={`font-body-sm text-[13px] italic ${isLight ? 'text-[#475569]' : 'text-[#fda4af]'}`}>"{stamp.notes}"</p>
+                  <p className={`font-body-sm text-[13px] italic ${isLight ? 'text-[#2e5570]' : 'text-[#ffb295]'}`}>"{stamp.notes}"</p>
                 </div>
               )}
             </div>
@@ -320,8 +320,8 @@ export const RechargeModal: React.FC<RechargeModalProps> = ({ pack, onClose, onC
         {pack && (
           <>
             <div
-              className={`w-16 h-16 rounded-full border text-[#e11d48] flex items-center justify-center mb-4 ${
-                isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#e11d48]/20 border-[#e11d48]/40'
+              className={`w-16 h-16 rounded-full border text-[#f16b48] flex items-center justify-center mb-4 ${
+                isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#f16b48]/20 border-[#f16b48]/40'
               }`}
             >
               <span className="material-symbols-outlined text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -329,23 +329,23 @@ export const RechargeModal: React.FC<RechargeModalProps> = ({ pack, onClose, onC
               </span>
             </div>
 
-            <span className={`font-label-caps text-[10px] uppercase tracking-widest mb-1 font-bold ${isLight ? 'text-[#e11d48]' : 'text-[#fb7185]'}`}>
+            <span className={`font-label-caps text-[10px] uppercase tracking-widest mb-1 font-bold ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}>
               BÓVEDA PERSONAL
             </span>
-            <h3 className={`font-headline-md text-[20px] font-bold mb-1 ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{pack.name}</h3>
-            <p className={`font-body-sm text-[13px] mb-5 ${isLight ? 'text-[#475569]' : 'text-[#fda4af]/80'}`}>
-              Recibirás <strong className="text-[#e11d48]">+{pack.pts} PTS</strong> en tu saldo de Mely para regalos y beneficios de conexión.
+            <h3 className={`font-headline-md text-[20px] font-bold mb-1 ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{pack.name}</h3>
+            <p className={`font-body-sm text-[13px] mb-5 ${isLight ? 'text-[#2e5570]' : 'text-[#ffb295]/80'}`}>
+              Recibirás <strong className="text-[#f16b48]">+{pack.pts} PTS</strong> en tu saldo de Mely para regalos y beneficios de conexión.
             </p>
 
             <div
               className={`p-4 rounded-2xl border w-full flex justify-between items-center mb-6 ${
-                isLight ? 'bg-[#fff5f6] border-[#fecdd3]' : 'bg-[#0b0507] border-[#e11d48]/25'
+                isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/25'
               }`}
             >
-              <span className={`font-label-caps text-[11px] uppercase font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fda4af]'}`}>
+              <span className={`font-label-caps text-[11px] uppercase font-bold ${isLight ? 'text-[#16223b]' : 'text-[#ffb295]'}`}>
                 Importe Total
               </span>
-              <span className={`font-headline-md text-[20px] font-bold ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>{pack.price} USD</span>
+              <span className={`font-headline-md text-[20px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{pack.price} USD</span>
             </div>
 
             <div className="flex gap-2.5 w-full">
@@ -411,7 +411,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
         <div className="flex flex-col gap-5">
           {/* Header */}
           <div className={`pb-3.5 border-b pr-8 ${isLight ? 'border-slate-100' : 'border-white/10'}`}>
-            <h2 className="font-headline-md text-[19px] font-bold text-[#e11d48]">MELY</h2>
+            <h2 className="font-wordmark text-[19px] font-bold text-[#f16b48]">MELY</h2>
           </div>
 
           {/* User mini badge */}
@@ -432,12 +432,12 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
               referrerPolicy="no-referrer"
             />
             <div className="flex-1 min-w-0">
-              <span className={`text-[13.5px] font-bold block truncate ${isLight ? 'text-[#0f172a]' : 'text-[#fff1f2]'}`}>
+              <span className={`text-[13.5px] font-bold block truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                 {user.displayName}
               </span>
-              <span className="text-[11px] text-[#e11d48] font-bold block truncate">{user.membership.tierLabel}</span>
+              <span className="text-[11px] text-[#f16b48] font-bold block truncate">{user.membership.tierLabel}</span>
             </div>
-            <span className={`material-symbols-outlined text-[18px] ${isLight ? 'text-[#94a3b8]' : 'text-[#fda4af]/50'}`}>
+            <span className={`material-symbols-outlined text-[18px] ${isLight ? 'text-[#6fa8c9]' : 'text-[#ffb295]/50'}`}>
               chevron_right
             </span>
           </div>
@@ -453,10 +453,10 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
                   onClose();
                 }}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors group cursor-pointer ${
-                  isLight ? 'hover:bg-slate-50 text-[#0f172a]' : 'hover:bg-white/5 text-[#fff1f2]'
+                  isLight ? 'hover:bg-slate-50 text-[#16223b]' : 'hover:bg-white/5 text-[#f5f1e8]'
                 }`}
               >
-                <span className="material-symbols-outlined text-[19px] text-[#e11d48] group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-[19px] text-[#f16b48] group-hover:scale-110 transition-transform">
                   {link.icon}
                 </span>
                 <span className="text-[13.5px] font-medium">{link.label}</span>
@@ -474,10 +474,10 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
               toggleTheme();
             }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors group cursor-pointer ${
-              isLight ? 'hover:bg-slate-50 text-[#0f172a]' : 'hover:bg-white/5 text-[#fff1f2]'
+              isLight ? 'hover:bg-slate-50 text-[#16223b]' : 'hover:bg-white/5 text-[#f5f1e8]'
             }`}
           >
-            <span className="material-symbols-outlined text-[19px] text-[#e11d48]">{isLight ? 'dark_mode' : 'light_mode'}</span>
+            <span className="material-symbols-outlined text-[19px] text-[#f16b48]">{isLight ? 'dark_mode' : 'light_mode'}</span>
             <span className="text-[13.5px] font-medium">{isLight ? 'Modo oscuro' : 'Modo claro'}</span>
           </button>
 
@@ -488,7 +488,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
               onSignOut();
               onClose();
             }}
-            className="w-full gap-1.5 text-[13px] normal-case tracking-normal text-[#e11d48]"
+            className="w-full gap-1.5 text-[13px] normal-case tracking-normal text-[#f16b48]"
           >
             <span className="material-symbols-outlined text-[16px]">logout</span>
             <span>Cerrar sesión</span>

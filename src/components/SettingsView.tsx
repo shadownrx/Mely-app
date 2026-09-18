@@ -275,7 +275,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
   // pisa por accidente lo que se editó en otro panel.
   const saveAll = async (successMessage: string) => {
     if (seeking.length === 0) {
-      toast.error('Elegi al menos a quién querés conocer.');
+      toast.error('Elegí al menos a quién querés conocer.');
       return;
     }
     try {

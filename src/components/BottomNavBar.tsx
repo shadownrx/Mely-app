@@ -79,7 +79,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
         className={`pointer-events-auto w-full max-w-[416px] rounded-[24px] border liquid-glass transition-colors duration-300 ${
           isLight
             ? 'bg-white/75 border-white/60 shadow-elevation-lg'
-            : 'bg-[#0d070a]/65 border-white/10 shadow-elevation-lg'
+            : 'bg-[#0a1120]/65 border-white/10 shadow-elevation-lg'
         }`}
       >
       <div className="flex justify-around items-center py-1 px-1.5 w-full max-w-full">
@@ -100,7 +100,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                 sounds.playClick();
                 onTabChange(tab.id);
               }}
-              className="flex flex-col items-center justify-center gap-0.5 py-1 px-1 min-w-0 flex-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#e11d48]/40"
+              className="flex flex-col items-center justify-center gap-0.5 py-1 px-1 min-w-0 flex-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f16b48]/40"
             >
               <span className="relative flex items-center justify-center w-10 h-10 rounded-full">
                 {/* Pastilla circular que se desliza entre tabs (layoutId compartido: motion
@@ -110,7 +110,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                     layoutId="bottomNavActivePill"
                     layout="position"
                     transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                    className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#e11d48] via-[#f43f5e] to-[#fb7185] shadow-elevation-sm"
+                    className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#f16b48] via-[#ff8a65] to-[#ffb295] shadow-elevation-sm"
                   />
                 )}
 
@@ -118,7 +118,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                 {tab.badge !== undefined && tab.badge > 0 && (
                   <span
                     className={`absolute -top-0.5 -right-0.5 z-10 min-w-[16px] h-4 px-1 rounded-full text-[9px] font-bold flex items-center justify-center text-white ring-2 animate-pulseGlow ${
-                      isLight ? 'bg-[#e11d48] ring-white' : 'bg-[#e11d48] ring-[#0d070a]'
+                      isLight ? 'bg-[#f16b48] ring-white' : 'bg-[#f16b48] ring-[#0a1120]'
                     }`}
                   >
                     {tab.badge}
@@ -133,7 +133,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                         ? 'border-white/80'
                         : isLight
                         ? 'border-gray-300'
-                        : 'border-[#fda4af]/40'
+                        : 'border-[#ffb295]/40'
                     }`}
                   >
                     <img
@@ -146,7 +146,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                 ) : (
                   <span
                     className={`relative z-10 material-symbols-outlined text-[21px] transition-colors ${
-                      isActive ? 'text-white' : isLight ? 'text-[#64748b]' : 'text-[#fda4af]'
+                      isActive ? 'text-white' : isLight ? 'text-[#5b6478]' : 'text-[#ffb295]'
                     }`}
                     style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
                   >
@@ -158,11 +158,11 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                 className={`font-label-caps text-[9px] tracking-wider uppercase font-medium transition-colors ${
                   isActive
                     ? isLight
-                      ? 'text-[#e11d48] font-bold'
-                      : 'text-[#fb7185] font-bold'
+                      ? 'text-[#f16b48] font-bold'
+                      : 'text-[#ffb295] font-bold'
                     : isLight
-                    ? 'text-[#64748b]'
-                    : 'text-[#fda4af] opacity-65'
+                    ? 'text-[#5b6478]'
+                    : 'text-[#ffb295] opacity-65'
                 }`}
               >
                 {tab.label}

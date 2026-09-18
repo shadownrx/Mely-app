@@ -24,7 +24,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
   useEffect(() => {
     if (!profile || firedFor.current === profile.id) return;
     firedFor.current = profile.id;
-    const colors = ['#e11d48', '#ff4d67', '#fda4af', '#ffffff'];
+    const colors = ['#f16b48', '#ff8a65', '#ffb295', '#ffffff'];
     const burst = (originX: number) =>
       confetti({
         particleCount: 60,
@@ -135,7 +135,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4, type: 'spring', stiffness: 400, damping: 18 }}
-                className="absolute z-10 w-11 h-11 rounded-full bg-gradient-to-br from-[#e11d48] to-[#ff4d67] flex items-center justify-center shadow-[0_6px_18px_rgba(225,29,72,0.5)]"
+                className="absolute z-10 w-11 h-11 rounded-full bg-gradient-to-br from-[#f16b48] to-[#ff8a65] flex items-center justify-center shadow-[0_6px_18px_rgba(225,29,72,0.5)]"
               >
                 <span className="material-symbols-outlined text-[20px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
                   favorite
@@ -155,7 +155,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
                   sounds.playClick();
                   onSendMessage();
                 }}
-                className="w-full h-13 rounded-full bg-gradient-to-r from-[#e11d48] to-[#ff4d67] text-white text-[15px] font-bold shadow-[0_10px_24px_-8px_rgba(225,29,72,0.6)]"
+                className="w-full h-13 rounded-full bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white text-[15px] font-bold shadow-[0_10px_24px_-8px_rgba(225,29,72,0.6)]"
               >
                 Enviar mensaje
               </button>

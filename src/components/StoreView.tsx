@@ -215,7 +215,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
     <div className="flex flex-col gap-5 pb-12 animate-fadeIn max-w-[440px] mx-auto">
       {/* BALANCE BAR */}
       <section
-        className={`relative overflow-hidden rounded-3xl p-5 border ${
+        className={`relative overflow-hidden rounded-[var(--radius-lg)] p-5 border ${
           isLight
             ? 'bg-gradient-to-br from-white via-[#fcf9f2] to-[#efe7d8]/30 border-[#ffe3d3] shadow-[0_4px_20px_rgba(255,77,103,0.08)]'
             : 'bg-gradient-to-br from-[#131f36] via-[#0f1a2e] to-[#0a1120] border-[#f16b48]/40 shadow-[0_0_30px_rgba(225,29,72,0.18)]'
@@ -230,9 +230,9 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
               TIENDA & BENEFICIOS MELY
             </span>
           </div>
-          <div className={`flex items-center justify-between p-3.5 rounded-2xl border ${isLight ? 'bg-white border-[#ffe3d3] shadow-elevation-sm' : 'bg-[#0a1120]/95 border-[#f16b48]/30 shadow-inner'}`}>
+          <div className={`flex items-center justify-between p-3.5 rounded-[var(--radius-md)] border ${isLight ? 'bg-white border-[#ffe3d3] shadow-elevation-sm' : 'bg-[#0a1120]/95 border-[#f16b48]/30 shadow-inner'}`}>
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shadow-elevation-md shadow-[#f16b48]/25">
+              <div className="w-11 h-11 rounded-[var(--radius-md)] bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shadow-elevation-md shadow-[#f16b48]/25">
                 <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
               </div>
               <div>
@@ -256,7 +256,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
 
       {/* DAILY BONUS */}
       <div
-        className={`flex items-center gap-3 p-3.5 rounded-2xl border ${
+        className={`flex items-center gap-3 p-3.5 rounded-[var(--radius-md)] border ${
           wallet?.dailyBonusAvailable
             ? isLight
               ? 'bg-gradient-to-r from-amber-50 to-white border-amber-300'
@@ -265,7 +265,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
         }`}
       >
         <div
-          className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 text-white shadow-elevation-md ${
+          className={`w-11 h-11 rounded-[var(--radius-md)] flex items-center justify-center shrink-0 text-white shadow-elevation-md ${
             wallet?.dailyBonusAvailable ? 'bg-gradient-to-tr from-amber-400 to-amber-500' : 'bg-gradient-to-tr from-slate-400 to-slate-500'
           }`}
         >
@@ -300,13 +300,13 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
             sounds.playClick();
             onOpenLikes?.();
           }}
-          className={`flex items-center gap-3 p-3.5 rounded-2xl border text-left transition-transform active:scale-[0.98] ${
+          className={`flex items-center gap-3 p-3.5 rounded-[var(--radius-md)] border text-left transition-transform active:scale-[0.98] ${
             isLight
               ? 'bg-gradient-to-r from-[#fcf9f2] to-white border-[#ffe3d3]'
               : 'bg-gradient-to-r from-[#0a1120] to-[#0f1a2e] border-[#f16b48]/30'
           }`}
         >
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shrink-0 shadow-elevation-md">
+          <div className="w-11 h-11 rounded-[var(--radius-md)] bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shrink-0 shadow-elevation-md">
             <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
           </div>
           <div className="flex-1 min-w-0">
@@ -323,9 +323,9 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
 
       {isLoadingShop && shopItems.length === 0 && (
         <div className="flex flex-col gap-3">
-          <Skeleton className="h-24 w-full rounded-2xl" />
-          <Skeleton className="h-24 w-full rounded-2xl" />
-          <Skeleton className="h-24 w-full rounded-2xl" />
+          <Skeleton className="h-24 w-full rounded-[var(--radius-md)]" />
+          <Skeleton className="h-24 w-full rounded-[var(--radius-md)]" />
+          <Skeleton className="h-24 w-full rounded-[var(--radius-md)]" />
         </div>
       )}
 
@@ -333,7 +333,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
           mezclando decisiones muy distintas (una suscripción no es lo mismo que
           recargar coins), como hacen las tiendas de Tinder Gold/Bumble. */}
       {!isLoadingShop && (
-        <div className={`flex items-center gap-1 p-1 rounded-2xl ${isLight ? 'bg-[#fcf9f2]' : 'bg-[#131f36]'}`}>
+        <div className={`flex items-center gap-1 p-1 rounded-[var(--radius-md)] ${isLight ? 'bg-[#fcf9f2]' : 'bg-[#131f36]'}`}>
           {STORE_TABS.map((tab) => (
             <button
               key={tab.id}
@@ -378,7 +378,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                 return (
                   <div
                     key={item.key}
-                    className={`relative rounded-3xl p-4 flex flex-col gap-3.5 border-2 overflow-hidden ${
+                    className={`relative rounded-[var(--radius-lg)] p-4 flex flex-col gap-3.5 border-2 overflow-hidden ${
                       isCurrent
                         ? 'border-emerald-500'
                         : isFeatured
@@ -395,17 +395,17 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                     }`}
                   >
                     {isCurrent ? (
-                      <span className="absolute top-0 right-0 px-3 py-1 rounded-bl-2xl text-[9px] font-bold uppercase tracking-wide bg-emerald-500 text-white flex items-center gap-1">
+                      <span className="absolute top-0 right-0 px-3 py-1 rounded-bl-[var(--radius-md)] text-[9px] font-bold uppercase tracking-wide bg-emerald-500 text-white flex items-center gap-1">
                         <span className="material-symbols-outlined text-[12px]">check_circle</span>Tu plan
                       </span>
                     ) : isFeatured ? (
-                      <span className="absolute top-0 right-0 px-3 py-1 rounded-bl-2xl text-[9px] font-bold uppercase tracking-wide bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white">
+                      <span className="absolute top-0 right-0 px-3 py-1 rounded-bl-[var(--radius-md)] text-[9px] font-bold uppercase tracking-wide bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white">
                         Más popular
                       </span>
                     ) : null}
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+                        className="w-12 h-12 rounded-[var(--radius-md)] flex items-center justify-center shrink-0"
                         style={{ backgroundColor: `${presentation.color}20`, color: presentation.color }}
                       >
                         <span className="material-symbols-outlined text-[26px]" style={{ fontVariationSettings: "'FILL' 1" }}>{presentation.icon}</span>
@@ -458,7 +458,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                     const isLikesActive = item.key === 'LIKES_UNLOCK' && (likesAlreadyIncluded || likesUnlockActiveMinutes > 0);
                     const isActive = isBoostActive || isLikesActive;
                     return (
-                      <div key={item.key} className={`rounded-2xl p-3.5 flex flex-col justify-between gap-2.5 border ${cardClass}`}>
+                      <div key={item.key} className={`rounded-[var(--radius-md)] p-3.5 flex flex-col justify-between gap-2.5 border ${cardClass}`}>
                         <div>
                           <div
                             className="w-10 h-10 rounded-xl flex items-center justify-center mb-2"
@@ -498,7 +498,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                   {contextual.map((item) => {
                     const presentation = ITEM_PRESENTATION[item.key] ?? { icon: 'info', color: '#f16b48' };
                     return (
-                      <div key={item.key} className={`rounded-2xl p-3 flex items-center gap-3 border border-dashed ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'}`}>
+                      <div key={item.key} className={`rounded-[var(--radius-md)] p-3 flex items-center gap-3 border border-dashed ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'}`}>
                         <span className="material-symbols-outlined text-[20px] shrink-0" style={{ color: presentation.color }}>{presentation.icon}</span>
                         <div className="min-w-0">
                           <span className={`font-label-caps text-[10px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
@@ -518,7 +518,13 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
           {activeTab === 'coins' && (
             <section className="flex flex-col gap-2.5">
               <div className="flex items-center justify-between px-1">
-                <h3 className={`font-label-caps text-[11px] uppercase font-bold tracking-wider ${isLight ? 'text-[#16223b]' : 'text-[#ffb295]'}`}>
+                {/* Título editorial en Fraunces itálica, per Store.dc.html ("Cómo ganás
+                    monedas"/"Canjear" usan font-display) — antes quedaba el único título
+                    de sección en Manrope uppercase, desentonando con el resto del rediseño. */}
+                <h3
+                  className={`text-[16px] italic font-semibold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
                   Monedas Mely
                 </h3>
                 <span className="font-label-caps text-[8.5px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
@@ -529,13 +535,13 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                 {coinPacks.map((pack, idx) => {
                   const isBiggest = idx === coinPacks.length - 1 && coinPacks.length > 1;
                   return (
-                    <div key={pack.key} className={`relative rounded-2xl p-3.5 flex flex-col items-center gap-2 border ${cardClass}`}>
+                    <div key={pack.key} className={`relative rounded-[var(--radius-md)] p-3.5 flex flex-col items-center gap-2 border ${cardClass}`}>
                       {isBiggest && (
                         <span className="absolute -top-2 right-2 px-1.5 py-0.5 rounded-full text-[7.5px] font-bold uppercase tracking-wide bg-gradient-to-r from-amber-400 to-amber-500 text-white shadow-elevation-sm z-10">
                           Más coins
                         </span>
                       )}
-                      <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shadow-elevation-sm">
+                      <div className="w-10 h-10 rounded-[var(--radius-md)] bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shadow-elevation-sm">
                         <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
                       </div>
                       <span className={`font-headline-md text-[16px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{pack.coins.toLocaleString()}</span>
@@ -559,7 +565,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
       </AnimatePresence>
 
       {/* PROMO CODE */}
-      <section className={`p-4 rounded-2xl border flex flex-col gap-2.5 ${cardClass}`}>
+      <section className={`p-4 rounded-[var(--radius-md)] border flex flex-col gap-2.5 ${cardClass}`}>
         <span className={`font-label-caps text-[10px] uppercase font-bold ${isLight ? 'text-[#16223b]' : 'text-[#ffb295]'}`}>
           ¿Tenés un código promocional?
         </span>
@@ -580,10 +586,13 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
       {/* RECENT MOVEMENTS */}
       {history && history.entries.length > 0 && (
         <section className="flex flex-col gap-2">
-          <h3 className={`font-label-caps text-[11px] uppercase font-bold tracking-wider px-1 ${isLight ? 'text-[#16223b]' : 'text-[#ffb295]'}`}>
+          <h3
+            className={`px-1 text-[16px] italic font-semibold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
             Movimientos recientes
           </h3>
-          <div className={`rounded-2xl border divide-y ${isLight ? 'bg-white border-[#ffe3d3] divide-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/25 divide-[#f16b48]/15'}`}>
+          <div className={`rounded-[var(--radius-md)] border divide-y ${isLight ? 'bg-white border-[#ffe3d3] divide-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/25 divide-[#f16b48]/15'}`}>
             {history.entries.slice(0, 6).map((entry) => {
               const described = describeLedgerReason(entry.reason, shopItems);
               return (
@@ -616,7 +625,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                 </div>
               </DialogHeader>
               <div className="p-5 flex flex-col gap-4">
-                <div className={`p-3.5 rounded-2xl border flex items-center gap-3.5 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/30'}`}>
+                <div className={`p-3.5 rounded-[var(--radius-md)] border flex items-center gap-3.5 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/30'}`}>
                   <div className="min-w-0 flex-1">
                     <h4 className={`font-headline-md text-[16px] font-bold truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{selectedItem.name}</h4>
                     <p className={`text-[11px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>{selectedItem.description}</p>

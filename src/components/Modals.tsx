@@ -183,7 +183,7 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
             </div>
             {coordinateByChat && (
               <p
-                className={`text-[11.5px] rounded-2xl px-3.5 py-2.5 border ${
+                className={`text-[11.5px] rounded-[var(--radius-md)] px-3.5 py-2.5 border ${
                   isLight ? 'bg-[#fcf9f2] border-[#ffe3d3] text-[#5b6478]' : 'bg-[#0a1120] border-[#f16b48]/25 text-[#ffb295]/80'
                 }`}
               >
@@ -233,7 +233,7 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
                       setDayKey(qv.dayKey);
                       setTimeKey(qv.timeKey);
                     }}
-                    className={`p-2.5 rounded-2xl text-left border text-[11px] transition-all cursor-pointer ${
+                    className={`p-2.5 rounded-[var(--radius-md)] text-left border text-[11px] transition-all cursor-pointer ${
                       zone === qv.zone
                         ? isLight
                           ? 'bg-[#fcf9f2] border-[#f16b48] text-[#f16b48] font-bold'
@@ -311,7 +311,7 @@ export const StampModal: React.FC<StampModalProps> = ({ stamp, onClose }) => {
 
   return (
     <Dialog open={Boolean(stamp)} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-[calc(100%-2rem)] max-w-[380px] p-6 rounded-3xl flex flex-col items-center text-center">
+      <DialogContent className="w-[calc(100%-2rem)] max-w-[380px] p-6 rounded-[var(--radius-lg)] flex flex-col items-center text-center">
         {stamp && (
           <>
             <div
@@ -336,7 +336,7 @@ export const StampModal: React.FC<StampModalProps> = ({ stamp, onClose }) => {
             </span>
 
             <div
-              className={`rounded-2xl p-4 border w-full text-left flex flex-col gap-2.5 mb-5 ${
+              className={`rounded-[var(--radius-md)] p-4 border w-full text-left flex flex-col gap-2.5 mb-5 ${
                 isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'
               }`}
             >
@@ -397,7 +397,7 @@ export const RechargeModal: React.FC<RechargeModalProps> = ({ pack, onClose, onC
 
   return (
     <Dialog open={Boolean(pack)} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-[calc(100%-2rem)] max-w-[380px] p-6 rounded-3xl flex flex-col items-center text-center">
+      <DialogContent className="w-[calc(100%-2rem)] max-w-[380px] p-6 rounded-[var(--radius-lg)] flex flex-col items-center text-center">
         {pack && (
           <>
             <div
@@ -419,7 +419,7 @@ export const RechargeModal: React.FC<RechargeModalProps> = ({ pack, onClose, onC
             </p>
 
             <div
-              className={`p-4 rounded-2xl border w-full flex justify-between items-center mb-6 ${
+              className={`p-4 rounded-[var(--radius-md)] border w-full flex justify-between items-center mb-6 ${
                 isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/25'
               }`}
             >
@@ -507,7 +507,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
               onNavigate('perfil');
               onClose();
             }}
-            className={`p-3 rounded-2xl border flex items-center gap-3 cursor-pointer transition-colors ${
+            className={`p-3 rounded-[var(--radius-md)] border flex items-center gap-3 cursor-pointer transition-colors ${
               isLight ? 'border-slate-100 hover:bg-slate-50' : 'border-white/10 hover:bg-white/5'
             }`}
           >

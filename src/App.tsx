@@ -311,7 +311,7 @@ function AppContent() {
             currentTab === 'ajustes'
               ? 'Ajustes'
               : currentTab === 'tienda'
-                ? 'Tienda'
+                ? 'Recompensas'
                 : currentTab === 'mensajes'
                   ? 'Mensajes'
                   : currentTab === 'matches'

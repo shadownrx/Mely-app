@@ -92,16 +92,16 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
             <motion.div
               animate={{ rotate: wheelRotation }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="w-28 h-28 rounded-full border-4 border-[#f16b48] p-1.5 flex items-center justify-center bg-gradient-to-tr from-rose-950 via-slate-900 to-rose-900 shadow-xl"
+              className="w-28 h-28 rounded-full border-4 border-[#f16b48] p-1.5 flex items-center justify-center bg-gradient-to-tr from-[#0a1120] via-[#131f36] to-[#17233d] shadow-xl"
             >
-              <div className="w-full h-full rounded-full border border-dashed border-rose-400/40 flex items-center justify-center relative">
-                <span className="material-symbols-outlined text-[36px] text-amber-300 animate-pulse">
+              <div className="w-full h-full rounded-full border border-dashed border-[#f16b48]/40 flex items-center justify-center relative">
+                <span className="material-symbols-outlined text-[36px] text-[#ffb295] animate-pulse">
                   psychology_alt
                 </span>
                 {/* Dial spokes */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-full h-0.5 bg-rose-500/20" />
-                  <div className="h-full w-0.5 bg-rose-500/20 absolute" />
+                  <div className="w-full h-0.5 bg-[#f16b48]/20" />
+                  <div className="h-full w-0.5 bg-[#f16b48]/20 absolute" />
                 </div>
               </div>
             </motion.div>
@@ -114,7 +114,7 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
             size="sm"
             onClick={handleSpinRoulette}
             disabled={isSpinning}
-            className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-label-caps text-[10px] uppercase font-bold tracking-wider rounded-xl tactile-btn shadow-elevation-md shadow-amber-500/25"
+            className="px-4 py-2 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] hover:opacity-90 text-white font-label-caps text-[10px] uppercase font-bold tracking-wider rounded-xl tactile-btn shadow-elevation-md shadow-[#f16b48]/25"
           >
             <span className="material-symbols-outlined text-[14px] mr-1.5">autorenew</span>
             GIRAR RULETA DE PREGUNTAS
@@ -125,7 +125,7 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
             key={currentQuestion.id}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`p-4 rounded-2xl border text-left w-full transition-all ${
+            className={`p-4 rounded-[var(--radius-md)] border text-left w-full transition-all ${
               isLight
                 ? 'bg-[#fcf9f2] border-[#ffe3d3]'
                 : 'bg-[#131f36] border-[#f16b48]/30'
@@ -147,7 +147,11 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
             {/* Options pills if available */}
             {currentQuestion.options && currentQuestion.options.length > 0 && (
               <div className="mt-3 flex flex-col gap-1.5">
-                <span className="font-label-caps text-[9px] uppercase text-gray-400 font-bold block">
+                <span
+                  className={`font-label-caps text-[9px] uppercase font-bold block ${
+                    isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/60'
+                  }`}
+                >
                   Opciones sugeridas para charlar:
                 </span>
                 <div className="grid grid-cols-2 gap-1.5">
@@ -172,7 +176,7 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
           <div className="flex gap-2 w-full pt-1">
             <Button
               onClick={handleSendToChat}
-              className="flex-1 py-2.5 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-label-caps text-[10px] font-bold uppercase tracking-wider rounded-2xl tactile-btn shadow-elevation-md shadow-[#f16b48]/25"
+              className="flex-1 py-2.5 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-label-caps text-[10px] font-bold uppercase tracking-wider rounded-[var(--radius-md)] tactile-btn shadow-elevation-md shadow-[#f16b48]/25"
             >
               <span className="material-symbols-outlined text-[14px] mr-1">send</span>
               ENVIAR AL CHAT

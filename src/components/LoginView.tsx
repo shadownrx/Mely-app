@@ -157,7 +157,11 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <div className="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-600 text-[12px] flex items-start gap-2">
+            <div
+              className={`p-3 rounded-[var(--radius-md)] border text-[12px] flex items-start gap-2 ${
+                isLight ? 'bg-red-50 border-red-200 text-red-600' : 'bg-red-500/10 border-red-500/30 text-red-300'
+              }`}
+            >
               <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5 text-[#f16b48]">error</span>
               <span>{errorMsg}</span>
             </div>
@@ -205,7 +209,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className={`absolute right-3 p-1 focus:outline-none cursor-pointer ${isLight ? 'text-gray-400 hover:text-[#16223b]' : 'text-[#8a93a8] hover:text-[#f5f1e8]'}`}
+              className={`absolute right-3 p-1 focus:outline-none cursor-pointer ${isLight ? 'text-[#5b6478] hover:text-[#16223b]' : 'text-[#8a93a8] hover:text-[#f5f1e8]'}`}
               aria-label="Ver u ocultar contraseña"
             >
               <span className="material-symbols-outlined text-[18px]">{showPassword ? 'visibility_off' : 'visibility'}</span>
@@ -213,7 +217,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
           </div>
         </div>
 
-        <Label className="flex items-center gap-2 cursor-pointer select-none normal-case tracking-normal text-[12.5px] font-normal text-slate-500 dark:text-[#8a93a8]">
+        <Label className="flex items-center gap-2 cursor-pointer select-none normal-case tracking-normal text-[12.5px] font-normal text-[#5b6478] dark:text-[#8a93a8]">
           <Checkbox checked={rememberMe} onCheckedChange={(v) => setRememberMe(v === true)} />
           Recordar mi sesión
         </Label>
@@ -266,7 +270,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
 
       {/* Password Recovery Modal */}
       <Dialog open={showRecoveryModal} onOpenChange={setShowRecoveryModal}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-[360px] p-6 rounded-3xl">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-[360px] p-6 rounded-[var(--radius-lg)]">
           <h3 className={`font-headline-md text-[18px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
             Recuperar contraseña
           </h3>
@@ -275,13 +279,17 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
           </p>
 
           {recoverySent ? (
-            <div className="p-3 bg-[#3f7a5c]/15 border border-[#3f7a5c]/40 rounded-2xl text-[#3f7a5c] text-[12.5px] text-center font-medium">
+            <div className="p-3 bg-[#3f7a5c]/15 border border-[#3f7a5c]/40 rounded-[var(--radius-md)] text-[#3f7a5c] text-[12.5px] text-center font-medium">
               Si el correo existe, te enviamos un enlace de restablecimiento. Revisá tu bandeja.
             </div>
           ) : (
             <form onSubmit={handleSendRecovery} className="flex flex-col gap-3">
               {recoveryError && (
-                <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px]">
+                <div
+                  className={`p-2.5 rounded-[var(--radius-md)] border text-[11px] ${
+                    isLight ? 'bg-red-50 border-red-200 text-red-600' : 'bg-red-500/10 border-red-500/30 text-red-300'
+                  }`}
+                >
                   {recoveryError}
                 </div>
               )}

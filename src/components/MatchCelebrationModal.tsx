@@ -135,7 +135,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
                 initial={{ opacity: 0, y: 8, scale: 0.85 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.55, type: 'spring', stiffness: 340, damping: 20 }}
-                className="mt-3 flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-3.5 py-1.5"
+                className="mt-3 flex items-center gap-1.5 rounded-[var(--radius-pill)] bg-white/10 border border-white/15 px-3.5 py-1.5"
               >
                 <span className="material-symbols-outlined text-[16px] text-amber-300" style={{ fontVariationSettings: "'FILL' 1" }}>
                   monetization_on

@@ -92,7 +92,7 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
           return (
             <div
               key={dateMeet.id}
-              className={`border rounded-3xl overflow-hidden relative shadow-2xl ${
+              className={`border rounded-[var(--radius-lg)] overflow-hidden relative shadow-2xl ${
                 isLight
                   ? 'bg-white border-[#ffe3d3] shadow-[0_10px_30px_rgba(225,29,72,0.08)]'
                   : 'bg-[#0f1a2e] border-[#f16b48]/30 shadow-[0_0_30px_rgba(225,29,72,0.12)]'
@@ -144,7 +144,7 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
                           ? 'bg-[#fcf9f2] text-[#f16b48] border-[#ffe3d3]'
                           : 'bg-[#f16b48]/20 text-[#ffb295] border-[#f16b48]/40'
                         : isLight
-                        ? 'bg-gray-100 text-gray-700 border-gray-200'
+                        ? 'bg-[#efe7d8] text-[#5b6478] border-[#ffe3d3]'
                         : 'bg-[#ffb295]/20 text-[#ffb295] border-[#ffb295]/40'
                     }`}
                   >
@@ -156,7 +156,7 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
               {/* Ticket Content */}
               <div className="p-4 sm:p-5 flex flex-col gap-3.5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
-                  <div className={`p-3.5 rounded-2xl border ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
+                  <div className={`p-3.5 rounded-[var(--radius-md)] border ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
                     <span className={`font-label-caps text-[9px] uppercase block mb-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                       LUGAR & DIRECCIÓN
                     </span>
@@ -166,7 +166,7 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
                     </p>
                   </div>
 
-                  <div className={`p-3.5 rounded-2xl border ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
+                  <div className={`p-3.5 rounded-[var(--radius-md)] border ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
                     <span className={`font-label-caps text-[9px] uppercase block mb-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                       HORARIO
                     </span>

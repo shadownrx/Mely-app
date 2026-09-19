@@ -66,7 +66,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
       <DialogContent className="w-[calc(100%-1.5rem)] max-w-[420px] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden">
         <DialogHeader
           className={`p-4 sm:p-5 border-b flex-row justify-between items-center shrink-0 space-y-0 ${
-            isLight ? 'bg-white border-black/8' : 'bg-[#131f36] border-white/10'
+            isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'
           }`}
         >
           <div className="flex items-center gap-2.5">
@@ -143,7 +143,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
 
           {/* Verified Only Toggle */}
           <div
-            className={`p-3.5 rounded-2xl border flex items-center justify-between transition-colors ${
+            className={`p-3.5 rounded-[var(--radius-md)] border flex items-center justify-between transition-colors ${
               isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'
             }`}
           >
@@ -169,7 +169,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
 
           {/* Audio Bio Toggle */}
           <div
-            className={`p-3.5 rounded-2xl border flex items-center justify-between transition-colors ${
+            className={`p-3.5 rounded-[var(--radius-md)] border flex items-center justify-between transition-colors ${
               isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'
             }`}
           >
@@ -206,7 +206,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
                     key={interest.id}
                     type="button"
                     onClick={() => toggleInterest(interest.slug)}
-                    className={`px-2.5 py-1 rounded-full text-[11px] font-body-sm transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-[var(--radius-pill)] text-[11px] font-body-sm transition-all cursor-pointer ${
                       isSelected
                         ? 'bg-[#f16b48] text-white font-bold shadow-elevation-sm'
                         : isLight

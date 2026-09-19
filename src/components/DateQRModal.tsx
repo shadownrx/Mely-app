@@ -274,11 +274,11 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
         {mode === 'show_qr' && !verificationSuccess && (
           <div className="p-5 flex flex-col items-center gap-4 text-center">
             <div
-              className={`p-4 rounded-3xl border-2 border-dashed relative shadow-inner ${
+              className={`p-4 rounded-[var(--radius-lg)] border-2 border-dashed relative shadow-inner ${
                 isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/40'
               }`}
             >
-              <div className="w-[220px] h-[220px] bg-white p-2 rounded-2xl flex items-center justify-center shadow-elevation-md overflow-hidden">
+              <div className="w-[220px] h-[220px] bg-white p-2 rounded-[var(--radius-md)] flex items-center justify-center shadow-elevation-md overflow-hidden">
                 {locationError ? (
                   <div className="flex flex-col items-center gap-2 px-3 text-center">
                     <span className="material-symbols-outlined text-[32px] text-[#f16b48]">location_off</span>
@@ -287,7 +287,13 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 ) : qrDataUrl ? (
                   <img src={qrDataUrl} alt="Código QR de la cita" className="w-full h-full object-contain" />
                 ) : (
-                  <span className="material-symbols-outlined text-[48px] text-slate-300 animate-pulse">qr_code_2</span>
+                  <span
+                    className={`material-symbols-outlined text-[48px] animate-pulse ${
+                      isLight ? 'text-[#ffe3d3]' : 'text-[#f16b48]/30'
+                    }`}
+                  >
+                    qr_code_2
+                  </span>
                 )}
               </div>
               {locationError && (
@@ -312,7 +318,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
             </div>
 
             <div
-              className={`p-3 rounded-2xl border text-left flex items-start gap-2.5 w-full ${
+              className={`p-3 rounded-[var(--radius-md)] border text-left flex items-start gap-2.5 w-full ${
                 isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'
               }`}
             >
@@ -328,7 +334,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
             </div>
 
             {status === 'CHECKED_IN' && (
-              <div className={`w-full flex flex-col gap-2 p-3 rounded-2xl border ${isLight ? 'bg-[#efe7d8] border-[#dcf0e4]' : 'bg-[#3f7a5c]/30 border-[#3f7a5c]/40'}`}>
+              <div className={`w-full flex flex-col gap-2 p-3 rounded-[var(--radius-md)] border ${isLight ? 'bg-[#efe7d8] border-[#dcf0e4]' : 'bg-[#3f7a5c]/30 border-[#3f7a5c]/40'}`}>
                 <p className={`text-[11px] font-bold ${isLight ? 'text-[#3f7a5c]' : 'text-[#7fbfa0]'}`}>
                   Check-in listo. ¿Se vieron en persona?
                 </p>
@@ -362,7 +368,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
                   Apuntá la cámara al QR que {partnerName} te muestra en su pantalla.
                 </p>
-                <div className="w-full aspect-square rounded-2xl overflow-hidden bg-black relative border-2 border-dashed border-[#f16b48]/40">
+                <div className="w-full aspect-square rounded-[var(--radius-md)] overflow-hidden bg-black relative border-2 border-dashed border-[#f16b48]/40">
                   {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
                   <video ref={videoRef} className="w-full h-full object-cover" muted playsInline />
                   {cameraError && (
@@ -409,7 +415,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 <Button
                   type="submit"
                   disabled={scanCheckIn.isPending}
-                  className="w-full py-2.5 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-2xl shadow-elevation-md shadow-[#f16b48]/25 disabled:opacity-60"
+                  className="w-full py-2.5 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-[var(--radius-md)] shadow-elevation-md shadow-[#f16b48]/25 disabled:opacity-60"
                 >
                   VALIDAR CÓDIGO
                 </Button>
@@ -456,7 +462,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ delay: 0.3, type: 'spring', stiffness: 340, damping: 20 }}
                 onAnimationStart={() => window.setTimeout(() => sounds.playCoins(), 250)}
-                className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 border ${
+                className={`flex items-center gap-1.5 rounded-[var(--radius-pill)] px-4 py-1.5 border ${
                   isLight ? 'bg-amber-50 border-amber-200' : 'bg-amber-500/10 border-amber-400/30'
                 }`}
               >
@@ -476,7 +482,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 sounds.playClick();
                 onClose();
               }}
-              className="w-full py-2.5 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-2xl tactile-btn shadow-elevation-md shadow-[#f16b48]/25"
+              className="w-full py-2.5 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-[var(--radius-md)] tactile-btn shadow-elevation-md shadow-[#f16b48]/25"
             >
               LISTO • VOLVER AL ITINERARIO
             </Button>

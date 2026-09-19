@@ -91,7 +91,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
       {error && matches.length > 0 && (
         <div
           role="status"
-          className={`flex items-center justify-between gap-3 rounded-xl border px-3 py-2 text-[11px] ${
+          className={`flex items-center justify-between gap-3 rounded-[var(--radius-md)] border px-3 py-2 text-[11px] ${
             isLight ? 'border-amber-200 bg-amber-50 text-amber-800' : 'border-amber-500/30 bg-amber-500/10 text-amber-200'
           }`}
         >
@@ -111,7 +111,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
               Tus conexiones
             </p>
             <div className="mt-0.5 flex items-baseline gap-2">
-              <h2 className={`text-[21px] font-bold tracking-tight ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
+              <h2 className={`font-headline-md text-[21px] font-bold tracking-tight ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                 {matches.length} {matches.length === 1 ? 'match' : 'matches'}
               </h2>
               {activeFilter !== 'all' || searchQuery ? (
@@ -221,7 +221,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-1 text-gray-400 hover:text-rose-500 p-2"
+                      className="absolute right-1 text-gray-400 hover:text-[#f16b48] p-2"
                       aria-label="Limpiar búsqueda"
                       title="Limpiar búsqueda"
                     >
@@ -277,7 +277,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`flex flex-col items-center justify-center py-12 px-6 text-center rounded-2xl border border-dashed ${
+          className={`flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-lg)] border border-dashed ${
             isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'
           }`}
         >
@@ -304,7 +304,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
         <div className="grid grid-cols-2 gap-3">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="flex flex-col gap-2">
-              <Skeleton className="aspect-[3/4] w-full rounded-2xl" />
+              <Skeleton className="aspect-[3/4] w-full rounded-[var(--radius-lg)]" />
               <Skeleton className="h-3 w-2/3" />
             </div>
           ))}
@@ -329,7 +329,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.04, duration: 0.25 }}
-                  className={`p-2.5 rounded-2xl border flex items-center justify-between gap-3 transition-colors ${
+                  className={`p-2.5 rounded-[var(--radius-md)] border flex items-center justify-between gap-3 transition-colors ${
                     isLight
                       ? 'bg-white border-[#ffe3d3]/70 hover:border-[#f16b48] shadow-elevation-sm'
                       : 'bg-[#0f1a2e] border-[#f16b48]/25 hover:border-[#f16b48]/60'
@@ -367,7 +367,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
 
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
-                        <h4 className={`text-[13px] font-bold truncate ${isLight ? 'text-gray-900' : 'text-white'}`}>
+                        <h4 className={`text-[13px] font-bold truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                           {match.other.displayName}, {match.other.age}
                         </h4>
                         {match.other.badges.trusted && (
@@ -381,7 +381,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                           </span>
                         )}
                       </div>
-                      <p className={`text-[11px] truncate ${isLight ? 'text-gray-500' : 'text-[#ffb295]/70'}`}>
+                      <p className={`text-[11px] truncate ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
                         {match.other.city || 'Buenos Aires'}
                       </p>
                       <p className={`mt-1 text-[10px] font-semibold truncate ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}>
@@ -451,7 +451,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     sounds.playClick();
                     onExploreMore();
                   }}
-                  className={`p-3 rounded-2xl border-2 border-dashed flex items-center justify-center gap-2 transition-colors ${
+                  className={`p-3 rounded-[var(--radius-lg)] border-2 border-dashed flex items-center justify-center gap-2 transition-colors ${
                     isLight
                       ? 'border-[#ffe3d3] hover:border-[#f16b48] text-[#f16b48] hover:bg-[#fcf9f2]'
                       : 'border-[#f16b48]/30 hover:border-[#f16b48]/60 text-[#ffb295] hover:bg-white/5'
@@ -483,7 +483,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 >
                   {/* Instagram-grid weight: square photo, minimal chrome, name below not on top */}
                   <div
-                    className="relative aspect-[1/1.15] rounded-2xl overflow-hidden cursor-pointer bg-[#0a1120] group"
+                    className="relative aspect-[1/1.15] rounded-[var(--radius-lg)] overflow-hidden cursor-pointer bg-[#0a1120] group"
                     role="button"
                     tabIndex={0}
                     onKeyDown={(event) => {
@@ -550,7 +550,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] text-slate-500 dark:text-[#8a93a8]">{match.other.city || 'Buenos Aires'}</span>
+                    <span className={`text-[11px] ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>{match.other.city || 'Buenos Aires'}</span>
                     <span className={`mt-0.5 block text-[10px] font-semibold truncate ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}>
                       {match.unread > 0 ? `${match.unread} sin leer` : match.label}
                     </span>
@@ -573,7 +573,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       sounds.playClick();
                       onExploreMore();
                     }}
-                    className={`w-full h-full min-h-[212px] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-2 text-center p-4 transition-colors ${
+                    className={`w-full h-full min-h-[212px] rounded-[var(--radius-lg)] border-2 border-dashed flex flex-col items-center justify-center gap-2 text-center p-4 transition-colors ${
                       isLight
                         ? 'border-[#ffe3d3] hover:border-[#f16b48] text-[#f16b48] hover:bg-[#fcf9f2]'
                         : 'border-[#f16b48]/30 hover:border-[#f16b48]/60 text-[#ffb295] hover:bg-white/5'
@@ -595,7 +595,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          className={`flex flex-col items-center justify-center py-12 px-6 text-center rounded-2xl border border-dashed ${
+          className={`flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-lg)] border border-dashed ${
             isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'
           }`}
         >
@@ -658,7 +658,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 14 }}
               transition={{ type: 'spring', stiffness: 360, damping: 28 }}
-              className={`relative z-10 w-full max-w-md max-h-[88vh] rounded-2xl overflow-hidden flex flex-col shadow-2xl border ${
+              className={`relative z-10 w-full max-w-md max-h-[88vh] rounded-[var(--radius-lg)] overflow-hidden flex flex-col shadow-2xl border ${
                 isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/40 text-[#f5f1e8]'
               }`}
             >
@@ -731,7 +731,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   if (!countdown) return null;
                   return (
                     <div
-                      className={`p-2.5 rounded-xl border flex items-center gap-2 ${
+                      className={`p-2.5 rounded-[var(--radius-md)] border flex items-center gap-2 ${
                         countdown.urgent
                           ? 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400'
                           : isLight
@@ -747,7 +747,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   );
                 })()}
                 {/* Bio */}
-                <div className={`p-2.5 rounded-xl border ${isLight ? 'bg-[#fcf9f2]/50 border-[#ffe3d3]' : 'bg-white/5 border-white/10'}`}>
+                <div className={`p-2.5 rounded-[var(--radius-md)] border ${isLight ? 'bg-[#fcf9f2]/50 border-[#ffe3d3]' : 'bg-white/5 border-white/10'}`}>
                   <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#f16b48] mb-0.5">
                     Sobre {selectedMatch.other.displayName}
                   </h4>
@@ -788,14 +788,14 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     {selectedMatch.other.prompts.map((p) => (
                       <div
                         key={p.id}
-                        className={`p-2.5 rounded-xl border ${
-                          isLight ? 'bg-gray-50 border-gray-200' : 'bg-white/5 border-white/10'
+                        className={`p-2.5 rounded-[var(--radius-md)] border ${
+                          isLight ? 'bg-[#fcf9f2]/50 border-[#ffe3d3]' : 'bg-white/5 border-white/10'
                         }`}
                       >
                         <p className="text-[10.5px] font-bold text-[#f16b48] mb-0.5">
                           {p.question}
                         </p>
-                        <p className={`text-[11.5px] ${isLight ? 'text-gray-700' : 'text-gray-200'}`}>
+                        <p className={`text-[11.5px] ${isLight ? 'text-[#2e5570]' : 'text-[#ffe3d3]'}`}>
                           {p.answer}
                         </p>
                       </div>
@@ -807,7 +807,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
               {/* Modal Actions Footer - Compact & Elegant */}
               <div
                 className={`p-3 border-t flex items-center gap-2 shrink-0 ${
-                  isLight ? 'bg-gray-50 border-gray-200' : 'bg-[#0f1a2e] border-[#f16b48]/30'
+                  isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'
                 }`}
               >
                 <motion.button

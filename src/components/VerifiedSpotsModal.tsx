@@ -48,7 +48,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
           }`}
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shadow-elevation-md shadow-[#f16b48]/30">
+            <div className="w-9 h-9 rounded-[var(--radius-md)] bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shadow-elevation-md shadow-[#f16b48]/30">
               <span className="material-symbols-outlined text-[20px]">storefront</span>
             </div>
             <div>
@@ -100,7 +100,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
               layout
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`border rounded-2xl overflow-hidden shadow-elevation-sm transition-all duration-200 ${
+              className={`border rounded-[var(--radius-lg)] overflow-hidden shadow-elevation-sm transition-all duration-200 ${
                 isLight
                   ? 'bg-white border-[#ffe3d3] hover:border-[#f16b48]/50 hover:shadow-elevation-md'
                   : 'bg-[#131f36] border-[#f16b48]/30 hover:border-[#f16b48]/60 hover:shadow-[0_4px_20px_rgba(225,29,72,0.15)]'
@@ -117,7 +117,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
                 {/* Rating badge */}
-                <div className="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full flex items-center gap-1 border border-white/20">
+                <div className="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-[var(--radius-pill)] flex items-center gap-1 border border-white/20">
                   <span className="material-symbols-outlined text-[12px] text-amber-400" style={{ fontVariationSettings: "'FILL' 1" }}>
                     star
                   </span>

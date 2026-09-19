@@ -327,7 +327,13 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             className="flex flex-col gap-4"
           >
             {step1Error && (
-              <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px]">{step1Error}</div>
+              <div
+                className={`p-2.5 rounded-[var(--radius-md)] border text-[11px] ${
+                  isLight ? 'bg-red-50 border-red-200 text-red-600' : 'bg-red-500/10 border-red-500/30 text-red-300'
+                }`}
+              >
+                {step1Error}
+              </div>
             )}
 
             <div>
@@ -420,7 +426,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             </div>
 
             {googleData ? (
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#3f7a5c]/10 border border-[#3f7a5c]/30 text-[#3f7a5c] text-[11px]">
+              <div className="flex items-center gap-2 p-2.5 rounded-[var(--radius-md)] bg-[#3f7a5c]/10 border border-[#3f7a5c]/30 text-[#3f7a5c] text-[11px]">
                 <span className="material-symbols-outlined text-[16px]">verified</span>
                 <span>Cuenta verificada con Google. No necesitás contraseña.</span>
               </div>
@@ -513,7 +519,13 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             className="flex flex-col gap-4"
           >
             {submitError && (
-              <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px]">{submitError}</div>
+              <div
+                className={`p-2.5 rounded-[var(--radius-md)] border text-[11px] ${
+                  isLight ? 'bg-red-50 border-red-200 text-red-600' : 'bg-red-500/10 border-red-500/30 text-red-300'
+                }`}
+              >
+                {submitError}
+              </div>
             )}
 
             <div>
@@ -564,11 +576,11 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
 
             {/* Single combined consent block, not a wall of checkboxes */}
             <div className="flex flex-col gap-2.5">
-              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-slate-600 dark:text-[#8a93a8]">
+              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-[#5b6478] dark:text-[#8a93a8]">
                 <Checkbox required checked={acceptTerms} onCheckedChange={(v) => setAcceptTerms(v === true)} className="mt-0.5 shrink-0" />
                 <span>Acepto los <strong>Términos y condiciones</strong> de MELY.</span>
               </Label>
-              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-slate-600 dark:text-[#8a93a8]">
+              <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-[#5b6478] dark:text-[#8a93a8]">
                 <Checkbox required checked={acceptPrivacy} onCheckedChange={(v) => setAcceptPrivacy(v === true)} className="mt-0.5 shrink-0" />
                 <span>Acepto la <strong>Política de privacidad</strong> y la verificación presencial en cada encuentro.</span>
               </Label>

@@ -41,9 +41,10 @@ interface DatesViewProps {
   matches: Match[];
   onOpenChat: (connectionId: string) => void;
   onOpenDateQR: (connectionId: string, partnerName: string, partnerAvatar: string) => void;
+  onExploreMatches?: () => void;
 }
 
-export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpenDateQR }) => {
+export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpenDateQR, onExploreMatches }) => {
   const { isLight } = useTheme();
   const { items, isLoading } = useAllDateProposals(matches);
 
@@ -70,16 +71,57 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
       </div>
 
       {isLoading && (
-        <div className="flex flex-col items-center gap-2 py-12 opacity-60">
-          <span className="material-symbols-outlined text-[32px] animate-pulse">confirmation_number</span>
-          <span className="text-[12px]">Cargando itinerario...</span>
+        <div className="flex flex-col gap-4" aria-label="Cargando itinerario">
+          {[0, 1].map((i) => (
+            <div
+              key={i}
+              className={`border rounded-[var(--radius-lg)] overflow-hidden ${isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'}`}
+            >
+              <div className={`p-4 flex items-center gap-3 border-b border-dashed ${isLight ? 'border-[#ffe3d3]' : 'border-[#f16b48]/30'}`}>
+                <div className="w-11 h-11 rounded-full bg-black/10 dark:bg-white/10 animate-pulse shrink-0" />
+                <div className="flex-1 flex flex-col gap-1.5">
+                  <div className="h-2.5 w-24 rounded-full bg-black/10 dark:bg-white/10 animate-pulse" />
+                  <div className="h-3.5 w-32 rounded-full bg-black/10 dark:bg-white/10 animate-pulse" />
+                </div>
+              </div>
+              <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="h-16 rounded-[var(--radius-md)] bg-black/5 dark:bg-white/5 animate-pulse" />
+                <div className="h-16 rounded-[var(--radius-md)] bg-black/5 dark:bg-white/5 animate-pulse" />
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
       {!isLoading && items.length === 0 && (
-        <div className="flex flex-col items-center gap-2 py-12 text-center opacity-60">
-          <span className="material-symbols-outlined text-[32px]">confirmation_number</span>
-          <span className="text-[12px]">Todavía no tenés citas acordadas. Proponé un plan desde el chat de un match.</span>
+        <div className="flex flex-col items-center gap-3 py-14 px-6 text-center">
+          <div
+            className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center text-[#f16b48] ${
+              isLight ? 'bg-white shadow-elevation-sm' : 'bg-[#0f1a2e]'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[36px]">confirmation_number</span>
+          </div>
+          <h3 className={`text-[17px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
+            Tu primera cita te está esperando
+          </h3>
+          <p className={`text-[13px] max-w-[260px] leading-relaxed ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
+            Todavía no tenés citas acordadas. Cada match puede convertirse en un plan con lugar verificado y sello de recuerdo.
+          </p>
+          {onExploreMatches && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => {
+                sounds.playClick();
+                onExploreMatches();
+              }}
+              className="mt-1 gap-1.5"
+            >
+              <span className="material-symbols-outlined text-[15px]">local_cafe</span>
+              Ver mis matches
+            </Button>
+          )}
         </div>
       )}
 
@@ -184,7 +226,7 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
                 >
                   <div className="flex gap-2">
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                       onClick={() => {
                         sounds.playClick();
@@ -198,7 +240,7 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
 
                     {!isVerified && (
                       <Button
-                        variant="cherry"
+                        variant="primary"
                         size="sm"
                         onClick={() => {
                           sounds.playClick();

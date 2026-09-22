@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Match } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
+import { ReportBlockSheet } from './ReportBlockSheet';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Skeleton } from './ui/skeleton';
@@ -61,6 +62,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [selectedGalleryIdx, setSelectedGalleryIdx] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [showReportBlock, setShowReportBlock] = useState(false);
 
   useEffect(() => {
     if (selectedMatch && !matches.some((match) => match.id === selectedMatch.id)) {
@@ -221,7 +223,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-1 text-gray-400 hover:text-[#f16b48] p-2"
+                      className="absolute right-1 text-[#5b6478] dark:text-[#a9b2c9] hover:text-[#f16b48] p-2"
                       aria-label="Limpiar búsqueda"
                       title="Limpiar búsqueda"
                     >
@@ -613,7 +615,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
 
           {searchQuery ? (
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
               onClick={() => {
                 setSearchQuery('');
@@ -672,15 +674,25 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
 
-                {/* Close Button */}
-                <button
-                  onClick={() => setSelectedMatch(null)}
-                  className="absolute top-3 right-3 w-11 h-11 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors"
-                  aria-label="Cerrar"
-                  title="Cerrar"
-                >
-                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
-                </button>
+                {/* Close & overflow buttons */}
+                <div className="absolute top-3 right-3 flex items-center gap-2">
+                  <button
+                    onClick={() => { sounds.playClick(); setShowReportBlock(true); }}
+                    className="w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors"
+                    aria-label="Reportar o bloquear"
+                    title="Reportar o bloquear"
+                  >
+                    <span className="material-symbols-outlined text-[17px]" aria-hidden="true">more_vert</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedMatch(null)}
+                    className="w-11 h-11 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors"
+                    aria-label="Cerrar"
+                    title="Cerrar"
+                  >
+                    <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
+                  </button>
+                </div>
 
                 {/* Photo Dots */}
                 {selectedMatch.other.photos.length > 1 && (
@@ -848,6 +860,18 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
           </div>
         )}
       </AnimatePresence>
+
+      {selectedMatch && (
+        <ReportBlockSheet
+          open={showReportBlock}
+          onOpenChange={setShowReportBlock}
+          partnerId={selectedMatch.other.id}
+          partnerName={selectedMatch.other.displayName}
+          onActionComplete={(action) => {
+            if (action === 'blocked') setSelectedMatch(null);
+          }}
+        />
+      )}
     </div>
   );
 };

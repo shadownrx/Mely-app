@@ -43,12 +43,12 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
         isLight ? 'bg-[#fcf9f2]/90 border-black/8' : 'bg-[#0a1120]/90 border-[#f16b48]/20'
       }`}
     >
-      <div className="flex justify-between items-center h-16 px-3 max-w-[440px] mx-auto gap-2">
+      <div className="flex justify-between items-center h-16 px-3 max-w-[440px] md:max-w-[560px] min-[1280px]:max-w-[600px] mx-auto gap-2">
         {/* Left Action (Back or Menu) */}
         {showBackButton ? (
           <Button
             id="top-back-btn"
-            variant="ghost"
+            variant="tertiary"
             size="icon"
             onClick={() => {
               sounds.playClick();
@@ -66,7 +66,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
         ) : (
           <Button
             id="top-menu-btn"
-            variant="ghost"
+            variant="tertiary"
             size="icon"
             onClick={() => {
               sounds.playClick();
@@ -111,7 +111,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
           {/* Wallet Balance */}
           <Button
             id="top-wallet-btn"
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={() => {
               sounds.playCoins();

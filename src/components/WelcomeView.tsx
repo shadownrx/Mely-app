@@ -73,10 +73,10 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({ onCreateAccount, onGoT
         >
           <div className="absolute top-3 right-3 px-2 py-1 rounded-[var(--radius-pill)] bg-white/90 flex items-center gap-1">
             <span className="material-symbols-outlined text-[13px]" style={{ color: 'var(--coral-600)' }}>
-              bolt
+              verified
             </span>
             <span className="text-[10px] font-bold" style={{ color: 'var(--coral-600)' }}>
-              92% compatible
+              Perfil verificado
             </span>
           </div>
 

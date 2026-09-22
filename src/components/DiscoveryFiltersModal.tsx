@@ -228,11 +228,11 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
             isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'
           }`}
         >
-          <Button variant="ghost" onClick={handleReset} className="text-[10px] tracking-wider">
+          <Button variant="tertiary" onClick={handleReset} className="text-[10px] tracking-wider">
             Limpiar Filtros
           </Button>
 
-          <Button variant="cherry" onClick={handleApply} className="px-5 py-2">
+          <Button variant="primary" onClick={handleApply} className="px-5 py-2">
             APLICAR AL RADAR
           </Button>
         </div>

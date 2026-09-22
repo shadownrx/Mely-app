@@ -299,7 +299,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
               {locationError && (
                 <Button
                   type="button"
-                  variant="cherry"
+                  variant="primary"
                   onClick={() => {
                     sounds.playClick();
                     if (dateId) startQrGeneration(dateId);
@@ -349,7 +349,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                   <Button
                     onClick={() => handleConfirm(false)}
                     disabled={confirmDate.isPending}
-                    variant="ghost"
+                    variant="tertiary"
                     className="flex-1 py-2 font-label-caps text-[10px] font-bold uppercase rounded-xl"
                   >
                     No pasó

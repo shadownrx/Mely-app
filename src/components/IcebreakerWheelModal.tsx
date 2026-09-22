@@ -95,7 +95,7 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
               className="w-28 h-28 rounded-full border-4 border-[#f16b48] p-1.5 flex items-center justify-center bg-gradient-to-tr from-[#0a1120] via-[#131f36] to-[#17233d] shadow-xl"
             >
               <div className="w-full h-full rounded-full border border-dashed border-[#f16b48]/40 flex items-center justify-center relative">
-                <span className="material-symbols-outlined text-[36px] text-[#ffb295] animate-pulse">
+                <span className="material-symbols-outlined text-[36px] text-[#ffb295]">
                   psychology_alt
                 </span>
                 {/* Dial spokes */}
@@ -111,10 +111,11 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
           </div>
 
           <Button
+            variant="primary"
             size="sm"
             onClick={handleSpinRoulette}
             disabled={isSpinning}
-            className="px-4 py-2 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] hover:opacity-90 text-white font-label-caps text-[10px] uppercase font-bold tracking-wider rounded-xl tactile-btn shadow-elevation-md shadow-[#f16b48]/25"
+            className="px-4 py-2 font-label-caps text-[10px] uppercase font-bold tracking-wider"
           >
             <span className="material-symbols-outlined text-[14px] mr-1.5">autorenew</span>
             GIRAR RULETA DE PREGUNTAS
@@ -175,8 +176,9 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
           {/* Action Buttons */}
           <div className="flex gap-2 w-full pt-1">
             <Button
+              variant="primary"
               onClick={handleSendToChat}
-              className="flex-1 py-2.5 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-label-caps text-[10px] font-bold uppercase tracking-wider rounded-[var(--radius-md)] tactile-btn shadow-elevation-md shadow-[#f16b48]/25"
+              className="flex-1 py-2.5 font-label-caps text-[10px] font-bold uppercase tracking-wider rounded-[var(--radius-md)]"
             >
               <span className="material-symbols-outlined text-[14px] mr-1">send</span>
               ENVIAR AL CHAT

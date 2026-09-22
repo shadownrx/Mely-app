@@ -5,6 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useMarkRead, useMessages, useSendMessage, useSendPhoto, useTypingIndicator, useTypingPing } from '../hooks/useChat';
 import { useAcceptProposal, useCounterProposal, useProposals } from '../hooks/useDates';
+import { ReportBlockSheet } from './ReportBlockSheet';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -15,6 +16,8 @@ interface MessagesViewProps {
   matches: Match[];
   isLoadingMatches?: boolean;
   activeConnectionId: string | null;
+  /** Fragmento que originó el match (pilar 3): el chat vacío lo usa como punto de partida. */
+  contextLabel?: string | null;
   onSelectConnection: (connectionId: string | null) => void;
   onOpenProposeModal?: (connectionId: string) => void;
   onOpenIcebreaker?: (partnerName: string) => void;
@@ -57,7 +60,7 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
     name: 'Lavanda & Cyber Romance',
     description: 'Tonos violetas, misterio y poesía contemporánea',
     accentColor: '#b98fd1',
-    userBubbleLight: 'bg-gradient-to-r from-[#b98fd1] to-[#b98fd1] text-white border border-[#f1e4f7]/30',
+    userBubbleLight: 'bg-[#b98fd1] text-white border border-[#f1e4f7]/30',
     userBubbleDark: 'bg-gradient-to-r from-[#5b3b75] to-[#b98fd1] text-white border border-[#b98fd1]/40',
     wallpaperPattern: 'stars',
     previewBadge: '🔮 Lavanda',
@@ -67,8 +70,8 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
     name: 'Esmeralda & San Telmo',
     description: 'Frescura botánica y elegancia porteña',
     accentColor: '#3f7a5c',
-    userBubbleLight: 'bg-gradient-to-r from-[#3f7a5c] to-[#3f7a5c] text-white border border-[#dcf0e4]/30',
-    userBubbleDark: 'bg-gradient-to-r from-[#3f7a5c] to-[#3f7a5c] text-white border border-[#3f7a5c]/40',
+    userBubbleLight: 'bg-[#3f7a5c] text-white border border-[#dcf0e4]/30',
+    userBubbleDark: 'bg-[#3f7a5c] text-white border border-[#3f7a5c]/40',
     wallpaperPattern: 'grid',
     previewBadge: '🌿 Esmeralda',
   },
@@ -78,7 +81,7 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
     description: 'Cálido, tostado y perfecto para planear una cita',
     accentColor: '#e3b873',
     userBubbleLight: 'bg-gradient-to-r from-[#8a5a28] to-[#e3b873] text-white border border-[#f3e4be]/30',
-    userBubbleDark: 'bg-gradient-to-r from-[#8a5a28] to-[#8a5a28] text-white border border-[#e3b873]/40',
+    userBubbleDark: 'bg-[#8a5a28] text-white border border-[#e3b873]/40',
     wallpaperPattern: 'warm',
     previewBadge: '☕ Caramelo',
   },
@@ -218,6 +221,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   matches,
   isLoadingMatches = false,
   activeConnectionId,
+  contextLabel,
   onSelectConnection,
   onOpenProposeModal,
   onOpenIcebreaker,
@@ -246,6 +250,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const [showContactInfoDrawer, setShowContactInfoDrawer] = useState(false);
   const [showThemeCustomizer, setShowThemeCustomizer] = useState(false);
   const [showSafetyTips, setShowSafetyTips] = useState(false);
+  const [showReportBlock, setShowReportBlock] = useState(false);
 
   const [selectedThemeId, setSelectedThemeId] = useState<string>(() => {
     try {
@@ -329,7 +334,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
   const activeMatch: Match | null = matches.find((m) => m.id === activeConnectionId) ?? null;
 
-  const { data: messagesData } = useMessages(activeConnectionId);
+  const { data: messagesData, isLoading: isLoadingMessages } = useMessages(activeConnectionId);
   const messages = useMemo(() => messagesData?.messages ?? [], [messagesData]);
   const { data: proposals = [] } = useProposals(activeConnectionId);
   const activeProposal = useMemo(
@@ -645,7 +650,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                         {match.other.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#f16b48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">verified</span>}
                         {match.other.badges.verified && <span className="material-symbols-outlined text-[13px] text-sky-400 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Identidad verificada">verified</span>}
                       </div>
-                      {match.lastMessageAt && <span className={`font-meta-data text-[10px] shrink-0 ${isLight ? 'text-gray-400' : 'text-[#ffb295]/60'}`}>{formatTime(match.lastMessageAt)}</span>}
+                      {match.lastMessageAt && <span className={`font-meta-data text-[10px] shrink-0 ${isLight ? 'text-[#5b6478]' : 'text-[#a9b2c9]'}`}>{formatTime(match.lastMessageAt)}</span>}
                     </div>
                     <div className="flex items-center justify-between gap-2">
                       <p className={`text-[12.5px] truncate ${match.unread > 0 ? 'font-semibold text-[#f16b48]' : isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
@@ -688,7 +693,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {/* Header */}
       <div className={`px-3 py-2 border-b flex items-center justify-between shrink-0 relative z-30 shadow-elevation-sm liquid-glass min-h-[56px] ${isLight ? 'bg-white/60 border-[#ffe3d3]/60' : 'bg-[#0f1a2e]/60 border-[#f16b48]/25'}`}>
         <div className="flex items-center gap-2 min-w-0 flex-1 mr-1">
-          <Button variant="ghost" size="icon" onClick={() => { sounds.playClick(); setViewMode('inbox'); setActiveMediaTray(null); onSelectConnection(null); }} className="h-8 w-8 -ml-1 rounded-full text-[#5b6478] hover:text-[#f16b48] shrink-0" title="Volver">
+          <Button variant="tertiary" size="icon" onClick={() => { sounds.playClick(); setViewMode('inbox'); setActiveMediaTray(null); onSelectConnection(null); }} className="h-8 w-8 -ml-1 rounded-full text-[#5b6478] hover:text-[#f16b48] shrink-0" title="Volver">
             <span className="material-symbols-outlined text-[22px]">arrow_back</span>
           </Button>
 
@@ -727,7 +732,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               en el header del chat (antes esta info de confianza no existía en ningún lado
               de la conversación). */}
           <Button
-            variant="ghost"
+            variant="tertiary"
             size="icon"
             onClick={() => { sounds.playClick(); setShowSafetyTips(true); }}
             className={`h-8 w-8 rounded-full ${isLight ? 'text-[#2e5570]' : 'text-[#ffb295]/80'}`}
@@ -755,7 +760,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             </button>
           )}
           <div className="relative shrink-0">
-            <Button variant="ghost" size="icon" onClick={() => setShowHeaderMenu(!showHeaderMenu)} className={`h-8 w-8 rounded-full ${isLight ? 'text-[#2e5570]' : 'text-[#ffb295]/80'}`} title="Más opciones">
+            <Button variant="tertiary" size="icon" onClick={() => setShowHeaderMenu(!showHeaderMenu)} className={`h-8 w-8 rounded-full ${isLight ? 'text-[#2e5570]' : 'text-[#ffb295]/80'}`} title="Más opciones">
               <span className="material-symbols-outlined text-[19px]">more_vert</span>
             </Button>
             {showHeaderMenu && (
@@ -783,6 +788,11 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   <button onClick={() => { setShowHeaderMenu(false); setShowThemeCustomizer(true); }} className="w-full text-left px-3 py-2 text-[12px] font-medium rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2">
                     <span className="material-symbols-outlined text-[16px] text-[#f16b48]">palette</span>
                     <span>Personalizar tema</span>
+                  </button>
+                  <div className={`my-1 h-px ${isLight ? 'bg-[#ffe3d3]' : 'bg-white/10'}`} />
+                  <button onClick={() => { setShowHeaderMenu(false); setShowReportBlock(true); }} className="w-full text-left px-3 py-2 text-[12px] font-medium rounded-xl hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 text-red-500">
+                    <span className="material-symbols-outlined text-[16px]">flag</span>
+                    <span>Reportar o bloquear</span>
                   </button>
                 </div>
               </>
@@ -815,10 +825,10 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             value={inChatSearchTerm}
             onChange={(e) => setInChatSearchTerm(e.target.value)}
             placeholder="Buscar en este chat..."
-            className={`flex-1 text-[12.5px] bg-transparent border-0 focus:outline-none ${isLight ? 'text-[#16223b] placeholder:text-gray-400' : 'text-white placeholder:text-[#ffb295]/40'}`}
+            className={`flex-1 text-[12.5px] bg-transparent border-0 focus:outline-none ${isLight ? 'text-[#16223b] placeholder:text-[#5b6478]/70' : 'text-white placeholder:text-[#a9b2c9]/70'}`}
             autoFocus
           />
-          <Button variant="ghost" size="sm" onClick={() => setInChatSearchOpen(false)} className="h-7 px-2 text-[11px]">Listo</Button>
+          <Button variant="tertiary" size="sm" onClick={() => setInChatSearchOpen(false)} className="h-7 px-2 text-[11px]">Listo</Button>
         </div>
       )}
 
@@ -856,7 +866,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   <>
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="secondary"
                       onClick={() => setCounterFormOpen((prev) => !prev)}
                       className="h-8 px-2.5 text-[11px] font-bold rounded-xl"
                     >
@@ -875,7 +885,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                   type="button"
                   onClick={() => dismissProposalCard(activeProposal.id)}
                   className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
-                    isLight ? 'text-gray-400 hover:text-[#f16b48] hover:bg-black/5' : 'text-white/40 hover:text-[#ffb295] hover:bg-white/10'
+                    isLight ? 'text-[#5b6478] hover:text-[#f16b48] hover:bg-black/5' : 'text-[#a9b2c9] hover:text-[#ffb295] hover:bg-white/10'
                   }`}
                   aria-label="Ocultar tarjeta de próxima cita"
                   title="Ocultar"
@@ -951,6 +961,63 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           </div>
         </div>
 
+        {/* Punto de partida: el chat vacío ya no es una página en blanco. Si el
+            match nació de un fragmento concreto, se muestra como primer tema; si
+            no, quedan los tres caminos (pregunta, plan, chispa). */}
+        {!isLoadingMessages && filteredMessages.length === 0 && !inChatSearchTerm.trim() && (
+          <div className="flex flex-col items-center text-center gap-3 py-6 px-4 animate-fadeIn">
+            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#f16b48]/50 shadow-elevation-md bg-[#0a1120] flex items-center justify-center">
+              {partner.photos[0]?.url ? (
+                <img
+                  src={partner.photos[0]?.url}
+                  alt={partner.displayName}
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <span className="text-[20px] font-bold text-white/60" aria-hidden="true">
+                  {partner.displayName.slice(0, 2).toUpperCase()}
+                </span>
+              )}
+            </div>
+            <div>
+              <p className={`text-[14px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
+                {contextLabel ? `Conectaron por: ${contextLabel}` : `Conectaste con ${partner.displayName}`}
+              </p>
+              <p className={`text-[12px] mt-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
+                {contextLabel
+                  ? 'Ya tenés de qué hablar — empezá por ahí.'
+                  : 'Rompé el hielo con una pregunta o proponé un plan.'}
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-2">
+              {onOpenIcebreaker && (
+                <Button
+                  variant="primary"
+                  type="button"
+                  onClick={() => { sounds.playClick(); onOpenIcebreaker(partner.displayName); }}
+                  className="h-9 px-4 rounded-full text-[12px] font-bold gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-[15px]">casino</span>
+                  Pregunta inicial
+                </Button>
+              )}
+              {onOpenProposeModal && (
+                <button
+                  type="button"
+                  onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }}
+                  className={`inline-flex items-center gap-1.5 h-9 px-4 rounded-full border-[1.5px] text-[12px] font-bold transition-colors ${
+                    isLight ? 'border-[#f16b48] text-[#f16b48] hover:bg-[#f16b48]/5' : 'border-[#f16b48] text-[#ffb295] hover:bg-white/5'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[15px]">local_cafe</span>
+                  Proponer plan
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {filteredMessages.map((msg: Message) => {
           const isUser = msg.senderId === user?.id;
           const sticker = msg.type === 'TEXT' ? parseSticker(msg.body) : null;
@@ -977,7 +1044,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     onMouseLeave={cancelLongPress}
                     className="relative cursor-pointer transition-transform hover:scale-105 active:scale-95 py-1"
                   >
-                    <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-[#fcf9f2] to-white dark:from-[#131f36] dark:to-[#0f1a2e] border-2 border-[#f16b48]/40 shadow-xl flex flex-col items-center justify-center p-3 text-center relative overflow-hidden">
+                    <div className="w-32 h-32 rounded-3xl bg-white dark:bg-[#131f36] border-2 border-[#f16b48]/40 shadow-xl flex flex-col items-center justify-center p-3 text-center relative overflow-hidden">
                       <span className="text-5xl select-none">{sticker.emoji}</span>
                       <span className="font-label-caps text-[9px] font-bold uppercase tracking-wider text-[#f16b48] mt-2 line-clamp-2 px-1">{sticker.badgeText || sticker.title}</span>
                       <div className="absolute bottom-1 right-1.5 flex items-center gap-0.5 bg-black/40 text-white px-1.5 py-0.5 rounded-full text-[8.5px]">
@@ -985,7 +1052,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                         {isUser && msg.readAt && <span className="material-symbols-outlined text-[10px] text-[#6fa8c9]">done_all</span>}
                       </div>
                     </div>
-                    {isStarred && <span className="absolute -top-1 -right-1 text-amber-400 text-[13px]">⭐</span>}
+                    {isStarred && <span className="absolute -top-1 -right-1 material-symbols-outlined text-amber-400 text-[15px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>}
                   </div>
                 ) : (
                   <div
@@ -1025,7 +1092,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                       <p className="font-body-sm text-[13px] leading-relaxed break-words">{msg.body}</p>
                     )}
                     <div className="flex items-center justify-end gap-1 mt-0.5 select-none text-[9.5px] opacity-75">
-                      {isStarred && <span>⭐</span>}
+                      {isStarred && <span className="material-symbols-outlined text-[12px] text-amber-400" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>}
                       <span>{formatTime(msg.createdAt)}</span>
                       {isUser && msg.readAt && <span className="material-symbols-outlined text-[13px] text-[#6fa8c9]" title="Leído">done_all</span>}
                     </div>
@@ -1104,7 +1171,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {showAttachmentMenu && (
         <div className={`border-t p-3.5 grid grid-cols-3 gap-3 animate-fadeIn relative z-20 shrink-0 ${isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'}`}>
           <button onClick={() => photoInputRef.current?.click()} className="flex flex-col items-center gap-1 text-center group">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
               <span className="material-symbols-outlined text-[22px]">image</span>
             </div>
             <span className={`text-[11px] font-medium ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>Fotos</span>
@@ -1140,7 +1207,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               {(['sparks', 'emojis', 'stickers', 'gifs'] as const).map((tab) => (
                 <Button
                   key={tab}
-                  variant="ghost"
+                  variant="tertiary"
                   size="sm"
                   onClick={() => setActiveMediaTray(tab)}
                   className={`h-7 px-3 rounded-full text-[11px] font-bold flex items-center gap-1 shrink-0 ${activeMediaTray === tab ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white shadow-elevation-sm' : isLight ? 'text-gray-600' : 'text-gray-300'}`}
@@ -1152,11 +1219,11 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             </div>
             <div className="flex items-center gap-0.5 shrink-0">
               {activeMediaTray === 'emojis' && (
-                <Button variant="ghost" size="icon" onClick={handleBackspaceEmoji} className="h-8 w-8 rounded-full text-gray-400" aria-label="Borrar último carácter">
+                <Button variant="tertiary" size="icon" onClick={handleBackspaceEmoji} className="h-8 w-8 rounded-full text-[#5b6478] dark:text-[#a9b2c9]" aria-label="Borrar último carácter">
                   <span className="material-symbols-outlined text-[18px]" aria-hidden="true">backspace</span>
                 </Button>
               )}
-              <Button variant="ghost" size="icon" onClick={() => setActiveMediaTray(null)} className="h-8 w-8 rounded-full text-gray-400" aria-label="Cerrar">
+              <Button variant="tertiary" size="icon" onClick={() => setActiveMediaTray(null)} className="h-8 w-8 rounded-full text-[#5b6478] dark:text-[#a9b2c9]" aria-label="Cerrar">
                 <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
               </Button>
             </div>
@@ -1220,7 +1287,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           {activeMediaTray === 'emojis' && (
             <div className="flex-1 overflow-y-auto p-3 no-scrollbar space-y-3">
               <div>
-                <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1.5 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>🕒 Recientes</span>
+                <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1.5 ${isLight ? 'text-[#5b6478]' : 'text-[#a9b2c9]'}`}>Recientes</span>
                 <div className="flex flex-wrap gap-1.5">
                   {(recentEmojis.length > 0 ? recentEmojis : DEFAULT_FREQUENT_EMOJIS).map((emoji, i) => (
                     <button
@@ -1235,7 +1302,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               </div>
               {EMOJI_CATEGORIES.map((cat) => (
                 <div key={cat.name}>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1.5 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>{cat.icon} {cat.name}</span>
+                  <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1.5 ${isLight ? 'text-[#5b6478]' : 'text-[#a9b2c9]'}`}>{cat.name}</span>
                   <div className="flex flex-wrap gap-1.5">
                     {cat.emojis.map((emoji, i) => (
                       <button
@@ -1271,7 +1338,10 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           (igual que Conversation.dc.html), sin sacar los accesos que ya existían. */}
       {!activeMediaTray && !showAttachmentMenu && !inChatSearchOpen && (
         <div className="shrink-0 flex flex-col gap-2 px-3 pt-2 relative z-10">
-          {onOpenProposeModal && (
+          {/* Jerarquía única: con el chat vacío, la tarjeta de punto de partida
+              ya ofrece plan + pregunta; este atajo solo aparece cuando hay
+              conversación (donde la tarjeta ya no está). */}
+          {onOpenProposeModal && filteredMessages.length > 0 && (
             <button
               type="button"
               onClick={() => { sounds.playStamp(); onOpenProposeModal(activeMatch.id); }}
@@ -1317,7 +1387,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             <button
               type="button"
               onClick={() => { setReplyingTo(null); sounds.playClick(); }}
-              className={`h-7 w-7 shrink-0 flex items-center justify-center rounded-full ${isLight ? 'text-gray-400 hover:text-[#f16b48] hover:bg-[#fcf9f2]' : 'text-[#ffb295]/60 hover:text-[#ffb295] hover:bg-white/5'}`}
+              className={`h-7 w-7 shrink-0 flex items-center justify-center rounded-full ${isLight ? 'text-[#5b6478] hover:text-[#f16b48] hover:bg-[#fcf9f2]' : 'text-[#a9b2c9] hover:text-[#ffb295] hover:bg-white/5'}`}
               aria-label="Cancelar respuesta"
               title="Cancelar respuesta"
             >
@@ -1342,7 +1412,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               onChange={(e) => { setInputText(e.target.value); pingTyping(); }}
               onFocus={() => { if (activeMediaTray) setActiveMediaTray(null); }}
               placeholder="Mensaje"
-              className={`flex-1 bg-transparent text-[13px] font-body-sm focus:outline-none ${isLight ? 'text-[#16223b] placeholder:text-gray-400' : 'text-[#f5f1e8] placeholder:text-[#ffb295]/40'}`}
+              className={`flex-1 bg-transparent text-[13px] font-body-sm focus:outline-none ${isLight ? 'text-[#16223b] placeholder:text-[#5b6478]/70' : 'text-[#f5f1e8] placeholder:text-[#a9b2c9]/70'}`}
             />
             <button
               type="button"
@@ -1369,7 +1439,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {selectedStickerDetail && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
           <div className={`w-full max-w-xs rounded-3xl p-5 border shadow-2xl flex flex-col items-center text-center animate-scaleUp ${isLight ? 'bg-white border-[#ffe3d3] text-[#16223b]' : 'bg-[#0f1a2e] border-[#f16b48]/40 text-[#f5f1e8]'}`}>
-            <div className="w-28 h-28 rounded-3xl bg-gradient-to-tr from-[#fcf9f2] to-white dark:from-[#17233d] dark:to-[#0f1a2e] border-2 border-[#f16b48]/40 shadow-xl flex items-center justify-center text-6xl mb-3">
+            <div className="w-28 h-28 rounded-3xl bg-white dark:bg-[#131f36] border-2 border-[#f16b48]/40 shadow-xl flex items-center justify-center text-6xl mb-3">
               {selectedStickerDetail.emoji}
             </div>
             <h3 className="font-headline-md text-[16px] font-bold mb-3">{selectedStickerDetail.title}</h3>
@@ -1377,11 +1447,11 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               <Button onClick={() => { handleSendSticker(selectedStickerDetail); setSelectedStickerDetail(null); }} className="w-full bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold h-9 rounded-2xl shadow-elevation-md">
                 Enviar Sticker al chat
               </Button>
-              <Button variant="outline" onClick={() => handleToggleFavoriteSticker(selectedStickerDetail.id)} className="w-full h-9 rounded-2xl flex items-center justify-center gap-1.5 text-[12px]">
+              <Button variant="secondary" onClick={() => handleToggleFavoriteSticker(selectedStickerDetail.id)} className="w-full h-9 rounded-2xl flex items-center justify-center gap-1.5 text-[12px]">
                 <span className="material-symbols-outlined text-[16px] text-amber-500">{favoriteStickerIds.includes(selectedStickerDetail.id) ? 'star' : 'star_border'}</span>
                 <span>{favoriteStickerIds.includes(selectedStickerDetail.id) ? 'Quitar de Favoritos' : 'Añadir a Favoritos'}</span>
               </Button>
-              <Button variant="ghost" onClick={() => setSelectedStickerDetail(null)} className="w-full h-8 text-[12px] opacity-70">Cerrar</Button>
+              <Button variant="tertiary" onClick={() => setSelectedStickerDetail(null)} className="w-full h-8 text-[12px] opacity-70">Cerrar</Button>
             </div>
           </div>
         </div>
@@ -1394,7 +1464,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-headline-md text-[16px] font-bold">Info. del contacto</h3>
-                <Button variant="ghost" size="icon" onClick={() => setShowContactInfoDrawer(false)} className="rounded-full" aria-label="Cerrar">
+                <Button variant="tertiary" size="icon" onClick={() => setShowContactInfoDrawer(false)} className="rounded-full" aria-label="Cerrar">
                   <span className="material-symbols-outlined text-[20px]" aria-hidden="true">close</span>
                 </Button>
               </div>
@@ -1439,7 +1509,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             <div>
               <div className="flex items-center justify-between pb-3 border-b border-black/10 dark:border-white/10 mb-4">
                 <h3 className="font-headline-md text-[16px] font-bold">Personalizar Chat</h3>
-                <Button variant="ghost" size="icon" onClick={() => setShowThemeCustomizer(false)} className="rounded-full h-8 w-8" aria-label="Cerrar">
+                <Button variant="tertiary" size="icon" onClick={() => setShowThemeCustomizer(false)} className="rounded-full h-8 w-8" aria-label="Cerrar">
                   <span className="material-symbols-outlined text-[20px]" aria-hidden="true">close</span>
                 </Button>
               </div>
@@ -1529,7 +1599,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             </div>
 
             <div className="flex gap-2 pt-3 border-t border-black/10 dark:border-white/10 mt-3">
-              <Button variant="outline" onClick={() => { sounds.playClick(); handleApplyTheme('mely-cherry'); }} className="flex-1 h-9 rounded-2xl text-[11.5px]">Por Defecto</Button>
+              <Button variant="secondary" onClick={() => { sounds.playClick(); handleApplyTheme('mely-cherry'); }} className="flex-1 h-9 rounded-2xl text-[11.5px]">Por Defecto</Button>
               <Button onClick={() => { sounds.playStamp(); setShowThemeCustomizer(false); }} className="flex-1 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold h-9 rounded-2xl shadow-elevation-md text-[11.5px]">Aplicar y Guardar</Button>
             </div>
           </div>
@@ -1545,7 +1615,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 <span className="material-symbols-outlined text-[20px] text-[#f16b48]">shield</span>
                 <h3 className="font-headline-md text-[16px] font-bold">Consejos de seguridad</h3>
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setShowSafetyTips(false)} className="rounded-full h-8 w-8" aria-label="Cerrar">
+              <Button variant="tertiary" size="icon" onClick={() => setShowSafetyTips(false)} className="rounded-full h-8 w-8" aria-label="Cerrar">
                 <span className="material-symbols-outlined text-[20px]" aria-hidden="true">close</span>
               </Button>
             </div>
@@ -1568,6 +1638,19 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           </div>
         </div>
       )}
+
+      <ReportBlockSheet
+        open={showReportBlock}
+        onOpenChange={setShowReportBlock}
+        partnerId={partner.id}
+        partnerName={partner.displayName}
+        onActionComplete={(action) => {
+          if (action === 'blocked') {
+            setViewMode('inbox');
+            onSelectConnection(null);
+          }
+        }}
+      />
     </div>
   );
 };

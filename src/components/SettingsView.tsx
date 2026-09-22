@@ -7,6 +7,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useInterests, useUpdateProfile, useReplacePrompts, useDeleteAccount, useUpdateLocation } from '../hooks/useProfile';
 import { useRequestPhoneCode, useVerifyPhone } from '../hooks/useAuth';
+import { useBlockedUsers, useUnblockUser } from '../hooks/useModeration';
 import { usePushSubscription } from '../hooks/usePushSubscription';
 import { getCurrentCoords } from '../lib/geolocation';
 import { ApiError } from '../lib/apiClient';
@@ -25,7 +26,7 @@ interface SettingsViewProps {
   onSignOut: () => void;
 }
 
-type SheetId = 'profile' | 'prompts' | 'discovery' | 'phone' | null;
+type SheetId = 'profile' | 'prompts' | 'discovery' | 'phone' | 'blocked' | null;
 
 const GENDER_OPTIONS: { value: Gender; label: string }[] = [
   { value: 'WOMAN', label: 'Mujer' },
@@ -139,6 +140,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
   const updateLocation = useUpdateLocation();
   const { state: pushState, subscribe: subscribePush, unsubscribe: unsubscribePush } = usePushSubscription();
   const [isTogglingPush, setIsTogglingPush] = useState(false);
+  const { data: blockedUsers = [], isLoading: isLoadingBlocked } = useBlockedUsers();
+  const unblockUser = useUnblockUser();
 
   const handleUpdateLocation = async () => {
     sounds.playClick();
@@ -377,7 +380,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
             <div className="flex items-center gap-1.5">
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -389,7 +392,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
               </Button>
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -453,6 +456,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           trailing={
             <span className="font-label-caps text-[10px] text-[#f16b48] font-bold shrink-0">{user.badges.verificationLabel}</span>
           }
+        />
+        <SettingsRow
+          isLight={isLight}
+          icon="block"
+          label="Cuentas bloqueadas"
+          description={blockedUsers.length > 0 ? `${blockedUsers.length} bloqueada${blockedUsers.length === 1 ? '' : 's'}` : 'No bloqueaste a nadie todavía'}
+          onClick={() => setActiveSheet('blocked')}
         />
       </SettingsGroup>
       </motion.div>
@@ -615,7 +625,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
 
           <Button
             type="button"
-            variant="cherry"
+            variant="primary"
             onClick={() => saveAll('Perfil actualizado correctamente.')}
             disabled={isSaving}
             className="w-full gap-2 mt-1"
@@ -690,7 +700,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
                   />
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="tertiary"
                     size="icon"
                     onClick={() => setPrompts((prev) => prev.filter((_, idx) => idx !== i))}
                     className="text-[#f16b48] shrink-0"
@@ -711,7 +721,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
             ))}
           </div>
 
-          <Button type="button" variant="cherry" onClick={() => saveAll('Prompts guardados.')} disabled={isSaving} className="w-full mt-1">
+          <Button type="button" variant="primary" onClick={() => saveAll('Prompts guardados.')} disabled={isSaving} className="w-full mt-1">
             GUARDAR
           </Button>
         </SheetContent>
@@ -735,7 +745,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
                 {user.hasLocation ? 'Activa — se usa para calcular la distancia' : 'No activada — no filtramos por distancia'}
               </span>
             </div>
-            <Button type="button" variant="outline" size="sm" onClick={handleUpdateLocation} disabled={updateLocation.isPending} className="shrink-0 rounded-full">
+            <Button type="button" variant="secondary" size="sm" onClick={handleUpdateLocation} disabled={updateLocation.isPending} className="shrink-0 rounded-full">
               {updateLocation.isPending ? '...' : user.hasLocation ? 'Actualizar' : 'Activar'}
             </Button>
           </div>
@@ -765,7 +775,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
               }}
             />
           </div>
-          <Button type="button" variant="cherry" onClick={() => saveAll('Preferencias de descubrimiento actualizadas.')} disabled={isSaving} className="w-full">
+          <Button type="button" variant="primary" onClick={() => saveAll('Preferencias de descubrimiento actualizadas.')} disabled={isSaving} className="w-full">
             Guardar Preferencias
           </Button>
         </SheetContent>
@@ -795,7 +805,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
               </div>
               <Button
                 type="button"
-                variant="cherry"
+                variant="primary"
                 onClick={handleSendPhoneCode}
                 disabled={requestPhoneCode.isPending || !phoneInput.trim()}
                 className="w-full h-auto min-h-11 py-2.5 whitespace-normal"
@@ -825,7 +835,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
               </div>
               <Button
                 type="button"
-                variant="cherry"
+                variant="primary"
                 onClick={handleVerifyPhoneCode}
                 disabled={verifyPhoneCode.isPending || phoneCode.length < 4}
                 className="w-full gap-2"
@@ -845,15 +855,63 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
         </SheetContent>
       </Sheet>
 
+      <Sheet open={activeSheet === 'blocked'} onOpenChange={(open) => !open && setActiveSheet(null)}>
+        <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-[var(--radius-lg)] flex flex-col gap-3 p-5">
+          <SheetHeader>
+            <SheetTitle>Cuentas bloqueadas</SheetTitle>
+          </SheetHeader>
+          <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+            Las personas que bloqueás no pueden verte, escribirte ni aparecer en tu Descubrir.
+          </p>
+          {isLoadingBlocked ? (
+            <div className="flex flex-col gap-2 mt-1">
+              <div className="h-14 rounded-2xl bg-black/5 dark:bg-white/5 animate-pulse" />
+              <div className="h-14 rounded-2xl bg-black/5 dark:bg-white/5 animate-pulse" />
+            </div>
+          ) : blockedUsers.length === 0 ? (
+            <div className="flex flex-col items-center text-center py-8 gap-2">
+              <span className="material-symbols-outlined text-[32px] text-[#f16b48]/60">block</span>
+              <p className={`text-[12.5px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>No bloqueaste a nadie todavía.</p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2 mt-1">
+              {blockedUsers.map((b) => (
+                <div
+                  key={b.id}
+                  className={`flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-2xl border ${
+                    isLight ? 'bg-white border-[#ffe3d3]' : 'bg-white/5 border-white/10'
+                  }`}
+                >
+                  <span className="text-[13px] font-bold truncate">{b.displayName}</span>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    disabled={unblockUser.isPending}
+                    onClick={async () => {
+                      await unblockUser.mutateAsync(b.id);
+                      toast.success(`Desbloqueaste a ${b.displayName}`);
+                    }}
+                    className="h-7 px-3 text-[10.5px] shrink-0"
+                  >
+                    Desbloquear
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+
       <Dialog open={showSignOutConfirm} onOpenChange={setShowSignOutConfirm}>
         <DialogContent className="w-[calc(100%-2rem)] max-w-[360px] p-6 text-center">
           <h3 className="font-headline-md text-[18px] font-bold">¿Cerrar Sesión?</h3>
           <p className={`text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>Vas a poder volver a ingresar en cualquier momento con tus credenciales.</p>
           <div className="flex gap-2.5">
-            <Button type="button" variant="secondary" onClick={() => setShowSignOutConfirm(false)} className="flex-1">
+            <Button type="button" variant="tertiary" onClick={() => setShowSignOutConfirm(false)} className="flex-1">
               Cancelar
             </Button>
-            <Button type="button" variant="cherry" onClick={() => { setShowSignOutConfirm(false); onSignOut(); }} className="flex-1">
+            <Button type="button" variant="primary" onClick={() => { setShowSignOutConfirm(false); onSignOut(); }} className="flex-1">
               Confirmar
             </Button>
           </div>
@@ -867,7 +925,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
             Esta acción es permanente. Se borra tu perfil, matches, mensajes y saldo. No se puede deshacer.
           </p>
           <div className="flex gap-2.5">
-            <Button type="button" variant="secondary" onClick={() => setShowDeleteConfirm(false)} className="flex-1">
+            <Button type="button" variant="tertiary" onClick={() => setShowDeleteConfirm(false)} className="flex-1">
               Cancelar
             </Button>
             <Button

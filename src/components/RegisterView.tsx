@@ -444,7 +444,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
               </div>
             )}
 
-            <Button type="button" variant="cherry" onClick={handleStep1Continue} className="mt-1 w-full normal-case tracking-normal text-[15px]">
+            <Button type="button" variant="primary" onClick={handleStep1Continue} className="mt-1 w-full normal-case tracking-normal text-[15px]">
               Continuar
             </Button>
 
@@ -495,7 +495,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
 
             <Button
               type="button"
-              variant="cherry"
+              variant="primary"
               onClick={() => {
                 sounds.playClick();
                 goToStep(3);
@@ -589,7 +589,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             <Button
               id="register-submit-btn"
               type="submit"
-              variant="cherry"
+              variant="primary"
               size="lg"
               disabled={isIssuing || !acceptTerms || !acceptPrivacy}
               className="w-full mt-1 normal-case tracking-normal text-[15px]"

@@ -16,6 +16,8 @@ interface ProposeDateModalProps {
   onClose: () => void;
   connectionId: string;
   partnerName: string;
+  /** Nota precargada (pilar 3: el fragmento que originó el match viaja al plan). */
+  initialNote?: string;
 }
 
 function defaultDateTimeLocal(daysAhead: number, hour: number) {
@@ -86,6 +88,7 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
   onClose,
   connectionId,
   partnerName,
+  initialNote,
 }) => {
   const { isLight } = useTheme();
   const { data: meta } = useDatesMeta();
@@ -95,7 +98,9 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
   const [planType, setPlanType] = useState<PlanType>('COFFEE');
   const [dayKey, setDayKey] = useState<DayKey>('sabado');
   const [timeKey, setTimeKey] = useState<TimeKey>('tarde');
-  const [note, setNote] = useState('Un café de especialidad y caminata por la galería.');
+  // El modal se remonta en cada apertura (App lo renderiza condicional), así que
+  // initialNote llega como estado inicial sin necesidad de sincronizar.
+  const [note, setNote] = useState(initialNote ?? 'Un café de especialidad y caminata por la galería.');
   const [showTemplates, setShowTemplates] = useState(false);
 
   const quickVenues: { zone: string; planType: PlanType; dayKey: DayKey; timeKey: TimeKey }[] = [
@@ -369,7 +374,7 @@ export const StampModal: React.FC<StampModalProps> = ({ stamp, onClose }) => {
             </div>
 
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={() => {
                 sounds.playClick();
                 onClose();
@@ -431,7 +436,7 @@ export const RechargeModal: React.FC<RechargeModalProps> = ({ pack, onClose, onC
 
             <div className="flex gap-2.5 w-full">
               <Button
-                variant="secondary"
+                variant="tertiary"
                 onClick={() => {
                   sounds.playClick();
                   onClose();
@@ -441,7 +446,7 @@ export const RechargeModal: React.FC<RechargeModalProps> = ({ pack, onClose, onC
                 Cancelar
               </Button>
               <Button
-                variant="cherry"
+                variant="primary"
                 onClick={() => {
                   onConfirm();
                   onClose();
@@ -573,7 +578,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
           </button>
 
           <Button
-            variant="outline"
+            variant="secondary"
             onClick={() => {
               sounds.playClick();
               onSignOut();

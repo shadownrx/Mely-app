@@ -282,7 +282,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
           </p>
         </div>
         <Button
-          variant={wallet?.dailyBonusAvailable ? 'cherry' : 'secondary'}
+          variant={wallet?.dailyBonusAvailable ? 'primary' : 'secondary'}
           size="sm"
           disabled={!wallet?.dailyBonusAvailable || claimDailyBonus.isPending}
           onClick={handleClaimDailyBonus}
@@ -302,8 +302,8 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
           }}
           className={`flex items-center gap-3 p-3.5 rounded-[var(--radius-md)] border text-left transition-transform active:scale-[0.98] ${
             isLight
-              ? 'bg-gradient-to-r from-[#fcf9f2] to-white border-[#ffe3d3]'
-              : 'bg-gradient-to-r from-[#0a1120] to-[#0f1a2e] border-[#f16b48]/30'
+              ? 'bg-white border-[#ffe3d3]'
+              : 'bg-[#0f1a2e] border-[#f16b48]/30'
           }`}
         >
           <div className="w-11 h-11 rounded-[var(--radius-md)] bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shrink-0 shadow-elevation-md">
@@ -389,8 +389,8 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                     } ${
                       isFeatured && !isCurrent
                         ? isLight
-                          ? 'bg-gradient-to-br from-[#fcf9f2] to-white'
-                          : 'bg-gradient-to-br from-[#0a1120] to-[#0f1a2e]'
+                          ? 'bg-white'
+                          : 'bg-[#0f1a2e]'
                         : cardClass
                     }`}
                   >
@@ -431,7 +431,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                       ))}
                     </ul>
                     <Button
-                      variant={isCurrent ? 'secondary' : 'cherry'}
+                      variant={isCurrent ? 'secondary' : 'primary'}
                       onClick={() => {
                         sounds.playClick();
                         setSelectedItem(item);
@@ -470,7 +470,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                           <p className={`text-[10.5px] leading-snug mt-0.5 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>{item.description}</p>
                         </div>
                         <Button
-                          variant={isActive ? 'secondary' : 'cherry'}
+                          variant={isActive ? 'secondary' : 'primary'}
                           size="sm"
                           disabled={isActive}
                           onClick={() => {
@@ -547,7 +547,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                       <span className={`font-headline-md text-[16px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{pack.coins.toLocaleString()}</span>
                       <span className={`text-[9.5px] text-center -mt-1.5 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>{pack.label}</span>
                       <Button
-                        variant="cherry"
+                        variant="primary"
                         size="sm"
                         onClick={() => handleRecharge(pack.key)}
                         disabled={recharge.isPending}
@@ -577,7 +577,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
             placeholder="Ej: MELY2026"
             className="flex-1 font-mono text-[12px] tracking-wide"
           />
-          <Button type="submit" variant="cherry" disabled={redeemCode.isPending} className="rounded-xl">
+          <Button type="submit" variant="primary" disabled={redeemCode.isPending} className="rounded-xl">
             Canjear
           </Button>
         </form>
@@ -618,7 +618,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
         <DialogContent className="w-[calc(100%-2rem)] max-w-[390px] p-0 gap-0 overflow-hidden">
           {selectedItem && (
             <>
-              <DialogHeader className={`p-4 border-b flex-row items-center space-y-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-gradient-to-r from-[#0a1120] to-[#0f1a2e] border-[#f16b48]/30'}`}>
+              <DialogHeader className={`p-4 border-b flex-row items-center space-y-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'}`}>
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-[#f16b48] text-[22px]">shopping_bag</span>
                   <h3 className={`font-headline-md text-[16px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>Confirmar Compra</h3>
@@ -640,12 +640,12 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                 )}
                 {purchaseError && <p className="text-[11px] text-[#f16b48] font-bold">{purchaseError}</p>}
                 <div className="grid grid-cols-2 gap-2 pt-2">
-                  <Button type="button" variant="secondary" onClick={() => setSelectedItem(null)}>
+                  <Button type="button" variant="tertiary" onClick={() => setSelectedItem(null)}>
                     Cancelar
                   </Button>
                   <Button
                     type="button"
-                    variant="cherry"
+                    variant="primary"
                     onClick={handleConfirmPurchase}
                     disabled={purchase.isPending || walletBalance < selectedItem.price}
                     className="gap-1"
@@ -672,7 +672,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
             <p className={`font-body-sm text-[12px] mt-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>Ya está disponible en tu cuenta.</p>
           </div>
           <Button
-            variant="cherry"
+            variant="primary"
             onClick={() => {
               sounds.playClick();
               setReceipt(null);

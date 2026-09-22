@@ -67,7 +67,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
       }}
       className="fixed inset-x-0 bottom-0 z-50"
     >
-      <div className="flex justify-around items-stretch w-full max-w-[440px] mx-auto h-[78px] pb-[14px]">
+      <div className="flex justify-around items-stretch w-full max-w-[440px] md:max-w-[560px] min-[1280px]:max-w-[600px] mx-auto h-[78px] pb-[14px]">
         {tabs.map((tab) => {
           const isActive = currentTab === tab.id;
 
@@ -98,7 +98,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
 
                 {tab.badge !== undefined && tab.badge > 0 && (
                   <span
-                    className="absolute -top-1.5 -right-1 z-10 min-w-[16px] h-4 px-1 rounded-[var(--radius-pill)] text-[9px] font-bold flex items-center justify-center text-white ring-2 animate-pulseGlow"
+                    className="absolute -top-1.5 -right-1 z-10 min-w-[16px] h-4 px-1 rounded-[var(--radius-pill)] text-[9px] font-bold flex items-center justify-center text-white ring-2"
                     style={{ background: 'var(--coral-600)', ringColor: isLight ? '#FCF9F2' : 'var(--midnight-950)' } as React.CSSProperties}
                   >
                     {tab.badge}

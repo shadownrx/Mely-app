@@ -3,26 +3,32 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
+/* Gramática MELY — misma intención, mismo lenguaje.
+ * primary: mueve la historia hacia adelante (gradiente coral = acción MELY).
+ * secondary: alternativa válida con borde (misma presencia, menos empuje).
+ * tertiary: contextual/discreta (icono, menú, cancelar).
+ * destructive: reportar, bloquear, eliminar.
+ * special: identidad propia de MELY (pasaporte/sello, ticket dashed).
+ * link: texto accionable.
+ * El radio lo pone el tamaño/contexto (hero = pill vía className); el color
+ * lo pone la intención. Deuda honesta: texto blanco sobre coral no llega a
+ * 4.5:1 — candidato futuro `ink-on-coral` cuando se revise la marca. */
 const buttonVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap rounded-2xl text-sm font-semibold transition-all focus-glow disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] select-none cursor-pointer',
   {
     variants: {
       variant: {
-        default:
-          'bg-[#f16b48] text-white shadow-elevation-sm hover:bg-[#d4552f] hover:shadow-elevation-md',
-        cherry:
-          'bg-[#f16b48] text-white shadow-elevation-md hover:bg-[#d4552f] hover:shadow-elevation-lg',
+        primary:
+          'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white shadow-[var(--shadow-coral)] hover:brightness-[1.05] active:brightness-95',
+        secondary:
+          'border border-black/10 bg-white text-slate-800 hover:bg-[#fcf9f2] hover:text-[#d4552f] dark:border-white/10 dark:bg-[#0f1a2e] dark:text-rose-100 dark:hover:bg-rose-950/40',
+        tertiary:
+          'hover:bg-rose-100/70 hover:text-rose-900 dark:hover:bg-rose-950/50 dark:hover:text-rose-200',
         destructive:
           'bg-red-500 text-white shadow-elevation-sm hover:bg-red-600 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800',
-        outline:
-          'border border-black/10 bg-white text-slate-800 hover:bg-[#fcf9f2] hover:text-[#d4552f] dark:border-white/10 dark:bg-[#0f1a2e] dark:text-rose-100 dark:hover:bg-rose-950/40',
-        secondary:
-          'bg-rose-100 text-rose-900 hover:bg-rose-200 dark:bg-rose-950/60 dark:text-rose-200 dark:hover:bg-rose-900/60',
-        ghost:
-          'hover:bg-rose-100/70 hover:text-rose-900 dark:hover:bg-rose-950/50 dark:hover:text-rose-200',
-        link: 'text-rose-600 underline-offset-4 hover:underline dark:text-rose-400',
-        stamp:
+        special:
           'border-2 border-dashed border-rose-400 bg-rose-50/50 text-rose-700 hover:bg-rose-100/80 dark:border-rose-500/40 dark:bg-rose-950/20 dark:text-rose-300 font-label-caps tracking-widest uppercase',
+        link: 'text-rose-600 underline-offset-4 hover:underline dark:text-rose-400',
       },
       size: {
         default: 'h-11 px-5 py-2.5 text-sm',
@@ -33,7 +39,7 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: 'primary',
       size: 'default',
     },
   }

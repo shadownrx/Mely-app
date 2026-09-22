@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { sounds } from '../utils/audio';
+import { readSentLikes } from '../utils/sentLikes';
 import { useTheme } from '../context/ThemeContext';
 import { useWhoLikedMe, useSwipe } from '../hooks/useDiscover';
 import { usePurchase } from '../hooks/useShop';
@@ -27,6 +28,8 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
   const { like } = useSwipe();
   const purchase = usePurchase();
   const [tab, setTab] = useState<LikesTab>('nuevos');
+  // Sin endpoint de "likes enviados" en el backend: historial local del teléfono.
+  const sentLikes = useMemo(() => (tab === 'enviados' ? readSentLikes() : []), [tab]);
 
   const handleLikeBack = (userId: string, connectionIdIfMatch?: string) => {
     sounds.playHeart();
@@ -107,7 +110,7 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
       {tab === 'nuevos' && (
         <div className="relative flex-1">
           {isLoading && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
               <Skeleton className="h-40 w-full rounded-[var(--radius-lg)]" />
               <Skeleton className="h-40 w-full rounded-[var(--radius-lg)]" />
               <Skeleton className="h-40 w-full rounded-[var(--radius-lg)]" />
@@ -126,7 +129,7 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
               <p className="text-[13px] max-w-[220px]" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)' }}>
                 Todavía nadie te dio like. Seguí explorando en Descubrir.
               </p>
-              <Button variant="cherry" size="sm" onClick={onExploreMore} className="mt-1">
+              <Button variant="primary" size="sm" onClick={onExploreMore} className="mt-1">
                 Ir a Descubrir
               </Button>
             </div>
@@ -135,7 +138,7 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
           {!isLoading && data && data.count > 0 && !data.unlocked && (
             <div className="relative">
               {/* Grid de fotos reales, desenfocadas hasta desbloquear */}
-              <div className="grid grid-cols-2 gap-3" style={{ filter: 'blur(7px)', opacity: 0.55, pointerEvents: 'none' }}>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3" style={{ filter: 'blur(7px)', opacity: 0.55, pointerEvents: 'none' }}>
                 {(data.profiles.length > 0 ? data.profiles : Array.from({ length: Math.min(data.count, 4) })).slice(0, 4).map((p: any, i: number) => (
                   <div key={p?.id ?? i} className="relative aspect-[3/4] w-full rounded-[var(--radius-lg)] overflow-hidden flex items-center justify-center" style={{ background: 'var(--midnight-850)' }}>
                     {p?.photos?.[0]?.url ? (
@@ -172,7 +175,7 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
                   <p className="text-[11.5px]" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)' }}>
                     Desbloqueá esta lista con monedas o Premium.
                   </p>
-                  <Button variant="cherry" onClick={handleUnlock} disabled={purchase.isPending} className="w-full gap-1.5 mt-1">
+                  <Button variant="primary" onClick={handleUnlock} disabled={purchase.isPending} className="w-full gap-1.5 mt-1">
                     <span className="material-symbols-outlined text-[16px]">lock_open</span>
                     <span>Desbloquear · {likesUnlockPrice} ◉</span>
                   </Button>
@@ -182,7 +185,7 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
           )}
 
           {!isLoading && data && data.unlocked && data.profiles.length > 0 && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
               {data.profiles.map((p) => (
                 <div
                   key={p.id}
@@ -196,7 +199,7 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
                     <p className="text-white text-[12.5px] font-bold truncate">{p.displayName}, {p.age}</p>
                     <Button
                       size="sm"
-                      variant="cherry"
+                      variant="primary"
                       onClick={() => handleLikeBack(p.id)}
                       disabled={like.isPending}
                       className="w-full h-7 mt-1.5 gap-1 text-[11px]"
@@ -213,13 +216,52 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
       )}
 
       {tab === 'enviados' && (
-        <div className="flex flex-col items-center gap-2 py-16 text-center">
-          <span className="material-symbols-outlined text-[40px]" style={{ color: isLight ? 'rgba(22,34,59,0.15)' : 'var(--hairline-strong)' }}>
-            send
-          </span>
-          <p className="text-[13px] max-w-[220px]" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)' }}>
-            Muy pronto vas a poder ver acá los likes que enviaste.
-          </p>
+        <div className="relative flex-1">
+          {sentLikes.length === 0 ? (
+            <div className="flex flex-col items-center gap-3 py-16 text-center">
+              <span className="material-symbols-outlined text-[40px]" style={{ color: isLight ? 'rgba(22,34,59,0.15)' : 'var(--hairline-strong)' }}>
+                send
+              </span>
+              <p className="text-[13px] max-w-[220px]" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)' }}>
+                Todavía no enviaste likes. Cuando reacciones a alguien en Descubrir, queda registrado acá.
+              </p>
+              <Button variant="primary" size="sm" onClick={onExploreMore} className="mt-1">
+                Ir a Descubrir
+              </Button>
+            </div>
+          ) : (
+            <>
+              <p className="text-[11.5px] px-0.5 mb-3" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)' }}>
+                {sentLikes.length} {sentLikes.length === 1 ? 'like enviado' : 'likes enviados'} desde este teléfono. Si hay match, aparece en Mensajes.
+              </p>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                {sentLikes.map((s) => (
+                  <div
+                    key={s.profileId}
+                    className="relative rounded-[var(--radius-lg)] overflow-hidden border aspect-[3/4]"
+                    style={{ borderColor: isLight ? 'rgba(22,34,59,0.1)' : 'var(--hairline-strong)', background: 'var(--midnight-850)' }}
+                  >
+                    {s.photoUrl ? (
+                      <img src={s.photoUrl} alt={s.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[28px]" style={{ color: 'var(--coral-500)', opacity: 0.4 }}>
+                          person
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute inset-x-0 bottom-0 p-2.5 bg-gradient-to-t from-black/85 via-black/40 to-transparent">
+                      <p className="text-white text-[12.5px] font-bold truncate">{s.displayName}, {s.age}</p>
+                      <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-white/85">
+                        <span className="material-symbols-outlined text-[12px]">schedule</span>
+                        A la espera
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>

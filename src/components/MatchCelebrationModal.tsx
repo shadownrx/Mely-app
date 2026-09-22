@@ -4,6 +4,8 @@ import confetti from 'canvas-confetti';
 import { Profile } from '../types';
 import { sounds } from '../utils/audio';
 import { useAuth } from '../context/AuthContext';
+import { computeAffinity } from '../utils/compatibility';
+import { Button } from './ui/button';
 
 interface MatchCelebrationModalProps {
   profile: Profile | null;
@@ -11,6 +13,10 @@ interface MatchCelebrationModalProps {
   myAvatar?: string;
   onSendMessage: () => void;
   onClose: () => void;
+  /** El diferenciador MELY: del match al plan en un tap. Opcional para no romper callers. */
+  onProposePlan?: () => void;
+  /** Fragmento que originó el like (pilar 3). Opcional; si no hay, no se muestra. */
+  contextLabel?: string | null;
 }
 
 export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
@@ -19,9 +25,30 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
   myAvatar,
   onSendMessage,
   onClose,
+  onProposePlan,
+  contextLabel,
 }) => {
   const firedFor = useRef<string | null>(null);
   const { user } = useAuth();
+
+  // Salida digna de un momento especial: ESC cierra, el fondo no scrollea
+  // mientras dura, y el lector de pantalla lo recibe como diálogo.
+  useEffect(() => {
+    if (!profile) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        sounds.playClick();
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [profile, onClose]);
 
   // Chip de "interés en común" que faltaba (Match.dc.html): el primer interés que
   // aparece tanto en el perfil propio como en el del match.
@@ -30,6 +57,19 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
     const mine = new Set(user.interests.map((i) => i.id));
     return profile.interests.find((i) => mine.has(i.id)) ?? null;
   }, [profile, user]);
+
+  // Ronda 7: el motivo nunca puede faltar. Cadena: fragmento → interés común →
+  // señal de afinidad → misma búsqueda. Todo con datos reales del perfil.
+  const fallbackReason = useMemo(() => {
+    if (!profile || !user || contextLabel || sharedInterest) return null;
+    const mine = user.interests.map((i) => i.id);
+    const affinity = computeAffinity(profile, mine);
+    if (affinity.signals.length > 0) return affinity.signals[0].label;
+    if (user.lookingFor && profile.lookingFor && user.lookingFor === profile.lookingFor && profile.lookingForLabel) {
+      return `ambos buscan ${profile.lookingForLabel.toLowerCase()}`;
+    }
+    return null;
+  }, [profile, user, contextLabel, sharedInterest]);
 
   useEffect(() => {
     if (!profile || firedFor.current === profile.id) return;
@@ -81,6 +121,9 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 320, damping: 26 }}
             className="relative z-10 w-full max-w-[340px] flex flex-col items-center text-center"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Es un match con ${profile.displayName}`}
           >
             <button
               type="button"
@@ -114,18 +157,52 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
               A vos y a {profile.displayName} les gustaron mutuamente
             </motion.p>
 
+            {/* El "por qué" antes que cualquier acción: primero lo específico
+                (el fragmento que originó este match), después lo compartido. */}
+            {contextLabel && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-3 flex items-center gap-1.5 rounded-[var(--radius-pill)] bg-white/10 border border-white/15 px-3.5 py-1.5 max-w-[280px]"
+              >
+                <span className="material-symbols-outlined text-[16px] text-[var(--coral-300)]">
+                  auto_stories
+                </span>
+                <span className="text-[12.5px] font-medium text-white/90 truncate">
+                  Conectaron por: {contextLabel}
+                </span>
+              </motion.div>
+            )}
+
             {sharedInterest && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.45, duration: 0.3 }}
-                className="mt-3 flex items-center gap-1.5 rounded-[var(--radius-pill)] bg-white/10 border border-white/15 px-3.5 py-1.5 max-w-[280px]"
+                transition={{ delay: 0.48, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className={`${contextLabel ? 'mt-2' : 'mt-3'} flex items-center gap-1.5 rounded-[var(--radius-pill)] bg-white/10 border border-white/15 px-3.5 py-1.5 max-w-[280px]`}
               >
                 <span className="material-symbols-outlined text-[16px] text-[var(--coral-300)]" style={{ fontVariationSettings: "'FILL' 1" }}>
                   favorite
                 </span>
                 <span className="text-[12.5px] font-medium text-white/90 truncate">
                   A ambos les gusta {sharedInterest.name.toLowerCase()}
+                </span>
+              </motion.div>
+            )}
+
+            {fallbackReason && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.48, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-3 flex items-center gap-1.5 rounded-[var(--radius-pill)] bg-white/10 border border-white/15 px-3.5 py-1.5 max-w-[280px]"
+              >
+                <span className="material-symbols-outlined text-[16px] text-[var(--coral-300)]">
+                  auto_stories
+                </span>
+                <span className="text-[12.5px] font-medium text-white/90 truncate">
+                  En común: {fallbackReason}
                 </span>
               </motion.div>
             )}
@@ -188,17 +265,46 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
               transition={{ delay: 0.3, duration: 0.3 }}
               className="w-full flex flex-col gap-2.5"
             >
-              <button
-                type="button"
-                onClick={() => {
-                  sounds.playClick();
-                  onSendMessage();
-                }}
-                className="w-full h-13 rounded-[var(--radius-pill)] bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-[15px] font-bold shadow-[0_10px_24px_-8px_rgba(225,29,72,0.6)]"
-                style={{ color: 'var(--ink-on-coral)' }}
-              >
-                Enviar mensaje
-              </button>
+              {onProposePlan ? (
+                <Button
+                  variant="primary"
+                  type="button"
+                  onClick={() => {
+                    sounds.playStamp();
+                    onProposePlan();
+                  }}
+                  className="w-full h-13 rounded-[var(--radius-pill)] text-[15px] font-bold flex items-center justify-center gap-2"
+                  style={{ color: 'var(--ink-on-coral)' }}
+                >
+                  <span className="material-symbols-outlined text-[19px]">local_cafe</span>
+                  Proponer un plan
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  type="button"
+                  onClick={() => {
+                    sounds.playClick();
+                    onSendMessage();
+                  }}
+                  className="w-full h-13 rounded-[var(--radius-pill)] text-[15px] font-bold"
+                  style={{ color: 'var(--ink-on-coral)' }}
+                >
+                  Enviar mensaje
+                </Button>
+              )}
+              {onProposePlan && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    sounds.playClick();
+                    onSendMessage();
+                  }}
+                  className="w-full h-13 rounded-[var(--radius-pill)] border border-white/25 text-white/85 text-[14px] font-bold"
+                >
+                  Enviar mensaje primero
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => {

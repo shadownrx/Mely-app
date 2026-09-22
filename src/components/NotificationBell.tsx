@@ -63,7 +63,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }
     <>
       <Button
         id="top-notifications-btn"
-        variant="outline"
+        variant="secondary"
         size="icon"
         onClick={() => {
           sounds.playClick();
@@ -162,7 +162,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }
                       <p className={`text-[12.5px] mt-0.5 leading-snug ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
                         {n.body}
                       </p>
-                      <span className={`text-[11px] mt-1 block ${isLight ? 'text-gray-400' : 'text-white/35'}`}>
+                      <span className={`text-[11px] mt-1 block ${isLight ? 'text-[#5b6478]' : 'text-[#a9b2c9]'}`}>
                         {timeAgo(n.createdAt)}
                       </span>
                     </div>
@@ -195,7 +195,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }
             No se puede deshacer.
           </p>
           <div className="flex gap-2.5">
-            <Button type="button" variant="secondary" onClick={() => setShowDeleteAllConfirm(false)} className="flex-1">
+            <Button type="button" variant="tertiary" onClick={() => setShowDeleteAllConfirm(false)} className="flex-1">
               Cancelar
             </Button>
             <Button

@@ -147,7 +147,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           Mi perfil
         </h1>
         <Button
-          variant="ghost"
+          variant="tertiary"
           size="icon"
           onClick={() => {
             sounds.playClick();
@@ -422,7 +422,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 <span className="block text-[10.5px]" style={{ color: mutedText }}>Un audio corto de hasta 60 segundos</span>
               </div>
               <input ref={audioInputRef} type="file" accept="audio/*" className="hidden" onChange={handleAudioFileChange} />
-              <Button variant="cherry" size="sm" onClick={() => audioInputRef.current?.click()} disabled={uploadAudioBio.isPending} className="rounded-full shrink-0 normal-case tracking-normal h-8 text-[11px]">
+              <Button variant="primary" size="sm" onClick={() => audioInputRef.current?.click()} disabled={uploadAudioBio.isPending} className="rounded-full shrink-0 normal-case tracking-normal h-8 text-[11px]">
                 {uploadAudioBio.isPending ? 'Subiendo...' : 'Subir'}
               </Button>
             </>
@@ -452,7 +452,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   <span className="block text-[10.5px]" style={{ color: mutedText }}>Una selfie rápida y sumás el tilde azul</span>
                 </div>
                 <input ref={selfieInputRef} type="file" accept="image/*" capture="user" className="hidden" onChange={handleSelfieFileChange} />
-                <Button variant="cherry" size="sm" onClick={() => selfieInputRef.current?.click()} disabled={submitVerificationSelfie.isPending} className="rounded-full shrink-0 normal-case tracking-normal h-8 text-[11px]">
+                <Button variant="primary" size="sm" onClick={() => selfieInputRef.current?.click()} disabled={submitVerificationSelfie.isPending} className="rounded-full shrink-0 normal-case tracking-normal h-8 text-[11px]">
                   {submitVerificationSelfie.isPending ? 'Enviando...' : 'Verificar'}
                 </Button>
               </>

@@ -18,7 +18,7 @@ export const PasswordStrengthChecklist: React.FC<PasswordStrengthChecklistProps>
         <div
           key={rule.id}
           className={`flex items-center gap-1.5 text-[11px] transition-colors duration-200 ${
-            rule.ok ? 'text-emerald-500' : isLight ? 'text-gray-400' : 'text-white/35'
+            rule.ok ? 'text-emerald-500' : isLight ? 'text-[#5b6478]' : 'text-[#a9b2c9]'
           }`}
         >
           <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: rule.ok ? "'FILL' 1" : "'FILL' 0" }}>

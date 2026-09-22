@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, MotionConfig } from 'motion/react';
+import { recordSentLike } from './utils/sentLikes';
 import { DEFAULT_DISCOVERY_FILTERS } from './data/mockData';
 import { TabType, DiscoveryFilters, Profile, Match } from './types';
 import { TopAppBar } from './components/TopAppBar';
@@ -17,6 +18,9 @@ import { sounds } from './utils/audio';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { useAuth } from './context/AuthContext';
 import { useDiscover, usePersonOfTheDay, useSwipe, useWhoLikedMe } from './hooks/useDiscover';
+import { useInterests } from './hooks/useProfile';
+import { getIntention, loadIntention, resolveIntentionSlugs, saveIntention } from './utils/intentions';
+import { consumeFragment } from './utils/fragmentContext';
 import { useMatches } from './hooks/useMatches';
 import { useShop } from './hooks/useShop';
 import { useWallet } from './hooks/useWallet';
@@ -52,7 +56,7 @@ const TabFallback: React.FC = () => (
   </div>
 );
 
-type ProposeModalState = { connectionId: string; partnerName: string } | null;
+type ProposeModalState = { connectionId: string; partnerName: string; initialNote?: string } | null;
 type DateQRModalState = { connectionId: string; partnerName: string; partnerAvatar: string } | null;
 type IcebreakerState = { connectionId: string; partnerName: string } | null;
 
@@ -75,7 +79,7 @@ function AppContent() {
   const [selectedStamp, setSelectedStamp] = useState<Stamp | null>(null);
   const [dateQRModal, setDateQRModal] = useState<DateQRModalState>(null);
   const [icebreaker, setIcebreaker] = useState<IcebreakerState>(null);
-  const [matchCelebration, setMatchCelebration] = useState<{ profile: Profile; connectionId: string; coinsEarned: number } | null>(
+  const [matchCelebration, setMatchCelebration] = useState<{ profile: Profile; connectionId: string; coinsEarned: number; contextLabel: string | null } | null>(
     null,
   );
   const [activeConnectionId, setActiveConnectionId] = useState<string | null>(null);
@@ -83,6 +87,28 @@ function AppContent() {
   const [discoveryFilters, setDiscoveryFilters] = useState<DiscoveryFilters>(DEFAULT_DISCOVERY_FILTERS);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isVerifiedSpotsOpen, setIsVerifiedSpotsOpen] = useState(false);
+
+  // Pilar 1: la intención manda. Vive en localStorage (semanal, expira cuando el
+  // usuario la pausa) y mientras está activa ES el filtro de intereses — se
+  // traduce a slugs del catálogo real de /interests, nunca inventados.
+  const [intentionId, setIntentionId] = useState<string | null>(() => loadIntention());
+  const interestsQuery = useInterests();
+
+  useEffect(() => {
+    if (!intentionId || !interestsQuery.data) return;
+    const intention = getIntention(intentionId);
+    if (!intention) return;
+    const slugs = resolveIntentionSlugs(intention, interestsQuery.data);
+    setDiscoveryFilters((prev) => ({ ...prev, selectedInterests: slugs }));
+  }, [intentionId, interestsQuery.data]);
+
+  const handleSelectIntention = (id: string | null) => {
+    setIntentionId(id);
+    saveIntention(id);
+    if (!id) {
+      setDiscoveryFilters((prev) => ({ ...prev, selectedInterests: [] }));
+    }
+  };
 
   // Seed discovery filters from the user's persisted preferences once loaded.
   useEffect(() => {
@@ -208,11 +234,14 @@ function AppContent() {
 
   const handleLike = (profile: Profile) => {
     sounds.playStamp();
+    // Historial local de "Enviados" (el backend no expone a quién le di like).
+    recordSentLike({ profileId: profile.id, displayName: profile.displayName, age: profile.age, photoUrl: profile.photos[0]?.url ?? null });
     swipe.like.mutate(profile.id, {
       onSuccess: (res) => {
         if (res.match) {
           sounds.playHeart();
-          setMatchCelebration({ profile, connectionId: res.match.id, coinsEarned: res.match.coinsEarned });
+          // Pilar 3: el fragmento que originó el like viaja a la celebración.
+          setMatchCelebration({ profile, connectionId: res.match.id, coinsEarned: res.match.coinsEarned, contextLabel: consumeFragment(profile.id) });
         }
       },
     });
@@ -224,17 +253,26 @@ function AppContent() {
 
   const handleSuperLike = (profile: Profile) => {
     sounds.playCoins();
+    recordSentLike({ profileId: profile.id, displayName: profile.displayName, age: profile.age, photoUrl: profile.photos[0]?.url ?? null });
     swipe.superLike.mutate(profile.id, {
       onSuccess: (res) => {
         if (res.match) {
           sounds.playHeart();
-          setMatchCelebration({ profile, connectionId: res.match.id, coinsEarned: res.match.coinsEarned });
+          setMatchCelebration({ profile, connectionId: res.match.id, coinsEarned: res.match.coinsEarned, contextLabel: consumeFragment(profile.id) });
         }
       },
     });
   };
 
-  const handleOpenChat = (connectionId: string) => {
+  // Contexto de origen por conversación (pilar 3): cuando el chat se abre desde
+  // una celebración con fragmento, el chat vacío muestra el punto de partida.
+  // Vive en memoria de sesión; desaparece solo al enviar el primer mensaje.
+  const [chatContext, setChatContext] = useState<Record<string, string>>({});
+
+  const handleOpenChat = (connectionId: string, contextLabel?: string | null) => {
+    if (contextLabel) {
+      setChatContext((prev) => ({ ...prev, [connectionId]: contextLabel }));
+    }
     setActiveConnectionId(connectionId);
     handleTabChange('mensajes');
   };
@@ -351,6 +389,7 @@ function AppContent() {
               <DiscoverView
                 profiles={discoverQuery.data?.profiles ?? []}
                 isLoading={discoverQuery.isLoading || discoverQuery.isFetching}
+                error={discoverQuery.error}
                 quota={discoverQuery.data?.quota}
                 personOfTheDay={personOfTheDayQuery.data?.person ?? null}
                 onLike={handleLike}
@@ -361,6 +400,9 @@ function AppContent() {
                 onOpenVerifiedSpots={() => setIsVerifiedSpotsOpen(true)}
                 onOpenStore={() => handleTabChange('tienda')}
                 onReload={() => discoverQuery.refetch()}
+                myInterestIds={user.interests.map((i) => i.id)}
+                intentionId={intentionId}
+                onSelectIntention={handleSelectIntention}
               />
             )}
 
@@ -389,6 +431,7 @@ function AppContent() {
                 matches={matches}
                 isLoadingMatches={matchesQuery.isLoading || matchesQuery.isFetching}
                 activeConnectionId={activeConnectionId}
+                contextLabel={activeConnectionId ? chatContext[activeConnectionId] ?? null : null}
                 onSelectConnection={setActiveConnectionId}
                 onOpenProposeModal={(connectionId) => {
                   const match = matches.find((m) => m.id === connectionId);
@@ -410,6 +453,7 @@ function AppContent() {
               <DatesView
                 matches={matches}
                 onOpenChat={handleOpenChat}
+                onExploreMatches={() => handleTabChange('matches')}
                 onOpenDateQR={(connectionId, partnerName, partnerAvatar) => {
                   setDateQRModal({ connectionId, partnerName, partnerAvatar });
                 }}
@@ -447,12 +491,24 @@ function AppContent() {
       <MatchCelebrationModal
         profile={matchCelebration?.profile ?? null}
         coinsEarned={matchCelebration?.coinsEarned ?? 0}
+        contextLabel={matchCelebration?.contextLabel ?? null}
         myAvatar={user.photos[0]?.url}
         onSendMessage={() => {
           if (!matchCelebration) return;
           const connectionId = matchCelebration.connectionId;
+          const contextLabel = matchCelebration.contextLabel;
           setMatchCelebration(null);
-          handleOpenChat(connectionId);
+          handleOpenChat(connectionId, contextLabel);
+        }}
+        onProposePlan={() => {
+          if (!matchCelebration) return;
+          // Pilar 3: el contexto llega hasta la nota del plan.
+          setProposeModal({
+            connectionId: matchCelebration.connectionId,
+            partnerName: matchCelebration.profile.displayName,
+            initialNote: matchCelebration.contextLabel ? `Nos conectó: ${matchCelebration.contextLabel}. ` : undefined,
+          });
+          setMatchCelebration(null);
         }}
         onClose={() => setMatchCelebration(null)}
       />
@@ -463,6 +519,7 @@ function AppContent() {
           onClose={() => setProposeModal(null)}
           connectionId={proposeModal.connectionId}
           partnerName={proposeModal.partnerName}
+          initialNote={proposeModal.initialNote}
         />
       )}
 
@@ -482,6 +539,15 @@ function AppContent() {
         onClose={() => setIsFiltersOpen(false)}
         filters={discoveryFilters}
         onApplyFilters={(newFilters) => {
+          // La intención es dueña de los intereses mientras está activa; si el
+          // usuario toma control manual, la intención se pausa (con aviso).
+          if (intentionId) {
+            setIntentionId(null);
+            saveIntention(null);
+            toast('Intención pausada', {
+              description: 'Ajustaste filtros manualmente — elegí una intención cuando quieras volver.',
+            });
+          }
           setDiscoveryFilters(newFilters);
           setIsFiltersOpen(false);
         }}
@@ -522,8 +588,12 @@ export default function App() {
   return (
     <ThemeProvider>
       <ErrorBoundary>
-        <AppContent />
-        <Toaster />
+        {/* reducedMotion="user": toda animación JS de motion respeta el ajuste
+            de accesibilidad del sistema; el CSS ya lo cubre con su media query. */}
+        <MotionConfig reducedMotion="user">
+          <AppContent />
+          <Toaster />
+        </MotionConfig>
       </ErrorBoundary>
     </ThemeProvider>
   );

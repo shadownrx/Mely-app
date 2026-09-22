@@ -226,7 +226,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
           <Button
             id="login-submit-btn"
             type="submit"
-            variant="cherry"
+            variant="primary"
             size="lg"
             disabled={isSubmitting}
             className="w-full mt-1 normal-case tracking-normal text-[15px]"
@@ -300,7 +300,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
                 value={recoveryEmail}
                 onChange={(e) => setRecoveryEmail(e.target.value)}
               />
-              <Button type="submit" variant="cherry" className="w-full normal-case tracking-normal">
+              <Button type="submit" variant="primary" className="w-full normal-case tracking-normal">
                 Enviar enlace de recuperación
               </Button>
             </form>

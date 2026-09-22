@@ -269,6 +269,17 @@
     --font-serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
     --font-mono: 'Space Mono', monospace;
     --font-sans: 'Manrope', -apple-system, 'Segoe UI', sans-serif;
+
+    /* Lenguaje de motion MELY — una sola curva y tres duraciones para toda la
+       app. Entradas: suben 8-16px con spring suave (aparecer). Salidas: 160ms
+       (desaparecer, nunca robar atención). Feedback (tap): 120-180ms con
+       overshoot leve. Celebración: spring amplio, una sola vez. Todo respeta
+       prefers-reduced-motion (ver MotionConfig en App + media query abajo). */
+    --ease-mely: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur-in: 280ms;
+    --dur-out: 160ms;
+    --dur-tap: 150ms;
+    --dur-celebrate: 450ms;
   }
 
   /* Safari hace zoom automático (y no vuelve a des-zoomear) al enfocar un campo
@@ -324,6 +335,25 @@
     width: 100%;
     max-width: 440px;
     margin-inline: auto;
+  }
+
+  /* 2026: la columna mobile-first respira en tablet/desktop sin rediseñar cada
+     pantalla — el deck sigue siendo una conexión a la vez, solo más ancho. */
+  @media (min-width: 768px) {
+    .app-page {
+      max-width: 560px;
+    }
+  }
+  @media (min-width: 1280px) {
+    .app-page {
+      max-width: 600px;
+    }
+  }
+
+  /* Foco visible global con el halo de marca (respeta los rings puntuales). */
+  :where(button, a, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 
   .section-kicker {

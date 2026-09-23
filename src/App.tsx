@@ -52,7 +52,7 @@ const DateQRModal = lazy(() => import('./components/DateQRModal').then((m) => ({
 
 const TabFallback: React.FC = () => (
   <div className="w-full flex-1 flex items-center justify-center py-20">
-    <span className="material-symbols-outlined text-[32px] text-[#f16b48] animate-pulse">favorite</span>
+    <span className="material-symbols-outlined text-[32px] text-[#ec4d86] animate-pulse">favorite</span>
   </div>
 );
 
@@ -289,14 +289,14 @@ function AppContent() {
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <span className="material-symbols-outlined text-[36px] text-[#f16b48] animate-pulse">favorite</span>
+        <span className="material-symbols-outlined text-[36px] text-[#ec4d86] animate-pulse">favorite</span>
       </div>
     );
   }
 
   if (status === 'unauthenticated' || !user) {
     return (
-      <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-center selection:bg-[#f16b48] selection:text-white p-2`}>
+      <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-center selection:bg-[#ec4d86] selection:text-white p-2`}>
         <Suspense fallback={<TabFallback />}>
           {authScreen === 'welcome' ? (
             <WelcomeView onCreateAccount={() => setAuthScreen('register')} onGoToLogin={() => setAuthScreen('login')} />
@@ -327,15 +327,14 @@ function AppContent() {
   // navegación de la app (header + tab bar) se saca por completo — el chat ya tiene su
   // propio header con botón de volver, y así aprovecha toda la altura de la pantalla.
   const isChatDetail = currentTab === 'mensajes' && Boolean(activeConnectionId);
-  // Descubrir / Me gusta / Chats / Perfil son las 4 tabs de primer nivel de la bottom
-  // nav (per Discover.dc.html/Likes.dc.html). Matches, Tienda y Citas se sacaron de la
-  // bottom nav y ahora se llega a ellas solo desde el menú hamburguesa — como son
-  // pantallas "secundarias" empujadas desde el menú, se tratan igual que Ajustes: header
-  // con flecha de volver en vez de la bottom nav de 4 tabs.
-  const isSecondaryScreen = currentTab === 'ajustes' || currentTab === 'matches' || currentTab === 'tienda' || currentTab === 'citas';
+  // Descubrir / Me gusta / Tienda / Chats / Perfil son las 5 tabs de primer nivel de la
+  // bottom nav. Matches, Citas y Ajustes se llegan desde el menú hamburguesa — como son
+  // pantallas "secundarias" empujadas desde el menú, llevan header con flecha de volver
+  // en vez de la bottom nav.
+  const isSecondaryScreen = currentTab === 'ajustes' || currentTab === 'matches' || currentTab === 'citas';
 
   return (
-    <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-start selection:bg-[#f16b48] selection:text-white`}>
+    <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-start selection:bg-[#ec4d86] selection:text-white`}>
       {!isChatDetail && (
         <TopAppBar
           currentTab={currentTab}
@@ -349,7 +348,7 @@ function AppContent() {
             currentTab === 'ajustes'
               ? 'Ajustes'
               : currentTab === 'tienda'
-                ? 'Recompensas'
+                ? 'Tienda'
                 : currentTab === 'mensajes'
                   ? 'Mensajes'
                   : currentTab === 'matches'
@@ -366,7 +365,7 @@ function AppContent() {
           paddingTop: isChatDetail ? 'env(safe-area-inset-top)' : `calc(${currentTab === 'mensajes' ? '4rem' : '5rem'} + env(safe-area-inset-top))`,
           // La bottom nav ahora queda pegada al borde inferior (78px + safe-area) en vez de
           // flotar con margen — el padding se ajusta a esa altura real. En las pantallas
-          // secundarias (Ajustes/Matches/Tienda/Citas) la nav no se muestra, así que ahí
+          // secundarias (Ajustes/Matches/Citas) la nav no se muestra, así que ahí
           // alcanza con el safe-area, igual que en el detalle de un chat.
           paddingBottom:
             isChatDetail || isSecondaryScreen

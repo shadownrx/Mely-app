@@ -19,9 +19,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white shadow-[var(--shadow-coral)] hover:brightness-[1.05] active:brightness-95',
+          'bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white shadow-[var(--shadow-coral)] hover:brightness-[1.05] active:brightness-95',
         secondary:
-          'border border-black/10 bg-white text-slate-800 hover:bg-[#fcf9f2] hover:text-[#d4552f] dark:border-white/10 dark:bg-[#0f1a2e] dark:text-rose-100 dark:hover:bg-rose-950/40',
+          'border border-black/10 bg-white text-slate-800 hover:bg-[#fcf9f2] hover:text-[#c9366d] dark:border-white/10 dark:bg-[#0f1a2e] dark:text-rose-100 dark:hover:bg-rose-950/40',
         tertiary:
           'hover:bg-rose-100/70 hover:text-rose-900 dark:hover:bg-rose-950/50 dark:hover:text-rose-200',
         destructive:

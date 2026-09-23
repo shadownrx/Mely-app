@@ -6,25 +6,25 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================================
-   Mely — sistema de color de marca (azul medianoche + coral suave)
+   Mely — sistema de color de marca (azul medianoche + rosa)
    Redefine las paletas nombradas de Tailwind (rose, slate, gray, amber,
    orange, yellow, emerald, sky, red, purple/violet/indigo/fuchsia) para que
    TODA la app — que ya usaba `rose` como su color de marca (shadcn
    baseColor: "rose") — herede la nueva identidad sin tocar cada componente.
    ============================================================ */
 @theme {
-  /* Marca — coral (antes "rose", que coincidía con el cherry #e11d48) */
-  --color-rose-50: #FFF6F0;
-  --color-rose-100: #FFE8DA;
-  --color-rose-200: #FFD3B8;
-  --color-rose-300: #FFB295;
-  --color-rose-400: #FF9C7D;
-  --color-rose-500: #FF8A65;
-  --color-rose-600: #F16B48;
-  --color-rose-700: #D4552F;
-  --color-rose-800: #A8431F;
-  --color-rose-900: #7A3016;
-  --color-rose-950: #451A0B;
+  /* Marca — rosa moderno (antes coral; los nombres "rose" se mantienen para que toda la app herede el cambio) */
+  --color-rose-50: #FFF1F6;
+  --color-rose-100: #FFE4EE;
+  --color-rose-200: #FFC7DC;
+  --color-rose-300: #FFA3C4;
+  --color-rose-400: #FF85B0;
+  --color-rose-500: #FF6B9E;
+  --color-rose-600: #EC4D86;
+  --color-rose-700: #C9366D;
+  --color-rose-800: #9E2A56;
+  --color-rose-900: #6E1D3C;
+  --color-rose-950: #3D0D20;
 
   /* Neutros cálidos (antes "slate" / "gray") — mismo tinte para ambos */
   --color-slate-50: #F7F4EE;
@@ -209,13 +209,13 @@
     --hairline: rgba(233, 238, 250, 0.08);
     --hairline-strong: rgba(233, 238, 250, 0.14);
 
-    /* Acento — coral suave */
-    --coral-100: #FFE3D3;
-    --coral-300: #FFB295;
-    --coral-500: #FF8A65;
-    --coral-600: #F16B48;
-    --coral-700: #D4552F;
-    --ink-on-coral: #341005;
+    /* Acento — rosa (los tokens conservan el nombre --coral-* para no tocar cada componente) */
+    --coral-100: #FFE0EC;
+    --coral-300: #FFA3C4;
+    --coral-500: #FF6B9E;
+    --coral-600: #EC4D86;
+    --coral-700: #C9366D;
+    --ink-on-coral: #3A0A1E;
 
     /* Texto sobre medianoche (dark) */
     --text-primary: #F5F1E8;
@@ -227,9 +227,9 @@
     --text-on-light-muted: #5B6478;
     --color-ink: #16223B;
     --color-muted: #5B6478;
-    --color-cherry: #FF8A65;
-    --color-cherry-deep: #D4552F;
-    --color-rose-soft: #FFF6F0;
+    --color-cherry: #FF6B9E;
+    --color-cherry-deep: #C9366D;
+    --color-rose-soft: #FFF1F6;
     --color-canvas: #FCF9F2;
     --color-line: rgb(22 34 59 / 0.08);
 
@@ -244,7 +244,7 @@
     --danger-500: #E2695F;
     --danger-100: #FBE1DD;
 
-    --focus-ring: #FFC9AC;
+    --focus-ring: #FFC2D8;
 
     --radius-panel: 24px;
     --shadow-panel: 0 18px 45px -28px rgb(10 17 32 / 0.35);
@@ -263,7 +263,7 @@
     --shadow-sm: 0 1px 2px rgba(4, 8, 18, 0.45);
     --shadow-md: 0 12px 28px -10px rgba(4, 8, 18, 0.55);
     --shadow-lg: 0 28px 56px -18px rgba(4, 8, 18, 0.65);
-    --shadow-coral: 0 14px 30px -12px rgba(255, 138, 101, 0.45);
+    --shadow-coral: 0 14px 30px -12px rgba(255, 107, 158, 0.45);
     --shadow-inset-top: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 
     --font-serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
@@ -311,9 +311,9 @@
   html.theme-dark body {
     background-color: #0A1120;
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 138, 101, 0.14), transparent 70%),
-      radial-gradient(ellipse 60% 40% at 90% 100%, rgba(255, 178, 149, 0.10), transparent 60%),
-      radial-gradient(ellipse 60% 40% at 10% 90%, rgba(122, 48, 22, 0.16), transparent 60%);
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 107, 158, 0.14), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 90% 100%, rgba(255, 163, 196, 0.10), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 10% 90%, rgba(110, 29, 60, 0.16), transparent 60%);
     background-attachment: fixed;
     color: #F5F1E8;
   }
@@ -322,9 +322,9 @@
   html.theme-light body {
     background-color: var(--color-canvas);
     background-image:
-      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(255, 138, 101, 0.07), transparent 65%),
-      radial-gradient(ellipse 60% 30% at 90% 90%, rgba(255, 138, 101, 0.045), transparent 60%),
-      radial-gradient(ellipse 50% 30% at 10% 80%, rgba(255, 178, 149, 0.06), transparent 50%);
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(255, 107, 158, 0.07), transparent 65%),
+      radial-gradient(ellipse 60% 30% at 90% 90%, rgba(255, 107, 158, 0.045), transparent 60%),
+      radial-gradient(ellipse 50% 30% at 10% 80%, rgba(255, 163, 196, 0.06), transparent 50%);
     background-attachment: fixed;
     color: var(--color-ink);
   }
@@ -428,20 +428,20 @@
    bordes casi invisibles, coherente con la dirección editorial aprobada. Los
    bordes de acento SIN alpha quedan intactos a propósito: son estado
    activo/seleccionado/hover, no el reposo decorativo. */
-[class*="border-[#ffe3d3]"],
-[class*="divide-[#ffe3d3]"] {
+[class*="border-[#ffe0ec]"],
+[class*="divide-[#ffe0ec]"] {
   border-color: rgb(22 34 59 / 0.07);
 }
-.dark [class*="border-[#ffe3d3]"],
-.dark [class*="divide-[#ffe3d3]"] {
+.dark [class*="border-[#ffe0ec]"],
+.dark [class*="divide-[#ffe0ec]"] {
   border-color: var(--hairline-strong);
 }
-[class*="border-[#f16b48]/"],
-[class*="divide-[#f16b48]/"] {
+[class*="border-[#ec4d86]/"],
+[class*="divide-[#ec4d86]/"] {
   border-color: rgb(22 34 59 / 0.07);
 }
-.dark [class*="border-[#f16b48]/"],
-.dark [class*="divide-[#f16b48]/"] {
+.dark [class*="border-[#ec4d86]/"],
+.dark [class*="divide-[#ec4d86]/"] {
   border-color: var(--hairline-strong);
 }
 
@@ -458,7 +458,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  border-bottom: 2px dashed rgba(255, 178, 149, 0.3);
+  border-bottom: 2px dashed rgba(255, 163, 196, 0.3);
 }
 
 .perforation-line {
@@ -483,12 +483,12 @@
 
 .theme-dark .stamp-ink {
   mix-blend-mode: screen;
-  filter: drop-shadow(0px 0px 4px rgba(255, 138, 101, 0.5));
+  filter: drop-shadow(0px 0px 4px rgba(255, 107, 158, 0.5));
 }
 
 .theme-light .stamp-ink {
   mix-blend-mode: multiply;
-  filter: drop-shadow(0px 1px 3px rgba(212, 85, 47, 0.3));
+  filter: drop-shadow(0px 1px 3px rgba(201, 54, 109, 0.3));
 }
 
 .ink-stamp-pressed {
@@ -513,23 +513,23 @@
 /* Security Tint Pattern — QR / check-in */
 .qr-pattern {
   background-color: #0F1A2E;
-  background-image: radial-gradient(#F16B48 1px, transparent 1px);
+  background-image: radial-gradient(#EC4D86 1px, transparent 1px);
   background-size: 10px 10px;
 }
 
 .theme-light .qr-pattern {
   background-color: #FCF9F2;
-  background-image: radial-gradient(#FF8A65 1px, transparent 1px);
+  background-image: radial-gradient(#FF6B9E 1px, transparent 1px);
   background-size: 10px 10px;
 }
 
 .security-tint-gold {
-  background-image: radial-gradient(#FFB295 1px, transparent 1px);
+  background-image: radial-gradient(#FFA3C4 1px, transparent 1px);
   background-size: 10px 10px;
 }
 
 .security-tint-cherry {
-  background-image: radial-gradient(#F16B48 1.2px, transparent 1.2px);
+  background-image: radial-gradient(#EC4D86 1.2px, transparent 1.2px);
   background-size: 12px 12px;
 }
 
@@ -608,45 +608,45 @@
 
 /* Glowing Coral Accents */
 .glow-cherry {
-  box-shadow: 0 0 20px -3px rgba(255, 138, 101, 0.4);
+  box-shadow: 0 0 20px -3px rgba(255, 107, 158, 0.4);
 }
 
 .glow-rose {
-  box-shadow: 0 0 20px -3px rgba(255, 178, 149, 0.4);
+  box-shadow: 0 0 20px -3px rgba(255, 163, 196, 0.4);
 }
 
 /* Elevación premium: una sombra de contacto (ajustada, oscura) y una sombra
    ambiental más difusa con el tinte de marca — así las superficies se sienten
    "físicas" en vez de pegadas con CSS. */
 .shadow-elevation-sm {
-  box-shadow: 0 1px 2px rgba(10, 17, 32, 0.06), 0 4px 14px -6px rgba(255, 138, 101, 0.14);
+  box-shadow: 0 1px 2px rgba(10, 17, 32, 0.06), 0 4px 14px -6px rgba(255, 107, 158, 0.14);
 }
 .shadow-elevation-md {
   box-shadow:
     0 2px 4px rgba(10, 17, 32, 0.06),
-    0 14px 30px -10px rgba(255, 138, 101, 0.18),
-    0 32px 56px -32px rgba(255, 138, 101, 0.14);
+    0 14px 30px -10px rgba(255, 107, 158, 0.18),
+    0 32px 56px -32px rgba(255, 107, 158, 0.14);
 }
 .shadow-elevation-lg {
   box-shadow:
     0 4px 8px rgba(10, 17, 32, 0.07),
-    0 22px 46px -14px rgba(255, 138, 101, 0.22),
-    0 52px 84px -40px rgba(255, 138, 101, 0.18);
+    0 22px 46px -14px rgba(255, 107, 158, 0.22),
+    0 52px 84px -40px rgba(255, 107, 158, 0.18);
 }
 .theme-dark .shadow-elevation-sm {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px -6px rgba(255, 138, 101, 0.24);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px -6px rgba(255, 107, 158, 0.24);
 }
 .theme-dark .shadow-elevation-md {
   box-shadow:
     0 2px 6px rgba(0, 0, 0, 0.45),
-    0 16px 36px -10px rgba(255, 138, 101, 0.3),
-    0 36px 64px -32px rgba(255, 138, 101, 0.24);
+    0 16px 36px -10px rgba(255, 107, 158, 0.3),
+    0 36px 64px -32px rgba(255, 107, 158, 0.24);
 }
 .theme-dark .shadow-elevation-lg {
   box-shadow:
     0 4px 10px rgba(0, 0, 0, 0.5),
-    0 26px 56px -16px rgba(255, 138, 101, 0.36),
-    0 56px 84px -40px rgba(255, 138, 101, 0.28);
+    0 26px 56px -16px rgba(255, 107, 158, 0.36),
+    0 56px 84px -40px rgba(255, 107, 158, 0.28);
 }
 
 /* Resalte interior sutil en superficies de vidrio (glass) — simula el borde superior
@@ -661,7 +661,7 @@
 /* Foco premium: un halo suave con el color de marca en vez del ring duro por defecto. */
 .focus-glow:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(255, 138, 101, 0.18), 0 0 0 1.5px rgba(255, 138, 101, 0.6);
+  box-shadow: 0 0 0 4px rgba(255, 107, 158, 0.18), 0 0 0 1.5px rgba(255, 107, 158, 0.6);
 }
 
 /* "Liquid Glass": vidrio con refracción — no solo blur, sino un borde con degradé de
@@ -717,16 +717,16 @@
   border-radius: 4px;
 }
 .theme-dark ::-webkit-scrollbar-thumb:hover {
-  background: #F16B48;
+  background: #EC4D86;
 }
 
 .theme-light ::-webkit-scrollbar-track {
   background: #F7F2E9;
 }
 .theme-light ::-webkit-scrollbar-thumb {
-  background: #FFE3D3;
+  background: #FFE0EC;
   border-radius: 4px;
 }
 .theme-light ::-webkit-scrollbar-thumb:hover {
-  background: #FF8A65;
+  background: #FF6B9E;
 }

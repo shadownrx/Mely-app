@@ -97,7 +97,7 @@ export const ReportBlockSheet: React.FC<ReportBlockSheetProps> = ({
                 type="button"
                 onClick={() => { sounds.playClick(); setView('report'); }}
                 className={`w-full text-left px-4 py-3.5 rounded-2xl border flex items-center gap-3 transition-colors ${
-                  isLight ? 'bg-white border-[#ffe3d3] hover:bg-[#fcf9f2]' : 'bg-white/5 border-white/10 hover:bg-white/10'
+                  isLight ? 'bg-white border-[#ffe0ec] hover:bg-[#fcf9f2]' : 'bg-white/5 border-white/10 hover:bg-white/10'
                 }`}
               >
                 <span className="material-symbols-outlined text-[20px] text-amber-500 shrink-0">flag</span>
@@ -110,7 +110,7 @@ export const ReportBlockSheet: React.FC<ReportBlockSheetProps> = ({
                 type="button"
                 onClick={() => { sounds.playClick(); setView('block-confirm'); }}
                 className={`w-full text-left px-4 py-3.5 rounded-2xl border flex items-center gap-3 transition-colors ${
-                  isLight ? 'bg-white border-[#ffe3d3] hover:bg-[#fcf9f2]' : 'bg-white/5 border-white/10 hover:bg-white/10'
+                  isLight ? 'bg-white border-[#ffe0ec] hover:bg-[#fcf9f2]' : 'bg-white/5 border-white/10 hover:bg-white/10'
                 }`}
               >
                 <span className="material-symbols-outlined text-[20px] text-red-500 shrink-0">block</span>
@@ -129,7 +129,7 @@ export const ReportBlockSheet: React.FC<ReportBlockSheetProps> = ({
               <button
                 type="button"
                 onClick={() => setView('menu')}
-                className={`inline-flex items-center gap-1 text-[11.5px] font-bold mb-1 ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}
+                className={`inline-flex items-center gap-1 text-[11.5px] font-bold mb-1 ${isLight ? 'text-[#ec4d86]' : 'text-[#ffa3c4]'}`}
               >
                 <span className="material-symbols-outlined text-[15px]">arrow_back</span>
                 Volver
@@ -147,9 +147,9 @@ export const ReportBlockSheet: React.FC<ReportBlockSheetProps> = ({
                   htmlFor={`report-${r.value}`}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl border cursor-pointer text-[13px] font-medium ${
                     reason === r.value
-                      ? 'border-[#f16b48] bg-[#f16b48]/8'
+                      ? 'border-[#ec4d86] bg-[#ec4d86]/8'
                       : isLight
-                      ? 'border-[#ffe3d3] bg-white'
+                      ? 'border-[#ffe0ec] bg-white'
                       : 'border-white/10 bg-white/5'
                   }`}
                 >

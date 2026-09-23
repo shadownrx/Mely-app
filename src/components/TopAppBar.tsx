@@ -40,7 +40,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
       // un frame viejo de otra pestaña detrás del blur — bajar la intensidad reduce esa
       // chance sin cambiar cómo se ve.
       className={`fixed top-0 w-full z-50 transition-colors duration-200 border-b backdrop-blur-sm glass-surface shadow-elevation-sm ${
-        isLight ? 'bg-[#fcf9f2]/90 border-black/8' : 'bg-[#0a1120]/90 border-[#f16b48]/20'
+        isLight ? 'bg-[#fcf9f2]/90 border-black/8' : 'bg-[#0a1120]/90 border-[#ec4d86]/20'
       }`}
     >
       <div className="flex justify-between items-center h-16 px-3 max-w-[440px] md:max-w-[560px] min-[1280px]:max-w-[600px] mx-auto gap-2">
@@ -56,8 +56,8 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
             }}
             className={`rounded-full transition-colors ${
               isLight
-                ? 'text-[#16223b] hover:text-[#f16b48] hover:bg-[#fcf9f2]'
-                : 'text-[#ffb295] hover:text-[#f16b48] hover:bg-white/5'
+                ? 'text-[#16223b] hover:text-[#ec4d86] hover:bg-[#fcf9f2]'
+                : 'text-[#ffa3c4] hover:text-[#ec4d86] hover:bg-white/5'
             }`}
             aria-label="Volver"
           >
@@ -74,8 +74,8 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
             }}
             className={`rounded-full transition-colors ${
               isLight
-                ? 'text-[#16223b] hover:text-[#f16b48] hover:bg-[#fcf9f2]'
-                : 'text-[#ffb295] hover:text-[#f16b48] hover:bg-white/5'
+                ? 'text-[#16223b] hover:text-[#ec4d86] hover:bg-[#fcf9f2]'
+                : 'text-[#ffa3c4] hover:text-[#ec4d86] hover:bg-white/5'
             }`}
             aria-label="Menú principal"
           >
@@ -94,7 +94,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
               alinean acá para no quedar como el único texto grande en Manrope de la app. El
               wordmark "MELY" (sin customTitle) ya usaba Fraunces vía .font-wordmark. */}
           <h1
-            className={`font-bold text-[#f16b48] ${customTitle ? 'text-[18px] italic font-semibold' : 'text-[17px] font-wordmark'}`}
+            className={`font-bold text-[#ec4d86] ${customTitle ? 'text-[18px] italic font-semibold' : 'text-[17px] font-wordmark'}`}
             style={customTitle ? { fontFamily: 'var(--font-display)' } : undefined}
           >
             {customTitle || 'MELY'}
@@ -119,21 +119,21 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
             }}
             className={`relative h-8 px-2.5 rounded-[var(--radius-md)] active:scale-95 flex items-center gap-1.5 group border transition-all duration-200 shadow-elevation-sm hover:shadow-elevation-md ${
               isLight
-                ? 'bg-[#ffffff] text-[#16223b] border-[#ffe3d3] hover:border-[#f16b48]'
-                : 'bg-[#131f36] text-[#ffb295] hover:text-[#ffb295] border-[#f16b48]/30'
+                ? 'bg-[#ffffff] text-[#16223b] border-[#ffe0ec] hover:border-[#ec4d86]'
+                : 'bg-[#131f36] text-[#ffa3c4] hover:text-[#ffa3c4] border-[#ec4d86]/30'
             }`}
             aria-label="Tienda y saldo Mely Coins"
             title="Ver Tienda & Monedas"
           >
             <span
-              className="material-symbols-outlined text-[18px] text-[#f16b48] group-hover:scale-110 transition-transform"
+              className="material-symbols-outlined text-[18px] text-[#ec4d86] group-hover:scale-110 transition-transform"
               style={{ fontVariationSettings: "'FILL' 1" }}
             >
               monetization_on
             </span>
             <span
               className={`font-meta-data text-[11px] font-bold px-0.5 ${
-                isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'
+                isLight ? 'text-[#ec4d86]' : 'text-[#ffa3c4]'
               }`}
             >
               {walletBalance.toLocaleString()}

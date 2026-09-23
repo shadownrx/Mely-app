@@ -74,7 +74,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
   useEffect(() => {
     if (!profile || firedFor.current === profile.id) return;
     firedFor.current = profile.id;
-    const colors = ['#f16b48', '#ff8a65', '#ffb295', '#ffffff'];
+    const colors = ['#ec4d86', '#ff6b9e', '#ffa3c4', '#ffffff'];
     const burst = (originX: number) =>
       confetti({
         particleCount: 60,
@@ -251,7 +251,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4, type: 'spring', stiffness: 400, damping: 18 }}
-                className="absolute z-10 w-11 h-11 rounded-full bg-gradient-to-br from-[#f16b48] to-[#ff8a65] flex items-center justify-center shadow-[0_6px_18px_rgba(225,29,72,0.5)]"
+                className="absolute z-10 w-11 h-11 rounded-full bg-gradient-to-br from-[#ec4d86] to-[#ff6b9e] flex items-center justify-center shadow-[0_6px_18px_rgba(225,29,72,0.5)]"
               >
                 <span className="material-symbols-outlined text-[20px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
                   favorite

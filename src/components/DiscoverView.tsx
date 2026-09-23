@@ -218,7 +218,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           className="flex flex-col items-center justify-center py-20 px-6 text-center"
         >
           <div
-            className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center text-[#f16b48] mb-4 ${
+            className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center text-[#ec4d86] mb-4 ${
               isLight ? 'bg-white shadow-elevation-sm' : 'bg-[#0f1a2e]'
             }`}
           >
@@ -227,7 +227,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           <h2 className={`text-[22px] mb-2 font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
             No pudimos cargar Descubrir
           </h2>
-          <p className={`text-[14px] max-w-xs mb-6 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
+          <p className={`text-[14px] max-w-xs mb-6 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>
             Revisá tu conexión e intentá de nuevo — tu cupo de hoy sigue intacto.
           </p>
           <Button
@@ -285,7 +285,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
         <h2 className={`font-headline-md text-[22px] mb-2 font-bold ${isLight ? 'text-[#16223b]' : 'text-[#5b6478]'}`}>
           Por hoy está bien
         </h2>
-        <p className={`font-body-sm text-[14px] max-w-xs mb-6 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
+        <p className={`font-body-sm text-[14px] max-w-xs mb-6 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>
           Mañana hay más historias — el cupo vuelve {quota ? new Date(quota.resetsAt).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit' }) : 'a la medianoche'}.
           Calidad antes que cantidad: eso también es MELY.
         </p>
@@ -317,8 +317,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
         className="flex flex-col items-center justify-center py-20 px-6 text-center"
       >
         <div
-          className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center text-[#f16b48] mb-4 ${
-            isLight ? 'border-[#ffe3d3] bg-white shadow-elevation-sm' : 'border-[#6e7891] bg-[#0f1a2e]'
+          className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center text-[#ec4d86] mb-4 ${
+            isLight ? 'border-[#ffe0ec] bg-white shadow-elevation-sm' : 'border-[#6e7891] bg-[#0f1a2e]'
           }`}
         >
           <span className="material-symbols-outlined text-[36px]">auto_stories</span>
@@ -326,7 +326,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
         <h2 className={`font-headline-md text-[22px] mb-2 font-bold ${isLight ? 'text-[#16223b]' : 'text-[#5b6478]'}`}>
           Ya viste todo lo de hoy
         </h2>
-        <p className={`font-body-sm text-[14px] max-w-xs mb-6 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
+        <p className={`font-body-sm text-[14px] max-w-xs mb-6 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>
           {intentionId
             ? 'Con tu intención activa no queda nadie por ver. Probá pausarla o volver mañana.'
             : 'Mañana hay más historias. Descansar también es parte del ritual.'}
@@ -350,7 +350,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                 sounds.playClick();
                 onSelectIntention(null);
               }}
-              className={`text-[12px] font-bold underline underline-offset-4 ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}
+              className={`text-[12px] font-bold underline underline-offset-4 ${isLight ? 'text-[#ec4d86]' : 'text-[#ffa3c4]'}`}
             >
               Ver sin filtro de intención
             </button>
@@ -425,7 +425,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           <h2 className={`mt-1 text-[22px] font-bold tracking-tight ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
             Una conexión a la vez
           </h2>
-          <p className={`mt-1 max-w-[250px] text-[12px] leading-relaxed ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+          <p className={`mt-1 max-w-[250px] text-[12px] leading-relaxed ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>
             Conocé la historia antes de decidir si hay chispa.
           </p>
           {quota && (
@@ -466,7 +466,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               >
                 <span className="material-symbols-outlined text-[16px]">tune</span>
                 {(isBlindMode || activeFiltersCount > 0) && (
-                  <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#f16b48] border-2 border-[var(--midnight-900)]" />
+                  <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#ec4d86] border-2 border-[var(--midnight-900)]" />
                 )}
               </button>
             </DropdownMenuTrigger>
@@ -481,7 +481,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   }}
                   className="gap-2"
                 >
-                  <span className="material-symbols-outlined text-[16px] text-[#f16b48]">storefront</span>
+                  <span className="material-symbols-outlined text-[16px] text-[#ec4d86]">storefront</span>
                   Rincones & Beneficios
                 </DropdownMenuItem>
               )}
@@ -494,7 +494,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                 onSelect={(e) => e.preventDefault()}
                 className="gap-2"
               >
-                <span className="material-symbols-outlined text-[16px] text-[#f16b48]">
+                <span className="material-symbols-outlined text-[16px] text-[#ec4d86]">
                   {isBlindMode ? 'visibility' : 'visibility_off'}
                 </span>
                 Modo Cita a Ciegas
@@ -507,10 +507,10 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   }}
                   className="gap-2"
                 >
-                  <span className="material-symbols-outlined text-[16px] text-[#f16b48]">tune</span>
+                  <span className="material-symbols-outlined text-[16px] text-[#ec4d86]">tune</span>
                   <span className="flex-1">Filtros</span>
                   {activeFiltersCount > 0 && (
-                    <span className="w-4 h-4 bg-[#f16b48] text-white font-mono text-[9px] font-bold rounded-full flex items-center justify-center">
+                    <span className="w-4 h-4 bg-[#ec4d86] text-white font-mono text-[9px] font-bold rounded-full flex items-center justify-center">
                       {activeFiltersCount}
                     </span>
                   )}
@@ -524,7 +524,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   }}
                   className="gap-2"
                 >
-                  <span className="material-symbols-outlined text-[16px] text-[#f16b48]">flag</span>
+                  <span className="material-symbols-outlined text-[16px] text-[#ec4d86]">flag</span>
                   <span className="flex-1">Reportar o bloquear</span>
                 </DropdownMenuItem>
               )}
@@ -556,7 +556,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   title={item.blurb}
                   className={`shrink-0 inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border-[1.5px] text-[12px] font-bold whitespace-nowrap transition-all active:scale-95 ${
                     active
-                      ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] border-transparent text-white shadow-elevation-md'
+                      ? 'bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] border-transparent text-white shadow-elevation-md'
                       : isLight
                         ? 'bg-white border-[rgba(22,34,59,0.14)] text-[#5b6478]'
                         : 'bg-white/5 border-white/10 text-[#a9b2c9]'
@@ -575,7 +575,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-              className={`mt-1.5 px-1 text-[11px] leading-snug ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}
+              className={`mt-1.5 px-1 text-[11px] leading-snug ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}
               aria-live="polite"
             >
               {intention
@@ -595,7 +595,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           animate={{ opacity: 1, y: 0 }}
           onClick={handleOpenPersonOfDay}
           className={`flex items-center gap-3 rounded-[var(--radius-md)] border p-2.5 text-left tactile-btn shadow-elevation-sm ${
-            isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/25'
+            isLight ? 'bg-white border-[#ffe0ec]' : 'bg-[#0f1a2e] border-[#ec4d86]/25'
           }`}
         >
           <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-[#0a1120] flex items-center justify-center">
@@ -613,7 +613,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <span className="font-label-caps text-[9.5px] uppercase font-bold tracking-wider text-[#f16b48] flex items-center gap-1">
+            <span className="font-label-caps text-[9.5px] uppercase font-bold tracking-wider text-[#ec4d86] flex items-center gap-1">
               <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                 auto_awesome
               </span>
@@ -638,7 +638,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
         {nextProfile && (
           <div
             className={`absolute inset-0 rounded-[var(--radius-lg)] border overflow-hidden pointer-events-none transition-transform duration-300 shadow-elevation-sm ${
-              isLight ? 'bg-white border-[#ffe3d3]/60' : 'bg-[#0f1a2e] border-[#f16b48]/20'
+              isLight ? 'bg-white border-[#ffe0ec]/60' : 'bg-[#0f1a2e] border-[#ec4d86]/20'
             }`}
             style={{
               transform: 'scale(0.95) translateY(12px)',
@@ -695,7 +695,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           >
             <Card
               className={`rounded-[var(--radius-lg)] border overflow-hidden relative shadow-elevation-lg transition-shadow duration-300 ${
-                isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'
+                isLight ? 'bg-white border-[#ffe0ec]' : 'bg-[#0f1a2e] border-[#ec4d86]/30'
               }`}
             >
               {/* Dynamic Live Stamp Indicators on Drag */}
@@ -749,7 +749,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               {/* Instant Action Feedback on Button Click */}
               {actionState === 'liked' && (
                 <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-3 bg-black/45 backdrop-blur-[2px] px-8 text-center">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center shadow-elevation-lg">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#ec4d86] to-[#ff6b9e] flex items-center justify-center shadow-elevation-lg">
                     <span className="material-symbols-outlined text-[40px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
                       favorite
                     </span>
@@ -826,7 +826,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                         sounds.playSpark();
                         setUnblurredCards((prev) => ({ ...prev, [currentProfile.id]: true }));
                       }}
-                      className="mt-3 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-label-caps text-[9px] uppercase font-bold tracking-wider shadow-elevation-md hover:scale-105 transition-transform flex items-center gap-1.5"
+                      className="mt-3 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white font-label-caps text-[9px] uppercase font-bold tracking-wider shadow-elevation-md hover:scale-105 transition-transform flex items-center gap-1.5"
                     >
                       <span className="material-symbols-outlined text-[13px]">sparkles</span>
                       Revelar Mirada
@@ -895,7 +895,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   <div className="min-w-0 flex-1 pr-2">
                     {/* Intención primero: qué busca, antes que la foto decida por vos. */}
                     <span className="mb-1.5 inline-flex items-center gap-1 rounded-full bg-black/55 border border-white/25 px-2.5 py-1 text-[10.5px] font-bold text-white backdrop-blur-xs">
-                      <span className="material-symbols-outlined text-[12px] text-[#ff8a65]">explore</span>
+                      <span className="material-symbols-outlined text-[12px] text-[#ff6b9e]">explore</span>
                       Busca: {currentProfile.lookingForLabel}
                     </span>
                     <div className="flex items-center gap-2">
@@ -904,7 +904,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                       </h2>
                       {currentProfile.badges.trusted && (
                         <span
-                          className="material-symbols-outlined text-[20px] text-[#f16b48] shrink-0"
+                          className="material-symbols-outlined text-[20px] text-[#ec4d86] shrink-0"
                           style={{ fontVariationSettings: "'FILL' 1" }}
                           title="Citas verificadas"
                         >
@@ -922,7 +922,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                       )}
                     </div>
                     <p className="text-[13.5px] text-white/90 flex items-center gap-1 mt-1.5">
-                      <span className="material-symbols-outlined text-[13px] text-[#ff8a65]">location_on</span>
+                      <span className="material-symbols-outlined text-[13px] text-[#ff6b9e]">location_on</span>
                       {currentProfile.city} • {currentProfile.distance}
                     </p>
                     {/* Capítulo 1 cierra con el motivo humano (no con la bio
@@ -930,7 +930,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                         entendés por qué apareció esta persona. */}
                     {primaryReason && (
                       <p className="text-[13.5px] font-semibold text-white mt-1.5 truncate flex items-center gap-1.5 drop-shadow-xs">
-                        <span className="material-symbols-outlined text-[14px] text-[#ff8a65] shrink-0">
+                        <span className="material-symbols-outlined text-[14px] text-[#ff6b9e] shrink-0">
                           {affinity?.signals[0]?.icon ?? 'location_on'}
                         </span>
                         <span className="truncate">{primaryReason}</span>
@@ -961,7 +961,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                       {/* Promesa de contenido: el chevron ya no es genérico, dice
                           cuánta historia hay adentro. */}
                       {(currentProfile.prompts.length > 0 || currentProfile.audioBio) && !showFullNotebook && (
-                        <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#f16b48] text-white text-[10px] font-bold flex items-center justify-center font-mono">
+                        <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#ec4d86] text-white text-[10px] font-bold flex items-center justify-center font-mono">
                           {currentProfile.prompts.length + (currentProfile.audioBio ? 1 : 0)}
                         </span>
                       )}
@@ -981,7 +981,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                   className={`mx-4 mt-3 flex items-center gap-2.5 rounded-[var(--radius-md)] border px-3 py-2.5 ${
-                    isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'
+                    isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0a1120] border-[#ec4d86]/20'
                   }`}
                   aria-live="polite"
                 >
@@ -999,7 +999,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                     )}
                   </div>
                   <span
-                    className="shrink-0 rounded-full bg-gradient-to-br from-[#f16b48] to-[#ff8a65] text-white text-[12px] font-extrabold px-2 py-0.5 font-mono"
+                    className="shrink-0 rounded-full bg-gradient-to-br from-[#ec4d86] to-[#ff6b9e] text-white text-[12px] font-extrabold px-2 py-0.5 font-mono"
                     title="Afinidad estimada con tus datos"
                   >
                     {affinity.score}
@@ -1017,11 +1017,11 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                     onOpenVerifiedSpots();
                   }}
                   className={`mx-4 mt-2 flex items-center gap-2 rounded-[var(--radius-md)] border px-2.5 py-2 text-left transition-colors active:scale-[0.99] ${
-                    isLight ? 'bg-white border-[#ffe3d3] hover:bg-[#fcf9f2]' : 'bg-[#131f36] border-[#f16b48]/20 hover:bg-white/5'
+                    isLight ? 'bg-white border-[#ffe0ec] hover:bg-[#fcf9f2]' : 'bg-[#131f36] border-[#ec4d86]/20 hover:bg-white/5'
                   }`}
                   title={`Ver ${planSuggestion.spot.name}`}
                 >
-                  <span className="relative w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-[#f16b48]/25">
+                  <span className="relative w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-[#ec4d86]/25">
                     <img
                       src={planSuggestion.spot.image}
                       alt=""
@@ -1057,12 +1057,12 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                     setShowFullNotebook(true);
                   }}
                   className={`mx-4 mt-2 flex items-center gap-2.5 rounded-[var(--radius-md)] border px-3 py-2 text-left transition-colors active:scale-[0.99] ${
-                    isLight ? 'bg-white border-[#ffe3d3] hover:bg-[#fcf9f2]' : 'bg-[#0a1120] border-[#f16b48]/20 hover:bg-white/5'
+                    isLight ? 'bg-white border-[#ffe0ec] hover:bg-[#fcf9f2]' : 'bg-[#0a1120] border-[#ec4d86]/20 hover:bg-white/5'
                   }`}
                   title="Abrir el cuaderno"
                   aria-label={`${storyPeek.text}. ${storyPeek.hint}`}
                 >
-                  <span className="material-symbols-outlined text-[18px] text-[#f16b48] shrink-0" aria-hidden="true">
+                  <span className="material-symbols-outlined text-[18px] text-[#ec4d86] shrink-0" aria-hidden="true">
                     {storyPeek.icon}
                   </span>
                   <span className="min-w-0 flex-1">
@@ -1093,7 +1093,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   >
                     <div className={`p-5 flex flex-col gap-4 ${isLight ? 'bg-white' : 'bg-[#0f1a2e]'}`}>
                       {currentProfile.bio && (
-                        <p className={`text-[14px] leading-relaxed ${isLight ? 'text-[#2e5570]' : 'text-[#ffe3d3]/90'}`}>
+                        <p className={`text-[14px] leading-relaxed ${isLight ? 'text-[#2e5570]' : 'text-[#ffe0ec]/90'}`}>
                           {currentProfile.bio}
                         </p>
                       )}
@@ -1104,9 +1104,9 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                             isLight ? 'bg-[#fcf9f2]' : 'bg-[#131f36]'
                           }`}
                         >
-                          <span className="material-symbols-outlined text-[20px] text-[#f16b48] shrink-0">mic</span>
+                          <span className="material-symbols-outlined text-[20px] text-[#ec4d86] shrink-0">mic</span>
                           <div className="flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
-                            <span className="text-[10px] font-bold text-[#f16b48] block mb-1">Audio-bio</span>
+                            <span className="text-[10px] font-bold text-[#ec4d86] block mb-1">Audio-bio</span>
                             {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
                             <audio controls preload="none" className="w-full h-8" src={currentProfile.audioBio.url} />
                           </div>
@@ -1126,7 +1126,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                               title={`Me gusta su interés en ${interest.name}`}
                               aria-label={`Me gusta su interés en ${interest.name}`}
                               className={`inline-flex items-center gap-1 text-[11px] px-2.5 py-1.5 min-h-[32px] rounded-full transition-transform active:scale-95 ${
-                                isLight ? 'bg-[#fcf9f2] text-[#f16b48] font-bold' : 'bg-[#131f36] text-[#ffb295]'
+                                isLight ? 'bg-[#fcf9f2] text-[#ec4d86] font-bold' : 'bg-[#131f36] text-[#ffa3c4]'
                               }`}
                             >
                               {interest.name}
@@ -1145,7 +1145,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                           className={`p-3.5 rounded-[var(--radius-md)] ${isLight ? 'bg-[#fcf9f2]' : 'bg-[#0a1120]'}`}
                         >
                           <div className="flex items-start justify-between gap-2 mb-1">
-                            <span className="text-[11px] font-bold text-[#f16b48] block">{prompt.question}</span>
+                            <span className="text-[11px] font-bold text-[#ec4d86] block">{prompt.question}</span>
                             <button
                               type="button"
                               onClick={(e) => {
@@ -1154,7 +1154,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                               }}
                               title="Me gusta esta respuesta"
                               aria-label={`Me gusta su respuesta sobre ${prompt.question}`}
-                              className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-[#f16b48] hover:bg-[#f16b48]/10 active:scale-90 transition-all"
+                              className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-[#ec4d86] hover:bg-[#ec4d86]/10 active:scale-90 transition-all"
                             >
                               <span className="material-symbols-outlined text-[16px]">favorite</span>
                             </button>
@@ -1185,7 +1185,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                     setShowFullNotebook(true);
                   }}
                   className={`mx-4 mt-3 flex items-center justify-center gap-1.5 rounded-full px-3 py-2 text-[11.5px] font-bold transition-colors animate-fadeIn ${
-                    isLight ? 'bg-[#f16b48]/8 text-[#f16b48]' : 'bg-white/5 text-[#ffb295]'
+                    isLight ? 'bg-[#ec4d86]/8 text-[#ec4d86]' : 'bg-white/5 text-[#ffa3c4]'
                   }`}
                 >
                   <span className="material-symbols-outlined text-[15px]">favorite</span>
@@ -1210,8 +1210,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                     currentIndex === 0
                       ? 'opacity-30 cursor-not-allowed text-slate-400 dark:text-white/30'
                       : isLight
-                      ? 'text-slate-400 hover:text-[#f16b48]'
-                      : 'text-white/40 hover:text-[#ffb295]'
+                      ? 'text-slate-400 hover:text-[#ec4d86]'
+                      : 'text-white/40 hover:text-[#ffa3c4]'
                   }`}
                   title="Deshacer"
                   aria-label="Deshacer perfil"
@@ -1225,7 +1225,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   id="btn-discover-pass"
                   onClick={() => triggerAction('passed')}
                   className={`w-[46px] h-[46px] rounded-full flex items-center justify-center shadow-elevation-sm transition-colors ${
-                    isLight ? 'bg-white text-[#ff8a65]' : 'bg-[#131f3690] text-[#ffb295]'
+                    isLight ? 'bg-white text-[#ff6b9e]' : 'bg-[#131f3690] text-[#ffa3c4]'
                   }`}
                   title="Pasar"
                   aria-label="Pasar perfil"
@@ -1238,7 +1238,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   whileTap={{ scale: 0.88 }}
                   id="btn-discover-stamp-like"
                   onClick={() => triggerAction('liked')}
-                  className="w-[60px] h-[60px] rounded-full bg-gradient-to-br from-[#f16b48] to-[#ff8a65] text-white flex items-center justify-center shadow-[0_10px_22px_-6px_rgba(225,29,72,0.55)] transition-all"
+                  className="w-[60px] h-[60px] rounded-full bg-gradient-to-br from-[#ec4d86] to-[#ff6b9e] text-white flex items-center justify-center shadow-[0_10px_22px_-6px_rgba(225,29,72,0.55)] transition-all"
                   title="Me gusta"
                   aria-label="Me gusta y conectar"
                 >

@@ -15,15 +15,15 @@ import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
 import { Skeleton } from './ui/skeleton';
 
 const ITEM_PRESENTATION: Record<string, { icon: string; color: string; badge?: string }> = {
-  MEMBERSHIP_PREMIUM: { icon: 'workspace_premium', color: '#f16b48', badge: '👑 MEMBRESÍA' },
+  MEMBERSHIP_PREMIUM: { icon: 'workspace_premium', color: '#ec4d86', badge: '👑 MEMBRESÍA' },
   MEMBERSHIP_FOUNDING: { icon: 'military_tech', color: '#d9b45c', badge: '✨ MEJOR PRECIO' },
-  MEMBERSHIP_VIP: { icon: 'diamond', color: '#ff8a65', badge: '💎 GOLD' },
-  UNDO_PASS: { icon: 'replay', color: '#ffb295' },
-  EXTRA_PROFILES: { icon: 'visibility', color: '#ffb295' },
+  MEMBERSHIP_VIP: { icon: 'diamond', color: '#ff6b9e', badge: '💎 GOLD' },
+  UNDO_PASS: { icon: 'replay', color: '#ffa3c4' },
+  EXTRA_PROFILES: { icon: 'visibility', color: '#ffa3c4' },
   SUPER_INVITE: { icon: 'star', color: '#d9b45c' },
-  REACTIVATE_MATCH: { icon: 'favorite', color: '#f16b48' },
+  REACTIVATE_MATCH: { icon: 'favorite', color: '#ec4d86' },
   BOOST: { icon: 'bolt', color: '#e3b873' },
-  LIKES_UNLOCK: { icon: 'visibility', color: '#f16b48' },
+  LIKES_UNLOCK: { icon: 'visibility', color: '#ec4d86' },
 };
 
 const MOST_POPULAR_KEY = 'MEMBERSHIP_PREMIUM';
@@ -141,7 +141,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
 
   const celebrate = () => {
     try {
-      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ['#f16b48', '#ff8a65', '#ffb295', '#d9b45c', '#ffffff'] });
+      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ['#ec4d86', '#ff6b9e', '#ffa3c4', '#d9b45c', '#ffffff'] });
     } catch {
       // safe fallback
     }
@@ -209,7 +209,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
     });
   };
 
-  const cardClass = isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/25';
+  const cardClass = isLight ? 'bg-white border-[#ffe0ec]' : 'bg-[#0f1a2e] border-[#ec4d86]/25';
 
   return (
     <div className="flex flex-col gap-5 pb-12 animate-fadeIn max-w-[440px] mx-auto">
@@ -217,37 +217,37 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
       <section
         className={`relative overflow-hidden rounded-[var(--radius-lg)] p-5 border ${
           isLight
-            ? 'bg-gradient-to-br from-white via-[#fcf9f2] to-[#efe7d8]/30 border-[#ffe3d3] shadow-[0_4px_20px_rgba(255,77,103,0.08)]'
-            : 'bg-gradient-to-br from-[#131f36] via-[#0f1a2e] to-[#0a1120] border-[#f16b48]/40 shadow-[0_0_30px_rgba(225,29,72,0.18)]'
+            ? 'bg-gradient-to-br from-white via-[#fcf9f2] to-[#efe7d8]/30 border-[#ffe0ec] shadow-[0_4px_20px_rgba(255,77,103,0.08)]'
+            : 'bg-gradient-to-br from-[#131f36] via-[#0f1a2e] to-[#0a1120] border-[#ec4d86]/40 shadow-[0_0_30px_rgba(225,29,72,0.18)]'
         }`}
       >
         <div className="relative z-10 flex flex-col gap-3">
           <div className="flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[#f16b48] text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <span className="material-symbols-outlined text-[#ec4d86] text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
               local_mall
             </span>
-            <span className={`font-label-caps text-[10px] uppercase tracking-widest font-bold ${isLight ? 'text-[#ff8a65]' : 'text-[#ffb295]'}`}>
+            <span className={`font-label-caps text-[10px] uppercase tracking-widest font-bold ${isLight ? 'text-[#ff6b9e]' : 'text-[#ffa3c4]'}`}>
               TIENDA & BENEFICIOS MELY
             </span>
           </div>
-          <div className={`flex items-center justify-between p-3.5 rounded-[var(--radius-md)] border ${isLight ? 'bg-white border-[#ffe3d3] shadow-elevation-sm' : 'bg-[#0a1120]/95 border-[#f16b48]/30 shadow-inner'}`}>
+          <div className={`flex items-center justify-between p-3.5 rounded-[var(--radius-md)] border ${isLight ? 'bg-white border-[#ffe0ec] shadow-elevation-sm' : 'bg-[#0a1120]/95 border-[#ec4d86]/30 shadow-inner'}`}>
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-[var(--radius-md)] bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shadow-elevation-md shadow-[#f16b48]/25">
+              <div className="w-11 h-11 rounded-[var(--radius-md)] bg-gradient-to-tr from-[#ec4d86] to-[#ff6b9e] flex items-center justify-center text-white shadow-elevation-md shadow-[#ec4d86]/25">
                 <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
               </div>
               <div>
-                <span className={`font-label-caps text-[9px] uppercase tracking-wider block font-bold ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+                <span className={`font-label-caps text-[9px] uppercase tracking-wider block font-bold ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>
                   TU SALDO DISPONIBLE
                 </span>
                 <div className="flex items-baseline gap-1.5">
                   <span className={`font-headline-md text-[22px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                     {walletBalance.toLocaleString()}
                   </span>
-                  <span className="font-meta-data text-[10px] text-[#f16b48] font-bold">COINS</span>
+                  <span className="font-meta-data text-[10px] text-[#ec4d86] font-bold">COINS</span>
                 </div>
               </div>
             </div>
-            <span className={`px-2.5 py-1 rounded-xl font-label-caps text-[9px] font-bold uppercase border ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3] text-[#f16b48]' : 'bg-[#f16b48]/15 border-[#f16b48]/30 text-[#ffb295]'}`}>
+            <span className={`px-2.5 py-1 rounded-xl font-label-caps text-[9px] font-bold uppercase border ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec] text-[#ec4d86]' : 'bg-[#ec4d86]/15 border-[#ec4d86]/30 text-[#ffa3c4]'}`}>
               {user?.membership.tierLabel ?? 'Standard'}
             </span>
           </div>
@@ -277,7 +277,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
           <h4 className={`font-headline-md text-[13.5px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
             {wallet?.dailyBonusAvailable ? 'Bono diario disponible' : 'Ya reclamaste tu bono de hoy'}
           </h4>
-          <p className={`text-[11px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+          <p className={`text-[11px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>
             {wallet?.dailyBonusAvailable ? 'Entrá todos los días y sumá coins gratis.' : 'Volvé mañana por más.'}
           </p>
         </div>
@@ -302,22 +302,22 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
           }}
           className={`flex items-center gap-3 p-3.5 rounded-[var(--radius-md)] border text-left transition-transform active:scale-[0.98] ${
             isLight
-              ? 'bg-white border-[#ffe3d3]'
-              : 'bg-[#0f1a2e] border-[#f16b48]/30'
+              ? 'bg-white border-[#ffe0ec]'
+              : 'bg-[#0f1a2e] border-[#ec4d86]/30'
           }`}
         >
-          <div className="w-11 h-11 rounded-[var(--radius-md)] bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shrink-0 shadow-elevation-md">
+          <div className="w-11 h-11 rounded-[var(--radius-md)] bg-gradient-to-tr from-[#ec4d86] to-[#ff6b9e] flex items-center justify-center text-white shrink-0 shadow-elevation-md">
             <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
           </div>
           <div className="flex-1 min-w-0">
             <h4 className={`font-headline-md text-[13.5px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
               {whoLikedMe.count} {whoLikedMe.count === 1 ? 'persona te dio like' : 'personas te dieron like'}
             </h4>
-            <p className={`text-[11px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+            <p className={`text-[11px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>
               {whoLikedMe.unlocked ? 'Tocá para verlas y responder' : 'Tocá para ver quiénes son'}
             </p>
           </div>
-          <span className="material-symbols-outlined text-[20px] text-[#f16b48] shrink-0">chevron_right</span>
+          <span className="material-symbols-outlined text-[20px] text-[#ec4d86] shrink-0">chevron_right</span>
         </button>
       )}
 
@@ -344,10 +344,10 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
               }}
               className={`flex-1 h-9 rounded-xl text-[11.5px] font-bold flex items-center justify-center gap-1.5 transition-all ${
                 activeTab === tab.id
-                  ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white shadow-elevation-sm'
+                  ? 'bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white shadow-elevation-sm'
                   : isLight
                     ? 'text-[#5b6478]'
-                    : 'text-[#ffb295]/70'
+                    : 'text-[#ffa3c4]/70'
               }`}
             >
               <span className="material-symbols-outlined text-[15px]">{tab.icon}</span>
@@ -371,7 +371,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
           {activeTab === 'membresias' && memberships.length > 0 && (
             <section className="flex flex-col gap-3.5">
               {memberships.map((item) => {
-                const presentation = ITEM_PRESENTATION[item.key] ?? { icon: 'workspace_premium', color: '#f16b48' };
+                const presentation = ITEM_PRESENTATION[item.key] ?? { icon: 'workspace_premium', color: '#ec4d86' };
                 const isCurrent = membershipTier === item.key.replace('MEMBERSHIP_', '');
                 const isFeatured = item.key === MOST_POPULAR_KEY;
                 const benefits = MEMBERSHIP_BENEFITS[item.key] ?? [];
@@ -382,10 +382,10 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                       isCurrent
                         ? 'border-emerald-500'
                         : isFeatured
-                          ? 'border-[#f16b48]'
+                          ? 'border-[#ec4d86]'
                           : isLight
-                            ? 'border-[#ffe3d3]'
-                            : 'border-[#f16b48]/20'
+                            ? 'border-[#ffe0ec]'
+                            : 'border-[#ec4d86]/20'
                     } ${
                       isFeatured && !isCurrent
                         ? isLight
@@ -399,7 +399,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                         <span className="material-symbols-outlined text-[12px]">check_circle</span>Tu plan
                       </span>
                     ) : isFeatured ? (
-                      <span className="absolute top-0 right-0 px-3 py-1 rounded-bl-[var(--radius-md)] text-[9px] font-bold uppercase tracking-wide bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white">
+                      <span className="absolute top-0 right-0 px-3 py-1 rounded-bl-[var(--radius-md)] text-[9px] font-bold uppercase tracking-wide bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white">
                         Más popular
                       </span>
                     ) : null}
@@ -412,11 +412,11 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                       </div>
                       <div className="min-w-0">
                         <h4 className={`font-headline-md text-[16px] font-bold truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{item.name}</h4>
-                        <span className="text-[11.5px] font-bold text-[#f16b48]">
+                        <span className="text-[11.5px] font-bold text-[#ec4d86]">
                           {item.price} coins · {MEMBERSHIP_DURATION_LABEL[item.key] ?? '30 días'}
                         </span>
                         {item.priceUsd != null && (
-                          <span className={`block text-[10px] ${isLight ? 'text-[#6fa8c9]' : 'text-[#ffb295]/50'}`}>
+                          <span className={`block text-[10px] ${isLight ? 'text-[#6fa8c9]' : 'text-[#ffa3c4]/50'}`}>
                             ≈ ${item.priceUsd.toFixed(2)} USD
                           </span>
                         )}
@@ -424,7 +424,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                     </div>
                     <ul className="flex flex-col gap-1.5">
                       {benefits.map((benefit) => (
-                        <li key={benefit} className={`flex items-center gap-2 text-[12px] ${isLight ? 'text-[#2e5570]' : 'text-[#ffb295]/85'}`}>
+                        <li key={benefit} className={`flex items-center gap-2 text-[12px] ${isLight ? 'text-[#2e5570]' : 'text-[#ffa3c4]/85'}`}>
                           <span className="material-symbols-outlined text-[15px] text-emerald-500 shrink-0">check_circle</span>
                           <span>{benefit}</span>
                         </li>
@@ -453,7 +453,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
               {boosts.length > 0 && (
                 <div className="grid grid-cols-2 gap-3">
                   {boosts.map((item) => {
-                    const presentation = ITEM_PRESENTATION[item.key] ?? { icon: 'bolt', color: '#f16b48' };
+                    const presentation = ITEM_PRESENTATION[item.key] ?? { icon: 'bolt', color: '#ec4d86' };
                     const isBoostActive = item.key === 'BOOST' && boostActiveMinutes > 0;
                     const isLikesActive = item.key === 'LIKES_UNLOCK' && (likesAlreadyIncluded || likesUnlockActiveMinutes > 0);
                     const isActive = isBoostActive || isLikesActive;
@@ -467,7 +467,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                             <span className="material-symbols-outlined text-[20px]">{presentation.icon}</span>
                           </div>
                           <h4 className={`font-headline-md text-[13px] font-bold leading-snug ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{item.name}</h4>
-                          <p className={`text-[10.5px] leading-snug mt-0.5 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>{item.description}</p>
+                          <p className={`text-[10.5px] leading-snug mt-0.5 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>{item.description}</p>
                         </div>
                         <Button
                           variant={isActive ? 'secondary' : 'primary'}
@@ -496,15 +496,15 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
               {contextual.length > 0 && (
                 <div className="flex flex-col gap-2">
                   {contextual.map((item) => {
-                    const presentation = ITEM_PRESENTATION[item.key] ?? { icon: 'info', color: '#f16b48' };
+                    const presentation = ITEM_PRESENTATION[item.key] ?? { icon: 'info', color: '#ec4d86' };
                     return (
-                      <div key={item.key} className={`rounded-[var(--radius-md)] p-3 flex items-center gap-3 border border-dashed ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'}`}>
+                      <div key={item.key} className={`rounded-[var(--radius-md)] p-3 flex items-center gap-3 border border-dashed ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0f1a2e] border-[#ec4d86]/30'}`}>
                         <span className="material-symbols-outlined text-[20px] shrink-0" style={{ color: presentation.color }}>{presentation.icon}</span>
                         <div className="min-w-0">
                           <span className={`font-label-caps text-[10px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                             {item.name} · {item.price} coins
                           </span>
-                          <p className={`text-[10.5px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>{CONTEXTUAL_HINT[item.key]}</p>
+                          <p className={`text-[10.5px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>{CONTEXTUAL_HINT[item.key]}</p>
                         </div>
                       </div>
                     );
@@ -541,11 +541,11 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                           Más coins
                         </span>
                       )}
-                      <div className="w-10 h-10 rounded-[var(--radius-md)] bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shadow-elevation-sm">
+                      <div className="w-10 h-10 rounded-[var(--radius-md)] bg-gradient-to-tr from-[#ec4d86] to-[#ff6b9e] flex items-center justify-center text-white shadow-elevation-sm">
                         <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>monetization_on</span>
                       </div>
                       <span className={`font-headline-md text-[16px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{pack.coins.toLocaleString()}</span>
-                      <span className={`text-[9.5px] text-center -mt-1.5 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>{pack.label}</span>
+                      <span className={`text-[9.5px] text-center -mt-1.5 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>{pack.label}</span>
                       <Button
                         variant="primary"
                         size="sm"
@@ -566,7 +566,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
 
       {/* PROMO CODE */}
       <section className={`p-4 rounded-[var(--radius-md)] border flex flex-col gap-2.5 ${cardClass}`}>
-        <span className={`font-label-caps text-[10px] uppercase font-bold ${isLight ? 'text-[#16223b]' : 'text-[#ffb295]'}`}>
+        <span className={`font-label-caps text-[10px] uppercase font-bold ${isLight ? 'text-[#16223b]' : 'text-[#ffa3c4]'}`}>
           ¿Tenés un código promocional?
         </span>
         <form onSubmit={handleRedeem} className="flex gap-2">
@@ -592,18 +592,18 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
           >
             Movimientos recientes
           </h3>
-          <div className={`rounded-[var(--radius-md)] border divide-y ${isLight ? 'bg-white border-[#ffe3d3] divide-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/25 divide-[#f16b48]/15'}`}>
+          <div className={`rounded-[var(--radius-md)] border divide-y ${isLight ? 'bg-white border-[#ffe0ec] divide-[#ffe0ec]' : 'bg-[#0f1a2e] border-[#ec4d86]/25 divide-[#ec4d86]/15'}`}>
             {history.entries.slice(0, 6).map((entry) => {
               const described = describeLedgerReason(entry.reason, shopItems);
               return (
                 <div key={entry.id} className="p-3 flex items-center gap-2.5 text-[11px]">
                   <span
-                    className={`material-symbols-outlined text-[16px] shrink-0 ${entry.direction === 'CREDIT' ? 'text-emerald-500' : 'text-[#f16b48]'}`}
+                    className={`material-symbols-outlined text-[16px] shrink-0 ${entry.direction === 'CREDIT' ? 'text-emerald-500' : 'text-[#ec4d86]'}`}
                   >
                     {described.icon}
                   </span>
-                  <span className={`flex-1 min-w-0 truncate ${isLight ? 'text-[#2e5570]' : 'text-[#ffb295]/80'}`}>{described.label}</span>
-                  <span className={`font-mono font-bold shrink-0 ${entry.direction === 'CREDIT' ? 'text-emerald-500' : 'text-[#f16b48]'}`}>
+                  <span className={`flex-1 min-w-0 truncate ${isLight ? 'text-[#2e5570]' : 'text-[#ffa3c4]/80'}`}>{described.label}</span>
+                  <span className={`font-mono font-bold shrink-0 ${entry.direction === 'CREDIT' ? 'text-emerald-500' : 'text-[#ec4d86]'}`}>
                     {entry.direction === 'CREDIT' ? '+' : '-'}{entry.amount}
                   </span>
                 </div>
@@ -618,27 +618,27 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
         <DialogContent className="w-[calc(100%-2rem)] max-w-[390px] p-0 gap-0 overflow-hidden">
           {selectedItem && (
             <>
-              <DialogHeader className={`p-4 border-b flex-row items-center space-y-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'}`}>
+              <DialogHeader className={`p-4 border-b flex-row items-center space-y-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0f1a2e] border-[#ec4d86]/30'}`}>
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#f16b48] text-[22px]">shopping_bag</span>
+                  <span className="material-symbols-outlined text-[#ec4d86] text-[22px]">shopping_bag</span>
                   <h3 className={`font-headline-md text-[16px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>Confirmar Compra</h3>
                 </div>
               </DialogHeader>
               <div className="p-5 flex flex-col gap-4">
-                <div className={`p-3.5 rounded-[var(--radius-md)] border flex items-center gap-3.5 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/30'}`}>
+                <div className={`p-3.5 rounded-[var(--radius-md)] border flex items-center gap-3.5 ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0a1120] border-[#ec4d86]/30'}`}>
                   <div className="min-w-0 flex-1">
                     <h4 className={`font-headline-md text-[16px] font-bold truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{selectedItem.name}</h4>
-                    <p className={`text-[11px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>{selectedItem.description}</p>
+                    <p className={`text-[11px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>{selectedItem.description}</p>
                   </div>
                 </div>
-                <div className={`p-3 rounded-xl border flex justify-between items-center text-[12px] ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
-                  <span className={isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}>Total a pagar:</span>
-                  <span className="font-headline-md text-[16px] font-bold text-[#f16b48]">{selectedItem.price} Mely Coins</span>
+                <div className={`p-3 rounded-xl border flex justify-between items-center text-[12px] ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0a1120] border-[#ec4d86]/20'}`}>
+                  <span className={isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}>Total a pagar:</span>
+                  <span className="font-headline-md text-[16px] font-bold text-[#ec4d86]">{selectedItem.price} Mely Coins</span>
                 </div>
                 {walletBalance < selectedItem.price && (
-                  <p className="text-[11px] text-[#f16b48] font-bold">No te alcanzan los coins. Recargá desde Monedas Mely.</p>
+                  <p className="text-[11px] text-[#ec4d86] font-bold">No te alcanzan los coins. Recargá desde Monedas Mely.</p>
                 )}
-                {purchaseError && <p className="text-[11px] text-[#f16b48] font-bold">{purchaseError}</p>}
+                {purchaseError && <p className="text-[11px] text-[#ec4d86] font-bold">{purchaseError}</p>}
                 <div className="grid grid-cols-2 gap-2 pt-2">
                   <Button type="button" variant="tertiary" onClick={() => setSelectedItem(null)}>
                     Cancelar
@@ -662,14 +662,14 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
 
       {/* RECEIPT */}
       <Dialog open={Boolean(receipt)} onOpenChange={(open) => !open && setReceipt(null)}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-[380px] text-center flex flex-col items-center gap-4 border-2 border-[#f16b48]/60">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shadow-xl">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-[380px] text-center flex flex-col items-center gap-4 border-2 border-[#ec4d86]/60">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#ec4d86] to-[#ff6b9e] flex items-center justify-center text-white shadow-xl">
             <span className="material-symbols-outlined text-[36px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
           </div>
           <div>
-            <span className="font-label-caps text-[10px] text-[#f16b48] uppercase tracking-widest font-bold block">¡ACTIVACIÓN EXITOSA!</span>
+            <span className="font-label-caps text-[10px] text-[#ec4d86] uppercase tracking-widest font-bold block">¡ACTIVACIÓN EXITOSA!</span>
             <h3 className={`font-headline-md text-[18px] font-bold mt-1 ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{receipt}</h3>
-            <p className={`font-body-sm text-[12px] mt-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>Ya está disponible en tu cuenta.</p>
+            <p className={`font-body-sm text-[12px] mt-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>Ya está disponible en tu cuenta.</p>
           </div>
           <Button
             variant="primary"

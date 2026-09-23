@@ -12,12 +12,11 @@ interface BottomNavBarProps {
   userAvatar?: string;
 }
 
-// Barra chata de 4 tabs (Descubrir / Me gusta / Chats / Perfil), pegada al borde
-// inferior — igual a Discover.dc.html y Likes.dc.html del diseño aprobado. Antes
-// era una tarjeta "liquid glass" flotante con 6 tabs (incluía Citas y Tienda, que
-// ahora viven en el menú hamburguesa) y una píldora sólida degradada detrás del
-// ícono activo; ahora el ícono activo queda con solo un trazo coral sobre una
-// píldora translúcida, sin el glassmorphism ni el flotado con margen.
+// Barra chata de 5 tabs (Descubrir / Me gusta / Tienda / Chats / Perfil), pegada al
+// borde inferior. La Tienda volvió a la navegación principal con el mismo peso visual
+// que el resto (sin botón flotante ni destacado extra): ícono + label, y el trazo rosa
+// sobre una píldora translúcida cuando está activa. Citas, Matches y Ajustes siguen
+// viviendo en el menú hamburguesa.
 export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   currentTab,
   onTabChange,
@@ -43,6 +42,11 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
       label: 'Me gusta',
       icon: 'favorite',
       badge: newLikesCount,
+    },
+    {
+      id: 'tienda',
+      label: 'Tienda',
+      icon: 'local_mall',
     },
     {
       id: 'mensajes',
@@ -90,7 +94,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
                     transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                     className="absolute inset-0 rounded-[var(--radius-pill)]"
                     style={{
-                      background: 'rgba(255, 138, 101, 0.14)',
+                      background: 'rgba(255, 107, 158, 0.14)',
                       border: '1px solid var(--coral-500)',
                     }}
                   />

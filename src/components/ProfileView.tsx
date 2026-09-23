@@ -220,7 +220,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           className="flex items-center gap-3.5 rounded-[var(--radius-lg)] border p-4 text-left shadow-[var(--shadow-sm)]"
           style={{ background: isLight ? 'linear-gradient(150deg,#FFFFFF,var(--cream-100))' : 'linear-gradient(150deg, var(--midnight-700), var(--midnight-850))', borderColor: isLight ? 'rgba(22,34,59,0.08)' : 'var(--hairline-strong)' }}
         >
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(255,138,101,0.16)' }}>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(255,107,158,0.16)' }}>
             <span className="material-symbols-outlined text-[19px]" style={{ color: 'var(--coral-500)' }}>
               monetization_on
             </span>
@@ -482,7 +482,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   className="w-11 h-11 rounded-full flex items-center justify-center"
                   style={
                     stamp.unlocked
-                      ? { background: 'rgba(255,138,101,0.14)', color: 'var(--coral-500)' }
+                      ? { background: 'rgba(255,107,158,0.14)', color: 'var(--coral-500)' }
                       : { border: `1px dashed ${isLight ? 'rgba(22,34,59,0.16)' : 'var(--hairline-strong)'}`, color: isLight ? 'rgba(22,34,59,0.25)' : 'var(--text-tertiary)' }
                   }
                 >

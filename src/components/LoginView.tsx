@@ -142,7 +142,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
 
       {/* Wordmark + one-line promise */}
       <motion.div variants={item} className="mt-2 mb-9">
-        <span className="font-wordmark text-[30px] font-bold text-[#f16b48]">MELY</span>
+        <span className="font-wordmark text-[30px] font-bold text-[#ec4d86]">MELY</span>
         <p className={`text-[14px] mt-2 leading-relaxed ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>
           Bienvenida de vuelta. Iniciá sesión para seguir tus citas y conversaciones.
         </p>
@@ -162,7 +162,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
                 isLight ? 'bg-red-50 border-red-200 text-red-600' : 'bg-red-500/10 border-red-500/30 text-red-300'
               }`}
             >
-              <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5 text-[#f16b48]">error</span>
+              <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5 text-[#ec4d86]">error</span>
               <span>{errorMsg}</span>
             </div>
           </motion.div>
@@ -191,7 +191,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
                 sounds.playClick();
                 setShowRecoveryModal(true);
               }}
-              className="text-[12.5px] font-bold text-[#f16b48] hover:underline cursor-pointer normal-case tracking-normal"
+              className="text-[12.5px] font-bold text-[#ec4d86] hover:underline cursor-pointer normal-case tracking-normal"
             >
               ¿Olvidaste tu contraseña?
             </button>
@@ -262,7 +262,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
             sounds.playClick();
             onGoToRegister();
           }}
-          className="text-[13.5px] font-bold text-[#f16b48] hover:underline cursor-pointer"
+          className="text-[13.5px] font-bold text-[#ec4d86] hover:underline cursor-pointer"
         >
           Registrate
         </button>

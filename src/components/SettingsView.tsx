@@ -65,7 +65,7 @@ const SettingsRow: React.FC<RowProps> = ({ label, description, onClick, trailing
           {label}
         </span>
         {description && (
-          <span className={`block text-[11px] mt-0.5 truncate ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>{description}</span>
+          <span className={`block text-[11px] mt-0.5 truncate ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>{description}</span>
         )}
       </div>
       {trailing}
@@ -100,12 +100,12 @@ const SettingsRow: React.FC<RowProps> = ({ label, description, onClick, trailing
 const SettingsGroup: React.FC<{ title?: string; children: React.ReactNode; isLight: boolean }> = ({ title, children, isLight }) => (
   <div className="flex flex-col gap-2">
     {title && (
-      <span className={`font-label-caps text-[10px] uppercase font-bold tracking-wider px-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]'}`}>
+      <span className={`font-label-caps text-[10px] uppercase font-bold tracking-wider px-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]'}`}>
         {title}
       </span>
     )}
     {/* Settings.dc.html usa un borde hairline sin sombra (tarjeta chata), no el
-        border-[#ffe3d3]/shadow-xl que quedaba de la paleta cherry vieja. --hairline es
+        border-[#ffe0ec]/shadow-xl que quedaba de la paleta cherry vieja. --hairline es
         claro (pensado para fondos oscuros), así que en modo claro se usa el equivalente
         oscuro-translúcido (--color-line) que ya usa surface-panel. */}
     <div
@@ -454,7 +454,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           icon="verified_user"
           label="Verificación de identidad"
           trailing={
-            <span className="font-label-caps text-[10px] text-[#f16b48] font-bold shrink-0">{user.badges.verificationLabel}</span>
+            <span className="font-label-caps text-[10px] text-[#ec4d86] font-bold shrink-0">{user.badges.verificationLabel}</span>
           }
         />
         <SettingsRow
@@ -548,10 +548,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
                   }}
                   className={`px-3 py-1.5 rounded-full text-[11px] border transition-all cursor-pointer ${
                     gender === g.value
-                      ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold border-transparent'
+                      ? 'bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white font-bold border-transparent'
                       : isLight
-                      ? 'bg-[#fcf9f2] border-[#ffe3d3]'
-                      : 'bg-[#0a1120] border-[#f16b48]/25 text-[#ffb295]/70'
+                      ? 'bg-[#fcf9f2] border-[#ffe0ec]'
+                      : 'bg-[#0a1120] border-[#ec4d86]/25 text-[#ffa3c4]/70'
                   }`}
                 >
                   {g.label}
@@ -570,10 +570,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
                   onClick={() => toggleSeeking(g.value)}
                   className={`px-3 py-1.5 rounded-full text-[11px] border transition-all cursor-pointer ${
                     seeking.includes(g.value)
-                      ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold border-transparent'
+                      ? 'bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white font-bold border-transparent'
                       : isLight
-                      ? 'bg-[#fcf9f2] border-[#ffe3d3]'
-                      : 'bg-[#0a1120] border-[#f16b48]/25 text-[#ffb295]/70'
+                      ? 'bg-[#fcf9f2] border-[#ffe0ec]'
+                      : 'bg-[#0a1120] border-[#ec4d86]/25 text-[#ffa3c4]/70'
                   }`}
                 >
                   {g.label}
@@ -610,10 +610,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
                     onClick={() => toggleInterest(interest.id)}
                     className={`px-3 py-1 rounded-full text-[11px] transition-all border cursor-pointer ${
                       isSelected
-                        ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold border-transparent'
+                        ? 'bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white font-bold border-transparent'
                         : isLight
-                        ? 'bg-[#fcf9f2] text-[#2e5570] border-[#ffe3d3]'
-                        : 'bg-[#0a1120] text-[#ffb295]/70 border-[#f16b48]/25'
+                        ? 'bg-[#fcf9f2] text-[#2e5570] border-[#ffe0ec]'
+                        : 'bg-[#0a1120] text-[#ffa3c4]/70 border-[#ec4d86]/25'
                     }`}
                   >
                     {isSelected ? `✓ ${interest.name}` : `+ ${interest.name}`}
@@ -644,7 +644,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           </SheetHeader>
 
           <div className="flex flex-col gap-2.5">
-            <span className="font-label-caps text-[10px] text-[#f16b48] uppercase font-bold tracking-wider">Perfil a Ciegas 🕶️</span>
+            <span className="font-label-caps text-[10px] text-[#ec4d86] uppercase font-bold tracking-wider">Perfil a Ciegas 🕶️</span>
             <Input
               type="text"
               value={blindTeaser}
@@ -671,19 +671,19 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
             />
           </div>
 
-          <div className={`pt-4 border-t flex flex-col gap-2.5 ${isLight ? 'border-[#ffe3d3]' : 'border-[#f16b48]/20'}`}>
+          <div className={`pt-4 border-t flex flex-col gap-2.5 ${isLight ? 'border-[#ffe0ec]' : 'border-[#ec4d86]/20'}`}>
             <div className="flex items-center justify-between">
-              <span className="font-label-caps text-[10px] text-[#f16b48] uppercase font-bold tracking-wider">
+              <span className="font-label-caps text-[10px] text-[#ec4d86] uppercase font-bold tracking-wider">
                 Prompts de Perfil ({prompts.length}/5)
               </span>
               {prompts.length < 5 && (
-                <button type="button" onClick={addPrompt} className="text-[10px] font-bold text-[#f16b48] flex items-center gap-1 cursor-pointer">
+                <button type="button" onClick={addPrompt} className="text-[10px] font-bold text-[#ec4d86] flex items-center gap-1 cursor-pointer">
                   <span className="material-symbols-outlined text-[14px]">add</span>Agregar
                 </button>
               )}
             </div>
             {prompts.length === 0 && (
-              <p className={`text-[11px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+              <p className={`text-[11px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>
                 Todavía no agregaste ninguno. Los prompts aparecen en tu perfil para que rompan el hielo con vos.
               </p>
             )}
@@ -696,14 +696,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
                     onChange={(e) => setPrompts((prev) => prev.map((x, idx) => (idx === i ? { ...x, question: e.target.value } : x)))}
                     maxLength={120}
                     placeholder="Pregunta"
-                    className="flex-1 text-[12px] font-bold text-[#f16b48] dark:text-[#ffb295]"
+                    className="flex-1 text-[12px] font-bold text-[#ec4d86] dark:text-[#ffa3c4]"
                   />
                   <Button
                     type="button"
                     variant="tertiary"
                     size="icon"
                     onClick={() => setPrompts((prev) => prev.filter((_, idx) => idx !== i))}
-                    className="text-[#f16b48] shrink-0"
+                    className="text-[#ec4d86] shrink-0"
                     aria-label="Borrar prompt"
                   >
                     <span className="material-symbols-outlined text-[18px]" aria-hidden="true">close</span>
@@ -733,15 +733,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           <SheetHeader>
             <SheetTitle>Preferencias de Descubrimiento</SheetTitle>
           </SheetHeader>
-          <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+          <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>
             Estos valores son tu punto de partida cada vez que abrís los filtros de Descubrir.
           </p>
 
-          <div className={`p-3.5 rounded-[var(--radius-md)] border flex items-center gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
-            <span className="material-symbols-outlined text-[19px] text-[#f16b48] shrink-0">location_on</span>
+          <div className={`p-3.5 rounded-[var(--radius-md)] border flex items-center gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0a1120] border-[#ec4d86]/20'}`}>
+            <span className="material-symbols-outlined text-[19px] text-[#ec4d86] shrink-0">location_on</span>
             <div className="flex-1 min-w-0">
               <span className="block text-[13px] font-bold">Mi ubicación</span>
-              <span className="block text-[11px] text-[#5b6478] dark:text-[#ffb295]/70">
+              <span className="block text-[11px] text-[#5b6478] dark:text-[#ffa3c4]/70">
                 {user.hasLocation ? 'Activa — se usa para calcular la distancia' : 'No activada — no filtramos por distancia'}
               </span>
             </div>
@@ -750,17 +750,17 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
             </Button>
           </div>
 
-          <div className={`p-4 rounded-[var(--radius-md)] border flex flex-col gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
+          <div className={`p-4 rounded-[var(--radius-md)] border flex flex-col gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0a1120] border-[#ec4d86]/20'}`}>
             <div className="flex justify-between items-center">
               <span className="font-label-caps text-[10px] uppercase font-bold">Distancia Máxima</span>
-              <span className="font-headline-md text-[16px] text-[#f16b48] font-bold">{maxDistanceKm} km</span>
+              <span className="font-headline-md text-[16px] text-[#ec4d86] font-bold">{maxDistanceKm} km</span>
             </div>
             <Slider min={1} max={500} step={1} value={[maxDistanceKm]} onValueChange={([v]) => setMaxDistanceKm(v)} />
           </div>
-          <div className={`p-4 rounded-[var(--radius-md)] border flex flex-col gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}>
+          <div className={`p-4 rounded-[var(--radius-md)] border flex flex-col gap-3 ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0a1120] border-[#ec4d86]/20'}`}>
             <div className="flex justify-between items-center">
               <span className="font-label-caps text-[10px] uppercase font-bold">Rango de Edad</span>
-              <span className="font-headline-md text-[16px] text-[#f16b48] font-bold">
+              <span className="font-headline-md text-[16px] text-[#ec4d86] font-bold">
                 {minAge} - {maxAge} años
               </span>
             </div>
@@ -790,7 +790,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
 
           {phoneStep === 'enter' ? (
             <>
-              <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+              <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>
                 Te mandamos un código de 6 dígitos por WhatsApp a este número. Incluí el código de país.
               </p>
               <div>
@@ -818,7 +818,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
             </>
           ) : (
             <>
-              <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+              <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>
                 Te escribimos por WhatsApp a {phoneInput}. Ingresá el código de 6 dígitos que recibiste.
               </p>
               <div>
@@ -846,7 +846,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
               <button
                 type="button"
                 onClick={() => setPhoneStep('enter')}
-                className="text-[11px] font-bold text-[#f16b48] text-center cursor-pointer"
+                className="text-[11px] font-bold text-[#ec4d86] text-center cursor-pointer"
               >
                 Usar otro número / reenviar código
               </button>
@@ -860,7 +860,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
           <SheetHeader>
             <SheetTitle>Cuentas bloqueadas</SheetTitle>
           </SheetHeader>
-          <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+          <p className={`text-[11px] -mt-2 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>
             Las personas que bloqueás no pueden verte, escribirte ni aparecer en tu Descubrir.
           </p>
           {isLoadingBlocked ? (
@@ -870,8 +870,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
             </div>
           ) : blockedUsers.length === 0 ? (
             <div className="flex flex-col items-center text-center py-8 gap-2">
-              <span className="material-symbols-outlined text-[32px] text-[#f16b48]/60">block</span>
-              <p className={`text-[12.5px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>No bloqueaste a nadie todavía.</p>
+              <span className="material-symbols-outlined text-[32px] text-[#ec4d86]/60">block</span>
+              <p className={`text-[12.5px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>No bloqueaste a nadie todavía.</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2 mt-1">
@@ -879,7 +879,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
                 <div
                   key={b.id}
                   className={`flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-2xl border ${
-                    isLight ? 'bg-white border-[#ffe3d3]' : 'bg-white/5 border-white/10'
+                    isLight ? 'bg-white border-[#ffe0ec]' : 'bg-white/5 border-white/10'
                   }`}
                 >
                   <span className="text-[13px] font-bold truncate">{b.displayName}</span>
@@ -906,7 +906,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
       <Dialog open={showSignOutConfirm} onOpenChange={setShowSignOutConfirm}>
         <DialogContent className="w-[calc(100%-2rem)] max-w-[360px] p-6 text-center">
           <h3 className="font-headline-md text-[18px] font-bold">¿Cerrar Sesión?</h3>
-          <p className={`text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>Vas a poder volver a ingresar en cualquier momento con tus credenciales.</p>
+          <p className={`text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>Vas a poder volver a ingresar en cualquier momento con tus credenciales.</p>
           <div className="flex gap-2.5">
             <Button type="button" variant="tertiary" onClick={() => setShowSignOutConfirm(false)} className="flex-1">
               Cancelar
@@ -921,7 +921,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onSignOut }) => {
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <DialogContent className="w-[calc(100%-2rem)] max-w-[360px] p-6 text-center">
           <h3 className="font-headline-md text-[18px] font-bold text-red-500">Eliminar cuenta</h3>
-          <p className={`text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
+          <p className={`text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>
             Esta acción es permanente. Se borra tu perfil, matches, mensajes y saldo. No se puede deshacer.
           </p>
           <div className="flex gap-2.5">

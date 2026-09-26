@@ -43,7 +43,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
         isLight ? 'bg-[#fcf9f2]/90 border-black/8' : 'bg-[#0a1120]/90 border-[#f16b48]/20'
       }`}
     >
-      <div className="flex justify-between items-center h-16 px-3 max-w-[440px] md:max-w-[560px] min-[1280px]:max-w-[600px] mx-auto gap-2">
+      <div className="flex justify-between items-center h-16 px-2 min-[380px]:px-3 max-w-[440px] md:max-w-[560px] min-[1280px]:max-w-[600px] mx-auto gap-1 min-[380px]:gap-2">
         {/* Left Action (Back or Menu) */}
         {showBackButton ? (
           <Button

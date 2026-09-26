@@ -505,14 +505,17 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
             <h2 className="font-wordmark text-[19px] font-bold text-[#f16b48]">MELY</h2>
           </div>
 
-          {/* User mini badge */}
-          <div
+          {/* User mini badge — botón real (era un div con onClick: invisible
+              para teclado y lector de pantalla). Misma visual. */}
+          <button
+            type="button"
             onClick={() => {
               sounds.playClick();
               onNavigate('perfil');
               onClose();
             }}
-            className={`p-3 rounded-[var(--radius-md)] border flex items-center gap-3 cursor-pointer transition-colors ${
+            aria-label={`Ir a mi perfil, ${user.displayName}`}
+            className={`w-full p-3 rounded-[var(--radius-md)] border flex items-center gap-3 cursor-pointer transition-colors text-left ${
               isLight ? 'border-slate-100 hover:bg-slate-50' : 'border-white/10 hover:bg-white/5'
             }`}
           >
@@ -528,13 +531,13 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
               </span>
               <span className="text-[11px] text-[#f16b48] font-bold block truncate">{user.membership.tierLabel}</span>
             </div>
-            <span className={`material-symbols-outlined text-[18px] ${isLight ? 'text-[#6fa8c9]' : 'text-[#ffb295]/50'}`}>
+            <span className={`material-symbols-outlined text-[18px] ${isLight ? 'text-[#6fa8c9]' : 'text-[#ffb295]/50'}`} aria-hidden="true">
               chevron_right
             </span>
-          </div>
+          </button>
 
           {/* Navigation Links */}
-          <nav className="flex flex-col gap-1.5">
+          <nav className="flex flex-col gap-1.5" aria-label="Secciones de Mely">
             {mainLinks.map((link) => (
               <button
                 key={link.tab}

@@ -30,6 +30,16 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
 }) => {
   const firedFor = useRef<string | null>(null);
   const { user } = useAuth();
+  const primaryCtaRef = useRef<HTMLButtonElement>(null);
+  // Dismiss por gesto: si el panel se arrastró, el click fantasma al soltar
+  // no debe disparar ningún CTA.
+  const panelDragged = useRef(false);
+
+  // Foco inicial en la acción principal: teclado y lector entran directo al
+  // momento, sin tabear desde el fondo.
+  useEffect(() => {
+    if (profile) primaryCtaRef.current?.focus({ preventScroll: true });
+  }, [profile]);
 
   // Salida digna de un momento especial: ESC cierra, el fondo no scrollea
   // mientras dura, y el lector de pantalla lo recibe como diálogo.
@@ -105,7 +115,10 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
   return (
     <AnimatePresence>
       {profile && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 min-[380px]:p-6 overflow-y-auto">
+          {/* p-4 en teléfonos chicos (320px): el p-6 fijo robaba 48px al panel.
+              overflow-y-auto + my-auto en el panel: en landscape o pantallas
+              bajas el contenido scrollea en vez de cortar los CTAs. */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -116,11 +129,32 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.9, y: 18 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 14 }}
             transition={{ type: 'spring', stiffness: 320, damping: 26 }}
-            className="relative z-10 w-full max-w-[340px] flex flex-col items-center text-center"
+            // Deslizar hacia abajo cierra, como un bottom-sheet: gesto nativo
+            // en mobile. Solo vertical y con elástico corto para no pelear con
+            // el scroll del contenedor en pantallas bajas.
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0.4}
+            onDragStart={() => { panelDragged.current = false; }}
+            onDrag={(_, info) => { if (Math.abs(info.offset.y) > 12) panelDragged.current = true; }}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 110 || info.velocity.y > 550) {
+                sounds.playClick();
+                onClose();
+              }
+            }}
+            onClickCapture={(e) => {
+              if (panelDragged.current) {
+                panelDragged.current = false;
+                e.stopPropagation();
+                e.preventDefault();
+              }
+            }}
+            className="relative z-10 w-full max-w-[340px] flex flex-col items-center text-center my-auto touch-pan-y"
             role="dialog"
             aria-modal="true"
             aria-label={`Es un match con ${profile.displayName}`}
@@ -228,8 +262,14 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
                 transition={{ delay: 0.15, type: 'spring', stiffness: 260, damping: 20 }}
                 className="absolute left-0 w-24 h-24 rounded-full p-[3px] bg-gradient-to-br from-white/40 to-white/10"
               >
-                <div className="w-full h-full rounded-full overflow-hidden border-2 border-white/70">
-                  {myAvatar && <img src={myAvatar} alt="Vos" className="w-full h-full object-cover" referrerPolicy="no-referrer" />}
+                <div className="w-full h-full rounded-full overflow-hidden border-2 border-white/70 bg-white/10 flex items-center justify-center">
+                  {myAvatar ? (
+                    <img src={myAvatar} alt="Vos" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  ) : (
+                    <span className="text-white/80 text-[22px] font-bold" aria-hidden="true">
+                      {(user?.displayName ?? 'V').slice(0, 1).toUpperCase()}
+                    </span>
+                  )}
                 </div>
               </motion.div>
               <motion.div
@@ -267,6 +307,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
             >
               {onProposePlan ? (
                 <Button
+                  ref={primaryCtaRef}
                   variant="primary"
                   type="button"
                   onClick={() => {
@@ -281,6 +322,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
                 </Button>
               ) : (
                 <Button
+                  ref={primaryCtaRef}
                   variant="primary"
                   type="button"
                   onClick={() => {
@@ -300,7 +342,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
                     sounds.playClick();
                     onSendMessage();
                   }}
-                  className="w-full h-13 rounded-[var(--radius-pill)] border border-white/25 text-white/85 text-[14px] font-bold"
+                  className="w-full h-13 rounded-[var(--radius-pill)] border border-white/25 text-white/85 text-[14px] font-bold transition-all duration-150 active:scale-[0.98] hover:bg-white/5"
                 >
                   Enviar mensaje primero
                 </button>
@@ -311,7 +353,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
                   sounds.playClick();
                   onClose();
                 }}
-                className="w-full h-13 rounded-[var(--radius-pill)] border border-white/25 text-white/85 text-[14px] font-bold"
+                className="w-full h-13 rounded-[var(--radius-pill)] border border-white/25 text-white/85 text-[14px] font-bold transition-all duration-150 active:scale-[0.98] hover:bg-white/5"
               >
                 Seguir explorando
               </button>

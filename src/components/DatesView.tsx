@@ -3,6 +3,7 @@ import { DateMeet, Match, PlanType } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAllDateProposals } from '../hooks/useDates';
+import { EmptyState } from './StateViews';
 import { Button } from './ui/button';
 
 const PLAN_LABELS: Record<PlanType, string> = {
@@ -94,35 +95,16 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
       )}
 
       {!isLoading && items.length === 0 && (
-        <div className="flex flex-col items-center gap-3 py-14 px-6 text-center">
-          <div
-            className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center text-[#f16b48] ${
-              isLight ? 'bg-white shadow-elevation-sm' : 'bg-[#0f1a2e]'
-            }`}
-          >
-            <span className="material-symbols-outlined text-[36px]">confirmation_number</span>
-          </div>
-          <h3 className={`text-[17px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
-            Tu primera cita te está esperando
-          </h3>
-          <p className={`text-[13px] max-w-[260px] leading-relaxed ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
-            Todavía no tenés citas acordadas. Cada match puede convertirse en un plan con lugar verificado y sello de recuerdo.
-          </p>
-          {onExploreMatches && (
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                sounds.playClick();
-                onExploreMatches();
-              }}
-              className="mt-1 gap-1.5"
-            >
-              <span className="material-symbols-outlined text-[15px]">local_cafe</span>
-              Ver mis matches
-            </Button>
-          )}
-        </div>
+        <EmptyState
+          icon="confirmation_number"
+          title="Tu primera cita te está esperando"
+          body="Todavía no tenés citas acordadas. Cada match puede convertirse en un plan con lugar verificado y sello de recuerdo."
+          actions={
+            onExploreMatches
+              ? [{ label: 'Ver mis matches', onClick: onExploreMatches, icon: 'local_cafe' }]
+              : []
+          }
+        />
       )}
 
       {/* List of Date Ticket Stubs */}
@@ -162,6 +144,8 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
                     <img
                       src={match.other.photos[0]?.url}
                       alt={match.other.displayName}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"
                     />

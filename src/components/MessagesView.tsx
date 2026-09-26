@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { ConnectionStatus, Match, Message } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useMarkRead, useMessages, useSendMessage, useSendPhoto, useTypingIndicator, useTypingPing } from '../hooks/useChat';
+import { useVisualViewportHeight } from '../hooks/useVisualViewportHeight';
 import { useAcceptProposal, useCounterProposal, useProposals } from '../hooks/useDates';
 import { ReportBlockSheet } from './ReportBlockSheet';
+import { EmptyState, ErrorState } from './StateViews';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -22,6 +25,7 @@ interface MessagesViewProps {
   onOpenProposeModal?: (connectionId: string) => void;
   onOpenIcebreaker?: (partnerName: string) => void;
   onOpenDateQR?: (connectionId: string, partnerName: string, partnerAvatar: string) => void;
+  onExploreMore?: () => void;
 }
 
 interface WhatsAppSticker {
@@ -226,6 +230,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   onOpenProposeModal,
   onOpenIcebreaker,
   onOpenDateQR,
+  onExploreMore,
 }) => {
   const { isLight } = useTheme();
   const { user } = useAuth();
@@ -311,7 +316,15 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesScrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Autoscroll inteligente: si estás leyendo arriba, los mensajes nuevos NO
+  // te arrastran al fondo — se avisa con una píldora "nuevos ↓". El ref evita
+  // re-renders en cada evento de scroll; el estado solo cambia al llegar
+  // mensajes o al tocar la píldora.
+  const isNearBottomRef = useRef(true);
+  const prevMessagesLength = useRef(0);
+  const [newBelowCount, setNewBelowCount] = useState(0);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
   // Mantenía dos botones (reaccionar + opciones) siempre visibles al lado de CADA mensaje
@@ -334,7 +347,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
   const activeMatch: Match | null = matches.find((m) => m.id === activeConnectionId) ?? null;
 
-  const { data: messagesData, isLoading: isLoadingMessages } = useMessages(activeConnectionId);
+  const { data: messagesData, isLoading: isLoadingMessages, error: messagesError, refetch: refetchMessages } = useMessages(activeConnectionId);
   const messages = useMemo(() => messagesData?.messages ?? [], [messagesData]);
   const { data: proposals = [] } = useProposals(activeConnectionId);
   const activeProposal = useMemo(
@@ -351,15 +364,38 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const [counterAt, setCounterAt] = useState('');
   const isPartnerTyping = useTypingIndicator(activeConnectionId);
   const pingTyping = useTypingPing(activeConnectionId);
+  // El contenedor del chat usa --vvh para seguir al teclado móvil.
+  useVisualViewportHeight(viewMode === 'chat');
 
   const currentTheme = CHAT_THEME_PRESETS.find((t) => t.id === selectedThemeId) || CHAT_THEME_PRESETS[0];
 
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
-    messagesEndRef.current?.scrollIntoView({ behavior });
+    messagesEndRef.current?.scrollIntoView({ behavior, block: 'end' });
+  };
+
+  const handleMessagesScroll = () => {
+    const el = messagesScrollRef.current;
+    if (!el) return;
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 90;
+    isNearBottomRef.current = nearBottom;
+    // Si bajó por su cuenta hasta el fondo, la píldora ya no tiene sentido.
+    if (nearBottom) setNewBelowCount(0);
+  };
+
+  const jumpToLatest = () => {
+    sounds.playClick();
+    setNewBelowCount(0);
+    isNearBottomRef.current = true;
+    scrollToBottom('smooth');
   };
 
   useEffect(() => {
-    if (viewMode === 'chat') scrollToBottom('auto');
+    if (viewMode !== 'chat') return;
+    // Al abrir (o cambiar de conversación) se arranca abajo, sin animación.
+    isNearBottomRef.current = true;
+    setNewBelowCount(0);
+    prevMessagesLength.current = 0;
+    scrollToBottom('auto');
   }, [viewMode, activeConnectionId]);
 
   useEffect(() => {
@@ -367,9 +403,31 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     setCounterAt('');
   }, [activeConnectionId, activeProposal?.id]);
 
+  // Llegadas nuevas: mis mensajes siempre bajan; los de mi match solo si
+  // ya estaba al fondo — si no, suman a la píldora "nuevos ↓".
   useEffect(() => {
-    if (viewMode === 'chat') scrollToBottom('smooth');
-  }, [messages.length, isPartnerTyping, activeMediaTray, viewMode]);
+    if (viewMode !== 'chat') {
+      prevMessagesLength.current = messages.length;
+      return;
+    }
+    if (messages.length > prevMessagesLength.current) {
+      const last = messages[messages.length - 1];
+      const mine = last?.senderId === user?.id;
+      if (mine || isNearBottomRef.current) {
+        scrollToBottom('smooth');
+        setNewBelowCount(0);
+      } else {
+        setNewBelowCount((c) => c + (messages.length - prevMessagesLength.current));
+      }
+    }
+    prevMessagesLength.current = messages.length;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages.length, viewMode]);
+
+  // El "escribiendo..." solo re-acomoda si ya estabas al fondo.
+  useEffect(() => {
+    if (viewMode === 'chat' && isNearBottomRef.current) scrollToBottom('smooth');
+  }, [isPartnerTyping, activeMediaTray, viewMode]);
 
   useEffect(() => {
     if (viewMode === 'chat' && activeConnectionId && messages.some((m) => m.senderId !== user?.id && !m.readAt)) {
@@ -474,12 +532,23 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const handleSendText = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const text = inputText.trim();
-    if (!text || !activeConnectionId) return;
+    if (!text || !activeConnectionId || sendMessage.isPending) return;
     sounds.playClick();
+    // Limpieza optimista (se siente instantáneo), pero si el envío falla el
+    // texto se restaura — antes se perdía para siempre.
     setInputText('');
     setActiveMediaTray(null);
     setShowAttachmentMenu(false);
-    sendMessage.mutate({ body: text, replyToId: replyingTo?.id });
+    const replyId = replyingTo?.id;
+    sendMessage.mutate(
+      { body: text, replyToId: replyId },
+      {
+        onError: () => {
+          setInputText(text);
+          toast.error('No se pudo enviar', { description: 'Revisá tu conexión e intentá de nuevo.' });
+        },
+      },
+    );
     setReplyingTo(null);
     inputRef.current?.focus();
   };
@@ -538,19 +607,21 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     inputRef.current?.focus();
   };
 
-  const filteredMatches = matches.filter((m) => {
+  // Memoizados: el componente re-renderiza en cada tecla del input — sin esto
+  // se recorrían ambas listas completas por cada carácter escrito.
+  const filteredMatches = useMemo(() => matches.filter((m) => {
     const q = searchQuery.toLowerCase();
     if (q && !m.other.displayName.toLowerCase().includes(q)) return false;
     if (inboxFilter === 'unread') return m.unread > 0;
     if (inboxFilter === 'dates') return m.status === 'PROPOSAL' || m.status === 'DATE_AGREED' || m.status === 'DATE_VERIFIED' || m.status === 'SECOND_DATE';
     return true;
-  });
+  }), [matches, searchQuery, inboxFilter]);
 
-  const filteredMessages = messages.filter((m) => {
+  const filteredMessages = useMemo(() => messages.filter((m) => {
     if (!inChatSearchTerm.trim()) return true;
     const q = inChatSearchTerm.toLowerCase();
     return m.body.toLowerCase().includes(q);
-  });
+  }), [messages, inChatSearchTerm]);
 
   const currentPack = STICKER_PACKS.find((p) => p.id === selectedStickerPackId) || STICKER_PACKS[0];
   const favoriteStickers = ALL_STICKERS.filter((s) => favoriteStickerIds.includes(s.id));
@@ -559,8 +630,11 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   // VIEW: INBOX
   // =========================================================================
   if (viewMode === 'inbox' || !activeMatch) {
+    // Altura flexible en vez del número mágico 100dvh-130px: el <main> de App
+    // ya descuenta header/nav con padding, así que flex-1 llena exacto en
+    // cualquier viewport (320px o tablet) sin adivinar la altura del chrome.
     return (
-      <div className="flex flex-col w-full h-[calc(100dvh-130px)] min-h-[500px] animate-fadeIn">
+      <div className="flex flex-col w-full flex-1 min-h-[320px] animate-fadeIn">
         {/* Búsqueda y filtros quedan pegados arriba mientras se scrollea la lista — sin
             repetir el título "MELY Chat" que ya muestra el TopAppBar de la app. */}
         <div className="shrink-0 pb-3">
@@ -589,7 +663,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     sounds.playClick();
                     setInboxFilter(chip.id as 'all' | 'unread' | 'dates');
                   }}
-                  className={`px-2.5 py-1.5 rounded-full text-[10.5px] font-bold flex items-center gap-1 whitespace-nowrap transition-all border shadow-elevation-sm ${
+                  aria-pressed={isSelected}
+                  className={`px-3 py-2.5 rounded-full text-[10.5px] font-bold flex items-center gap-1 whitespace-nowrap transition-all border shadow-elevation-sm active:scale-95 ${
                     isSelected
                       ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white border-transparent'
                       : isLight
@@ -620,18 +695,36 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 ))}
               </div>
             ) : filteredMatches.length === 0 ? (
-              <div className={`p-8 text-center font-body-sm text-[13px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
-                {matches.length === 0
-                  ? 'Todavía no tenés matches. Andá a Descubrir para empezar a conectar.'
-                  : 'No se encontraron conversaciones con ese filtro.'}
-              </div>
+              matches.length === 0 ? (
+                <EmptyState
+                  compact
+                  icon="forum"
+                  title="Sin conversaciones todavía"
+                  body="Cuando hagas match con alguien, tu chat aparece acá."
+                  actions={
+                    onExploreMore
+                      ? [{ label: 'Ir a Descubrir', onClick: onExploreMore, icon: 'explore' }]
+                      : []
+                  }
+                />
+              ) : (
+                <EmptyState
+                  compact
+                  icon="search_off"
+                  title="Sin resultados"
+                  body="Ninguna conversación coincide con esa búsqueda o filtro."
+                  actions={[
+                    { label: 'Limpiar filtros', onClick: () => { setSearchQuery(''); setInboxFilter('all'); }, icon: 'close', variant: 'secondary' },
+                  ]}
+                />
+              )
             ) : (
               filteredMatches.map((match) => (
                 <button
                   key={match.id}
                   onClick={() => handleOpenConversation(match.id)}
-                  className={`relative w-full pl-4 pr-2.5 py-3 rounded-2xl flex items-center gap-3 transition-colors text-left group ${
-                    isLight ? 'hover:bg-[#fcf9f2]' : 'hover:bg-[#0f1a2e]'
+                  className={`relative w-full pl-4 pr-2.5 py-3 rounded-2xl flex items-center gap-3 transition-colors text-left group active:scale-[0.99] ${
+                    isLight ? 'hover:bg-[#fcf9f2] active:bg-[#f16b48]/5' : 'hover:bg-[#0f1a2e] active:bg-white/5'
                   }`}
                 >
                   {/* Barra de acento en vez de una caja entera resaltada: menos "chip
@@ -640,7 +733,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     <span className="absolute left-0 top-1/2 -translate-y-1/2 h-7 w-[3px] rounded-full bg-gradient-to-b from-[#f16b48] to-[#ff8a65]" />
                   )}
                   <div className="relative w-13 h-13 rounded-full overflow-hidden shrink-0 shadow-elevation-sm">
-                    <img src={match.other.photos[0]?.url} alt={match.other.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <img src={match.other.photos[0]?.url} alt={match.other.displayName} loading="lazy" decoding="async" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     {match.other.lastActive === 'En línea' && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#3f7a5c] border-2 border-white rounded-full" />}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -684,7 +777,10 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     // padding del <main> para que el chat sea de borde a borde, como cualquier chat nativo
     // (WhatsApp/Telegram/iMessage) — quedaba flotando como una tarjeta si se lo bordeaba.
     <div
-      className={`flex flex-col h-[calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full overflow-hidden relative animate-fadeIn ${
+      // --vvh sigue al teclado (ver useVisualViewportHeight): con el teclado
+      // abierto el contenedor se achica y el composer queda visible en vez de
+      // tapado. Fallback a 100dvh donde no hay visualViewport.
+      className={`flex flex-col h-[calc(var(--vvh,100dvh)-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full overflow-hidden relative animate-fadeIn ${
         isLight ? 'bg-[#efe7d8]' : 'bg-[#0a1120]'
       }`}
     >
@@ -693,21 +789,21 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
       {/* Header */}
       <div className={`px-3 py-2 border-b flex items-center justify-between shrink-0 relative z-30 shadow-elevation-sm liquid-glass min-h-[56px] ${isLight ? 'bg-white/60 border-[#ffe3d3]/60' : 'bg-[#0f1a2e]/60 border-[#f16b48]/25'}`}>
         <div className="flex items-center gap-2 min-w-0 flex-1 mr-1">
-          <Button variant="tertiary" size="icon" onClick={() => { sounds.playClick(); setViewMode('inbox'); setActiveMediaTray(null); onSelectConnection(null); }} className="h-8 w-8 -ml-1 rounded-full text-[#5b6478] hover:text-[#f16b48] shrink-0" title="Volver">
+          <Button variant="tertiary" size="icon" onClick={() => { sounds.playClick(); setViewMode('inbox'); setActiveMediaTray(null); onSelectConnection(null); }} className="tap-target h-11 w-11 -ml-2 rounded-full text-[#5b6478] hover:text-[#f16b48] shrink-0" title="Volver" aria-label="Volver a la lista de chats">
             <span className="material-symbols-outlined text-[22px]">arrow_back</span>
           </Button>
 
-          <div className="relative cursor-pointer group shrink-0" onClick={() => setShowContactInfoDrawer(true)}>
+          <button type="button" onClick={() => setShowContactInfoDrawer(true)} aria-label={`Ver info de ${partner.displayName}`} className="relative group shrink-0 rounded-full">
             <Avatar className="w-9 h-9 border border-[#f16b48] group-hover:scale-105 transition-transform">
               <AvatarImage src={partner.photos[0]?.url} alt={partner.displayName} />
               <AvatarFallback>{partner.displayName.slice(0, 2)}</AvatarFallback>
             </Avatar>
-            {partner.lastActive === 'En línea' && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#3f7a5c] border-2 border-white rounded-full" />}
-          </div>
+            {partner.lastActive === 'En línea' && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#3f7a5c] border-2 border-white rounded-full" aria-hidden="true" />}
+          </button>
 
-          <div className="flex flex-col cursor-pointer min-w-0 flex-1" onClick={() => setShowContactInfoDrawer(true)}>
+          <button type="button" onClick={() => setShowContactInfoDrawer(true)} aria-label={`Ver info de ${partner.displayName}`} className="flex flex-col min-w-0 flex-1 text-left">
             <div className="flex items-center gap-1 min-w-0">
-              <h2 className={`font-headline-md text-[13.5px] font-bold tracking-wide truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{partner.displayName}</h2>
+              <span className={`font-headline-md text-[13.5px] font-bold tracking-wide truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{partner.displayName}</span>
               {partner.badges.trusted && <span className="material-symbols-outlined text-[13px] text-[#f16b48] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Citas verificadas">verified</span>}
               {partner.badges.verified && <span className="material-symbols-outlined text-[13px] text-sky-400 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }} title="Identidad verificada">verified</span>}
             </div>
@@ -720,7 +816,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 <span className={`truncate ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>{partner.lastActive === 'En línea' ? 'en línea' : partner.lastActive}</span>
               )}
             </div>
-          </div>
+          </button>
         </div>
 
         {/* Solo las 2 acciones más contextuales quedan siempre visibles (proponer cita y
@@ -952,7 +1048,40 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
           overflow-y-auto tiene un bug conocido de Chromium donde scrollHeight queda
           igual a clientHeight apenas el contenido desborda — se veía "scrolleable"
           pero nunca se movía ni un píxel. */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-3 flex flex-col gap-2 relative z-10 no-scrollbar select-text transition-all duration-300" style={getWallpaperStyle()}>
+      <div
+        ref={messagesScrollRef}
+        onScroll={handleMessagesScroll}
+        className="flex-1 min-h-0 overflow-y-auto p-3 flex flex-col gap-2 relative z-10 no-scrollbar select-text transition-all duration-300"
+        style={getWallpaperStyle()}
+      >
+        {/* Cargando: esqueleto de burbujas con la geometría real del chat, no
+            un spinner genérico ni una página en blanco. */}
+        {isLoadingMessages && messages.length === 0 && (
+          <div className="flex flex-col gap-2 animate-fadeIn" aria-label="Cargando mensajes">
+            <div className="self-start max-w-[75%] flex flex-col gap-1.5">
+              <Skeleton className="h-9 w-44 rounded-[20px] rounded-bl-md" />
+              <Skeleton className="h-9 w-32 rounded-[20px] rounded-bl-md" />
+            </div>
+            <div className="self-end max-w-[75%] flex flex-col items-end gap-1.5">
+              <Skeleton className="h-9 w-40 rounded-[20px] rounded-br-md" />
+            </div>
+            <div className="self-start max-w-[75%]">
+              <Skeleton className="h-9 w-52 rounded-[20px] rounded-bl-md" />
+            </div>
+          </div>
+        )}
+
+        {/* Error de carga: antes se mostraba el empty-state ("rompé el hielo")
+            como si no hubiera mensajes — ahora se dice la verdad con retry. */}
+        {!isLoadingMessages && messagesError && messages.length === 0 && (
+          <ErrorState
+            compact
+            title="No pudimos cargar los mensajes"
+            body="Revisá tu conexión e intentá de nuevo."
+            onRetry={() => refetchMessages()}
+          />
+        )}
+
         <div className="flex justify-center mb-1 mt-auto">
           <div className={`max-w-xs px-3 py-1.5 rounded-xl border text-center text-[10px] leading-tight shadow-elevation-sm backdrop-blur-md ${isLight ? 'bg-white/80 border-[#ffe3d3] text-[#2e5570]' : 'bg-[#131f36]/80 border-[#f16b48]/30 text-[#ffb295]/80'}`}>
             <span className="inline-flex items-center gap-1 font-bold text-[#f16b48] mb-0.5">
@@ -964,7 +1093,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
         {/* Punto de partida: el chat vacío ya no es una página en blanco. Si el
             match nació de un fragmento concreto, se muestra como primer tema; si
             no, quedan los tres caminos (pregunta, plan, chispa). */}
-        {!isLoadingMessages && filteredMessages.length === 0 && !inChatSearchTerm.trim() && (
+        {!isLoadingMessages && !messagesError && filteredMessages.length === 0 && !inChatSearchTerm.trim() && (
           <div className="flex flex-col items-center text-center gap-3 py-6 px-4 animate-fadeIn">
             <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#f16b48]/50 shadow-elevation-md bg-[#0a1120] flex items-center justify-center">
               {partner.photos[0]?.url ? (
@@ -1079,13 +1208,13 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     )}
                     {gif && (
                       <div className="mb-2 rounded-xl overflow-hidden max-w-[220px] border border-black/10">
-                        <img src={gif.url} alt={gif.title} className="w-full h-auto object-cover max-h-52 rounded-xl" referrerPolicy="no-referrer" />
+                        <img src={gif.url} alt={gif.title} loading="lazy" decoding="async" className="w-full h-auto object-cover max-h-52 rounded-xl" referrerPolicy="no-referrer" />
                         <span className="block text-[10px] font-bold px-1.5 py-1">{gif.tag}</span>
                       </div>
                     )}
                     {isImage && (
                       <div className="mb-2 rounded-xl overflow-hidden max-w-[240px] border border-black/10">
-                        <img src={msg.imageUrl ?? undefined} alt="Foto enviada" className="w-full h-auto object-cover max-h-52 rounded-xl cursor-pointer" referrerPolicy="no-referrer" />
+                        <img src={msg.imageUrl ?? undefined} alt="Foto enviada" loading="lazy" decoding="async" className="w-full h-auto object-cover max-h-52 rounded-xl cursor-pointer" referrerPolicy="no-referrer" />
                       </div>
                     )}
                     {!gif && !isImage && (
@@ -1094,7 +1223,14 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     <div className="flex items-center justify-end gap-1 mt-0.5 select-none text-[9.5px] opacity-75">
                       {isStarred && <span className="material-symbols-outlined text-[12px] text-amber-400" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>}
                       <span>{formatTime(msg.createdAt)}</span>
-                      {isUser && msg.readAt && <span className="material-symbols-outlined text-[13px] text-[#6fa8c9]" title="Leído">done_all</span>}
+                      {/* Estado de envío: un tilde al enviar, doble celeste al
+                          leer. Antes solo existía el "leído" y nada confirmaba
+                          que el mensaje había salido. */}
+                      {isUser && (msg.readAt ? (
+                        <span className="material-symbols-outlined text-[13px] text-[#6fa8c9]" title="Leído">done_all</span>
+                      ) : (
+                        <span className="material-symbols-outlined text-[13px] opacity-70" title="Enviado">done</span>
+                      ))}
                     </div>
                     {msgReaction && (
                       <button onClick={() => handleToggleReaction(msg.id, msgReaction)} className={`absolute -bottom-2 ${isUser ? 'left-2' : 'right-2'} px-1.5 py-0.5 rounded-full text-[11px] shadow-elevation-md flex items-center gap-1 ${isLight ? 'bg-white border border-[#ffe3d3]' : 'bg-[#0f1a2e] border border-[#f16b48]/40'}`}>
@@ -1166,6 +1302,24 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
         )}
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Píldora "nuevos mensajes": aparece cuando llegan mensajes mientras
+          leés arriba, en vez de arrastrarte al fondo a la fuerza. */}
+      {newBelowCount > 0 && (
+        <div className="relative h-0 shrink-0 z-20">
+          <div className="absolute inset-x-0 -top-11 flex justify-center px-3 pointer-events-none animate-fadeIn">
+            <button
+              type="button"
+              onClick={jumpToLatest}
+              className="pointer-events-auto flex items-center gap-1.5 h-9 pl-3.5 pr-4 rounded-full bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white text-[12px] font-bold shadow-elevation-md active:scale-95 transition-transform"
+              aria-label={`Bajar a los ${newBelowCount} mensajes nuevos`}
+            >
+              <span className="material-symbols-outlined text-[16px]">arrow_downward</span>
+              {newBelowCount} {newBelowCount === 1 ? 'nuevo' : 'nuevos'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Attachment menu */}
       {showAttachmentMenu && (
@@ -1323,7 +1477,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             <div className="flex-1 overflow-y-auto p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 no-scrollbar">
               {QUICK_GIFS.map((gif) => (
                 <div key={gif.id} onClick={() => handleSendGif(gif)} className="rounded-2xl overflow-hidden border border-[#ffe3d3] dark:border-[#f16b48]/30 cursor-pointer group relative shadow-elevation-md">
-                  <img src={gif.url} alt={gif.title} className="w-full h-24 object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
+                  <img src={gif.url} alt={gif.title} loading="lazy" decoding="async" className="w-full h-24 object-cover group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
                   <div className="absolute bottom-0 inset-x-0 p-1 bg-gradient-to-t from-black/80 to-transparent text-white text-[10px] font-bold truncate text-center">{gif.tag}</div>
                 </div>
               ))}
@@ -1370,8 +1524,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
         </div>
       )}
 
-      {/* Input bar */}
-      <div className={`border-t p-2 relative z-30 shrink-0 liquid-glass ${isLight ? 'bg-white/55 border-[#ffe3d3]/60' : 'bg-[#0f1a2e]/55 border-[#f16b48]/20'}`}>
+      {/* Input bar — el padding inferior respeta el home indicator; sin esto el
+          composer quedaba pegado al borde en iPhones con Face ID. */}
+      <div
+        style={{ paddingBottom: 'calc(0.5rem + env(safe-area-inset-bottom))' }}
+        className={`border-t px-2 pt-2 relative z-30 shrink-0 liquid-glass ${isLight ? 'bg-white/55 border-[#ffe3d3]/60' : 'bg-[#0f1a2e]/55 border-[#f16b48]/20'}`}
+      >
         {replyingTo && (
           <div className={`flex items-center gap-2 mb-1.5 pl-3 pr-1.5 py-1.5 rounded-2xl border-l-4 border animate-fadeIn ${
             isLight ? 'bg-white border-l-[#f16b48] border-[#ffe3d3]' : 'bg-[#131f36] border-l-[#f16b48] border-[#f16b48]/25'
@@ -1400,8 +1558,9 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             <button
               type="button"
               onClick={() => { sounds.playClick(); setActiveMediaTray(activeMediaTray ? null : 'stickers'); setShowAttachmentMenu(false); }}
-              className={`text-[#5b6478] hover:text-[#f16b48] transition-colors focus:outline-none ${activeMediaTray ? 'text-[#f16b48]' : ''}`}
+              className={`tap-target w-11 h-11 -m-1.5 flex items-center justify-center rounded-full text-[#5b6478] hover:text-[#f16b48] transition-colors ${activeMediaTray ? 'text-[#f16b48]' : ''}`}
               title="Stickers y Emojis"
+              aria-label={activeMediaTray ? 'Cerrar stickers' : 'Abrir stickers y emojis'}
             >
               <span className="material-symbols-outlined text-[21px] block">{activeMediaTray ? 'keyboard' : 'sentiment_satisfied'}</span>
             </button>
@@ -1412,13 +1571,19 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               onChange={(e) => { setInputText(e.target.value); pingTyping(); }}
               onFocus={() => { if (activeMediaTray) setActiveMediaTray(null); }}
               placeholder="Mensaje"
+              // Teclado móvil: la tecla Enter dice "enviar" y lo envía.
+              enterKeyHint="send"
+              aria-label={`Mensaje para ${partner.displayName}`}
+              autoComplete="off"
+              autoCorrect="on"
               className={`flex-1 bg-transparent text-[13px] font-body-sm focus:outline-none ${isLight ? 'text-[#16223b] placeholder:text-[#5b6478]/70' : 'text-[#f5f1e8] placeholder:text-[#a9b2c9]/70'}`}
             />
             <button
               type="button"
               onClick={() => { sounds.playClick(); setShowAttachmentMenu(!showAttachmentMenu); setActiveMediaTray(null); }}
-              className={`text-[#5b6478] hover:text-[#f16b48] transition-colors focus:outline-none ${showAttachmentMenu ? 'text-[#f16b48]' : ''}`}
+              className={`tap-target w-11 h-11 -m-1.5 flex items-center justify-center rounded-full text-[#5b6478] hover:text-[#f16b48] transition-colors ${showAttachmentMenu ? 'text-[#f16b48]' : ''}`}
               title="Adjuntar"
+              aria-label={showAttachmentMenu ? 'Cerrar adjuntos' : 'Adjuntar foto o plan'}
             >
               <span className="material-symbols-outlined text-[20px] block">attach_file</span>
             </button>
@@ -1426,11 +1591,16 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
           <button
             type="submit"
-            disabled={!inputText.trim()}
+            disabled={!inputText.trim() || sendMessage.isPending}
             className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] text-white flex items-center justify-center tactile-btn shadow-elevation-md hover:brightness-105 transition-transform active:scale-95 shrink-0 disabled:opacity-40"
             title="Enviar mensaje"
+            aria-label={sendMessage.isPending ? 'Enviando mensaje' : 'Enviar mensaje'}
           >
-            <span className="material-symbols-outlined text-[19px]" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
+            {sendMessage.isPending ? (
+              <span className="material-symbols-outlined text-[19px] animate-spin">progress_activity</span>
+            ) : (
+              <span className="material-symbols-outlined text-[19px]" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
+            )}
           </button>
         </form>
       </div>

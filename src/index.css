@@ -730,3 +730,95 @@
 .theme-light ::-webkit-scrollbar-thumb:hover {
   background: #FF8A65;
 }
+
+/* ============================================================
+   MELY — Fundación responsive + gestos (Fase 2, solo frontend)
+   Sin tocar identidad: mismos tokens, misma estética.
+   ============================================================ */
+
+/* Altura visible real. iOS NO achica el layout viewport cuando abre el
+   teclado, así que 100dvh miente y el composer del chat quedaba tapado.
+   useVisualViewportHeight() fija --vvh al alto de visualViewport; donde no
+   hay soporte se usa 100dvh como fallback. */
+:root {
+  --vvh: 100dvh;
+}
+
+/* Oculta la barra de scroll manteniendo el scroll (carruseles, listas del
+   chat, bandeja). Se usaba en ~20 lugares pero la clase no existía. */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Entrada lateral (drawer de info del chat). También se usaba sin existir. */
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.animate-slideLeft {
+  animation: slideLeft 0.28s var(--ease-mely) forwards;
+}
+
+/* Target táctil mínimo recomendado (44px) sin cambiar el lenguaje visual:
+   se aplica al botón, no al icono — el icono mantiene su tamaño. */
+.tap-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Hit-slop: agranda la zona táctil de un botón chico SIN cambiar su tamaño
+   visual (badges, iconitos). El ::after invisible captura el tap. */
+.hit-slop {
+  position: relative;
+}
+.hit-slop::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+}
+
+/* Contenido de modal que siempre entra: en landscape o pantallas bajas
+   (≤600px de alto) el panel scrollea por dentro en vez de cortarse. */
+.modal-fit {
+  max-height: calc(var(--vvh, 100dvh) - 2rem);
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+/* Higiene de gestos: dentro de una superficie arrastrable las imágenes no
+   deben iniciar un drag nativo (fantasma) ni seleccionarse — el gesto lo
+   maneja el contenedor con pointer events. */
+[data-drag-surface] img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* `clip` no crea un scroll-container como `hidden` (evita bugs de sticky/
+   fixed anidados); si el navegador no lo soporta, rige el hidden de base. */
+body {
+  overflow-x: clip;
+}
+
+/* Teléfonos angostos (≤360px): ajustes quirúrgicos, sin hacks por modelo. */
+@media (max-width: 360px) {
+  /* La cabecera de Descubrir (título + botón) no debe empujar el botón
+     fuera de pantalla cuando el título ocupa dos líneas. */
+  .discover-header-title {
+    font-size: 19px;
+  }
+  /* Chips de intención y listas horizontales: un poco más compactos para
+     que siempre se asome el siguiente ítem (affordance de scroll). */
+  .chip-row-compact {
+    gap: 6px;
+  }
+}

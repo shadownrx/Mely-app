@@ -73,6 +73,10 @@ function AppContent() {
 
   const [currentTab, setCurrentTab] = useState<TabType>('descubrir');
   const [previousTab, setPreviousTab] = useState<TabType>('descubrir');
+  // Dirección de la transición: entrar a una pantalla secundaria (push desde
+  // el menú) desliza desde la derecha; volver, hacia la derecha. Las tabs
+  // principales solo funden con una deriva vertical mínima.
+  const [navDir, setNavDir] = useState<1 | -1>(1);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [proposeModal, setProposeModal] = useState<ProposeModalState>(null);
@@ -160,7 +164,18 @@ function AppContent() {
     // puede quedar "pegado" en pantalla flotando sobre la pestaña nueva.
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     if (currentTab !== 'ajustes') setPreviousTab(currentTab);
+    setNavDir(1);
+    // Cada pantalla arranca arriba: sin esto, el scroll de la pestaña
+    // anterior se heredaba y la nueva aparecía a mitad de camino.
+    window.scrollTo({ top: 0 });
     setCurrentTab(tab);
+  };
+
+  const handleBackToPrevious = () => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    setNavDir(-1);
+    window.scrollTo({ top: 0 });
+    setCurrentTab(previousTab);
   };
 
   // A qué pantalla te lleva tocar una notificación (toast, campanita, o push del SO).
@@ -344,7 +359,7 @@ function AppContent() {
           onNavigateNotification={handleNotificationNavigate}
           onOpenMenu={() => setIsMenuOpen(true)}
           showBackButton={isSecondaryScreen}
-          onBack={() => setCurrentTab(previousTab)}
+          onBack={handleBackToPrevious}
           customTitle={
             currentTab === 'ajustes'
               ? 'Ajustes'
@@ -373,15 +388,18 @@ function AppContent() {
               ? 'env(safe-area-inset-bottom)'
               : `calc(${currentTab === 'mensajes' ? '4.25rem' : '5rem'} + env(safe-area-inset-bottom))`,
         }}
-        className={`app-page ${isChatDetail ? '' : currentTab === 'mensajes' ? 'px-2 sm:px-3' : 'px-4'} flex-1 flex flex-col min-h-0`}
+        className={`app-page ${isChatDetail ? '' : currentTab === 'mensajes' ? 'px-2 sm:px-3' : 'px-3 min-[380px]:px-4'} flex-1 flex flex-col min-h-0`}
       >
-        <AnimatePresence mode="wait">
+        {/* popLayout en vez de mode="wait": la pantalla que sale y la que entra
+            se solapan (crossfade) en vez de dejar un hueco en blanco entre
+            ambas. Las secundarias deslizan horizontal según dirección. */}
+        <AnimatePresence mode="popLayout">
           <motion.div
             key={currentTab}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, x: isSecondaryScreen ? navDir * 32 : 0, y: isSecondaryScreen ? 0 : 10 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            exit={{ opacity: 0, x: isSecondaryScreen ? navDir * -24 : 0, y: isSecondaryScreen ? 0 : -10 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="w-full flex-1 flex flex-col min-h-0"
           >
             <Suspense fallback={<TabFallback />}>
@@ -444,6 +462,7 @@ function AppContent() {
                 onOpenDateQR={(connectionId, partnerName, partnerAvatar) => {
                   setDateQRModal({ connectionId, partnerName, partnerAvatar });
                 }}
+                onExploreMore={() => handleTabChange('descubrir')}
               />
             )}
 

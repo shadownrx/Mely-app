@@ -178,7 +178,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               photoInputRef.current?.click();
             }}
             aria-label="Editar foto"
-            className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full flex items-center justify-center border-2"
+            className="hit-slop absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full flex items-center justify-center border-2"
             style={{ background: 'var(--coral-500)', borderColor: isLight ? '#FFFFFF' : 'var(--midnight-900)' }}
           >
             <span className="material-symbols-outlined text-[13px]" style={{ color: 'var(--ink-on-coral)' }}>
@@ -191,13 +191,20 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             {user.displayName}, {user.age}
           </span>
           {user.badges.verification === 'VERIFIED' ? (
-            <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[15px]" style={{ color: 'var(--success-500)' }} title="Identidad verificada">
-                verified
+            <span className="flex flex-col gap-0.5">
+              <span className="flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[15px]" style={{ color: 'var(--success-500)' }} title="Identidad verificada">
+                  verified
+                </span>
+                <span className="text-[12.5px] font-semibold" style={{ color: 'var(--success-500)' }}>
+                  Perfil verificado
+                </span>
               </span>
-              <span className="text-[12.5px] font-semibold" style={{ color: 'var(--success-500)' }}>
-                Perfil verificado
-              </span>
+              {[user.job, user.city].filter(Boolean).length > 0 && (
+                <span className="text-[12px]" style={{ color: mutedText }}>
+                  {[user.job, user.city].filter(Boolean).join(' · ')}
+                </span>
+              )}
             </span>
           ) : (
             <span className="text-[12px]" style={{ color: mutedText }}>
@@ -271,15 +278,17 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         <div className="grid grid-cols-3 gap-2">
           {user.photos.map((photo) => (
             <div key={photo.id} className="relative aspect-square rounded-[var(--radius-md)] overflow-hidden group">
-              <img src={photo.url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              <img src={photo.url} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              {/* Siempre visible: con opacity-0 + group-hover era imposible
+                  borrar fotos en táctil (no hay hover). Misma estética. */}
               <button
                 type="button"
                 onClick={() => handleDeletePhoto(photo.id)}
                 disabled={deletePhoto.isPending}
                 aria-label="Eliminar foto"
-                className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/55 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-black/55 flex items-center justify-center text-white/90 hover:bg-black/75 hover:text-white active:scale-90 transition-all"
               >
-                <span className="material-symbols-outlined text-[13px]">close</span>
+                <span className="material-symbols-outlined text-[15px]">close</span>
               </button>
             </div>
           ))}
@@ -331,7 +340,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     onOpenFullSettings?.();
                   }}
                   aria-label="Editar prompt"
-                  className="shrink-0"
+                  className="hit-slop shrink-0 rounded-full p-1 -m-1"
                 >
                   <span className="material-symbols-outlined text-[16px]" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-tertiary)' }}>
                     edit
@@ -365,7 +374,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               onOpenFullSettings?.();
             }}
             aria-label="Editar intereses"
-            className="w-8 h-8 rounded-[var(--radius-pill)] border border-dashed flex items-center justify-center"
+            className="hit-slop w-8 h-8 rounded-[var(--radius-pill)] border border-dashed flex items-center justify-center"
             style={{ borderColor: isLight ? 'rgba(22,34,59,0.16)' : 'var(--hairline-strong)' }}
           >
             <span className="material-symbols-outlined text-[15px]" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-tertiary)' }}>
@@ -507,7 +516,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           sounds.playClick();
           onSignOut();
         }}
-        className="text-[13px] font-bold cursor-pointer mt-1"
+        className="text-[13px] font-bold cursor-pointer mt-1 min-h-[44px]"
         style={{ color: 'var(--coral-500)' }}
       >
         Cerrar sesión

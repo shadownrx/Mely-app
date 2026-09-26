@@ -7,6 +7,7 @@ import { useWhoLikedMe, useSwipe } from '../hooks/useDiscover';
 import { usePurchase } from '../hooks/useShop';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
+import { EmptyState } from './StateViews';
 import { Skeleton } from './ui/skeleton';
 
 interface LikesViewProps {
@@ -90,7 +91,8 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
                 sounds.playClick();
                 setTab(t.id);
               }}
-              className="h-8 px-4 rounded-[var(--radius-pill)] text-[12.5px] font-bold transition-colors"
+              aria-pressed={active}
+              className="min-h-[40px] px-4 rounded-[var(--radius-pill)] text-[12.5px] font-bold transition-all active:scale-95"
               style={
                 active
                   ? { background: 'var(--coral-500)', color: 'var(--ink-on-coral)' }
@@ -119,20 +121,12 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
           )}
 
           {!isLoading && data && data.count === 0 && (
-            <div className="flex flex-col items-center gap-3 py-16 text-center">
-              <span
-                className="material-symbols-outlined text-[40px]"
-                style={{ color: isLight ? 'rgba(22,34,59,0.15)' : 'var(--hairline-strong)' }}
-              >
-                favorite_border
-              </span>
-              <p className="text-[13px] max-w-[220px]" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)' }}>
-                Todavía nadie te dio like. Seguí explorando en Descubrir.
-              </p>
-              <Button variant="primary" size="sm" onClick={onExploreMore} className="mt-1">
-                Ir a Descubrir
-              </Button>
-            </div>
+            <EmptyState
+              icon="favorite_border"
+              title="Todavía sin likes"
+              body="Nadie te dio like aún. Seguí explorando en Descubrir — tu próxima conexión está a un swipe."
+              actions={[{ label: 'Ir a Descubrir', onClick: onExploreMore, icon: 'explore' }]}
+            />
           )}
 
           {!isLoading && data && data.count > 0 && !data.unlocked && (
@@ -142,7 +136,7 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
                 {(data.profiles.length > 0 ? data.profiles : Array.from({ length: Math.min(data.count, 4) })).slice(0, 4).map((p: any, i: number) => (
                   <div key={p?.id ?? i} className="relative aspect-[3/4] w-full rounded-[var(--radius-lg)] overflow-hidden flex items-center justify-center" style={{ background: 'var(--midnight-850)' }}>
                     {p?.photos?.[0]?.url ? (
-                      <img src={p.photos[0].url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      <img src={p.photos[0].url} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     ) : (
                       <span className="material-symbols-outlined text-[28px]" style={{ color: 'var(--coral-500)', opacity: 0.4 }}>
                         person
@@ -193,7 +187,7 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
                   style={{ borderColor: isLight ? 'rgba(22,34,59,0.1)' : 'var(--hairline-strong)', background: 'var(--midnight-850)' }}
                 >
                   {p.photos[0]?.url && (
-                    <img src={p.photos[0].url} alt={p.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <img src={p.photos[0].url} alt={p.displayName} loading="lazy" decoding="async" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   )}
                   <div className="absolute inset-x-0 bottom-0 p-2.5 bg-gradient-to-t from-black/85 via-black/40 to-transparent">
                     <p className="text-white text-[12.5px] font-bold truncate">{p.displayName}, {p.age}</p>
@@ -218,17 +212,12 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
       {tab === 'enviados' && (
         <div className="relative flex-1">
           {sentLikes.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 py-16 text-center">
-              <span className="material-symbols-outlined text-[40px]" style={{ color: isLight ? 'rgba(22,34,59,0.15)' : 'var(--hairline-strong)' }}>
-                send
-              </span>
-              <p className="text-[13px] max-w-[220px]" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)' }}>
-                Todavía no enviaste likes. Cuando reacciones a alguien en Descubrir, queda registrado acá.
-              </p>
-              <Button variant="primary" size="sm" onClick={onExploreMore} className="mt-1">
-                Ir a Descubrir
-              </Button>
-            </div>
+            <EmptyState
+              icon="send"
+              title="Nada enviado todavía"
+              body="Cuando reacciones a alguien en Descubrir, queda registrado acá."
+              actions={[{ label: 'Ir a Descubrir', onClick: onExploreMore, icon: 'explore' }]}
+            />
           ) : (
             <>
               <p className="text-[11.5px] px-0.5 mb-3" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)' }}>
@@ -242,7 +231,7 @@ export const LikesView: React.FC<LikesViewProps> = ({ likesUnlockPrice, onOpenCh
                     style={{ borderColor: isLight ? 'rgba(22,34,59,0.1)' : 'var(--hairline-strong)', background: 'var(--midnight-850)' }}
                   >
                     {s.photoUrl ? (
-                      <img src={s.photoUrl} alt={s.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      <img src={s.photoUrl} alt={s.displayName} loading="lazy" decoding="async" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <span className="material-symbols-outlined text-[28px]" style={{ color: 'var(--coral-500)', opacity: 0.4 }}>

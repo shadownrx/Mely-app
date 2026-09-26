@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from 'motion/react';
+import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo, MotionStyle } from 'motion/react';
 import { toast } from 'sonner';
 import { Profile } from '../types';
 import type { DiscoverQuota } from '../lib/api/discover';
@@ -9,8 +9,8 @@ import { INTENTIONS, getIntention } from '../utils/intentions';
 import { suggestPlanSpot } from '../utils/planSuggestion';
 import { rememberFragment } from '../utils/fragmentContext';
 import { ReportBlockSheet } from './ReportBlockSheet';
+import { EmptyState, ErrorState } from './StateViews';
 import { useTheme } from '../context/ThemeContext';
-import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Skeleton } from './ui/skeleton';
 import { LocationPrompt } from './LocationPrompt';
@@ -49,6 +49,47 @@ interface DiscoverViewProps {
   onSelectIntention?: (id: string | null) => void;
 }
 
+type StampKind = 'like' | 'pass' | 'star';
+
+// Sello de decisión con el lenguaje que Mely ya tenía (mismos colores y
+// formas): se usa tanto en vivo durante el drag como fijo en la carta que
+// sale volando. Extraído para no duplicar el marcado 4 veces.
+const STAMP_STYLE: Record<StampKind, { box: string; icon: string; label: string }> = {
+  like: { box: '-rotate-12 border-emerald-500 bg-emerald-950/80 text-emerald-300', icon: 'favorite', label: 'Me gusta' },
+  pass: { box: 'rotate-12 border-rose-500 bg-rose-950/80 text-rose-300', icon: 'close', label: 'Pasar' },
+  star: { box: 'border-amber-400 bg-amber-950/85 text-amber-300', icon: 'star', label: 'SUPER SPARK' },
+};
+
+const StampChip: React.FC<{ kind: StampKind; style?: MotionStyle; className?: string; large?: boolean }> = ({
+  kind,
+  style,
+  className = '',
+  large = false,
+}) => {
+  const s = STAMP_STYLE[kind];
+  return (
+    <motion.div
+      style={style}
+      aria-hidden="true"
+      className={`pointer-events-none border-2 rounded-[var(--radius-md)] shadow-elevation-md ${s.box} ${
+        large ? 'px-5 py-2.5' : 'px-4 py-1.5'
+      } ${className}`}
+    >
+      <div className={`flex items-center ${large ? 'gap-2' : 'gap-1.5'}`}>
+        <span
+          className={`material-symbols-outlined ${large ? 'text-[24px]' : 'text-[20px]'}`}
+          style={{ fontVariationSettings: "'FILL' 1" }}
+        >
+          {s.icon}
+        </span>
+        <span className={`font-label-caps font-black ${large ? 'text-[13px] tracking-widest uppercase' : 'text-[13px]'}`}>
+          {s.label}
+        </span>
+      </div>
+    </motion.div>
+  );
+};
+
 export const DiscoverView: React.FC<DiscoverViewProps> = ({
   profiles,
   isLoading = false,
@@ -69,10 +110,27 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
 }) => {
   const { isLight } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [actionState, setActionState] = useState<'liked' | 'passed' | 'starred' | null>(null);
   const [galleryIndex, setGalleryIndex] = useState(0);
   const [showFullNotebook, setShowFullNotebook] = useState(false);
-  const [exitDirection, setExitDirection] = useState<'left' | 'right' | 'up' | null>(null);
+  // Mazo continuo: la carta que sale vuela en su propia capa (`leaving`)
+  // mientras la siguiente ya entra — nunca hay hueco en blanco ni flicker.
+  // Guarda su punto de partida para que el vuelo continúe el gesto del dedo.
+  const [leaving, setLeaving] = useState<{
+    profile: Profile;
+    dir: 'left' | 'right' | 'up';
+    fromX: number;
+    fromY: number;
+    label: string | null;
+  } | null>(null);
+  // Candado anti-doble-tap: sin esto, dos taps rápidos mandaban dos likes y
+  // saltaban dos perfiles (el índice todavía no había avanzado).
+  const actionLock = useRef(false);
+  // El navegador dispara un click fantasma al soltar un arrastre sobre las
+  // zonas de foto — se suprime si el dedo se movió de verdad (ver guard).
+  const dragEndAt = useRef(0);
+  const dragMoved = useRef(false);
+  const timers = useRef<number[]>([]);
+  useEffect(() => () => { timers.current.forEach((t) => window.clearTimeout(t)); }, []);
   const [isBlindMode, setIsBlindMode] = useState(false);
   const [unblurredCards, setUnblurredCards] = useState<Record<string, boolean>>({});
   const [personOfDayPromoted, setPersonOfDayPromoted] = useState(false);
@@ -135,11 +193,15 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
   const dragX = useMotionValue(0);
   const dragY = useMotionValue(0);
 
-  // Transform drag distance into smooth rotation & opacity indicators
+  // Transform drag distance into smooth rotation & opacity indicators.
+  // Todo visual del gesto vive en MotionValues: cero re-renders durante el
+  // pointermove, solo transform/opacity por composición del navegador.
   const rotate = useTransform(dragX, [-220, 220], [-18, 18]);
   const likeOpacity = useTransform(dragX, [30, 140], [0, 1]);
   const passOpacity = useTransform(dragX, [-30, -140], [0, 1]);
   const superLikeOpacity = useTransform(dragY, [-30, -120], [0, 1]);
+  // La carta "respira" un poco al arrastrarla: sensación física, sin costo.
+  const cardScale = useTransform([dragX, dragY], ([x, y]: number[]) => 1 - Math.min(0.045, (Math.abs(x) + Math.abs(y)) * 0.0002));
 
   const currentProfile = deck[currentIndex];
   const nextProfile = deck[currentIndex + 1];
@@ -211,36 +273,12 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
     return (
       <div className="flex flex-col gap-4">
         <LocationPrompt />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col items-center justify-center py-20 px-6 text-center"
-        >
-          <div
-            className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center text-[#f16b48] mb-4 ${
-              isLight ? 'bg-white shadow-elevation-sm' : 'bg-[#0f1a2e]'
-            }`}
-          >
-            <span className="material-symbols-outlined text-[36px]">signal_wifi_off</span>
-          </div>
-          <h2 className={`text-[22px] mb-2 font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
-            No pudimos cargar Descubrir
-          </h2>
-          <p className={`text-[14px] max-w-xs mb-6 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
-            Revisá tu conexión e intentá de nuevo — tu cupo de hoy sigue intacto.
-          </p>
-          <Button
-            variant="primary"
-            onClick={() => {
-              sounds.playClick();
-              onReload?.();
-            }}
-            className="px-6 py-2.5 font-label-caps text-[11px] tracking-widest font-bold rounded-full"
-          >
-            REINTENTAR
-          </Button>
-        </motion.div>
+        <ErrorState
+          title="No pudimos cargar Descubrir"
+          body="Revisá tu conexión e intentá de nuevo — tu cupo de hoy sigue intacto."
+          onRetry={() => onReload?.()}
+          retryLabel="Reintentar"
+        />
       </div>
     );
   }
@@ -268,40 +306,18 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
   if (quotaExhausted) {
     return (
       <div className="flex flex-col gap-4">
-      <LocationPrompt />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="flex flex-col items-center justify-center py-20 px-6 text-center"
-      >
-        <div
-          className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center text-amber-500 mb-4 ${
-            isLight ? 'border-amber-200 bg-white shadow-elevation-sm' : 'border-amber-500/40 bg-[#0f1a2e]'
-          }`}
-        >
-          <span className="material-symbols-outlined text-[36px]">bolt</span>
-        </div>
-        <h2 className={`font-headline-md text-[22px] mb-2 font-bold ${isLight ? 'text-[#16223b]' : 'text-[#5b6478]'}`}>
-          Por hoy está bien
-        </h2>
-        <p className={`font-body-sm text-[14px] max-w-xs mb-6 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
-          Mañana hay más historias — el cupo vuelve {quota ? new Date(quota.resetsAt).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit' }) : 'a la medianoche'}.
-          Calidad antes que cantidad: eso también es MELY.
-        </p>
-        {onOpenStore && (
-          <Button
-            variant="primary"
-            onClick={() => {
-              sounds.playClick();
-              onOpenStore();
-            }}
-            className="px-6 py-2.5 font-label-caps text-[11px] tracking-widest font-bold rounded-full"
-          >
-            AMPLIAR CUPO EN LA TIENDA
-          </Button>
-        )}
-      </motion.div>
+        <LocationPrompt />
+        <EmptyState
+          icon="bolt"
+          accent="amber"
+          title="Por hoy está bien"
+          body={`Mañana hay más historias — el cupo vuelve ${quota ? new Date(quota.resetsAt).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit' }) : 'a la medianoche'}. Calidad antes que cantidad: eso también es MELY.`}
+          actions={
+            onOpenStore
+              ? [{ label: 'Ampliar cupo en la tienda', onClick: () => onOpenStore(), icon: 'storefront' }]
+              : []
+          }
+        />
       </div>
     );
   }
@@ -309,91 +325,74 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
   if (!currentProfile) {
     return (
       <div className="flex flex-col gap-4">
-      <LocationPrompt />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="flex flex-col items-center justify-center py-20 px-6 text-center"
-      >
-        <div
-          className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center text-[#f16b48] mb-4 ${
-            isLight ? 'border-[#ffe3d3] bg-white shadow-elevation-sm' : 'border-[#6e7891] bg-[#0f1a2e]'
-          }`}
-        >
-          <span className="material-symbols-outlined text-[36px]">auto_stories</span>
-        </div>
-        <h2 className={`font-headline-md text-[22px] mb-2 font-bold ${isLight ? 'text-[#16223b]' : 'text-[#5b6478]'}`}>
-          Ya viste todo lo de hoy
-        </h2>
-        <p className={`font-body-sm text-[14px] max-w-xs mb-6 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
-          {intentionId
-            ? 'Con tu intención activa no queda nadie por ver. Probá pausarla o volver mañana.'
-            : 'Mañana hay más historias. Descansar también es parte del ritual.'}
-        </p>
-        <div className="flex flex-col items-center gap-2.5">
-          <Button
-            variant="primary"
-            disabled={isLoading}
-            onClick={() => {
-              sounds.playClick();
-              onReload?.();
-            }}
-            className="px-6 py-2.5 font-label-caps text-[11px] tracking-widest font-bold rounded-full disabled:opacity-60"
-          >
-            {isLoading ? 'BUSCANDO…' : 'BUSCAR DE NUEVO'}
-          </Button>
-          {intentionId && onSelectIntention && (
-            <button
-              type="button"
-              onClick={() => {
-                sounds.playClick();
-                onSelectIntention(null);
-              }}
-              className={`text-[12px] font-bold underline underline-offset-4 ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}
-            >
-              Ver sin filtro de intención
-            </button>
-          )}
-        </div>
-      </motion.div>
+        <LocationPrompt />
+        <EmptyState
+          icon="auto_stories"
+          title="Ya viste todo lo de hoy"
+          body={
+            intentionId
+              ? 'Con tu intención activa no queda nadie por ver. Probá pausarla o volver mañana.'
+              : 'Mañana hay más historias. Descansar también es parte del ritual.'
+          }
+          actions={[
+            { label: isLoading ? 'Buscando…' : 'Buscar de nuevo', onClick: () => onReload?.(), icon: 'refresh' },
+            ...(intentionId && onSelectIntention
+              ? [{ label: 'Ver sin filtro de intención', onClick: () => onSelectIntention(null), variant: 'link' as const }]
+              : []),
+          ]}
+        />
       </div>
     );
   }
 
-  const triggerAction = (type: 'liked' | 'passed' | 'starred') => {
+  const triggerAction = (type: 'liked' | 'passed' | 'starred', fragmentLabel?: string | null) => {
+    if (actionLock.current || leaving || !currentProfile) return;
+    actionLock.current = true;
     dismissHint();
-    setActionState(type);
-    setExitDirection(type === 'liked' ? 'right' : type === 'passed' ? 'left' : 'up');
+    const dir = type === 'liked' ? 'right' : type === 'passed' ? 'left' : 'up';
+    const profile = currentProfile;
+    // La carta que sale arranca desde donde se soltó el dedo (continuidad
+    // física) y la entrante parte de valores frescos: sin snaps ni flicker.
+    const fromX = dragX.get();
+    const fromY = dragY.get();
+    dragX.set(0);
+    dragY.set(0);
+    setLeaving({ profile, dir, fromX, fromY, label: fragmentLabel ?? likedFragment });
 
     if (type === 'liked') {
       sounds.playStamp();
-      onLike(currentProfile);
+      onLike(profile);
     } else if (type === 'starred') {
       sounds.playCoins();
-      onSuperLike(currentProfile);
+      onSuperLike(profile);
     } else {
       sounds.playClick();
-      onPass(currentProfile);
+      onPass(profile);
     }
 
-    setTimeout(() => {
-      setActionState(null);
-      setExitDirection(null);
-      setGalleryIndex(0);
-      setShowFullNotebook(false);
-      setLikedFragment(null);
-      dragX.set(0);
-      dragY.set(0);
-      setCurrentIndex((prev) => prev + 1);
-    }, 320);
+    // Latido de 120ms para registrar el sello, y la siguiente carta ya entra
+    // mientras la anterior todavía vuela: mazo continuo, sin hueco en blanco.
+    timers.current.push(
+      window.setTimeout(() => {
+        setGalleryIndex(0);
+        setShowFullNotebook(false);
+        setLikedFragment(null);
+        setCurrentIndex((prev) => prev + 1);
+      }, 120),
+    );
+    timers.current.push(
+      window.setTimeout(() => {
+        setLeaving(null);
+        actionLock.current = false;
+      }, 480),
+    );
   };
 
   /** "Me gusta" nacido de un fragmento concreto (un interés, un prompt). El
    * backend recibe el mismo like de siempre — el contexto vive en la UI y en
    * el toast, y mañana puede persistirse como {fragment} sin romper el contrato. */
   const likeFromFragment = (fragmentLabel: string) => {
-    if (!currentProfile || actionState) return;
+    if (!currentProfile || leaving || actionLock.current) return;
     dismissHint();
     setLikedFragment(fragmentLabel);
     // Pilar 3: el contexto viaja con el perfil hacia el match y el plan.
@@ -401,10 +400,19 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
     toast.success(`Te gustó: ${fragmentLabel}`, {
       description: `${currentProfile.displayName} va a ver que algo concreto te llamó la atención.`,
     });
-    triggerAction('liked');
+    triggerAction('liked', fragmentLabel);
+  };
+
+  const handleDragStart = () => {
+    dragMoved.current = false;
+  };
+
+  const handleDrag = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (Math.abs(info.offset.x) + Math.abs(info.offset.y) > 12) dragMoved.current = true;
   };
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    dragEndAt.current = Date.now();
     const threshold = 100;
     const velocityThreshold = 400;
 
@@ -415,6 +423,18 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
     } else if (info.offset.y < -threshold || info.velocity.y < -velocityThreshold) {
       triggerAction('starred');
     }
+    // Si no hubo umbral, el spring elástico la devuelve sola (dragConstraints
+    // en 0 + dragElastic): acá no se toca ningún estado.
+  };
+
+  // Click fantasma post-arrastre: si el dedo se movió de verdad, el click que
+  // el navegador dispara al soltar (típicamente sobre una zona de foto) se
+  // traga acá — evita avances de galería y taps accidentales en botones.
+  const suppressClickAfterDrag = (e: React.SyntheticEvent) => {
+    if (dragMoved.current && Date.now() - dragEndAt.current < 300) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
   };
 
   return (
@@ -422,7 +442,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
       <div className="flex items-end justify-between gap-3 px-1">
         <div className="min-w-0">
           <p className="section-kicker">Descubrir</p>
-          <h2 className={`mt-1 text-[22px] font-bold tracking-tight ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
+          <h2 className={`discover-header-title mt-1 text-[22px] font-bold tracking-tight ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
             Una conexión a la vez
           </h2>
           <p className={`mt-1 max-w-[250px] text-[12px] leading-relaxed ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
@@ -458,7 +478,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               <button
                 type="button"
                 onClick={() => sounds.playClick()}
-                className={`relative w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+                className={`tap-target relative w-11 h-11 rounded-full flex items-center justify-center transition-colors ${
                   isLight ? 'bg-[#efe7d8] text-[#16223b] hover:bg-[#efe7d8]' : 'bg-white/8 text-[#f5f1e8] hover:bg-white/14'
                 }`}
                 title="Más opciones de Descubrir"
@@ -538,7 +558,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
       {onSelectIntention && (
         <div>
           <div
-            className="flex gap-1.5 overflow-x-auto no-scrollbar px-1 -mx-1 py-0.5"
+            className="chip-row-compact flex gap-1.5 overflow-x-auto no-scrollbar px-1 -mx-1 py-0.5"
             role="group"
             aria-label="Intención de la semana"
           >
@@ -646,14 +666,18 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               zIndex: 1,
             }}
           >
-            <div className="relative h-[360px] w-full bg-[#0a1120] overflow-hidden">
+            <div className="relative h-[300px] min-[380px]:h-[360px] w-full bg-[#0a1120] overflow-hidden">
               {nextProfile.photos[0]?.url && (
                 <img
                   src={nextProfile.photos[0]?.url}
                   alt=""
                   aria-hidden="true"
-                  loading="lazy"
+                  // Precarga visual del siguiente perfil: eager para que la
+                  // transición no muestre un lienzo vacío ni parpadee.
+                  loading="eager"
+                  fetchPriority="high"
                   decoding="async"
+                  draggable={false}
                   className="w-full h-full object-cover filter blur-[0.5px]"
                   referrerPolicy="no-referrer"
                 />
@@ -667,127 +691,70 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           </div>
         )}
 
-        {/* Active Forefront Card with Physics Drag Gestures */}
-        <AnimatePresence mode="wait">
+        {/* Active Forefront Card — entra desde la pose exacta de la carta de
+            atrás (scale .95 / y 12), así el handoff al avanzar es invisible.
+            El gesto vive en la foto (superficie de arrastre); esta capa solo
+            entra y sostiene los MotionValues compartidos. */}
           <motion.div
             key={`card-${currentProfile.id}`}
-            style={{ x: dragX, y: dragY, rotate, zIndex: 10 }}
-            drag={!exitDirection}
-            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-            dragElastic={0.7}
-            onDragEnd={handleDragEnd}
-            initial={{ opacity: 0, scale: 0.94, y: 16 }}
+            initial={{ opacity: 0.65, scale: 0.95, y: 14 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{
-              x: exitDirection === 'right' ? 380 : exitDirection === 'left' ? -380 : 0,
-              y: exitDirection === 'up' ? -380 : 0,
-              opacity: 0,
-              rotate: exitDirection === 'right' ? 22 : exitDirection === 'left' ? -22 : 0,
-              scale: 0.9,
-              transition: { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
-            }}
-            transition={{
-              type: 'spring',
-              stiffness: 340,
-              damping: 26,
-            }}
-            className="w-full touch-pan-y cursor-grab active:cursor-grabbing"
+            transition={{ type: 'spring', stiffness: 340, damping: 27 }}
+            onClickCapture={suppressClickAfterDrag}
+            className="w-full relative"
+            style={{ zIndex: 10 }}
           >
+          <motion.div style={{ x: dragX, y: dragY, rotate, scale: cardScale }} className="w-full">
             <Card
               className={`rounded-[var(--radius-lg)] border overflow-hidden relative shadow-elevation-lg transition-shadow duration-300 ${
                 isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'
               }`}
             >
-              {/* Dynamic Live Stamp Indicators on Drag */}
-              {/* Sin backdrop-blur acá: con el fondo ya 80-85% opaco el blur aportaba poco
-                  visualmente, pero recalcularlo en cada frame del drag (junto con la opacity
-                  que sigue en vivo al gesto) es la combinación que más dispara el glitch de
-                  Chrome Android que deja "pegado" un frame viejo (reportado por usuarios). */}
-              {/* LIKE Stamp (Drag Right) */}
-              <motion.div
-                style={{ opacity: likeOpacity }}
-                className="absolute top-8 left-6 z-30 pointer-events-none -rotate-12 border-2 border-emerald-500 bg-emerald-950/80 text-emerald-300 px-4 py-1.5 rounded-[var(--radius-md)] shadow-elevation-md"
-              >
-                <div className="flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    favorite
-                  </span>
-                  <span className="font-label-caps text-[13px] font-black">
-                    Me gusta
-                  </span>
-                </div>
-              </motion.div>
-
-              {/* PASS Stamp (Drag Left) */}
-              <motion.div
-                style={{ opacity: passOpacity }}
-                className="absolute top-8 right-6 z-30 pointer-events-none rotate-12 border-2 border-rose-500 bg-rose-950/80 text-rose-300 px-4 py-1.5 rounded-[var(--radius-md)] shadow-elevation-md"
-              >
-                <div className="flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[20px]">close</span>
-                  <span className="font-label-caps text-[13px] font-black">
-                    Pasar
-                  </span>
-                </div>
-              </motion.div>
-
-              {/* SUPER LIKE Stamp (Drag Up) */}
-              <motion.div
+              {/* Sellos en vivo del gesto: el usuario ve qué está por hacer antes
+                  de soltar. Sin backdrop-blur: con el fondo ya 80-85% opaco el
+                  blur aportaba poco, pero recalcularlo en cada frame del drag
+                  dispara el glitch de Chrome Android que deja "pegado" un frame
+                  viejo (reportado por usuarios). El feedback de botón vive en
+                  la capa `leaving`, que vuela con el sello puesto. */}
+              <StampChip kind="like" style={{ opacity: likeOpacity }} className="absolute top-8 left-6 z-30" />
+              <StampChip kind="pass" style={{ opacity: passOpacity }} className="absolute top-8 right-6 z-30" />
+              <StampChip
+                kind="star"
                 style={{ opacity: superLikeOpacity }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none border-2 border-amber-400 bg-amber-950/85 text-amber-300 px-5 py-2.5 rounded-[var(--radius-md)] shadow-elevation-md"
+                className="absolute top-[38%] left-1/2 -translate-x-1/2 z-30"
+                large
+              />
+
+              {/* Superficie de arrastre: solo la foto es `touch-none` — así el
+                  gesto vertical (Super Spark) funciona en táctil sin matar el
+                  scroll de la página, que sigue disponible desde el contenido
+                  de abajo. directionLock fija el eje dominante (evita Super
+                  Sparks accidentales en diagonal) y momentum=false deja la
+                  carta donde se suelta o vuelve con spring. */}
+              <motion.div
+                data-drag-surface
+                drag={!leaving}
+                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                dragElastic={0.7}
+                dragDirectionLock
+                dragMomentum={false}
+                onDragStart={handleDragStart}
+                onDrag={handleDrag}
+                onDragEnd={handleDragEnd}
+                className="relative h-[min(380px,42dvh)] w-full bg-[#0a1120] overflow-hidden group touch-none cursor-grab active:cursor-grabbing"
               >
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    star
-                  </span>
-                  <span className="font-label-caps text-[13px] tracking-widest font-black uppercase">
-                    SUPER SPARK
-                  </span>
-                </div>
-              </motion.div>
-
-              {/* Instant Action Feedback on Button Click */}
-              {actionState === 'liked' && (
-                <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-3 bg-black/45 backdrop-blur-[2px] px-8 text-center">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center shadow-elevation-lg">
-                    <span className="material-symbols-outlined text-[40px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      favorite
-                    </span>
-                  </div>
-                  {likedFragment && (
-                    <p className="text-white text-[13px] font-bold leading-snug animate-fadeIn">
-                      Te gustó: {likedFragment}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {actionState === 'passed' && (
-                <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/45 backdrop-blur-[2px]">
-                  <div className="w-24 h-24 rounded-full bg-white/15 border border-white/30 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[36px] text-white">close</span>
-                  </div>
-                </div>
-              )}
-
-              {actionState === 'starred' && (
-                <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/45 backdrop-blur-[2px]">
-                  <div className="w-24 h-24 rounded-full bg-amber-400 flex items-center justify-center shadow-elevation-lg">
-                    <span className="material-symbols-outlined text-[36px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      star
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {/* Photography Canvas — altura fluida en viewports bajos. */}
-              <div className="relative h-[min(380px,42dvh)] w-full bg-[#0a1120] overflow-hidden group">
                 {mainPhotoUrl ? (
-                  <img
+                  <motion.img
+                    key={`${currentProfile.id}-${galleryIndex}`}
                     src={mainPhotoUrl}
                     alt={currentProfile.displayName}
                     loading="eager"
                     decoding="async"
+                    // Fundido corto al cambiar de foto: la galería se siente
+                    // continua en vez de "cortar" entre imágenes.
+                    initial={{ opacity: 0.35 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
                     onError={(e) => {
                       // Imagen rota: se oculta y queda el lienzo midnight con la
                       // info encima, nunca un ícono de imagen rota.
@@ -878,7 +845,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
 
                 {/* Photo progress segments, top */}
                 {currentProfile.photos.length > 1 && (
-                  <div className="absolute top-3 inset-x-4 flex gap-1.5 z-20 pointer-events-none">
+                  <div className="absolute top-3 inset-x-4 flex gap-1.5 z-20 pointer-events-none" aria-hidden="true">
                     {currentProfile.photos.map((_, idx) => (
                       <div
                         key={idx}
@@ -921,10 +888,14 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                         </span>
                       )}
                     </div>
-                    <p className="text-[13.5px] text-white/90 flex items-center gap-1 mt-1.5">
-                      <span className="material-symbols-outlined text-[13px] text-[#ff8a65]">location_on</span>
-                      {currentProfile.city} • {currentProfile.distance}
-                    </p>
+                    {/* Solo si hay dato real: con ciudad/distancia nulas se leía
+                        un "•" flotando sin nada al lado. */}
+                    {[currentProfile.city, currentProfile.distance].filter(Boolean).length > 0 && (
+                      <p className="text-[13.5px] text-white/90 flex items-center gap-1 mt-1.5">
+                        <span className="material-symbols-outlined text-[13px] text-[#ff8a65]">location_on</span>
+                        {[currentProfile.city, currentProfile.distance].filter(Boolean).join(' • ')}
+                      </p>
+                    )}
                     {/* Capítulo 1 cierra con el motivo humano (no con la bio
                         truncada, que vive completa en el cuaderno): en 1 segundo
                         entendés por qué apareció esta persona. */}
@@ -968,7 +939,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                     </motion.button>
                   )}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Capítulo 2 — por qué esta persona: razones humanas primero, el %
                   como sello que las respalda (nunca "Compatibilidad: 87%"). Vive
@@ -1200,12 +1171,11 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                   whileTap={{ scale: currentIndex > 0 ? 0.92 : 1 }}
                   id="btn-discover-rewind"
                   onClick={() => {
-                    if (currentIndex > 0) {
-                      sounds.playClick();
-                      setCurrentIndex((prev) => prev - 1);
-                    }
+                    if (leaving || currentIndex === 0) return;
+                    sounds.playClick();
+                    setCurrentIndex((prev) => prev - 1);
                   }}
-                  disabled={currentIndex === 0}
+                  disabled={currentIndex === 0 || leaving !== null}
                   className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
                     currentIndex === 0
                       ? 'opacity-30 cursor-not-allowed text-slate-400 dark:text-white/30'
@@ -1265,7 +1235,66 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               </div>
             </Card>
           </motion.div>
-        </AnimatePresence>
+          </motion.div>
+
+        {/* La carta que sale vuela en su propia capa mientras la siguiente ya
+            entra: mazo continuo. Visual simplificada (foto + sello + nombre)
+            porque a esa velocidad el detalle no se lee — y sale más barato de
+            animar que la carta completa. */}
+        {leaving && (
+          <motion.div
+            key={`leaving-${leaving.profile.id}`}
+            aria-hidden="true"
+            initial={{
+              x: leaving.fromX,
+              y: leaving.fromY,
+              rotate: (leaving.fromX / 220) * 16,
+              scale: 1,
+              opacity: 1,
+            }}
+            animate={{
+              x: leaving.dir === 'right' ? 420 : leaving.dir === 'left' ? -420 : leaving.fromX * 0.4,
+              y: leaving.dir === 'up' ? -420 : 72,
+              rotate: leaving.dir === 'right' ? 22 : leaving.dir === 'left' ? -22 : 0,
+              scale: 0.9,
+              opacity: 0,
+            }}
+            transition={{ type: 'spring', stiffness: 250, damping: 25 }}
+            className="absolute inset-0 z-30 pointer-events-none"
+          >
+            <div
+              className={`relative h-full rounded-[var(--radius-lg)] border overflow-hidden ${
+                isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'
+              }`}
+            >
+              {leaving.profile.photos[0]?.url && (
+                <img
+                  src={leaving.profile.photos[0].url}
+                  alt=""
+                  draggable={false}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+              <div className="absolute inset-0 flex items-center justify-center pb-16">
+                <StampChip kind={leaving.dir === 'right' ? 'like' : leaving.dir === 'left' ? 'pass' : 'star'} large />
+              </div>
+              {leaving.label && (
+                <div className="absolute inset-x-0 top-[58%] flex justify-center px-8">
+                  <p className="text-white text-[13px] font-bold leading-snug text-center drop-shadow-md">
+                    Te gustó: {leaving.label}
+                  </p>
+                </div>
+              )}
+              <div className="absolute bottom-4 left-5 right-5">
+                <p className="text-white text-[20px] font-extrabold tracking-tight truncate drop-shadow-md">
+                  {leaving.profile.displayName}, {leaving.profile.age}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
 
       {/* Seguridad integrada: reportar o bloquear sin tener que matchear primero. */}
@@ -1275,7 +1304,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           onOpenChange={setIsReportOpen}
           partnerId={currentProfile.id}
           partnerName={currentProfile.displayName}
-          onActionComplete={() => setCurrentIndex((prev) => prev + 1)}
+          // Si hay un vuelo en curso, el avance ya está programado: no duplicar.
+          onActionComplete={() => { if (!actionLock.current) setCurrentIndex((prev) => prev + 1); }}
         />
       )}
     </div>

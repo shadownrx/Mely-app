@@ -60,6 +60,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   return (
     <nav
       id="bottom-navigation-bar"
+      aria-label="Navegación principal"
       style={{
         paddingBottom: 'env(safe-area-inset-bottom)',
         background: isLight ? '#FCF9F2' : 'var(--midnight-950)',
@@ -75,11 +76,14 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
             <motion.button
               key={tab.id}
               id={`nav-btn-${tab.id}`}
+              type="button"
               whileTap={{ scale: 0.92 }}
               onClick={() => {
                 sounds.playClick();
                 onTabChange(tab.id);
               }}
+              aria-label={tab.badge ? `${tab.label}, ${tab.badge} nuevos` : tab.label}
+              aria-current={isActive ? 'page' : undefined}
               className="flex flex-col items-center justify-center gap-1 flex-1 min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]/50"
             >
               <span className="relative flex items-center justify-center w-10 h-7 rounded-[var(--radius-pill)]">

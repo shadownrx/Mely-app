@@ -4,6 +4,7 @@ import { Match } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { ReportBlockSheet } from './ReportBlockSheet';
+import { EmptyState, ErrorState } from './StateViews';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Skeleton } from './ui/skeleton';
@@ -175,6 +176,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       <img
                         src={m.other.photos[0]?.url}
                         alt={m.other.displayName}
+                        loading="lazy"
+                        decoding="async"
                         referrerPolicy="no-referrer"
                         className="w-full h-full object-cover rounded-full border border-white dark:border-[#0a1120]"
                       />
@@ -276,32 +279,12 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
       {/* MATCHES LIST / GRID LAYOUT                                   */}
       {/* ------------------------------------------------------------- */}
       {error && matches.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={`flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-lg)] border border-dashed ${
-            isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'
-          }`}
-        >
-          <div className="w-12 h-12 rounded-full bg-[#f16b48]/10 text-[#f16b48] flex items-center justify-center mb-2.5">
-            <span className="material-symbols-outlined text-[26px]">cloud_off</span>
-          </div>
-          <h3 className={`font-headline-md text-[15px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
-            No se pudieron cargar tus matches
-          </h3>
-          <p className={`font-body-sm text-[11.5px] max-w-xs mt-1 mb-4 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
-            Comprueba tu conexión e inténtalo de nuevo.
-          </p>
-          {onRetry && (
-            <Button
-              size="sm"
-              onClick={onRetry}
-              className="bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white rounded-full px-4 h-8 text-[11px] font-bold"
-            >
-              Reintentar
-            </Button>
-          )}
-        </motion.div>
+        <ErrorState
+          icon="cloud_off"
+          title="No se pudieron cargar tus matches"
+          body="Revisá tu conexión e intentá de nuevo."
+          onRetry={onRetry}
+        />
       ) : isLoading && matches.length === 0 ? (
         <div className="grid grid-cols-2 gap-3">
           {[1, 2, 3, 4].map((i) => (
@@ -359,6 +342,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                       <img
                         src={match.other.photos[0]?.url}
                         alt={match.other.displayName}
+                        loading="lazy"
+                        decoding="async"
                         referrerPolicy="no-referrer"
                         className="w-12 h-12 rounded-xl object-cover border border-[#ffe3d3]/60 dark:border-white/10"
                       />
@@ -505,6 +490,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     <img
                       src={match.other.photos[0]?.url}
                       alt={match.other.displayName}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       referrerPolicy="no-referrer"
                     />
@@ -593,52 +580,22 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
           )}
         </AnimatePresence>
       ) : (
-        /* Empty State */
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className={`flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-lg)] border border-dashed ${
-            isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/30'
-          }`}
-        >
-          <div className="w-12 h-12 rounded-full bg-[#f16b48]/10 text-[#f16b48] flex items-center justify-center mb-2.5">
-            <span className="material-symbols-outlined text-[26px]">favorite_border</span>
-          </div>
-          <h3 className={`font-headline-md text-[15px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
-            {searchQuery ? 'Sin coincidencias' : 'Sin sparks en este filtro'}
-          </h3>
-          <p className={`font-body-sm text-[11.5px] max-w-xs mt-1 mb-4 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
-            {searchQuery
-              ? 'Prueba buscando con otro término.'
-              : 'Explora perfiles en el radar para generar nuevas conexiones.'}
-          </p>
-
-          {searchQuery ? (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => {
-                setSearchQuery('');
-                setActiveFilter('all');
-              }}
-              className="rounded-full px-3.5 h-7.5 text-[11px] font-bold border-[#f16b48] text-[#f16b48]"
-            >
-              Limpiar búsqueda
-            </Button>
-          ) : onExploreMore ? (
-            <Button
-              size="sm"
-              onClick={() => {
-                sounds.playHeart();
-                onExploreMore();
-              }}
-              className="bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white rounded-full px-4 h-8 text-[11px] font-bold shadow-elevation-sm hover:brightness-105 flex items-center gap-1.5"
-            >
-              <span className="material-symbols-outlined text-[15px]">explore</span>
-              <span>Seguir Descubriendo</span>
-            </Button>
-          ) : null}
-        </motion.div>
+        <EmptyState
+          icon="favorite_border"
+          title={searchQuery ? 'Sin coincidencias' : 'Sin sparks en este filtro'}
+          body={
+            searchQuery
+              ? 'Probá buscando con otro término.'
+              : 'Explorá perfiles en Descubrir para generar nuevas conexiones.'
+          }
+          actions={
+            searchQuery
+              ? [{ label: 'Limpiar búsqueda', onClick: () => { setSearchQuery(''); setActiveFilter('all'); }, icon: 'close', variant: 'secondary' }]
+              : onExploreMore
+                ? [{ label: 'Seguir descubriendo', onClick: onExploreMore, icon: 'explore' }]
+                : []
+          }
+        />
       )}
 
       {/* ------------------------------------------------------------- */}
@@ -646,7 +603,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
       {/* ------------------------------------------------------------- */}
       <AnimatePresence>
         {selectedMatch && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 min-[380px]:p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -660,7 +617,7 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 14 }}
               transition={{ type: 'spring', stiffness: 360, damping: 28 }}
-              className={`relative z-10 w-full max-w-md max-h-[88vh] rounded-[var(--radius-lg)] overflow-hidden flex flex-col shadow-2xl border ${
+              className={`relative z-10 w-full max-w-md max-h-[88dvh] rounded-[var(--radius-lg)] overflow-hidden flex flex-col shadow-2xl border ${
                 isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0f1a2e] border-[#f16b48]/40 text-[#f5f1e8]'
               }`}
             >

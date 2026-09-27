@@ -67,15 +67,15 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
         {/* Header */}
         <DialogHeader
           className={`p-4 sm:p-5 border-b flex-row items-center shrink-0 space-y-0 ${
-            isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'
+            isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#131f36] border-[#ec4d86]/30'
           }`}
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#f16b48] to-[#ff8a65] flex items-center justify-center text-white shadow-elevation-md shadow-[#f16b48]/30">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#ec4d86] to-[#ff6b9e] flex items-center justify-center text-white shadow-elevation-md shadow-[#ec4d86]/30">
               <span className="material-symbols-outlined text-[18px]">casino</span>
             </div>
             <div>
-              <span className="font-label-caps text-[9px] uppercase tracking-widest text-[#f16b48] font-bold block">
+              <span className="font-label-caps text-[9px] uppercase tracking-widest text-[#ec4d86] font-bold block">
                 ROMPER EL HIELO
               </span>
               <h3 className={`font-headline-md text-[17px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
@@ -92,22 +92,22 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
             <motion.div
               animate={{ rotate: wheelRotation }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="w-28 h-28 rounded-full border-4 border-[#f16b48] p-1.5 flex items-center justify-center bg-gradient-to-tr from-[#0a1120] via-[#131f36] to-[#17233d] shadow-xl"
+              className="w-28 h-28 rounded-full border-4 border-[#ec4d86] p-1.5 flex items-center justify-center bg-gradient-to-tr from-[#0a1120] via-[#131f36] to-[#17233d] shadow-xl"
             >
-              <div className="w-full h-full rounded-full border border-dashed border-[#f16b48]/40 flex items-center justify-center relative">
-                <span className="material-symbols-outlined text-[36px] text-[#ffb295]">
+              <div className="w-full h-full rounded-full border border-dashed border-[#ec4d86]/40 flex items-center justify-center relative">
+                <span className="material-symbols-outlined text-[36px] text-[#ffa3c4]">
                   psychology_alt
                 </span>
                 {/* Dial spokes */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-full h-0.5 bg-[#f16b48]/20" />
-                  <div className="h-full w-0.5 bg-[#f16b48]/20 absolute" />
+                  <div className="w-full h-0.5 bg-[#ec4d86]/20" />
+                  <div className="h-full w-0.5 bg-[#ec4d86]/20 absolute" />
                 </div>
               </div>
             </motion.div>
 
             {/* Pointer Indicator */}
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#f16b48] rotate-45 border-2 border-white shadow-elevation-md z-10" />
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#ec4d86] rotate-45 border-2 border-white shadow-elevation-md z-10" />
           </div>
 
           <Button
@@ -128,15 +128,15 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className={`p-4 rounded-[var(--radius-md)] border text-left w-full transition-all ${
               isLight
-                ? 'bg-[#fcf9f2] border-[#ffe3d3]'
-                : 'bg-[#131f36] border-[#f16b48]/30'
+                ? 'bg-[#fcf9f2] border-[#ffe0ec]'
+                : 'bg-[#131f36] border-[#ec4d86]/30'
             }`}
           >
             <div className="flex justify-between items-center mb-1.5">
-              <span className="font-label-caps text-[9px] uppercase font-bold text-[#f16b48] px-2 py-0.5 rounded-md bg-[#f16b48]/10 border border-[#f16b48]/20">
+              <span className="font-label-caps text-[9px] uppercase font-bold text-[#ec4d86] px-2 py-0.5 rounded-md bg-[#ec4d86]/10 border border-[#ec4d86]/20">
                 {currentQuestion.category.toUpperCase()}
               </span>
-              <span className={`text-[10px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}>
+              <span className={`text-[10px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>
                 {currentQuestion.context}
               </span>
             </div>
@@ -150,7 +150,7 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
               <div className="mt-3 flex flex-col gap-1.5">
                 <span
                   className={`font-label-caps text-[9px] uppercase font-bold block ${
-                    isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/60'
+                    isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/60'
                   }`}
                 >
                   Opciones sugeridas para charlar:
@@ -161,8 +161,8 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
                       key={i}
                       className={`p-2 rounded-xl text-[10px] font-medium border leading-tight ${
                         isLight
-                          ? 'bg-white border-[#ffe3d3] text-[#2e5570]'
-                          : 'bg-[#0a1120] border-[#f16b48]/20 text-[#ffb295]/80'
+                          ? 'bg-white border-[#ffe0ec] text-[#2e5570]'
+                          : 'bg-[#0a1120] border-[#ec4d86]/20 text-[#ffa3c4]/80'
                       }`}
                     >
                       {opt}

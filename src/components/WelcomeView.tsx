@@ -50,7 +50,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({ onCreateAccount, onGoT
         <div
           className="absolute w-[320px] h-[320px] rounded-full pointer-events-none"
           style={{
-            background: 'radial-gradient(circle, rgba(255,138,101,0.28) 0%, rgba(255,138,101,0) 70%)',
+            background: 'radial-gradient(circle, rgba(255,107,158,0.28) 0%, rgba(255,107,158,0) 70%)',
           }}
         />
 

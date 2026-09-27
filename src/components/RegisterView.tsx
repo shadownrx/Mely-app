@@ -293,9 +293,9 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
         </button>
         <div className="flex items-center gap-1.5">
-          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 1 ? 'w-[22px] bg-[#f16b48]' : `w-[22px] ${isLight ? 'bg-[#efe7d8]' : 'bg-white/12'}`}`} />
-          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 2 ? 'w-[22px] bg-[#f16b48]' : `w-[22px] ${isLight ? 'bg-[#efe7d8]' : 'bg-white/12'}`}`} />
-          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 3 ? 'w-[22px] bg-[#f16b48]' : `w-[22px] ${isLight ? 'bg-[#efe7d8]' : 'bg-white/12'}`}`} />
+          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 1 ? 'w-[22px] bg-[#ec4d86]' : `w-[22px] ${isLight ? 'bg-[#efe7d8]' : 'bg-white/12'}`}`} />
+          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 2 ? 'w-[22px] bg-[#ec4d86]' : `w-[22px] ${isLight ? 'bg-[#efe7d8]' : 'bg-white/12'}`}`} />
+          <span className={`h-1 rounded-full transition-all duration-300 ${step >= 3 ? 'w-[22px] bg-[#ec4d86]' : `w-[22px] ${isLight ? 'bg-[#efe7d8]' : 'bg-white/12'}`}`} />
         </div>
       </div>
 
@@ -399,10 +399,10 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                       onClick={() => toggleSeeking(g.value)}
                       className={`px-3 py-1.5 rounded-full text-[12px] transition-all border cursor-pointer ${
                         isSelected
-                          ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold border-transparent'
+                          ? 'bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white font-bold border-transparent'
                           : isLight
-                          ? 'bg-[#fcf9f2] text-[#2e5570] border-[#efe7d8] hover:border-[#f16b48]/40'
-                          : 'bg-white/5 text-[#8a93a8] border-white/10 hover:border-[#f16b48]/40'
+                          ? 'bg-[#fcf9f2] text-[#2e5570] border-[#efe7d8] hover:border-[#ec4d86]/40'
+                          : 'bg-white/5 text-[#8a93a8] border-white/10 hover:border-[#ec4d86]/40'
                       }`}
                     >
                       {g.label}
@@ -477,12 +477,12 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover rounded-full" />
                 ) : (
-                  <span className="material-symbols-outlined text-[44px] text-[#f16b48]">person</span>
+                  <span className="material-symbols-outlined text-[44px] text-[#ec4d86]">person</span>
                 )}
               </div>
               <label
                 className={`px-4 py-2 rounded-full border cursor-pointer text-[13px] font-bold ${
-                  isLight ? 'bg-[#fcf9f2] border-[#efe7d8] text-[#f16b48]' : 'bg-white/5 border-white/10 text-[#ffb295]'
+                  isLight ? 'bg-[#fcf9f2] border-[#efe7d8] text-[#ec4d86]' : 'bg-white/5 border-white/10 text-[#ffa3c4]'
                 }`}
               >
                 {avatarFile ? 'Cambiar foto' : 'Subir foto'}
@@ -550,10 +550,10 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                       onClick={() => toggleInterest(interest.id)}
                       className={`px-3 py-1 rounded-full text-[11.5px] transition-all border cursor-pointer ${
                         isSelected
-                          ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-bold border-transparent'
+                          ? 'bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white font-bold border-transparent'
                           : isLight
-                          ? 'bg-[#fcf9f2] text-[#2e5570] border-[#efe7d8] hover:border-[#f16b48]/40'
-                          : 'bg-white/5 text-[#8a93a8] border-white/10 hover:border-[#f16b48]/40'
+                          ? 'bg-[#fcf9f2] text-[#2e5570] border-[#efe7d8] hover:border-[#ec4d86]/40'
+                          : 'bg-white/5 text-[#8a93a8] border-white/10 hover:border-[#ec4d86]/40'
                       }`}
                     >
                       {interest.name}
@@ -569,7 +569,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                 type="text"
                 value={promptQ}
                 onChange={(e) => setPromptQ(e.target.value)}
-                className="mb-1.5 font-medium text-[#f16b48] dark:text-[#ffb295]"
+                className="mb-1.5 font-medium text-[#ec4d86] dark:text-[#ffa3c4]"
               />
               <Input type="text" value={promptA} onChange={(e) => setPromptA(e.target.value)} placeholder="Tu respuesta..." />
             </div>
@@ -616,7 +616,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             sounds.playClick();
             onGoToLogin();
           }}
-          className="text-[13.5px] font-bold text-[#f16b48] hover:underline cursor-pointer"
+          className="text-[13.5px] font-bold text-[#ec4d86] hover:underline cursor-pointer"
         >
           Iniciá sesión
         </button>

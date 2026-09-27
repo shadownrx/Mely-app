@@ -41,8 +41,8 @@ export const LocationPrompt: React.FC = () => {
         transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
         className="rounded-2xl p-3.5 border border-slate-100 dark:border-white/10 bg-white dark:bg-[#131f36] flex items-center gap-3 mb-1"
       >
-        <div className="w-10 h-10 rounded-full bg-[#fcf9f2] dark:bg-[#f16b48]/15 flex items-center justify-center shrink-0">
-          <span className="material-symbols-outlined text-[19px] text-[#f16b48]">location_on</span>
+        <div className="w-10 h-10 rounded-full bg-[#fcf9f2] dark:bg-[#ec4d86]/15 flex items-center justify-center shrink-0">
+          <span className="material-symbols-outlined text-[19px] text-[#ec4d86]">location_on</span>
         </div>
         <div className="flex-1 min-w-0">
           <span className="block text-[13px] font-bold">Activá tu ubicación</span>
@@ -52,7 +52,7 @@ export const LocationPrompt: React.FC = () => {
           type="button"
           onClick={handleActivate}
           disabled={updateLocation.isPending}
-          className="shrink-0 h-9 px-3.5 rounded-full bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white text-[12.5px] font-bold disabled:opacity-60"
+          className="shrink-0 h-9 px-3.5 rounded-full bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white text-[12.5px] font-bold disabled:opacity-60"
         >
           {updateLocation.isPending ? '...' : 'Activar'}
         </button>

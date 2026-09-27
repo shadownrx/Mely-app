@@ -215,13 +215,13 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="w-[calc(100%-1.5rem)] max-w-[400px] p-0 gap-0 overflow-hidden">
         {/* Top Header */}
-        <DialogHeader className={`p-4 border-b flex-row items-center shrink-0 space-y-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'}`}>
+        <DialogHeader className={`p-4 border-b flex-row items-center shrink-0 space-y-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#131f36] border-[#ec4d86]/30'}`}>
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full border-2 border-[#f16b48] overflow-hidden shrink-0">
+            <div className="w-8 h-8 rounded-full border-2 border-[#ec4d86] overflow-hidden shrink-0">
               <img src={partnerAvatar} alt={partnerName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
             <div>
-              <span className="font-label-caps text-[9px] uppercase tracking-widest text-[#f16b48] font-bold block">
+              <span className="font-label-caps text-[9px] uppercase tracking-widest text-[#ec4d86] font-bold block">
                 PASE DE CITA PRESENCIAL
               </span>
               <h3 className={`font-headline-md text-[16px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
@@ -233,7 +233,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
 
         {!verificationSuccess && (
           <div
-            className={`p-2 flex gap-1 border-b ${isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/20'}`}
+            className={`p-2 flex gap-1 border-b ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0a1120] border-[#ec4d86]/20'}`}
           >
             <button
               onClick={() => {
@@ -242,10 +242,10 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
               }}
               className={`flex-1 py-1.5 rounded-xl font-label-caps text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
                 mode === 'show_qr'
-                  ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white shadow-elevation-sm'
+                  ? 'bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white shadow-elevation-sm'
                   : isLight
                   ? 'text-[#5b6478] hover:bg-white'
-                  : 'text-[#ffb295]/60 hover:text-[#ffb295]'
+                  : 'text-[#ffa3c4]/60 hover:text-[#ffa3c4]'
               }`}
             >
               <span className="material-symbols-outlined text-[14px]">qr_code_2</span>
@@ -258,10 +258,10 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
               }}
               className={`flex-1 py-1.5 rounded-xl font-label-caps text-[10px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
                 mode === 'scan_manual'
-                  ? 'bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white shadow-elevation-sm'
+                  ? 'bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white shadow-elevation-sm'
                   : isLight
                   ? 'text-[#5b6478] hover:bg-white'
-                  : 'text-[#ffb295]/60 hover:text-[#ffb295]'
+                  : 'text-[#ffa3c4]/60 hover:text-[#ffa3c4]'
               }`}
             >
               <span className="material-symbols-outlined text-[14px]">document_scanner</span>
@@ -275,21 +275,21 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
           <div className="p-5 flex flex-col items-center gap-4 text-center">
             <div
               className={`p-4 rounded-[var(--radius-lg)] border-2 border-dashed relative shadow-inner ${
-                isLight ? 'bg-white border-[#ffe3d3]' : 'bg-[#0a1120] border-[#f16b48]/40'
+                isLight ? 'bg-white border-[#ffe0ec]' : 'bg-[#0a1120] border-[#ec4d86]/40'
               }`}
             >
               <div className="w-[220px] h-[220px] bg-white p-2 rounded-[var(--radius-md)] flex items-center justify-center shadow-elevation-md overflow-hidden">
                 {locationError ? (
                   <div className="flex flex-col items-center gap-2 px-3 text-center">
-                    <span className="material-symbols-outlined text-[32px] text-[#f16b48]">location_off</span>
-                    <p className="text-[11px] text-[#f16b48] font-bold leading-snug">{locationError}</p>
+                    <span className="material-symbols-outlined text-[32px] text-[#ec4d86]">location_off</span>
+                    <p className="text-[11px] text-[#ec4d86] font-bold leading-snug">{locationError}</p>
                   </div>
                 ) : qrDataUrl ? (
                   <img src={qrDataUrl} alt="Código QR de la cita" className="w-full h-full object-contain" />
                 ) : (
                   <span
                     className={`material-symbols-outlined text-[48px] animate-pulse ${
-                      isLight ? 'text-[#ffe3d3]' : 'text-[#f16b48]/30'
+                      isLight ? 'text-[#ffe0ec]' : 'text-[#ec4d86]/30'
                     }`}
                   >
                     qr_code_2
@@ -311,7 +311,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 </Button>
               )}
               <div className="mt-3">
-                <span className={`font-meta-data text-[9px] uppercase ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/60'}`}>
+                <span className={`font-meta-data text-[9px] uppercase ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/60'}`}>
                   {PLAN_LABELS[planType]} EN {zone}
                 </span>
               </div>
@@ -319,15 +319,15 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
 
             <div
               className={`p-3 rounded-[var(--radius-md)] border text-left flex items-start gap-2.5 w-full ${
-                isLight ? 'bg-[#fcf9f2] border-[#ffe3d3]' : 'bg-[#131f36] border-[#f16b48]/30'
+                isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#131f36] border-[#ec4d86]/30'
               }`}
             >
-              <span className="material-symbols-outlined text-[18px] text-[#f16b48] shrink-0 mt-0.5">verified</span>
+              <span className="material-symbols-outlined text-[18px] text-[#ec4d86] shrink-0 mt-0.5">verified</span>
               <div>
                 <h4 className={`font-label-caps text-[10px] uppercase font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
                   Encuentro Seguro en Persona
                 </h4>
-                <p className={`font-body-sm text-[11px] mt-0.5 leading-snug ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
+                <p className={`font-body-sm text-[11px] mt-0.5 leading-snug ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>
                   Mostrale este código a {partnerName}, que lo ingrese desde su celular. Usamos tu ubicación (no se guarda en tu perfil) para confirmar que están en el mismo lugar.
                 </p>
               </div>
@@ -365,20 +365,20 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
           <div className="p-5 flex flex-col items-center gap-3 text-center">
             {!useManualEntry ? (
               <>
-                <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
+                <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>
                   Apuntá la cámara al QR que {partnerName} te muestra en su pantalla.
                 </p>
-                <div className="w-full aspect-square rounded-[var(--radius-md)] overflow-hidden bg-black relative border-2 border-dashed border-[#f16b48]/40">
+                <div className="w-full aspect-square rounded-[var(--radius-md)] overflow-hidden bg-black relative border-2 border-dashed border-[#ec4d86]/40">
                   {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
                   <video ref={videoRef} className="w-full h-full object-cover" muted playsInline />
                   {cameraError && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 bg-black/85 text-center">
-                      <span className="material-symbols-outlined text-[32px] text-[#ffb295]">videocam_off</span>
+                      <span className="material-symbols-outlined text-[32px] text-[#ffa3c4]">videocam_off</span>
                       <p className="text-[11px] text-white/90">{cameraError}</p>
                     </div>
                   )}
                 </div>
-                {scanError && <p className="text-[11px] text-[#f16b48] font-bold">{scanError}</p>}
+                {scanError && <p className="text-[11px] text-[#ec4d86] font-bold">{scanError}</p>}
                 <button
                   type="button"
                   onClick={() => {
@@ -387,15 +387,15 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                     setCameraError(null);
                     setScanError(null);
                   }}
-                  className={`font-label-caps text-[10px] uppercase font-bold underline ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}
+                  className={`font-label-caps text-[10px] uppercase font-bold underline ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}
                 >
                   No puedo usar la cámara, ingresar código a mano
                 </button>
               </>
             ) : (
               <form onSubmit={handleManualSubmit} className="w-full flex flex-col items-center gap-4">
-                <span className="material-symbols-outlined text-[48px] text-[#f16b48]/70">pin</span>
-                <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
+                <span className="material-symbols-outlined text-[48px] text-[#ec4d86]/70">pin</span>
+                <p className={`font-body-sm text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>
                   Pedile a {partnerName} que te muestre su pase y escribí el código de 6 dígitos.
                 </p>
                 <Input
@@ -411,11 +411,11 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                   autoFocus
                   className="text-center font-mono tracking-[0.4em] py-3 text-[22px] h-auto"
                 />
-                {scanError && <p className="text-[11px] text-[#f16b48] font-bold">{scanError}</p>}
+                {scanError && <p className="text-[11px] text-[#ec4d86] font-bold">{scanError}</p>}
                 <Button
                   type="submit"
                   disabled={scanCheckIn.isPending}
-                  className="w-full py-2.5 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-[var(--radius-md)] shadow-elevation-md shadow-[#f16b48]/25 disabled:opacity-60"
+                  className="w-full py-2.5 bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-[var(--radius-md)] shadow-elevation-md shadow-[#ec4d86]/25 disabled:opacity-60"
                 >
                   VALIDAR CÓDIGO
                 </Button>
@@ -426,7 +426,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                     setUseManualEntry(false);
                     setScanError(null);
                   }}
-                  className={`font-label-caps text-[10px] uppercase font-bold underline ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/70'}`}
+                  className={`font-label-caps text-[10px] uppercase font-bold underline ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}
                 >
                   Volver a usar la cámara
                 </button>
@@ -452,7 +452,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
               <h3 className={`font-headline-md text-[20px] font-black mt-0.5 ${isLight ? 'text-[#16223b]' : 'text-white'}`}>
                 Cita Presencial Confirmada
               </h3>
-              <p className={`font-body-sm text-[12px] mt-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
+              <p className={`font-body-sm text-[12px] mt-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>
                 El sello de {PLAN_LABELS[planType]} en {zone} se estampó en tu pasaporte MELY.
               </p>
             </div>
@@ -482,7 +482,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 sounds.playClick();
                 onClose();
               }}
-              className="w-full py-2.5 bg-gradient-to-r from-[#f16b48] to-[#ff8a65] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-[var(--radius-md)] tactile-btn shadow-elevation-md shadow-[#f16b48]/25"
+              className="w-full py-2.5 bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white font-label-caps text-[11px] font-bold uppercase tracking-wider rounded-[var(--radius-md)] tactile-btn shadow-elevation-md shadow-[#ec4d86]/25"
             >
               LISTO • VOLVER AL ITINERARIO
             </Button>

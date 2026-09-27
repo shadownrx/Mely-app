@@ -50,7 +50,7 @@ const StateShell: React.FC<StateBaseProps & { label: string }> = ({
       <div
         className={`rounded-full border-2 border-dashed flex items-center justify-center ${
           compact ? 'w-14 h-14' : 'w-20 h-20'
-        } ${amber ? 'text-amber-500' : 'text-[#f16b48]'} ${
+        } ${amber ? 'text-amber-500' : 'text-[#ec4d86]'} ${
           isLight ? 'bg-white shadow-elevation-sm' : 'bg-[#0f1a2e]'
         }`}
       >
@@ -62,7 +62,7 @@ const StateShell: React.FC<StateBaseProps & { label: string }> = ({
         {title}
       </h3>
       {body && (
-        <p className={`leading-relaxed ${compact ? 'text-[12px] max-w-[240px]' : 'text-[13px] max-w-[260px]'} ${isLight ? 'text-[#5b6478]' : 'text-[#ffb295]/80'}`}>
+        <p className={`leading-relaxed ${compact ? 'text-[12px] max-w-[240px]' : 'text-[13px] max-w-[260px]'} ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>
           {body}
         </p>
       )}
@@ -77,7 +77,7 @@ const StateShell: React.FC<StateBaseProps & { label: string }> = ({
                   sounds.playClick();
                   a.onClick();
                 }}
-                className={`text-[12px] font-bold underline underline-offset-4 ${isLight ? 'text-[#f16b48]' : 'text-[#ffb295]'}`}
+                className={`text-[12px] font-bold underline underline-offset-4 ${isLight ? 'text-[#ec4d86]' : 'text-[#ffa3c4]'}`}
               >
                 {a.label}
               </button>

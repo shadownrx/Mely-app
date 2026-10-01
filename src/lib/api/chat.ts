@@ -21,7 +21,7 @@ export async function sendPhoto(connectionId: string, file: File): Promise<Messa
     body: formData,
   });
   const data = await res.json().catch(() => null);
-  if (!res.ok) throw new Error(data?.error?.message ?? res.statusText);
+  if (!res.ok) throw new Error(data?.error?.message || `Error ${res.status}`);
   return data as Message;
 }
 

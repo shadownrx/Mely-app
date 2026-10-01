@@ -24,6 +24,15 @@ interface ProfileViewProps {
 
 const MAX_PHOTOS = 6;
 
+/** Niveles del pasaporte por sellos desbloqueados — progresión sin paywall ni rachas. */
+const PASSPORT_LEVELS = [
+  { at: 0, name: 'Nueva historia' },
+  { at: 1, name: 'Primera cita' },
+  { at: 3, name: 'Exploradora' },
+  { at: 6, name: 'Habitante MELY' },
+  { at: 10, name: 'Leyenda' },
+];
+
 export const ProfileView: React.FC<ProfileViewProps> = ({
   onSelectStamp,
   onOpenFullSettings,
@@ -67,6 +76,42 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
   const unlockedStamps = stamps.filter((s) => s.unlocked);
   const walletBalance = wallet?.balance ?? 0;
+
+  const passportLevel =
+    [...PASSPORT_LEVELS].reverse().find((l) => unlockedStamps.length >= l.at) ?? PASSPORT_LEVELS[0];
+  const nextPassportLevel = PASSPORT_LEVELS.find((l) => l.at > unlockedStamps.length) ?? null;
+  const passportProgress = nextPassportLevel
+    ? Math.min(1, unlockedStamps.length / nextPassportLevel.at)
+    : 1;
+
+  const trustChecks = [
+    { done: user.emailVerified, label: 'Correo verificado' },
+    { done: user.phoneVerified, label: 'Teléfono verificado' },
+    { done: user.badges.verification === 'VERIFIED', label: 'Identidad verificada' },
+    { done: user.badges.trusted, label: 'Citas verificadas' },
+  ];
+
+  const handleInvite = async () => {
+    sounds.playClick();
+    const shareText = 'Pasaporte de citas reales, no catálogo. Sumate a MELY.';
+    const shareUrl = window.location.origin;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'MELY', text: shareText, url: shareUrl });
+        return;
+      }
+      throw new Error('share no disponible');
+    } catch (err) {
+      // Cerrar el sheet nativo no es un error: solo se silencia esa salida.
+      if (err instanceof Error && err.name === 'AbortError') return;
+      try {
+        await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+        toast.success('Enlace copiado', { description: 'Pasalo por donde quieras.' });
+      } catch {
+        toast.error('No se pudo compartir', { description: 'Copiá el enlace manualmente.' });
+      }
+    }
+  };
 
   const handlePhotoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -469,6 +514,59 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
         )}
 
+        {/* Confianza visible por capas: lo verificado suma, lo pendiente invita. */}
+        <div className="rounded-[var(--radius-md)] border p-3 flex flex-col gap-1.5" style={cardStyle}>
+          <span className="text-[12px] font-bold" style={{ color: primaryText }}>Confianza</span>
+          {trustChecks.map((check) => (
+            <div key={check.label} className="flex items-center gap-2">
+              <span
+                className="material-symbols-outlined text-[16px]"
+                style={{
+                  color: check.done ? 'var(--success-500)' : isLight ? 'rgba(22,34,59,0.25)' : 'var(--text-tertiary)',
+                  fontVariationSettings: check.done ? "'FILL' 1" : undefined,
+                }}
+                aria-hidden="true"
+              >
+                {check.done ? 'check_circle' : 'circle'}
+              </span>
+              <span className="text-[12px] font-medium" style={{ color: check.done ? primaryText : mutedText }}>
+                {check.label}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Nivel del pasaporte: la retención es el recuerdo, no la racha. */}
+        <div className="rounded-[var(--radius-md)] border p-3 flex flex-col gap-1.5" style={cardStyle}>
+          <div className="flex items-baseline justify-between">
+            <span className="text-[12px] font-bold" style={{ color: primaryText }}>
+              Nivel: {passportLevel.name}
+            </span>
+            <span className="text-[11px]" style={{ color: mutedText }}>
+              {nextPassportLevel ? `${unlockedStamps.length} de ${nextPassportLevel.at} sellos` : `${unlockedStamps.length} sellos`}
+            </span>
+          </div>
+          <div
+            className="h-1.5 rounded-full overflow-hidden"
+            role="progressbar"
+            aria-valuenow={Math.round(passportProgress * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Progreso al siguiente nivel del pasaporte`}
+            style={{ background: isLight ? 'rgba(22,34,59,0.08)' : 'var(--midnight-700)' }}
+          >
+            <div
+              className="h-full rounded-full transition-all"
+              style={{ width: `${Math.round(passportProgress * 100)}%`, background: 'var(--coral-500)' }}
+            />
+          </div>
+          <span className="text-[10.5px]" style={{ color: mutedText }}>
+            {nextPassportLevel
+              ? `A ${nextPassportLevel.at - unlockedStamps.length} ${nextPassportLevel.at - unlockedStamps.length === 1 ? 'sello' : 'sellos'} de “${nextPassportLevel.name}” — cada cita verificada deja uno.`
+              : 'Nivel máximo: tu pasaporte es leyenda.'}
+          </span>
+        </div>
+
         {/* Sellos, compactos — antes era una grilla de 4 columnas a toda ancho justo
             debajo del header; ahora es una franja secundaria más chica. */}
         <div className="rounded-[var(--radius-md)] border p-3 flex flex-col gap-2.5" style={cardStyle}>
@@ -505,6 +603,28 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Invitar: crecimiento por recomendación, con share nativo o portapapeles. */}
+        <div className="rounded-[var(--radius-md)] border p-3 flex items-center gap-3" style={cardStyle}>
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+            style={{ background: 'rgba(255,107,158,0.14)', color: 'var(--coral-500)' }}
+          >
+            <span className="material-symbols-outlined text-[17px]">group_add</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="block text-[12.5px] font-bold" style={{ color: primaryText }}>Invitá a tus amigas</span>
+            <span className="block text-[10.5px]" style={{ color: mutedText }}>Las mejores conexiones llegan recomendadas</span>
+          </div>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handleInvite}
+            className="rounded-full shrink-0 normal-case tracking-normal h-8 text-[11px]"
+          >
+            Invitar
+          </Button>
         </div>
       </motion.section>
 

@@ -54,7 +54,9 @@ async function rawRequest<T>(path: string, opts: RequestOptions): Promise<T> {
 
   if (!res.ok) {
     const err = (data as { error?: { code?: string; message?: string; details?: unknown } } | null)?.error;
-    throw new ApiError(res.status, err?.code ?? 'UNKNOWN', err?.message ?? res.statusText, err?.details);
+    // res.statusText suele venir vacío con fetch — sin fallback los toasts quedaban sin texto.
+    const message = err?.message || (res.statusText ? `Error ${res.status}: ${res.statusText}` : `Error ${res.status}`);
+    throw new ApiError(res.status, err?.code ?? 'UNKNOWN', message, err?.details);
   }
 
   return data as T;

@@ -6,6 +6,7 @@ import type { DiscoverQuota } from '../lib/api/discover';
 import { sounds } from '../utils/audio';
 import { computeAffinity } from '../utils/compatibility';
 import { INTENTIONS, getIntention } from '../utils/intentions';
+import { DAILY_MOODS, getDailyMood } from '../utils/dailyMood';
 import { suggestPlanSpot } from '../utils/planSuggestion';
 import { rememberFragment } from '../utils/fragmentContext';
 import { ReportBlockSheet } from './ReportBlockSheet';
@@ -47,6 +48,13 @@ interface DiscoverViewProps {
   /** Pilar 1: intención temporal activa (id de INTENTIONS) o null. */
   intentionId?: string | null;
   onSelectIntention?: (id: string | null) => void;
+  /** Firma de los filtros que definen el mazo (ver App: verified+intereses+distancia).
+   * Al cambiar, el mazo arranca de cero en vez de mezclar perfiles del filtro anterior. */
+  resetKey?: string;
+  /** Ritual diario "Hoy estoy para…" (id de DAILY_MOODS) o null. Solo suma una
+   * señal explicada a la afinidad; nunca filtra ni reordena el mazo. */
+  dailyMoodId?: string | null;
+  onSelectDailyMood?: (id: string | null) => void;
 }
 
 type StampKind = 'like' | 'pass' | 'star';
@@ -107,6 +115,9 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
   myInterestIds = [],
   intentionId = null,
   onSelectIntention,
+  resetKey = '',
+  dailyMoodId = null,
+  onSelectDailyMood,
 }) => {
   const { isLight } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -169,6 +180,22 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profiles]);
 
+  // Mazo nuevo al cambiar de filtros o de intención: sin este reset, los
+  // perfiles del filtro anterior quedaban mezclados con los del nuevo.
+  // `profiles` se lee del render donde cambió resetKey (mismo estado de App
+  // que genera ambas cosas, y la query nueva todavía no trajo datos).
+  useEffect(() => {
+    seenIds.current = new Set(profiles.map((p) => p.id));
+    setDeck(profiles);
+    setCurrentIndex(0);
+    setGalleryIndex(0);
+    setShowFullNotebook(false);
+    setLikedFragment(null);
+    setLeaving(null);
+    actionLock.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetKey]);
+
   const quotaExhausted = quota ? quota.remaining <= 0 : false;
 
   // Tocar el banner de "Persona del día" adelanta ese perfil a la posición actual del
@@ -211,9 +238,10 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
 
   // Explicador de afinidad: aritmética client-side sobre datos que ya trae el
   // perfil (intereses, verificación, audio, distancia). Sin backend nuevo.
+  const moodKeywords = useMemo(() => getDailyMood(dailyMoodId)?.keywords ?? [], [dailyMoodId]);
   const affinity = useMemo(
-    () => (currentProfile ? computeAffinity(currentProfile, myInterestIds) : null),
-    [currentProfile, myInterestIds],
+    () => (currentProfile ? computeAffinity(currentProfile, myInterestIds, moodKeywords) : null),
+    [currentProfile, myInterestIds, moodKeywords],
   );
 
   const intention = getIntention(intentionId);
@@ -603,6 +631,55 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                 : '¿Qué querés estos días? Elegí una intención y te mostramos personas en esa sintonía.'}
             </motion.p>
           </AnimatePresence>
+        </div>
+      )}
+
+      {/* Ritual diario: el pulso de hoy en un tap. Expira solo a la medianoche y
+          solo suma una señal explicada a la afinidad — jamás filtra ni oculta. */}
+      {onSelectDailyMood && (
+        <div>
+          <div
+            className="flex items-center gap-1.5 overflow-x-auto no-scrollbar px-1 -mx-1 py-0.5"
+            role="group"
+            aria-label="Ánimo de hoy"
+          >
+            <span
+              className={`shrink-0 text-[10px] font-bold tracking-wider ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}
+              aria-hidden="true"
+            >
+              HOY
+            </span>
+            {DAILY_MOODS.map((mood) => {
+              const active = dailyMoodId === mood.id;
+              return (
+                <button
+                  key={mood.id}
+                  type="button"
+                  onClick={() => {
+                    sounds.playClick();
+                    onSelectDailyMood(active ? null : mood.id);
+                  }}
+                  aria-pressed={active}
+                  title={mood.blurb}
+                  className={`shrink-0 inline-flex items-center gap-1 h-8 px-3 rounded-full border text-[11px] font-bold whitespace-nowrap transition-all active:scale-95 ${
+                    active
+                      ? 'bg-[#ec4d86] border-transparent text-white shadow-elevation-sm'
+                      : isLight
+                        ? 'bg-transparent border-[rgba(22,34,59,0.14)] text-[#5b6478]'
+                        : 'bg-transparent border-white/10 text-[#a9b2c9]'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[14px]">{mood.icon}</span>
+                  {mood.label}
+                </button>
+              );
+            })}
+          </div>
+          {dailyMoodId && (
+            <p className={`mt-1 px-1 text-[11px] leading-snug ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`} aria-live="polite">
+              Hoy estás para {getDailyMood(dailyMoodId)?.label.toLowerCase()} — la afinidad lo tiene en cuenta. Se reinicia a la medianoche.
+            </p>
+          )}
         </div>
       )}
 

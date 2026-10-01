@@ -37,7 +37,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className={`w-[calc(100%-1.5rem)] max-w-[440px] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden ${
+        className={`w-[calc(100%-1.5rem)] max-w-[440px] max-h-[90dvh] flex flex-col p-0 gap-0 overflow-hidden ${
           isLight ? 'bg-[#fcf9f2]' : 'bg-[#0f1a2e]'
         }`}
       >

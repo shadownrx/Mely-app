@@ -6,6 +6,7 @@ import { sounds } from '../utils/audio';
 import { useAuth } from '../context/AuthContext';
 import { computeAffinity } from '../utils/compatibility';
 import { Button } from './ui/button';
+import { ProfilePhoto } from './ProfilePhoto';
 
 interface MatchCelebrationModalProps {
   profile: Profile | null;
@@ -279,11 +280,10 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
                 className="absolute right-0 w-24 h-24 rounded-full p-[3px] bg-gradient-to-br from-white/40 to-white/10"
               >
                 <div className="w-full h-full rounded-full overflow-hidden border-2 border-white/70">
-                  <img
-                    src={profile.photos[0]?.url}
-                    alt={profile.displayName}
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
+                  <ProfilePhoto
+                    url={profile.photos[0]?.url}
+                    name={profile.displayName}
+                    className="w-full h-full"
                   />
                 </div>
               </motion.div>

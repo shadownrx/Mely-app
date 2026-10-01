@@ -18,7 +18,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({ onCreateAccount, onGoT
 
   return (
     <div
-      className={`w-full max-w-[420px] mx-auto min-h-screen py-8 px-6 flex flex-col ${
+      className={`w-full max-w-[420px] mx-auto py-8 px-6 flex flex-col ${
         isLight ? 'text-[var(--text-on-light)]' : 'text-[var(--text-primary)]'
       }`}
     >

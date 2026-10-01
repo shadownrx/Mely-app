@@ -8,6 +8,7 @@ import { useMarkRead, useMessages, useSendMessage, useSendPhoto, useTypingIndica
 import { useVisualViewportHeight } from '../hooks/useVisualViewportHeight';
 import { useAcceptProposal, useCounterProposal, useProposals } from '../hooks/useDates';
 import { ReportBlockSheet } from './ReportBlockSheet';
+import { ProfilePhoto } from './ProfilePhoto';
 import { EmptyState, ErrorState } from './StateViews';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -285,7 +286,9 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   // (por id de propuesta, no de conexión) hasta que haya una propuesta nueva.
   const [hiddenProposalIds, setHiddenProposalIds] = useState<string[]>(() => {
     try {
-      return JSON.parse(localStorage.getItem('mely_hidden_proposals') ?? '[]');
+      const parsed: unknown = JSON.parse(localStorage.getItem('mely_hidden_proposals') ?? '[]');
+      // Storage corrupto (objeto, número…) rompía el render al hacer spread/filter.
+      return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === 'string') : [];
     } catch {
       return [];
     }
@@ -309,7 +312,8 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   // Emojis usados de verdad (no una lista fija) — como en el "Frecuentes" real de WhatsApp.
   const [recentEmojis, setRecentEmojis] = useState<string[]>(() => {
     try {
-      return JSON.parse(localStorage.getItem('mely_recent_emojis') ?? '[]');
+      const parsed: unknown = JSON.parse(localStorage.getItem('mely_recent_emojis') ?? '[]');
+      return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === 'string') : [];
     } catch {
       return [];
     }
@@ -349,7 +353,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
   const { data: messagesData, isLoading: isLoadingMessages, error: messagesError, refetch: refetchMessages } = useMessages(activeConnectionId);
   const messages = useMemo(() => messagesData?.messages ?? [], [messagesData]);
-  const { data: proposals = [] } = useProposals(activeConnectionId);
+  const { data: proposals = [], isLoading: isLoadingProposals } = useProposals(activeConnectionId);
   const activeProposal = useMemo(
     () => [...proposals].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).find((p) => p.status !== 'DECLINED' && p.status !== 'EXPIRED'),
     [proposals],
@@ -364,6 +368,37 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const [counterAt, setCounterAt] = useState('');
   const isPartnerTyping = useTypingIndicator(activeConnectionId);
   const pingTyping = useTypingPing(activeConnectionId);
+
+  // Facilitador de plan: si la charla ya tiene cuerpo (6+ mensajes) y todavía no
+  // hay propuesta a la vista, se sugiere el siguiente paso una sola vez por
+  // sesión y conexión — ataca la muerte de conversaciones sin ser insistente.
+  const [planNudgeClosed, setPlanNudgeClosed] = useState(false);
+  useEffect(() => {
+    setPlanNudgeClosed(false);
+  }, [activeConnectionId]);
+  const planNudgeDismissed = (() => {
+    try {
+      return sessionStorage.getItem(`mely-plan-nudge:${activeConnectionId}`) === '1';
+    } catch {
+      return true;
+    }
+  })();
+  const showPlanNudge =
+    viewMode === 'chat' &&
+    !isLoadingProposals &&
+    messages.length >= 6 &&
+    !activeProposal &&
+    !planNudgeClosed &&
+    !planNudgeDismissed;
+  const dismissPlanNudge = () => {
+    sounds.playClick();
+    setPlanNudgeClosed(true);
+    try {
+      sessionStorage.setItem(`mely-plan-nudge:${activeConnectionId}`, '1');
+    } catch {
+      /* sin sessionStorage se oculta igual esta vez */
+    }
+  };
   // El contenedor del chat usa --vvh para seguir al teclado móvil.
   useVisualViewportHeight(viewMode === 'chat');
 
@@ -573,7 +608,12 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     if (!file || !activeConnectionId) return;
     sounds.playStamp();
     setShowAttachmentMenu(false);
-    sendPhoto.mutate(file);
+    // Sin onError la foto fallida moría en silencio: el usuario tocaba enviar y no pasaba nada.
+    sendPhoto.mutate(file, {
+      onError: () => {
+        toast.error('No se pudo enviar la foto', { description: 'Revisá tu conexión e intentá de nuevo.' });
+      },
+    });
   };
 
   const handleToggleReaction = (msgId: string, emoji: string) => {
@@ -733,7 +773,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                     <span className="absolute left-0 top-1/2 -translate-y-1/2 h-7 w-[3px] rounded-full bg-gradient-to-b from-[#ec4d86] to-[#ff6b9e]" />
                   )}
                   <div className="relative w-13 h-13 rounded-full overflow-hidden shrink-0 shadow-elevation-sm">
-                    <img src={match.other.photos[0]?.url} alt={match.other.displayName} loading="lazy" decoding="async" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <ProfilePhoto url={match.other.photos[0]?.url} name={match.other.displayName} className="w-full h-full" />
                     {match.other.lastActive === 'En línea' && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#3f7a5c] border-2 border-white rounded-full" />}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -925,6 +965,50 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             autoFocus
           />
           <Button variant="tertiary" size="sm" onClick={() => setInChatSearchOpen(false)} className="h-7 px-2 text-[11px]">Listo</Button>
+        </div>
+      )}
+
+      {/* Facilitador de plan: la charla tiene cuerpo pero nadie propuso nada todavía. */}
+      {showPlanNudge && (
+        <div className={`px-3 pt-2 shrink-0 ${isLight ? 'bg-[#efe7d8]' : 'bg-[#0a1120]'}`}>
+          <div
+            className={`p-3 rounded-2xl border flex items-center gap-2.5 animate-fadeIn ${
+              isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#131f36] border-[#ec4d86]/30'
+            }`}
+          >
+            <span className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#ec4d86] to-[#ff6b9e] text-white flex items-center justify-center shrink-0 shadow-elevation-sm">
+              <span className="material-symbols-outlined text-[18px]">local_cafe</span>
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className={`text-[12px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
+                La charla viene bien…
+              </p>
+              <p className={`text-[11px] truncate ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>
+                ¿La bajamos a un plan real con {partner.displayName.split(' ')[0]}?
+              </p>
+            </div>
+            {onOpenProposeModal && (
+              <button
+                type="button"
+                onClick={() => {
+                  sounds.playStamp();
+                  onOpenProposeModal(activeMatch.id);
+                }}
+                className="h-8 px-3 rounded-full bg-[#ec4d86] text-white text-[11px] font-bold shrink-0 active:scale-95 transition-transform"
+              >
+                Proponer
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={dismissPlanNudge}
+              aria-label="Descartar sugerencia"
+              title="Descartar"
+              className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${isLight ? 'text-[#5b6478] hover:bg-black/5' : 'text-[#ffa3c4]/70 hover:bg-white/10'}`}
+            >
+              <span className="material-symbols-outlined text-[15px]">close</span>
+            </button>
+          </div>
         </div>
       )}
 
@@ -1355,7 +1439,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
 
       {/* Media tray */}
       {activeMediaTray && (
-        <div className={`border-t flex flex-col h-64 max-h-[45vh] animate-fadeIn relative z-20 shrink-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0f1a2e] border-[#ec4d86]/30'}`}>
+        <div className={`border-t flex flex-col h-64 max-h-[45dvh] animate-fadeIn relative z-20 shrink-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0f1a2e] border-[#ec4d86]/30'}`}>
           <div className={`px-3 py-1.5 border-b flex items-center justify-between shrink-0 ${isLight ? 'bg-[#fcf9f2]' : 'bg-[#131f36]'}`}>
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
               {(['sparks', 'emojis', 'stickers', 'gifs'] as const).map((tab) => (

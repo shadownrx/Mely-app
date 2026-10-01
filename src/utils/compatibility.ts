@@ -20,7 +20,7 @@ export interface Affinity {
  * (intereses, verificación, distancia, audio/prompts) y cada señal explica su
  * origen. No inventa compatibilidad ni llama a ningún backend nuevo.
  */
-export function computeAffinity(profile: Profile, myInterestIds: string[] = []): Affinity {
+export function computeAffinity(profile: Profile, myInterestIds: string[] = [], moodKeywords: string[] = []): Affinity {
   const signals: AffinitySignal[] = [];
   let score = 38; // base: toda persona del mazo ya pasó los filtros duros.
 
@@ -57,6 +57,26 @@ export function computeAffinity(profile: Profile, myInterestIds: string[] = []):
   if (profile.distance && /2\s?km|1\s?km|500\s?m|cerca/i.test(profile.distance)) {
     score += 4;
     signals.push({ label: 'Cerquita tuyo', icon: 'location_on' });
+  }
+
+  // Ritual diario: si algún interés del perfil resuena con el ánimo de hoy,
+  // suma explicado. Nunca filtra ni oculta: solo ordena la curiosidad.
+  if (moodKeywords.length > 0) {
+    const norm = (s: string) =>
+      s
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+    const resonates = profile.interests.some((i) =>
+      moodKeywords.some((k) => {
+        const key = norm(k).trim();
+        return key.length > 0 && (norm(i.slug).includes(key) || norm(i.name).includes(key));
+      }),
+    );
+    if (resonates) {
+      score += 6;
+      signals.push({ label: 'En tu sintonía de hoy', icon: 'today' });
+    }
   }
 
   return { score: Math.max(0, Math.min(99, Math.round(score))), signals: signals.slice(0, 3) };

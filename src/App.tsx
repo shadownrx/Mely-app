@@ -20,6 +20,7 @@ import { useAuth } from './context/AuthContext';
 import { useDiscover, usePersonOfTheDay, useSwipe, useWhoLikedMe } from './hooks/useDiscover';
 import { useInterests } from './hooks/useProfile';
 import { getIntention, loadIntention, resolveIntentionSlugs, saveIntention } from './utils/intentions';
+import { loadDailyMood, saveDailyMood } from './utils/dailyMood';
 import { consumeFragment } from './utils/fragmentContext';
 import { useMatches } from './hooks/useMatches';
 import { useShop } from './hooks/useShop';
@@ -96,6 +97,12 @@ function AppContent() {
   // usuario la pausa) y mientras está activa ES el filtro de intereses — se
   // traduce a slugs del catálogo real de /interests, nunca inventados.
   const [intentionId, setIntentionId] = useState<string | null>(() => loadIntention());
+  // Ritual diario: el ánimo de hoy (expira solo a la medianoche, ver dailyMood.ts).
+  const [dailyMoodId, setDailyMoodId] = useState<string | null>(() => loadDailyMood());
+  const handleSelectDailyMood = (id: string | null) => {
+    setDailyMoodId(id);
+    saveDailyMood(id);
+  };
   const interestsQuery = useInterests();
 
   useEffect(() => {
@@ -126,6 +133,13 @@ function AppContent() {
   }, [user?.minAge, user?.maxAge, user?.maxDistanceKm]);
 
   const discoverQuery = useDiscover(discoveryFilters);
+  // Firma del mazo: lo que define QUÉ perfiles trae el server. Cambiarla
+  // reinicia el deck en DiscoverView (ver resetKey).
+  const discoverResetKey = [
+    discoveryFilters.onlyVerifiedMembers ? 'v1' : 'v0',
+    ...discoveryFilters.selectedInterests,
+    `d${discoveryFilters.maxDistanceKm}`,
+  ].join('|');
   const personOfTheDayQuery = usePersonOfTheDay();
   const swipe = useSwipe();
   const matchesQuery = useMatches();
@@ -297,13 +311,16 @@ function AppContent() {
   };
 
   const handleSignOut = () => {
+    // Volver a la entrada diseñada (bienvenida), no al último formulario pisado.
+    setAuthScreen('welcome');
+    setGooglePrefill(null);
     logout();
   };
 
   // --- AUTH SCREENS ---
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-dvh flex items-center justify-center">
         <span className="material-symbols-outlined text-[36px] text-[#ec4d86] animate-pulse">favorite</span>
       </div>
     );
@@ -311,7 +328,7 @@ function AppContent() {
 
   if (status === 'unauthenticated' || !user) {
     return (
-      <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-center selection:bg-[#ec4d86] selection:text-white p-2`}>
+      <div className={`min-h-dvh bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-center selection:bg-[#ec4d86] selection:text-white p-2`}>
         <Suspense fallback={<TabFallback />}>
           {authScreen === 'welcome' ? (
             <WelcomeView onCreateAccount={() => setAuthScreen('register')} onGoToLogin={() => setAuthScreen('login')} />
@@ -349,7 +366,7 @@ function AppContent() {
   const isSecondaryScreen = currentTab === 'ajustes' || currentTab === 'matches' || currentTab === 'citas';
 
   return (
-    <div className={`min-h-screen bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-start selection:bg-[#ec4d86] selection:text-white`}>
+    <div className={`min-h-dvh bg-transparent ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'} antialiased flex flex-col items-center justify-start selection:bg-[#ec4d86] selection:text-white`}>
       {!isChatDetail && (
         <TopAppBar
           currentTab={currentTab}
@@ -385,7 +402,7 @@ function AppContent() {
           paddingBottom:
             isChatDetail || isSecondaryScreen
               ? 'env(safe-area-inset-bottom)'
-              : `calc(${currentTab === 'mensajes' ? '4.25rem' : '5rem'} + env(safe-area-inset-bottom))`,
+              : `calc(5.5rem + env(safe-area-inset-bottom))`,
         }}
         className={`app-page ${isChatDetail ? '' : currentTab === 'mensajes' ? 'px-2 sm:px-3' : 'px-3 min-[380px]:px-4'} flex-1 flex flex-col min-h-0`}
       >
@@ -420,6 +437,9 @@ function AppContent() {
                 myInterestIds={user.interests.map((i) => i.id)}
                 intentionId={intentionId}
                 onSelectIntention={handleSelectIntention}
+                resetKey={discoverResetKey}
+                dailyMoodId={dailyMoodId}
+                onSelectDailyMood={handleSelectDailyMood}
               />
             )}
 

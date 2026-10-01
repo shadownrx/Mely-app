@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, type Variants } from 'motion/react';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
@@ -32,6 +32,10 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
   const [recoveryEmail, setRecoveryEmail] = useState('');
   const [recoverySent, setRecoverySent] = useState(false);
   const [recoveryError, setRecoveryError] = useState('');
+  const recoveryTimer = useRef<number | null>(null);
+  useEffect(() => () => {
+    if (recoveryTimer.current !== null) window.clearTimeout(recoveryTimer.current);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +92,10 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
     try {
       await forgotPassword(recoveryEmail.trim());
       setRecoverySent(true);
-      setTimeout(() => {
+      // Si se desmonta (cambio de pantalla) antes de los 2.5s, el timer se limpia arriba.
+      if (recoveryTimer.current !== null) window.clearTimeout(recoveryTimer.current);
+      recoveryTimer.current = window.setTimeout(() => {
+        recoveryTimer.current = null;
         setShowRecoveryModal(false);
         setRecoverySent(false);
         setRecoveryEmail('');
@@ -112,7 +119,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
       variants={container}
       initial="hidden"
       animate="show"
-      className={`w-full max-w-[420px] mx-auto min-h-screen py-10 px-6 flex flex-col justify-center ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}
+      className={`w-full max-w-[420px] mx-auto py-10 px-6 flex flex-col justify-center ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}
     >
       {/* Theme toggle, unobtrusive corner control */}
       <motion.button

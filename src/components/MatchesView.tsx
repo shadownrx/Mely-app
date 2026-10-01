@@ -4,6 +4,7 @@ import { Match } from '../types';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { ReportBlockSheet } from './ReportBlockSheet';
+import { ProfilePhoto } from './ProfilePhoto';
 import { EmptyState, ErrorState } from './StateViews';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -38,7 +39,10 @@ function useMinuteTick() {
 
 function matchCountdown(expiresAt: string | null): { label: string; urgent: boolean } | null {
   if (!expiresAt) return null;
-  const diffMs = new Date(expiresAt).getTime() - Date.now();
+  const endsAt = new Date(expiresAt).getTime();
+  // Fecha malformada del server: antes renderizaba "Quedan NaNm".
+  if (!Number.isFinite(endsAt)) return null;
+  const diffMs = endsAt - Date.now();
   if (diffMs <= 0) return null;
   const hours = Math.floor(diffMs / (60 * 60 * 1000));
   const minutes = Math.floor((diffMs % (60 * 60 * 1000)) / (60 * 1000));
@@ -173,13 +177,10 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                 >
                   <div className="relative">
                     <div className="w-[50px] h-[50px] rounded-full p-[2px] bg-gradient-to-tr from-[#ec4d86] via-[#ffa3c4] to-[#ff6b9e] shadow-elevation-sm transition-transform">
-                      <img
-                        src={m.other.photos[0]?.url}
-                        alt={m.other.displayName}
-                        loading="lazy"
-                        decoding="async"
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover rounded-full border border-white dark:border-[#0a1120]"
+                      <ProfilePhoto
+                        url={m.other.photos[0]?.url}
+                        name={m.other.displayName}
+                        className="w-full h-full rounded-full border border-white dark:border-[#0a1120]"
                       />
                     </div>
                     {m.other.lastActive === 'En línea' && (
@@ -339,13 +340,10 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     }}
                   >
                     <div className="relative shrink-0">
-                      <img
-                        src={match.other.photos[0]?.url}
-                        alt={match.other.displayName}
-                        loading="lazy"
-                        decoding="async"
-                        referrerPolicy="no-referrer"
-                        className="w-12 h-12 rounded-xl object-cover border border-[#ffe0ec]/60 dark:border-white/10"
+                      <ProfilePhoto
+                        url={match.other.photos[0]?.url}
+                        name={match.other.displayName}
+                        className="w-12 h-12 rounded-xl border border-[#ffe0ec]/60 dark:border-white/10"
                       />
                       {match.other.lastActive === 'En línea' && (
                         <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-[#0f1a2e]" />
@@ -487,13 +485,12 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                     }}
                     title="Ver perfil completo"
                   >
-                    <img
-                      src={match.other.photos[0]?.url}
-                      alt={match.other.displayName}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      referrerPolicy="no-referrer"
+                    <ProfilePhoto
+                      url={match.other.photos[0]?.url}
+                      name={match.other.displayName}
+                      className="w-full h-full"
+                      imageClassName="transition-transform duration-500 group-hover:scale-105"
+                      fallbackClassName="text-3xl"
                     />
                     {match.other.lastActive === 'En línea' && (
                       <span className="absolute top-2.5 right-2.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#0a1120]" />
@@ -613,21 +610,26 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
               className="absolute inset-0 bg-black/75 backdrop-blur-xs"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 14 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.92, y: 14 }}
-              transition={{ type: 'spring', stiffness: 360, damping: 28 }}
+              // Sin opacity en la entrada: con fade-in la foto de la galería
+              // quedaba semitransparente sobre el grid y se mezclaba con la
+              // foto de atrás. La entrada es opaca (escala + desplazamiento);
+              // el fundido corto vive solo en la salida.
+              initial={{ scale: 0.93, y: 18 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 30, opacity: { duration: 0.16, ease: 'easeOut' } }}
               className={`relative z-10 w-full max-w-md max-h-[88dvh] rounded-[var(--radius-lg)] overflow-hidden flex flex-col shadow-2xl border ${
                 isLight ? 'bg-white border-[#ffe0ec]' : 'bg-[#0f1a2e] border-[#ec4d86]/40 text-[#f5f1e8]'
               }`}
             >
               {/* Modal Header Gallery */}
               <div className="relative h-60 w-full bg-black shrink-0">
-                <img
-                  src={selectedMatch.other.photos[selectedGalleryIdx]?.url || selectedMatch.other.photos[0]?.url}
-                  alt={selectedMatch.other.displayName}
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
+                <ProfilePhoto
+                  url={selectedMatch.other.photos[selectedGalleryIdx]?.url || selectedMatch.other.photos[0]?.url}
+                  name={selectedMatch.other.displayName}
+                  className="w-full h-full"
+                  fallbackClassName="text-4xl"
+                  eager
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
 

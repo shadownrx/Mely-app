@@ -4,6 +4,7 @@ import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAllDateProposals } from '../hooks/useDates';
 import { EmptyState } from './StateViews';
+import { ProfilePhoto } from './ProfilePhoto';
 import { Button } from './ui/button';
 
 const PLAN_LABELS: Record<PlanType, string> = {
@@ -26,7 +27,9 @@ const STATUS_LABEL: Record<DateMeet['status'], string> = {
 
 function formatDateTime(iso: string | null) {
   if (!iso) return 'A coordinar por chat';
-  const formatted = new Date(iso).toLocaleString('es-AR', {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return 'Fecha a confirmar';
+  const formatted = date.toLocaleString('es-AR', {
     weekday: 'long',
     day: 'numeric',
     month: 'short',
@@ -141,13 +144,10 @@ export const DatesView: React.FC<DatesViewProps> = ({ matches, onOpenChat, onOpe
               >
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#ec4d86] shrink-0 shadow-elevation-md">
-                    <img
-                      src={match.other.photos[0]?.url}
-                      alt={match.other.displayName}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
+                    <ProfilePhoto
+                      url={match.other.photos[0]?.url}
+                      name={match.other.displayName}
+                      className="w-full h-full"
                     />
                   </div>
                   <div>

@@ -63,7 +63,7 @@ export const DiscoveryFiltersModal: React.FC<DiscoveryFiltersModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-[calc(100%-1.5rem)] max-w-[420px] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden">
+      <DialogContent className="w-[calc(100%-1.5rem)] max-w-[420px] max-h-[90dvh] flex flex-col p-0 gap-0 overflow-hidden">
         <DialogHeader
           className={`p-4 sm:p-5 border-b flex-row justify-between items-center shrink-0 space-y-0 ${
             isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#131f36] border-[#ec4d86]/30'

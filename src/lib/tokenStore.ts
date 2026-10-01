@@ -3,17 +3,35 @@ const REFRESH_KEY = 'mely_refresh_token';
 
 export const tokenStore = {
   getAccessToken(): string | null {
-    return localStorage.getItem(ACCESS_KEY);
+    // En navegación privada localStorage.getItem puede lanzar SecurityError —
+    // mejor sesión ausente que un crash en el arranque.
+    try {
+      return localStorage.getItem(ACCESS_KEY);
+    } catch {
+      return null;
+    }
   },
   getRefreshToken(): string | null {
-    return localStorage.getItem(REFRESH_KEY);
+    try {
+      return localStorage.getItem(REFRESH_KEY);
+    } catch {
+      return null;
+    }
   },
   setTokens(accessToken: string, refreshToken: string) {
-    localStorage.setItem(ACCESS_KEY, accessToken);
-    localStorage.setItem(REFRESH_KEY, refreshToken);
+    try {
+      localStorage.setItem(ACCESS_KEY, accessToken);
+      localStorage.setItem(REFRESH_KEY, refreshToken);
+    } catch {
+      /* almacenamiento no disponible: la sesión vive solo en memoria */
+    }
   },
   clear() {
-    localStorage.removeItem(ACCESS_KEY);
-    localStorage.removeItem(REFRESH_KEY);
+    try {
+      localStorage.removeItem(ACCESS_KEY);
+      localStorage.removeItem(REFRESH_KEY);
+    } catch {
+      /* nada que limpiar */
+    }
   },
 };

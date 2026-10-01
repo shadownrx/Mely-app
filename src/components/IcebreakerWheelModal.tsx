@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { ICEBREAKER_QUESTIONS } from '../data/mockData';
 import { sounds } from '../utils/audio';
@@ -24,6 +24,13 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [wheelRotation, setWheelRotation] = useState(0);
+  // Sin cleanup, cerrar el modal a mitad del giro dejaba el intervalo vivo y el
+  // sonido de "monedas" sonaba con el modal ya cerrado.
+  const spinTimers = useRef<{ interval?: number; timeout?: number }>({});
+  useEffect(() => () => {
+    if (spinTimers.current.interval !== undefined) window.clearInterval(spinTimers.current.interval);
+    if (spinTimers.current.timeout !== undefined) window.clearTimeout(spinTimers.current.timeout);
+  }, []);
 
   const filteredQuestions = selectedCategory === 'all'
     ? ICEBREAKER_QUESTIONS
@@ -36,18 +43,20 @@ export const IcebreakerWheelModal: React.FC<IcebreakerWheelModalProps> = ({
     setIsSpinning(true);
 
     let ticks = 0;
-    const tickInterval = setInterval(() => {
+    spinTimers.current.interval = window.setInterval(() => {
       sounds.playSpinTick();
       ticks++;
-      if (ticks > 8) {
-        clearInterval(tickInterval);
+      if (ticks > 8 && spinTimers.current.interval !== undefined) {
+        window.clearInterval(spinTimers.current.interval);
+        spinTimers.current.interval = undefined;
       }
     }, 90);
 
     const extraRounds = 360 * 3 + Math.floor(Math.random() * 360);
     setWheelRotation((prev) => prev + extraRounds);
 
-    setTimeout(() => {
+    spinTimers.current.timeout = window.setTimeout(() => {
+      spinTimers.current.timeout = undefined;
       setIsSpinning(false);
       const nextIdx = Math.floor(Math.random() * filteredQuestions.length);
       setCurrentIndex(nextIdx);

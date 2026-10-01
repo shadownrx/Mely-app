@@ -4,12 +4,13 @@ import type { DiscoveryFilters } from '../types';
 
 export function useDiscover(filters: DiscoveryFilters) {
   return useQuery({
-    queryKey: ['discover', filters.onlyVerifiedMembers, filters.selectedInterests],
+    queryKey: ['discover', filters.onlyVerifiedMembers, filters.selectedInterests, filters.maxDistanceKm],
     queryFn: () =>
       discoverApi.listDiscover({
         limit: 15,
         onlyVerified: filters.onlyVerifiedMembers,
         interests: filters.selectedInterests,
+        maxDistanceKm: filters.maxDistanceKm,
       }),
     select: (data) => ({
       // El endpoint /discover ya devuelve la cuota diaria junto con los perfiles en la

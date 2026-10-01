@@ -27,19 +27,33 @@ let scriptPromise: Promise<void> | null = null;
 function loadGoogleScript(): Promise<void> {
   if (window.google?.accounts?.id) return Promise.resolve();
   if (!scriptPromise) {
-    scriptPromise = new Promise((resolve, reject) => {
-      const existing = document.querySelector(`script[src="${SCRIPT_SRC}"]`);
+    scriptPromise = new Promise<void>((resolve, reject) => {
+      const finish = (ok: boolean) => {
+        // Un rechazo quedaba cacheado para siempre: el reintento devolvía la
+        // misma promesa rechazada aunque el script ya cargara después.
+        if (ok && window.google?.accounts?.id) {
+          resolve();
+        } else {
+          scriptPromise = null;
+          reject(new Error('No se pudo cargar Google'));
+        }
+      };
+      const existing = document.querySelector(`script[src="${SCRIPT_SRC}"]`) as HTMLScriptElement | null;
       if (existing) {
-        existing.addEventListener('load', () => resolve());
-        existing.addEventListener('error', () => reject(new Error('No se pudo cargar Google')));
+        // Si el tag ya existe pero su evento load se disparó antes (o falló en
+        // silencio), los listeners nunca avisarían y la promesa colgaba eterna:
+        // timeout de rescate que revalida el estado real.
+        const fallback = window.setTimeout(() => finish(true), 8000);
+        existing.addEventListener('load', () => { window.clearTimeout(fallback); finish(true); });
+        existing.addEventListener('error', () => { window.clearTimeout(fallback); finish(false); });
         return;
       }
       const script = document.createElement('script');
       script.src = SCRIPT_SRC;
       script.async = true;
       script.defer = true;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error('No se pudo cargar Google'));
+      script.onload = () => finish(true);
+      script.onerror = () => finish(false);
       document.head.appendChild(script);
     });
   }

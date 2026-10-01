@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, type Variants } from 'motion/react';
 import { ARGENTINA_CITIES } from '../data/mockData';
 import { sounds } from '../utils/audio';
@@ -63,8 +63,14 @@ function describeValidationError(err: ApiError): string {
 
 function isAdult(dateOfBirth: string): boolean {
   if (!dateOfBirth) return false;
-  const dob = new Date(dateOfBirth);
-  const age = (Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+  // Comparación por fecha calendario (no por ms/365.25): el cálculo anterior
+  // fallaba por horas de zona horaria justo el día del cumpleaños 18.
+  const dob = new Date(`${dateOfBirth}T00:00:00`);
+  if (Number.isNaN(dob.getTime())) return false;
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const monthDiff = today.getMonth() - dob.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age -= 1;
   return age >= 18;
 }
 
@@ -152,10 +158,25 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
     });
   };
 
+  const avatarObjectUrl = useRef<string | null>(null);
+  // Las URLs de createObjectURL hay que revocarlas: cada foto elegida y
+  // descartada dejaba un blob vivo en memoria.
+  useEffect(() => () => {
+    if (avatarObjectUrl.current) URL.revokeObjectURL(avatarObjectUrl.current);
+  }, []);
+
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
+    // Permite volver a elegir el mismo archivo después de cambiar de idea.
+    e.target.value = '';
     setAvatarFile(file);
-    setAvatarPreview(file ? URL.createObjectURL(file) : null);
+    if (avatarObjectUrl.current) {
+      URL.revokeObjectURL(avatarObjectUrl.current);
+      avatarObjectUrl.current = null;
+    }
+    const url = file ? URL.createObjectURL(file) : null;
+    avatarObjectUrl.current = url;
+    setAvatarPreview(url);
   };
 
   const handleStep1Continue = () => {
@@ -271,7 +292,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className={`w-full max-w-[420px] mx-auto min-h-screen py-6 px-6 flex flex-col pb-12 ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}
+      className={`w-full max-w-[420px] mx-auto py-6 px-6 flex flex-col pb-12 ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}
     >
       {/* Back + step dots, onboarding chrome */}
       <div className="flex items-center gap-3.5 mb-6">

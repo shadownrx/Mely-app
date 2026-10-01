@@ -10,6 +10,7 @@ import { useConfirmDate, useCurrentDateMeet, useGenerateQr, useScanCheckIn } fro
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
+import { ProfilePhoto } from './ProfilePhoto';
 
 QrScanner.WORKER_PATH = QrScannerWorkerPath;
 
@@ -218,7 +219,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
         <DialogHeader className={`p-4 border-b flex-row items-center shrink-0 space-y-0 ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#131f36] border-[#ec4d86]/30'}`}>
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full border-2 border-[#ec4d86] overflow-hidden shrink-0">
-              <img src={partnerAvatar} alt={partnerName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              <ProfilePhoto url={partnerAvatar || null} name={partnerName} className="w-full h-full" fallbackClassName="text-[10px]" />
             </div>
             <div>
               <span className="font-label-caps text-[9px] uppercase tracking-widest text-[#ec4d86] font-bold block">

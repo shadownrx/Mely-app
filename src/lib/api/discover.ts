@@ -14,11 +14,14 @@ export type SwipeResult = {
   match: { id: string; status: string; superInvite: boolean; coinsEarned: number } | null;
 };
 
-export function listDiscover(opts: { limit?: number; onlyVerified?: boolean; interests?: string[] } = {}) {
+export function listDiscover(opts: { limit?: number; onlyVerified?: boolean; interests?: string[]; maxDistanceKm?: number } = {}) {
   const params = new URLSearchParams();
   if (opts.limit) params.set('limit', String(opts.limit));
   if (opts.onlyVerified) params.set('onlyVerified', 'true');
   if (opts.interests?.length) params.set('interests', opts.interests.join(','));
+  // El slider de distancia existía en la UI pero nunca viajaba al server:
+  // mismo nombre que la preferencia guardada (/me/preferences) para no inventar contrato.
+  if (opts.maxDistanceKm) params.set('maxDistanceKm', String(opts.maxDistanceKm));
   const qs = params.toString();
   return apiRequest<{ quota: DiscoverQuota; profiles: Profile[] }>(`/discover${qs ? `?${qs}` : ''}`);
 }

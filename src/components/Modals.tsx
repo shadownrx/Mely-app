@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
+import { ProfilePhoto } from './ProfilePhoto';
 import { Sheet, SheetContent } from './ui/sheet';
 
 // --- PROPOSE DATE MODAL ---
@@ -36,12 +37,16 @@ function daysUntilWeekday(targetDow: number) {
 type DayKey = 'hoy' | 'mañana' | 'sabado' | 'domingo';
 type TimeKey = 'mañana' | 'tarde' | 'noche' | 'chat';
 
-const DAY_OPTIONS: { key: DayKey; label: string; daysAhead: number }[] = [
-  { key: 'hoy', label: 'Hoy', daysAhead: 0 },
-  { key: 'mañana', label: 'Mañana', daysAhead: 1 },
-  { key: 'sabado', label: 'Sábado', daysAhead: daysUntilWeekday(6) },
-  { key: 'domingo', label: 'Domingo', daysAhead: daysUntilWeekday(0) },
-];
+// Función (no constante de módulo): daysUntilWeekday depende del día actual y la
+// app vive abierta por horas — calculado una vez al importar quedaba rancio pasada la medianoche.
+function getDayOptions(): { key: DayKey; label: string; daysAhead: number }[] {
+  return [
+    { key: 'hoy', label: 'Hoy', daysAhead: 0 },
+    { key: 'mañana', label: 'Mañana', daysAhead: 1 },
+    { key: 'sabado', label: 'Sábado', daysAhead: daysUntilWeekday(6) },
+    { key: 'domingo', label: 'Domingo', daysAhead: daysUntilWeekday(0) },
+  ];
+}
 
 // "Coordinar por chat" (no fija horario, sólo manda lugar y plan) era antes un botón
 // aparte que reemplazaba el input de fecha/hora — funcionalidad real que se mantiene,
@@ -56,18 +61,21 @@ const TIME_OPTIONS: { key: TimeKey; label: string; hour: number | null }[] = [
 
 // Chip reutilizable, per Propose.dc.html: fondo/borde/texto coral cuando está activo,
 // hairline transparente cuando no.
-const Chip: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode; className?: string }> = ({
+const Chip: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode; className?: string; disabled?: boolean }> = ({
   active,
   onClick,
   children,
   className = '',
+  disabled = false,
 }) => {
   const { isLight } = useTheme();
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`h-[38px] px-4 rounded-[var(--radius-pill)] border-[1.5px] text-[13px] font-bold whitespace-nowrap transition-colors cursor-pointer ${className}`}
+      disabled={disabled}
+      aria-disabled={disabled}
+      className={`h-[38px] px-4 rounded-[var(--radius-pill)] border-[1.5px] text-[13px] font-bold whitespace-nowrap transition-colors ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'} ${className}`}
       style={
         active
           ? { background: 'var(--coral-500)', borderColor: 'var(--coral-500)', color: 'var(--ink-on-coral)' }
@@ -116,9 +124,30 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
     { value: 'BAR' as PlanType, label: 'Bar' },
   ];
 
-  const selectedDay = DAY_OPTIONS.find((d) => d.key === dayKey)!;
+  const dayOptions = getDayOptions();
+  const selectedDay = dayOptions.find((d) => d.key === dayKey)!;
   const selectedTime = TIME_OPTIONS.find((t) => t.key === timeKey)!;
   const coordinateByChat = timeKey === 'chat';
+  // Horarios ya pasados (con 30min de margen): sin esto se podía proponer "hoy a
+  // la mañana" a las 3 de la tarde. Vale también para sábado/domingo cuando caen hoy.
+  const nowHours = new Date().getHours() + new Date().getMinutes() / 60;
+  const isPastTime = (hour: number | null, daysAhead: number) =>
+    hour !== null && daysAhead === 0 && hour <= nowHours + 0.5;
+
+  const handleDaySelect = (key: DayKey) => {
+    sounds.playClick();
+    setDayKey(key);
+    const target = dayOptions.find((d) => d.key === key)!;
+    // Si el horario elegido ya pasó en el día destino, mover al siguiente
+    // disponible (o a coordinar por chat) en vez de dejar un estado inválido.
+    if (timeKey !== 'chat') {
+      const currentHour = TIME_OPTIONS.find((t) => t.key === timeKey)?.hour;
+      if (isPastTime(currentHour ?? null, target.daysAhead)) {
+        const next = TIME_OPTIONS.find((t) => !isPastTime(t.hour, target.daysAhead) && t.hour !== null);
+        setTimeKey(next ? next.key : 'chat');
+      }
+    }
+  };
   const summary = `${planOptions.find((p) => p.value === planType)?.label ?? planType} · ${selectedDay.label} ${
     coordinateByChat ? '· coordinan por chat' : selectedTime.label.toLowerCase()
   } · ${zone}`;
@@ -126,11 +155,18 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     sounds.playClick();
+    const scheduledAt = coordinateByChat
+      ? undefined
+      : new Date(defaultDateTimeLocal(selectedDay.daysAhead, selectedTime.hour!)).toISOString();
+    // Red de seguridad (los chips ya bloquean lo pasado, pero el tiempo corre
+    // con el modal abierto): nunca mandar una cita en el pasado al server.
+    if (scheduledAt && new Date(scheduledAt).getTime() < Date.now() + 15 * 60 * 1000) {
+      toast.error('Ese horario ya pasó', { description: 'Elegí otro día u horario, o coordiná por chat.' });
+      return;
+    }
     proposeDate.mutate(
       {
-        scheduledAt: coordinateByChat
-          ? undefined
-          : new Date(defaultDateTimeLocal(selectedDay.daysAhead, selectedTime.hour!)).toISOString(),
+        scheduledAt,
         zone,
         planType,
         note: note || undefined,
@@ -168,8 +204,8 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
           <div className="flex flex-col gap-2.5">
             <Label className="normal-case tracking-wide text-[12px] font-bold">Día</Label>
             <div className="flex gap-2 flex-wrap">
-              {DAY_OPTIONS.map((d) => (
-                <Chip key={d.key} active={dayKey === d.key} onClick={() => { sounds.playClick(); setDayKey(d.key); }}>
+              {dayOptions.map((d) => (
+                <Chip key={d.key} active={dayKey === d.key} onClick={() => handleDaySelect(d.key)}>
                   {d.label}
                 </Chip>
               ))}
@@ -181,7 +217,12 @@ export const ProposeDateModal: React.FC<ProposeDateModalProps> = ({
             <Label className="normal-case tracking-wide text-[12px] font-bold">Horario</Label>
             <div className="flex gap-2 flex-wrap">
               {TIME_OPTIONS.map((t) => (
-                <Chip key={t.key} active={timeKey === t.key} onClick={() => { sounds.playClick(); setTimeKey(t.key); }}>
+                <Chip
+                  key={t.key}
+                  active={timeKey === t.key}
+                  disabled={isPastTime(t.hour, selectedDay.daysAhead)}
+                  onClick={() => { sounds.playClick(); setTimeKey(t.key); }}
+                >
                   {t.label}
                 </Chip>
               ))}
@@ -519,11 +560,10 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
               isLight ? 'border-slate-100 hover:bg-slate-50' : 'border-white/10 hover:bg-white/5'
             }`}
           >
-            <img
-              src={user.photos[0]?.url}
-              alt={user.displayName}
-              className="w-10 h-10 rounded-full object-cover shrink-0"
-              referrerPolicy="no-referrer"
+            <ProfilePhoto
+              url={user.photos[0]?.url}
+              name={user.displayName}
+              className="w-10 h-10 rounded-full shrink-0"
             />
             <div className="flex-1 min-w-0">
               <span className={`text-[13.5px] font-bold block truncate ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>

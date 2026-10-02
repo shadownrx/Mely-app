@@ -17,7 +17,7 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Checkbox } from './ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { GoogleAuthButton } from './GoogleAuthButton';
+import { GoogleAuthButton, isGoogleAuthAvailable } from './GoogleAuthButton';
 import type { GooglePrefill } from './LoginView';
 
 interface RegisterViewProps {
@@ -475,7 +475,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
               Continuar
             </Button>
 
-            {!googleData && (
+            {!googleData && isGoogleAuthAvailable() && (
               <>
                 <div className="flex items-center gap-3 mt-1">
                   <span className={`flex-1 h-px ${isLight ? 'bg-[#efe7d8]' : 'bg-white/10'}`} />

@@ -10,7 +10,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Checkbox } from './ui/checkbox';
 import { Dialog, DialogContent } from './ui/dialog';
-import { GoogleAuthButton } from './GoogleAuthButton';
+import { GoogleAuthButton, isGoogleAuthAvailable } from './GoogleAuthButton';
 
 export type GooglePrefill = { pendingToken: string; email: string; name?: string };
 
@@ -250,11 +250,13 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
         </motion.div>
       </motion.form>
 
+      {isGoogleAuthAvailable() && (
       <motion.div variants={item} className="flex items-center gap-3 my-6">
         <span className={`flex-1 h-px ${isLight ? 'bg-[#efe7d8]' : 'bg-white/10'}`} />
         <span className={`text-[12px] ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>o continuá con</span>
         <span className={`flex-1 h-px ${isLight ? 'bg-[#efe7d8]' : 'bg-white/10'}`} />
       </motion.div>
+      )}
 
       <motion.div variants={item}>
         <GoogleAuthButton onCredential={handleGoogleCredential} text="signin_with" />

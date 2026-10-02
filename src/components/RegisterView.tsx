@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { updateProfile, replacePrompts, uploadPhoto, listInterests } from '../lib/api/profile';
 import { redeemCode } from '../lib/api/wallet';
 import { ApiError } from '../lib/apiClient';
+import { toast } from 'sonner';
 import { isPasswordValid } from '../lib/passwordRules';
 import { PasswordStrengthChecklist } from './PasswordStrengthChecklist';
 import type { Gender } from '../types';
@@ -254,7 +255,12 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
       }
 
       if (avatarFile) {
-        await uploadPhoto(avatarFile).catch(() => undefined);
+        // La cuenta ya está creada: una foto que falla no debe frenar el alta, pero tampoco perderse en silencio.
+        await uploadPhoto(avatarFile).catch((err: unknown) => {
+          toast.error('No pudimos subir tu foto', {
+            description: `${err instanceof Error ? err.message : 'Probá de nuevo.'} Podés agregarla desde tu perfil.`,
+          });
+        });
       }
 
       await redeemCode('WELCOME').catch(() => undefined);

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { isNativeApp } from '../lib/platform';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
 const SCRIPT_SRC = 'https://accounts.google.com/gsi/client';
@@ -60,6 +61,9 @@ function loadGoogleScript(): Promise<void> {
   return scriptPromise;
 }
 
+/** false si no hay client ID o si corre en la app nativa: sirve para no dejar un "o continuá con" huérfano. */
+export const isGoogleAuthAvailable = (): boolean => Boolean(GOOGLE_CLIENT_ID) && !isNativeApp();
+
 interface GoogleAuthButtonProps {
   onCredential: (idToken: string) => void;
   text?: 'signin_with' | 'signup_with' | 'continue_with';
@@ -74,7 +78,7 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({ onCredential
   onCredentialRef.current = onCredential;
 
   useEffect(() => {
-    if (!GOOGLE_CLIENT_ID || !containerRef.current) return;
+    if (!GOOGLE_CLIENT_ID || isNativeApp() || !containerRef.current) return;
     let cancelled = false;
 
     loadGoogleScript()
@@ -102,7 +106,9 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({ onCredential
     };
   }, [isLight, text]);
 
-  if (!GOOGLE_CLIENT_ID || failed) return null;
+  // Google Identity Services no funciona dentro de un WebView (Google lo bloquea):
+  // en la app nativa se oculta en vez de mostrar un botón que no hace nada.
+  if (!GOOGLE_CLIENT_ID || failed || isNativeApp()) return null;
 
   return <div ref={containerRef} className="w-full flex justify-center [&>div]:w-full" />;
 };

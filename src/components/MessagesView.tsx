@@ -236,6 +236,10 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   const { isLight } = useTheme();
   const { user } = useAuth();
   const [viewMode, setViewMode] = useState<'inbox' | 'chat'>(activeConnectionId ? 'chat' : 'inbox');
+  // El "atrás" del sistema cierra el chat desde afuera (App limpia activeConnectionId).
+  useEffect(() => {
+    if (!activeConnectionId) setViewMode('inbox');
+  }, [activeConnectionId]);
   const [searchQuery, setSearchQuery] = useState('');
   const [inputText, setInputText] = useState('');
 

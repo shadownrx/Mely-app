@@ -1,5 +1,5 @@
-import { apiRequest, API_BASE_URL } from '../apiClient';
-import { tokenStore } from '../tokenStore';
+import { apiRequest } from '../apiClient';
+import { uploadFile, uploadImage } from './upload';
 import type { Gender, LookingFor, MeProfile, Photo, Prompt, Stamp, VerificationLevel } from '../../types';
 
 export function getMe() {
@@ -37,32 +37,12 @@ export function replacePrompts(prompts: { question: string; answer: string }[]) 
   return apiRequest<Prompt[]>('/me/prompts', { method: 'PUT', body: { prompts } });
 }
 
-/** multipart/form-data: sube directo con fetch, no pasa por apiRequest (necesita FormData). */
-async function uploadMultipart<T>(path: string, formData: FormData): Promise<T> {
-  const token = tokenStore.getAccessToken();
-  const res = await fetch(`${API_BASE_URL}/api/v1${path}`, {
-    method: 'POST',
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    body: formData,
-  });
-  const data = await res.json().catch(() => null);
-  if (!res.ok) {
-    const err = data?.error;
-    throw new Error(err?.message ?? res.statusText);
-  }
-  return data as T;
-}
-
 export function uploadPhoto(file: File) {
-  const formData = new FormData();
-  formData.append('photo', file);
-  return uploadMultipart<Photo>('/me/photos', formData);
+  return uploadImage<Photo>('/me/photos', file);
 }
 
 export function submitVerificationSelfie(file: File) {
-  const formData = new FormData();
-  formData.append('photo', file);
-  return uploadMultipart<{ ok: true; verification: VerificationLevel }>('/me/verify-photo', formData);
+  return uploadImage<{ ok: true; verification: VerificationLevel }>('/me/verify-photo', file);
 }
 
 export function deletePhoto(photoId: string) {
@@ -74,11 +54,10 @@ export function reorderPhotos(photoIds: string[]) {
 }
 
 export function uploadAudioBio(file: File) {
-  const formData = new FormData();
-  formData.append('audio', file);
-  return uploadMultipart<{ ok: true; audioBio: { url: string; durationSec: number | null } }>(
+  return uploadFile<{ ok: true; audioBio: { url: string; durationSec: number | null } }>(
     '/me/audio-bio',
-    formData,
+    'audio',
+    file,
   );
 }
 

@@ -1,5 +1,5 @@
-import { apiRequest, API_BASE_URL } from '../apiClient';
-import { tokenStore } from '../tokenStore';
+import { apiRequest } from '../apiClient';
+import { uploadImage } from './upload';
 import type { Message } from '../../types';
 
 export function listMessages(connectionId: string, cursor?: string) {
@@ -11,18 +11,8 @@ export function sendMessage(connectionId: string, body: string, replyToId?: stri
   return apiRequest<Message>(`/chat/${connectionId}/messages`, { method: 'POST', body: { body, replyToId } });
 }
 
-export async function sendPhoto(connectionId: string, file: File): Promise<Message> {
-  const formData = new FormData();
-  formData.append('photo', file);
-  const token = tokenStore.getAccessToken();
-  const res = await fetch(`${API_BASE_URL}/api/v1/chat/${connectionId}/messages/photo`, {
-    method: 'POST',
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    body: formData,
-  });
-  const data = await res.json().catch(() => null);
-  if (!res.ok) throw new Error(data?.error?.message || `Error ${res.status}`);
-  return data as Message;
+export function sendPhoto(connectionId: string, file: File): Promise<Message> {
+  return uploadImage<Message>(`/chat/${connectionId}/messages/photo`, file);
 }
 
 export function markRead(connectionId: string) {

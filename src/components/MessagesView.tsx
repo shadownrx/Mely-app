@@ -610,8 +610,10 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     setShowAttachmentMenu(false);
     // Sin onError la foto fallida moría en silencio: el usuario tocaba enviar y no pasaba nada.
     sendPhoto.mutate(file, {
-      onError: () => {
-        toast.error('No se pudo enviar la foto', { description: 'Revisá tu conexión e intentá de nuevo.' });
+      onError: (err) => {
+        toast.error('No se pudo enviar la foto', {
+          description: err instanceof Error && err.message ? err.message : 'Revisá tu conexión e intentá de nuevo.',
+        });
       },
     });
   };

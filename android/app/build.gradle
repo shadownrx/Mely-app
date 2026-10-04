@@ -1,5 +1,19 @@
 apply plugin: 'com.android.application'
 
+// Firma de release: el workflow de build escribe android/key.properties a partir de
+// los secrets ANDROID_KEYSTORE_*. Sin ese archivo se firma con la clave debug, así el
+// APK igual se puede instalar para probar (un release sin firmar no se instala).
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+// versionName sale de package.json; versionCode del número de corrida de CI, porque
+// Play Store rechaza una subida que no lo incremente.
+def packageJson = new groovy.json.JsonSlurper().parseText(rootProject.file('../package.json').text)
+def ciRunNumber = System.getenv('GITHUB_RUN_NUMBER')
+
 android {
     namespace = "app.mely.pasaporte"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +21,8 @@ android {
         applicationId "app.mely.pasaporte"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode ciRunNumber ? ciRunNumber.toInteger() : 1
+        versionName packageJson.version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,8 +30,19 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile rootProject.file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+    }
     buildTypes {
         release {
+            signingConfig keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

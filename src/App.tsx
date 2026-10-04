@@ -27,6 +27,7 @@ import { useShop } from './hooks/useShop';
 import { useWallet } from './hooks/useWallet';
 import { useAllDateProposals } from './hooks/useDates';
 import { useSendMessage } from './hooks/useChat';
+import { useBackHandler } from './hooks/useBackHandler';
 import { subscribeUserNotifications } from './lib/realtime';
 import { resolveNotificationTarget } from './lib/notificationRouting';
 import { useQueryClient } from '@tanstack/react-query';
@@ -191,6 +192,27 @@ function AppContent() {
     window.scrollTo({ top: 0 });
     setCurrentTab(previousTab);
   };
+
+  // "Atrás" del sistema: primero cierra lo que esté abierto encima, después sale del
+  // chat, después vuelve a Descubrir. Recién desde ahí deja salir de la app.
+  useBackHandler(() => {
+    if (dateQRModal) { setDateQRModal(null); return true; }
+    if (icebreaker) { setIcebreaker(null); return true; }
+    if (proposeModal) { setProposeModal(null); return true; }
+    if (selectedStamp) { setSelectedStamp(null); return true; }
+    if (matchCelebration) { setMatchCelebration(null); return true; }
+    if (isFiltersOpen) { setIsFiltersOpen(false); return true; }
+    if (isVerifiedSpotsOpen) { setIsVerifiedSpotsOpen(false); return true; }
+    if (isMenuOpen) { setIsMenuOpen(false); return true; }
+    if (!user) {
+      if (authScreen === 'welcome') return false;
+      setAuthScreen('welcome');
+      return true;
+    }
+    if (currentTab === 'mensajes' && activeConnectionId) { setActiveConnectionId(null); return true; }
+    if (currentTab !== 'descubrir') { handleTabChange('descubrir'); return true; }
+    return false;
+  });
 
   // A qué pantalla te lleva tocar una notificación (toast, campanita, o push del SO).
   const handleNotificationNavigate = (category?: string, data?: Record<string, unknown>) => {

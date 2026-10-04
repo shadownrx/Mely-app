@@ -1,0 +1,19 @@
+name: Build Android
+
+# Compila el APK/AAB con el workflow reutilizable de shadownrx/code. Los artefactos
+# quedan en la corrida (Actions → esta corrida → Artifacts → android-build).
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    # La rama por defecto de shadownrx/code es "Main" (con mayúscula): "@main" no resuelve.
+    uses: shadownrx/code/.github/workflows/build-mobile.yml@Main
+    with:
+      project_type: pwa
+      # Todavía no hay proyecto iOS (falta `npx cap add ios` y cuenta de Apple Developer).
+      build_ios: false
+    secrets: inherit

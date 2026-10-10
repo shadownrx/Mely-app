@@ -422,6 +422,8 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                 // Comprar un plan menor con uno mayor activo lo pisaba (el backend ahora
                 // lo rechaza); renovar el mismo plan suma días sobre los que quedan.
                 const isLowerThanCurrent = TIER_RANK[itemTier] < TIER_RANK[membershipTier];
+                // El Black "para siempre" de antes no vence: no hay nada que renovar.
+                const isLifetime = isCurrent && !user?.membership.expiresAt;
                 const isFeatured = item.key === MOST_POPULAR_KEY;
                 const benefits = MEMBERSHIP_BENEFITS[item.key] ?? [];
                 return (
@@ -485,12 +487,14 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                         sounds.playClick();
                         setSelectedItem(item);
                       }}
-                      disabled={isLowerThanCurrent}
+                      disabled={isLowerThanCurrent || isLifetime}
                       className="w-full rounded-xl"
                     >
                       {isLowerThanCurrent
                         ? 'Ya tenés un plan superior'
-                        : isCurrent
+                        : isLifetime
+                          ? 'Tu plan actual · sin vencimiento'
+                          : isCurrent
                           ? `Renovar +${MEMBERSHIP_DAYS[item.key] ?? 30} días · ${item.price} coins`
                           : `Obtener por ${item.price} coins`}
                     </Button>

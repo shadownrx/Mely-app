@@ -1,5 +1,5 @@
 import { apiRequest } from '../apiClient';
-import type { ShopItem } from '../../types';
+import type { PerkStatus, ShopItem } from '../../types';
 
 export function listShop() {
   return apiRequest<ShopItem[]>('/shop');
@@ -12,5 +12,10 @@ export type PurchaseInput = {
 };
 
 export function purchase(input: PurchaseInput) {
-  return apiRequest<{ item: string; result: unknown }>('/shop/purchase', { method: 'POST', body: input });
+  return apiRequest<{ item: string; includedInPlan: boolean; result: unknown }>('/shop/purchase', { method: 'POST', body: input });
+}
+
+/** Poderes incluidos en el plan actual y cuántos usos quedan. */
+export function getPerks() {
+  return apiRequest<PerkStatus>('/shop/perks');
 }

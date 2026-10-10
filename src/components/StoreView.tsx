@@ -5,10 +5,10 @@ import { toast } from 'sonner';
 import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
-import { useShop, usePurchase } from '../hooks/useShop';
+import { usePerks, useShop, usePurchase } from '../hooks/useShop';
 import { useClaimDailyBonus, useCoinPacks, useRecharge, useRedeemCode, useWallet, useWalletHistory } from '../hooks/useWallet';
 import { useWhoLikedMe } from '../hooks/useDiscover';
-import type { ShopItem } from '../types';
+import type { MembershipTier, PerkItemStatus, ShopItem } from '../types';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
@@ -30,12 +30,51 @@ const MOST_POPULAR_KEY = 'MEMBERSHIP_PREMIUM';
 
 // Listas de beneficios por membresía — se mantienen a mano en el frontend (igual que
 // ITEM_PRESENTATION) en vez de parsear la descripción del backend, para poder mostrarlas
-// como checklist en vez de una sola oración larga.
+// como checklist en vez de una sola oración larga. Tienen que coincidir con
+// MEMBERSHIP_PERKS y membershipDiscoverBonus del backend. Antes los tres planes
+// listaban lo mismo y solo cambiaba la duración; ahora cada uno suma algo propio.
 const MEMBERSHIP_BENEFITS: Record<string, string[]> = {
-  MEMBERSHIP_PREMIUM: ['Perfil siempre destacado en Descubrir', '+20 perfiles extra por día', 'Válida 7 días'],
-  MEMBERSHIP_FOUNDING: ['Perfil siempre destacado en Descubrir', 'Prácticamente sin límite diario de perfiles', 'Válida 90 días · el mejor precio por día'],
-  MEMBERSHIP_VIP: ['Perfil siempre destacado en Descubrir', 'Prácticamente sin límite diario de perfiles', 'Válida 30 días'],
+  MEMBERSHIP_PREMIUM: [
+    'Perfil destacado en Descubrir',
+    'Ver quién te dio like',
+    '+20 perfiles extra por día',
+    '1 Boost gratis por semana',
+  ],
+  MEMBERSHIP_VIP: [
+    'Todo lo de Plus',
+    'Perfiles casi sin límite por día',
+    'Deshacer pass ilimitado',
+    '3 Super Sparks por mes',
+    '1 Reactivar match por mes',
+  ],
+  MEMBERSHIP_FOUNDING: [
+    'Todo lo de Gold',
+    'Doble de coins por cada cita verificada',
+    '300 coins de bienvenida',
+    'Sello exclusivo "Miembro Black" en tu pasaporte',
+    'Temas de chat exclusivos',
+  ],
 };
+
+// Plus → Gold → Black (el backend las devuelve por nombre, que las desordenaba).
+const MEMBERSHIP_ORDER: Record<string, number> = { MEMBERSHIP_PREMIUM: 0, MEMBERSHIP_VIP: 1, MEMBERSHIP_FOUNDING: 2 };
+const TIER_RANK: Record<MembershipTier, number> = { STANDARD: 0, PREMIUM: 1, VIP: 2, FOUNDING: 3 };
+const MEMBERSHIP_DAYS: Record<string, number> = { MEMBERSHIP_PREMIUM: 7, MEMBERSHIP_VIP: 30, MEMBERSHIP_FOUNDING: 90 };
+
+/** Texto corto del cupo incluido: "Incluido", "Quedan 2", o null si no hay cupo. */
+function perkLabel(perk: PerkItemStatus | undefined): string | null {
+  if (!perk) return null;
+  if (perk.unlimited) return 'Incluido';
+  if ((perk.remaining ?? 0) > 0) return perk.remaining === 1 ? 'Incluido · queda 1' : `Incluido · quedan ${perk.remaining}`;
+  return null;
+}
+
+function perkResetLabel(perk: PerkItemStatus | undefined): string | null {
+  if (!perk || perk.unlimited || (perk.remaining ?? 0) > 0 || !perk.resetsAt) return null;
+  const date = new Date(perk.resetsAt);
+  if (!Number.isFinite(date.getTime())) return null;
+  return `Tu plan suma otro el ${date.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}`;
+}
 
 // La duración real de cada membresía difiere entre tiers (Plus: semanal; Gold: mensual;
 // Black: trimestral, con mejor precio por día que pagar Gold 3 meses seguidos) — todas
@@ -52,7 +91,7 @@ const MEMBERSHIP_DURATION_LABEL: Record<string, string> = {
 const CONTEXTUAL_ITEMS = new Set(['SUPER_INVITE', 'REACTIVATE_MATCH']);
 const CONTEXTUAL_HINT: Record<string, string> = {
   SUPER_INVITE: 'Se usa desde Descubrir, al enviar una invitación destacada.',
-  REACTIVATE_MATCH: 'Se usa desde Matches, sobre un match inactivo.',
+  REACTIVATE_MATCH: 'Se usa desde Matches, en "Se enfriaron".',
 };
 
 const STORE_TABS = [
@@ -80,6 +119,7 @@ const REWARD_REASON_LABELS: Record<string, { icon: string; label: string }> = {
   date_verified: { icon: 'verified', label: 'Cita verificada' },
   second_date_verified: { icon: 'workspace_premium', label: 'Segunda cita verificada' },
   daily_bonus: { icon: 'today', label: 'Bono diario' },
+  membership_welcome: { icon: 'diamond', label: 'Bienvenida a Findy Black' },
 };
 
 /**
@@ -122,6 +162,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
   const { data: history } = useWalletHistory();
   const { data: coinPacks = [] } = useCoinPacks();
   const { data: whoLikedMe } = useWhoLikedMe();
+  const { data: perks } = usePerks();
   const purchase = usePurchase();
   const recharge = useRecharge();
   const redeemCode = useRedeemCode();
@@ -138,6 +179,8 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
   const boostActiveMinutes = minutesLeft(user?.boostedUntil ?? null);
   const likesUnlockActiveMinutes = minutesLeft(user?.likesUnlockedUntil ?? null);
   const likesAlreadyIncluded = membershipTier !== 'STANDARD';
+  const perkFor = (itemKey: string) => perks?.items.find((p) => p.itemKey === itemKey);
+  const selectedPerkIncluded = selectedItem ? perkLabel(perkFor(selectedItem.key)) !== null : false;
 
   const celebrate = () => {
     try {
@@ -147,7 +190,9 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
     }
   };
 
-  const memberships = shopItems.filter((i) => i.key.startsWith('MEMBERSHIP_'));
+  const memberships = shopItems
+    .filter((i) => i.key.startsWith('MEMBERSHIP_'))
+    .sort((a, b) => (MEMBERSHIP_ORDER[a.key] ?? 9) - (MEMBERSHIP_ORDER[b.key] ?? 9));
   const boosts = shopItems.filter((i) => !i.key.startsWith('MEMBERSHIP_') && !CONTEXTUAL_ITEMS.has(i.key));
   const contextual = shopItems.filter((i) => CONTEXTUAL_ITEMS.has(i.key));
 
@@ -158,9 +203,9 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
     purchase.mutate(
       { itemKey: selectedItem.key },
       {
-        onSuccess: () => {
+        onSuccess: (res) => {
           celebrate();
-          setReceipt(selectedItem.name);
+          setReceipt(res.includedInPlan ? `${selectedItem.name} · incluido en tu plan` : selectedItem.name);
           setSelectedItem(null);
           // Sin esto, membresía/boost/likes quedaban comprados en el server pero la UI
           // (isCurrent, cuenta regresiva de boost, etc.) seguía mostrando el estado viejo
@@ -372,7 +417,11 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
             <section className="flex flex-col gap-3.5">
               {memberships.map((item) => {
                 const presentation = ITEM_PRESENTATION[item.key] ?? { icon: 'workspace_premium', color: '#ec4d86' };
-                const isCurrent = membershipTier === item.key.replace('MEMBERSHIP_', '');
+                const itemTier = item.key.replace('MEMBERSHIP_', '') as MembershipTier;
+                const isCurrent = membershipTier === itemTier;
+                // Comprar un plan menor con uno mayor activo lo pisaba (el backend ahora
+                // lo rechaza); renovar el mismo plan suma días sobre los que quedan.
+                const isLowerThanCurrent = TIER_RANK[itemTier] < TIER_RANK[membershipTier];
                 const isFeatured = item.key === MOST_POPULAR_KEY;
                 const benefits = MEMBERSHIP_BENEFITS[item.key] ?? [];
                 return (
@@ -431,15 +480,19 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                       ))}
                     </ul>
                     <Button
-                      variant={isCurrent ? 'secondary' : 'primary'}
+                      variant={isCurrent || isLowerThanCurrent ? 'secondary' : 'primary'}
                       onClick={() => {
                         sounds.playClick();
                         setSelectedItem(item);
                       }}
-                      disabled={isCurrent}
+                      disabled={isLowerThanCurrent}
                       className="w-full rounded-xl"
                     >
-                      {isCurrent ? 'Tu plan actual' : `Obtener por ${item.price} coins`}
+                      {isLowerThanCurrent
+                        ? 'Ya tenés un plan superior'
+                        : isCurrent
+                          ? `Renovar +${MEMBERSHIP_DAYS[item.key] ?? 30} días · ${item.price} coins`
+                          : `Obtener por ${item.price} coins`}
                     </Button>
                   </div>
                 );
@@ -457,6 +510,8 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                     const isBoostActive = item.key === 'BOOST' && boostActiveMinutes > 0;
                     const isLikesActive = item.key === 'LIKES_UNLOCK' && (likesAlreadyIncluded || likesUnlockActiveMinutes > 0);
                     const isActive = isBoostActive || isLikesActive;
+                    const included = perkLabel(perkFor(item.key));
+                    const resetLabel = perkResetLabel(perkFor(item.key));
                     return (
                       <div key={item.key} className={`rounded-[var(--radius-md)] p-3.5 flex flex-col justify-between gap-2.5 border ${cardClass}`}>
                         <div>
@@ -468,6 +523,9 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                           </div>
                           <h4 className={`font-headline-md text-[13px] font-bold leading-snug ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{item.name}</h4>
                           <p className={`text-[10.5px] leading-snug mt-0.5 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>{item.description}</p>
+                          {resetLabel && (
+                            <p className="text-[9.5px] leading-snug mt-1 text-emerald-600 dark:text-emerald-400">{resetLabel}</p>
+                          )}
                         </div>
                         <Button
                           variant={isActive ? 'secondary' : 'primary'}
@@ -485,7 +543,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                               ? likesAlreadyIncluded
                                 ? 'Incluido'
                                 : `Activo · ${likesUnlockActiveMinutes}m`
-                              : `${item.price} coins`}
+                              : included ?? `${item.price} coins`}
                         </Button>
                       </div>
                     );
@@ -497,12 +555,13 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                 <div className="flex flex-col gap-2">
                   {contextual.map((item) => {
                     const presentation = ITEM_PRESENTATION[item.key] ?? { icon: 'info', color: '#ec4d86' };
+                    const included = perkLabel(perkFor(item.key));
                     return (
                       <div key={item.key} className={`rounded-[var(--radius-md)] p-3 flex items-center gap-3 border border-dashed ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0f1a2e] border-[#ec4d86]/30'}`}>
                         <span className="material-symbols-outlined text-[20px] shrink-0" style={{ color: presentation.color }}>{presentation.icon}</span>
                         <div className="min-w-0">
                           <span className={`font-label-caps text-[10px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
-                            {item.name} · {item.price} coins
+                            {item.name} · {included ?? `${item.price} coins`}
                           </span>
                           <p className={`text-[10.5px] ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>{CONTEXTUAL_HINT[item.key]}</p>
                         </div>
@@ -633,9 +692,13 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                 </div>
                 <div className={`p-3 rounded-xl border flex justify-between items-center text-[12px] ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0a1120] border-[#ec4d86]/20'}`}>
                   <span className={isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}>Total a pagar:</span>
-                  <span className="font-headline-md text-[16px] font-bold text-[#ec4d86]">{selectedItem.price} Findy Coins</span>
+                  {selectedPerkIncluded ? (
+                    <span className="font-headline-md text-[16px] font-bold text-emerald-500">Incluido en tu plan</span>
+                  ) : (
+                    <span className="font-headline-md text-[16px] font-bold text-[#ec4d86]">{selectedItem.price} Findy Coins</span>
+                  )}
                 </div>
-                {walletBalance < selectedItem.price && (
+                {!selectedPerkIncluded && walletBalance < selectedItem.price && (
                   <p className="text-[11px] text-[#ec4d86] font-bold">No te alcanzan los coins. Recargá desde Monedas Findy.</p>
                 )}
                 {purchaseError && <p className="text-[11px] text-[#ec4d86] font-bold">{purchaseError}</p>}
@@ -647,7 +710,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                     type="button"
                     variant="primary"
                     onClick={handleConfirmPurchase}
-                    disabled={purchase.isPending || walletBalance < selectedItem.price}
+                    disabled={purchase.isPending || (!selectedPerkIncluded && walletBalance < selectedItem.price)}
                     className="gap-1"
                   >
                     <span>Confirmar</span>

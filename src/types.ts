@@ -172,6 +172,21 @@ export interface LedgerEntry {
   createdAt: string;
 }
 
+export interface PerkItemStatus {
+  itemKey: string;
+  unlimited: boolean;
+  limit: number | null;
+  periodDays: number | null;
+  remaining: number | null;
+  resetsAt: string | null;
+}
+
+export interface PerkStatus {
+  tier: MembershipTier;
+  dateRewardMultiplier: number;
+  items: PerkItemStatus[];
+}
+
 export interface ShopItem {
   key: string;
   name: string;

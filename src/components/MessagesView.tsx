@@ -47,6 +47,8 @@ interface ChatThemePreset {
   userBubbleDark: string;
   wallpaperPattern: 'dots' | 'grid' | 'stars' | 'clean' | 'warm';
   previewBadge: string;
+  /** Solo para miembros Findy Black (beneficio del plan). */
+  blackOnly?: boolean;
 }
 
 const CHAT_THEME_PRESETS: ChatThemePreset[] = [
@@ -109,6 +111,28 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
     userBubbleDark: 'bg-slate-200 text-slate-900',
     wallpaperPattern: 'clean',
     previewBadge: '◻️ Minimal',
+  },
+  {
+    id: 'black-onyx-gold',
+    name: 'Ónix & Oro',
+    description: 'Negro profundo con filo dorado · exclusivo Black',
+    accentColor: '#d9b45c',
+    userBubbleLight: 'bg-gradient-to-r from-[#111111] to-[#2b2b2b] text-[#f3e4be] border border-[#d9b45c]/60',
+    userBubbleDark: 'bg-gradient-to-r from-[#0b0b0b] to-[#1f1f1f] text-[#f3e4be] border border-[#d9b45c]/70',
+    wallpaperPattern: 'stars',
+    previewBadge: '🖤 Ónix',
+    blackOnly: true,
+  },
+  {
+    id: 'black-champagne',
+    name: 'Champagne & Medianoche',
+    description: 'Brindis en terraza a la medianoche · exclusivo Black',
+    accentColor: '#c9a96e',
+    userBubbleLight: 'bg-gradient-to-r from-[#c9a96e] to-[#e8d5a8] text-[#16223b] border border-[#f3e4be]/40',
+    userBubbleDark: 'bg-gradient-to-r from-[#16223b] to-[#c9a96e] text-white border border-[#c9a96e]/50',
+    wallpaperPattern: 'warm',
+    previewBadge: '🥂 Champagne',
+    blackOnly: true,
   },
 ];
 
@@ -406,7 +430,10 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
   // El contenedor del chat usa --vvh para seguir al teclado móvil.
   useVisualViewportHeight(viewMode === 'chat');
 
-  const currentTheme = CHAT_THEME_PRESETS.find((t) => t.id === selectedThemeId) || CHAT_THEME_PRESETS[0];
+  const isBlackMember = user?.membership.tier === 'FOUNDING';
+  // Un tema exclusivo guardado deja de aplicarse si el plan Black venció.
+  const currentTheme =
+    CHAT_THEME_PRESETS.find((t) => t.id === selectedThemeId && (!t.blackOnly || isBlackMember)) || CHAT_THEME_PRESETS[0];
 
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
     messagesEndRef.current?.scrollIntoView({ behavior, block: 'end' });
@@ -1794,18 +1821,30 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#ec4d86] block mb-2">PALETAS & TEMAS FINDY</span>
                 <div className="grid grid-cols-2 gap-2">
                   {CHAT_THEME_PRESETS.map((preset) => {
-                    const isSelected = selectedThemeId === preset.id && !customColor;
+                    const isSelected = currentTheme.id === preset.id && !customColor;
+                    const isLocked = Boolean(preset.blackOnly && !isBlackMember);
                     return (
                       <button
                         key={preset.id}
-                        onClick={() => handleApplyTheme(preset.id)}
+                        onClick={() => {
+                          if (isLocked) {
+                            sounds.playClick();
+                            toast('Tema exclusivo de Findy Black', { description: 'Activá Black desde la Tienda para usarlo.' });
+                            return;
+                          }
+                          handleApplyTheme(preset.id);
+                        }}
                         className={`p-2.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between gap-1.5 ${
                           isSelected ? isLight ? 'border-[#ec4d86] bg-[#fcf9f2] ring-2 ring-[#ec4d86]/30' : 'border-[#ec4d86] bg-[#17233d] ring-2 ring-[#ec4d86]/40' : isLight ? 'border-gray-200 bg-gray-50/50' : 'border-white/10 bg-white/5'
                         }`}
                       >
                         <div className="flex items-center justify-between w-full">
-                          <span className="text-[11px] font-bold truncate">{preset.previewBadge}</span>
-                          <span className="w-3.5 h-3.5 rounded-full border border-white/50 shadow-elevation-sm shrink-0" style={{ backgroundColor: preset.accentColor }} />
+                          <span className={`text-[11px] font-bold truncate ${isLocked ? 'opacity-60' : ''}`}>{preset.previewBadge}</span>
+                          {isLocked ? (
+                            <span className="material-symbols-outlined text-[14px] shrink-0 text-[#d9b45c]" aria-label="Exclusivo Black">lock</span>
+                          ) : (
+                            <span className="w-3.5 h-3.5 rounded-full border border-white/50 shadow-elevation-sm shrink-0" style={{ backgroundColor: preset.accentColor }} />
+                          )}
                         </div>
                         <p className="text-[10px] opacity-75 line-clamp-1">{preset.description}</p>
                       </button>

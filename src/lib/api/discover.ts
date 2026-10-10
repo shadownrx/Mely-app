@@ -12,6 +12,8 @@ export type DiscoverQuota = {
 export type SwipeResult = {
   action: 'LIKE' | 'PASS' | 'SUPER_INVITE';
   match: { id: string; status: string; superInvite: boolean; coinsEarned: number } | null;
+  /** Solo en Super Spark: true si salió del cupo del plan en vez de cobrar coins. */
+  includedInPlan?: boolean;
 };
 
 export function listDiscover(opts: { limit?: number; onlyVerified?: boolean; interests?: string[]; maxDistanceKm?: number } = {}) {

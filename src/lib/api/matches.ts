@@ -15,8 +15,13 @@ export function getMatch(connectionId: string) {
   >(`/matches/${connectionId}`);
 }
 
+/** Matches que se enfriaron (sin mensajes a tiempo) — se pueden reactivar. */
+export function listInactiveMatches() {
+  return apiRequest<Match[]>('/matches/inactive');
+}
+
 export function reactivateMatch(connectionId: string) {
-  return apiRequest<{ id: string; status: string; label: string }>(`/matches/${connectionId}/reactivate`, {
+  return apiRequest<{ id: string; status: string; label: string; includedInPlan: boolean }>(`/matches/${connectionId}/reactivate`, {
     method: 'POST',
   });
 }

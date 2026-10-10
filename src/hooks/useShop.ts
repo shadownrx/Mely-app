@@ -5,6 +5,10 @@ export function useShop() {
   return useQuery({ queryKey: ['shop'], queryFn: shopApi.listShop, staleTime: Infinity });
 }
 
+export function usePerks() {
+  return useQuery({ queryKey: ['perks'], queryFn: shopApi.getPerks });
+}
+
 export function usePurchase() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -16,6 +20,7 @@ export function usePurchase() {
       queryClient.invalidateQueries({ queryKey: ['matches'] });
       queryClient.invalidateQueries({ queryKey: ['discoverQuota'] });
       queryClient.invalidateQueries({ queryKey: ['whoLikedMe'] });
+      queryClient.invalidateQueries({ queryKey: ['perks'] });
     },
   });
 }

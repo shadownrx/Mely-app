@@ -5,6 +5,7 @@ import { sounds } from '../utils/audio';
 import { useTheme } from '../context/ThemeContext';
 import { ReportBlockSheet } from './ReportBlockSheet';
 import { ProfilePhoto } from './ProfilePhoto';
+import { InactiveMatchesSection } from './InactiveMatchesSection';
 import { EmptyState, ErrorState } from './StateViews';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -594,6 +595,8 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
           }
         />
       )}
+
+      <InactiveMatchesSection onOpenChat={onOpenChat} />
 
       {/* ------------------------------------------------------------- */}
       {/* MATCH PROFILE DETAIL MODAL WITH FLUID SPRING ANIMATION        */}

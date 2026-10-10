@@ -49,7 +49,16 @@ export function useSwipe() {
 
   const like = useMutation({ mutationFn: discoverApi.like, onSuccess: invalidate });
   const pass = useMutation({ mutationFn: discoverApi.pass, onSuccess: invalidate });
-  const superLike = useMutation({ mutationFn: discoverApi.superLike, onSuccess: invalidate });
+  // Super Spark ahora usa el cupo del plan o cobra coins: hay que refrescar saldo y cupos.
+  const superLike = useMutation({
+    mutationFn: discoverApi.superLike,
+    onSuccess: () => {
+      invalidate();
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      queryClient.invalidateQueries({ queryKey: ['walletHistory'] });
+      queryClient.invalidateQueries({ queryKey: ['perks'] });
+    },
+  });
 
   return { like, pass, superLike };
 }

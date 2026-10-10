@@ -312,6 +312,19 @@ function AppContent() {
           setMatchCelebration({ profile, connectionId: res.match.id, coinsEarned: res.match.coinsEarned, contextLabel: consumeFragment(profile.id) });
         }
       },
+      // Super Spark ahora sale del cupo del plan o cuesta coins: si no alcanzan, la
+      // tarjeta ya se fue del mazo, así que se recarga Descubrir para que vuelva.
+      onError: (err) => {
+        discoverQuery.refetch();
+        if (err instanceof ApiError && err.code === 'INSUFFICIENT_FUNDS') {
+          toast.error('No te alcanzan los coins para un Super Spark', {
+            description: 'Recargá en la Tienda, o con Findy Gold tenés 3 por mes incluidos.',
+            action: { label: 'Tienda', onClick: () => handleTabChange('tienda') },
+          });
+        } else {
+          toast.error(err instanceof Error ? err.message : 'No se pudo enviar el Super Spark');
+        }
+      },
     });
   };
 

@@ -92,12 +92,12 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
               (Manrope) — el resto del rediseño ya pasó los titulares editoriales a Fraunces
               itálica (per Store.dc.html: `font-family:var(--font-display)`), así que se
               alinean acá para no quedar como el único texto grande en Manrope de la app. El
-              wordmark "MELY" (sin customTitle) ya usaba Fraunces vía .font-wordmark. */}
+              wordmark "FINDY" (sin customTitle) ya usaba Fraunces vía .font-wordmark. */}
           <h1
             className={`font-bold text-[#ec4d86] ${customTitle ? 'text-[18px] italic font-semibold' : 'text-[17px] font-wordmark'}`}
             style={customTitle ? { fontFamily: 'var(--font-display)' } : undefined}
           >
-            {customTitle || 'MELY'}
+            {customTitle || 'FINDY'}
           </h1>
           {customSubtitle && (
             <span className={`text-[10px] -mt-0.5 ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>{customSubtitle}</span>
@@ -122,7 +122,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
                 ? 'bg-[#ffffff] text-[#16223b] border-[#ffe0ec] hover:border-[#ec4d86]'
                 : 'bg-[#131f36] text-[#ffa3c4] hover:text-[#ffa3c4] border-[#ec4d86]/30'
             }`}
-            aria-label="Tienda y saldo Mely Coins"
+            aria-label="Tienda y saldo Findy Coins"
             title="Ver Tienda & Monedas"
           >
             <span

@@ -17,7 +17,7 @@ QrScanner.WORKER_PATH = QrScannerWorkerPath;
 type Coords = { latitude: number; longitude: number };
 
 /**
- * MELY verifica encuentros presenciales comparando la ubicación de quien genera el QR
+ * FINDY verifica encuentros presenciales comparando la ubicación de quien genera el QR
  * contra la de quien lo escanea (ver dates/service.ts scanQr). Sin esto ambos pasos
  * eran puro trámite: nadie chequeaba que estuvieran realmente en el mismo lugar.
  */
@@ -454,7 +454,7 @@ export const DateQRModal: React.FC<DateQRModalProps> = ({
                 Cita Presencial Confirmada
               </h3>
               <p className={`font-body-sm text-[12px] mt-1 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/80'}`}>
-                El sello de {PLAN_LABELS[planType]} en {zone} se estampó en tu pasaporte MELY.
+                El sello de {PLAN_LABELS[planType]} en {zone} se estampó en tu pasaporte FINDY.
               </p>
             </div>
             {coinsEarned > 0 && (

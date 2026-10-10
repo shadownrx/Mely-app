@@ -3,12 +3,12 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
-/* Gramática MELY — misma intención, mismo lenguaje.
- * primary: mueve la historia hacia adelante (gradiente coral = acción MELY).
+/* Gramática FINDY — misma intención, mismo lenguaje.
+ * primary: mueve la historia hacia adelante (gradiente coral = acción FINDY).
  * secondary: alternativa válida con borde (misma presencia, menos empuje).
  * tertiary: contextual/discreta (icono, menú, cancelar).
  * destructive: reportar, bloquear, eliminar.
- * special: identidad propia de MELY (pasaporte/sello, ticket dashed).
+ * special: identidad propia de FINDY (pasaporte/sello, ticket dashed).
  * link: texto accionable.
  * El radio lo pone el tamaño/contexto (hero = pill vía className); el color
  * lo pone la intención. Deuda honesta: texto blanco sobre coral no llega a

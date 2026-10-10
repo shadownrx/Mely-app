@@ -30,7 +30,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({ onCreateAccount, onGoT
         className="flex items-center justify-between"
       >
         <span className="font-wordmark text-[22px] italic font-bold" style={{ color: 'var(--coral-500)' }}>
-          Mely
+          Findy
         </span>
         <button
           type="button"

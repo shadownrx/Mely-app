@@ -13,6 +13,28 @@ interface WelcomeViewProps {
 // tarjeta ilustrada con glow coral detrás, titular editorial en dos líneas (la
 // segunda en coral itálica) y dos CTAs (crear cuenta / ya tengo cuenta). Antes
 // LoginView arrancaba directo en el formulario, sin ningún momento de marca.
+//
+// Quien recién la descarga no sabe qué son los coins, la Tienda ni el pasaporte, así
+// que acá se vende primero la idea (gente en serio, citas reales) y después se explica
+// en tres pasos cómo funciona, sin jerga de la app.
+const HOW_IT_WORKS = [
+  {
+    icon: 'verified_user',
+    title: 'Gente real',
+    text: 'Verificás tu perfil con una selfie y ves quién más lo hizo. Así sabés con quién hablás.',
+  },
+  {
+    icon: 'forum',
+    title: 'Charlas con intención',
+    text: 'Pocos matches, bien elegidos. Si nadie escribe en 48 h, el match se enfría.',
+  },
+  {
+    icon: 'local_cafe',
+    title: 'Se ven en persona',
+    text: 'Proponés una cita, escanean un QR al encontrarse y los dos ganan premios.',
+  },
+] as const;
+
 export const WelcomeView: React.FC<WelcomeViewProps> = ({ onCreateAccount, onGoToLogin }) => {
   const { isLight } = useTheme();
 
@@ -46,7 +68,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({ onCreateAccount, onGoT
       </motion.div>
 
       {/* Hero: glow coral + tarjeta ilustrada apilada */}
-      <div className="relative flex-1 flex items-center justify-center min-h-[280px] my-6">
+      <div className="relative flex-1 flex items-center justify-center min-h-[230px] my-4">
         <div
           className="absolute w-[320px] h-[320px] rounded-full pointer-events-none"
           style={{
@@ -58,7 +80,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({ onCreateAccount, onGoT
           initial={{ opacity: 0, scale: 0.9, rotate: -10 }}
           animate={{ opacity: 1, scale: 1, rotate: -8 }}
           transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute w-[190px] h-[240px] rounded-[var(--radius-lg)] shadow-[var(--shadow-lg)]"
+          className="absolute w-[160px] h-[205px] rounded-[var(--radius-lg)] shadow-[var(--shadow-lg)]"
           style={{ background: 'var(--midnight-700)', border: '1px solid var(--hairline)' }}
         />
 
@@ -66,7 +88,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({ onCreateAccount, onGoT
           initial={{ opacity: 0, scale: 0.9, rotate: 8 }}
           animate={{ opacity: 1, scale: 1, rotate: 5 }}
           transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 w-[196px] h-[250px] rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-lg)]"
+          className="relative z-10 w-[166px] h-[212px] rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-lg)]"
           style={{
             background: 'linear-gradient(155deg, var(--coral-700) 0%, var(--coral-500) 55%, var(--coral-300) 100%)',
           }}
@@ -94,22 +116,51 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({ onCreateAccount, onGoT
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.4 }}
-        className="mb-7"
+        className="mb-5"
       >
         <h1
           className="text-[28px] leading-[1.15] font-semibold"
           style={{ fontFamily: 'var(--font-display)', color: isLight ? 'var(--text-on-light)' : 'var(--text-primary)' }}
         >
-          Conocer a alguien,
+          Acá conocés gente
           <br />
           <span className="italic" style={{ color: 'var(--coral-500)' }}>
-            otra vez con ganas.
+            en serio.
           </span>
         </h1>
         <p className="text-[14px] mt-2.5 leading-relaxed" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)' }}>
-          Perfiles verificados, conversaciones con intención y citas de verdad — no otro scroll infinito.
+          Findy no es para scrollear perfiles toda la noche: es para salir y conocerse en persona.
         </p>
       </motion.div>
+
+      {/* Cómo funciona */}
+      <motion.ol
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35, duration: 0.4 }}
+        className="flex flex-col gap-3 mb-7"
+      >
+        {HOW_IT_WORKS.map((step) => (
+          <li key={step.title} className="flex items-start gap-3">
+            <span
+              className="w-9 h-9 shrink-0 rounded-full flex items-center justify-center"
+              style={{ background: isLight ? 'var(--coral-100)' : 'rgba(255,107,158,0.14)' }}
+            >
+              <span className="material-symbols-outlined text-[18px]" style={{ color: 'var(--coral-500)' }}>
+                {step.icon}
+              </span>
+            </span>
+            <div className="min-w-0">
+              <p className="text-[13.5px] font-bold" style={{ color: isLight ? 'var(--text-on-light)' : 'var(--text-primary)' }}>
+                {step.title}
+              </p>
+              <p className="text-[12.5px] leading-snug mt-0.5" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)' }}>
+                {step.text}
+              </p>
+            </div>
+          </li>
+        ))}
+      </motion.ol>
 
       {/* CTAs */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.4 }} className="flex flex-col gap-2.5">
@@ -123,7 +174,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({ onCreateAccount, onGoT
           className="w-full h-13 rounded-[var(--radius-pill)] text-[15px] font-bold shadow-[var(--shadow-coral)]"
           style={{ background: 'var(--coral-500)', color: 'var(--ink-on-coral)' }}
         >
-          Crear cuenta
+          Crear cuenta gratis
         </button>
         <button
           id="welcome-goto-login-btn"
@@ -153,7 +204,7 @@ export const WelcomeView: React.FC<WelcomeViewProps> = ({ onCreateAccount, onGoT
           verified
         </span>
         <span className="text-[11.5px]" style={{ color: isLight ? 'var(--text-on-light-muted)' : 'var(--text-secondary)' }}>
-          Perfiles verificados, comunidad cuidada.
+          Gratis para empezar. Sin tarjeta.
         </span>
       </motion.div>
     </div>

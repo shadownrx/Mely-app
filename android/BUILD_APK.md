@@ -1,4 +1,4 @@
-# Generar el APK de MELY
+# Generar el APK de FINDY
 
 Este proyecto Android ya está armado con [Capacitor](https://capacitorjs.com/) —
 envuelve el build web (`dist/`) en un WebView nativo. No se pudo compilar el
@@ -49,7 +49,7 @@ mira `src/` directamente, solo copia lo que hay en `dist/`.
 
 ## Ícono y nombre
 
-- Nombre / App ID: `app.mely.pasaporte` (`capacitor.config.ts`,
+- Nombre / App ID: `app.findy.pasaporte` (`capacitor.config.ts`,
   `android/app/src/main/res/values/strings.xml`).
 - Ícono: generado a partir del mismo sello de corazón que usa el login
   (gradiente `#e11d48`→`#ff4d67`), en `android/app/src/main/res/mipmap-*/`.

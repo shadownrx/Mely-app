@@ -178,7 +178,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
     recharge.mutate(packKey, {
       onSuccess: (res) => {
         celebrate();
-        setReceipt(`+${res.amount} Mely Coins (demo)`);
+        setReceipt(`+${res.amount} Findy Coins (demo)`);
       },
     });
   };
@@ -189,7 +189,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
     claimDailyBonus.mutate(undefined, {
       onSuccess: (res) => {
         celebrate();
-        toast.success(`¡Bono diario reclamado! +${res.amount} Mely Coins.`);
+        toast.success(`¡Bono diario reclamado! +${res.amount} Findy Coins.`);
       },
       onError: (err: any) => toast.error(err?.message ?? 'No se pudo reclamar el bono'),
     });
@@ -201,7 +201,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
     sounds.playClick();
     redeemCode.mutate(promoCode.trim(), {
       onSuccess: (res) => {
-        toast.success(`¡Código canjeado! +${res.amount} Mely Coins.`);
+        toast.success(`¡Código canjeado! +${res.amount} Findy Coins.`);
         setPromoCode('');
         celebrate();
       },
@@ -227,7 +227,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
               local_mall
             </span>
             <span className={`font-label-caps text-[10px] uppercase tracking-widest font-bold ${isLight ? 'text-[#ff6b9e]' : 'text-[#ffa3c4]'}`}>
-              TIENDA & BENEFICIOS MELY
+              TIENDA & BENEFICIOS FINDY
             </span>
           </div>
           <div className={`flex items-center justify-between p-3.5 rounded-[var(--radius-md)] border ${isLight ? 'bg-white border-[#ffe0ec] shadow-elevation-sm' : 'bg-[#0a1120]/95 border-[#ec4d86]/30 shadow-inner'}`}>
@@ -525,7 +525,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                   className={`text-[16px] italic font-semibold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
-                  Monedas Mely
+                  Monedas Findy
                 </h3>
                 <span className="font-label-caps text-[8.5px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
                   MODO DEMO · SIN COBRO REAL
@@ -574,7 +574,7 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
             type="text"
             value={promoCode}
             onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-            placeholder="Ej: MELY2026"
+            placeholder="Ej: FINDY2026"
             className="flex-1 font-mono text-[12px] tracking-wide"
           />
           <Button type="submit" variant="primary" disabled={redeemCode.isPending} className="rounded-xl">
@@ -633,10 +633,10 @@ export const StoreView: React.FC<StoreViewProps> = ({ onOpenLikes }) => {
                 </div>
                 <div className={`p-3 rounded-xl border flex justify-between items-center text-[12px] ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#0a1120] border-[#ec4d86]/20'}`}>
                   <span className={isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}>Total a pagar:</span>
-                  <span className="font-headline-md text-[16px] font-bold text-[#ec4d86]">{selectedItem.price} Mely Coins</span>
+                  <span className="font-headline-md text-[16px] font-bold text-[#ec4d86]">{selectedItem.price} Findy Coins</span>
                 </div>
                 {walletBalance < selectedItem.price && (
-                  <p className="text-[11px] text-[#ec4d86] font-bold">No te alcanzan los coins. Recargá desde Monedas Mely.</p>
+                  <p className="text-[11px] text-[#ec4d86] font-bold">No te alcanzan los coins. Recargá desde Monedas Findy.</p>
                 )}
                 {purchaseError && <p className="text-[11px] text-[#ec4d86] font-bold">{purchaseError}</p>}
                 <div className="grid grid-cols-2 gap-2 pt-2">

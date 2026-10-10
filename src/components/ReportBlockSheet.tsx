@@ -90,7 +90,7 @@ export const ReportBlockSheet: React.FC<ReportBlockSheetProps> = ({
           <>
             <SheetHeader className="text-left mb-1">
               <SheetTitle>Reportar o bloquear</SheetTitle>
-              <p className={`text-[12.5px] ${mutedText}`}>Sobre {partnerName}. Esto queda entre vos y el equipo de MELY.</p>
+              <p className={`text-[12.5px] ${mutedText}`}>Sobre {partnerName}. Esto queda entre vos y el equipo de FINDY.</p>
             </SheetHeader>
             <div className="flex flex-col gap-2 mt-3">
               <button

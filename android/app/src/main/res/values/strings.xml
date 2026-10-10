@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">MELY</string>
-    <string name="title_activity_main">MELY</string>
-    <string name="package_name">app.mely.pasaporte</string>
-    <string name="custom_url_scheme">app.mely.pasaporte</string>
+    <string name="app_name">FINDY</string>
+    <string name="title_activity_main">FINDY</string>
+    <string name="package_name">app.findy.pasaporte</string>
+    <string name="custom_url_scheme">app.findy.pasaporte</string>
 </resources>

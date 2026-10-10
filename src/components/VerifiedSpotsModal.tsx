@@ -56,7 +56,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
                 LUGARES ASOCIADOS & BENEFICIOS
               </span>
               <h2 className={`font-headline-md text-[18px] font-bold ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>
-                Rincones de Citas MELY
+                Rincones de Citas FINDY
               </h2>
             </div>
           </div>
@@ -145,7 +145,7 @@ export const VerifiedSpotsModal: React.FC<VerifiedSpotsModalProps> = ({
 
               {/* Content Body */}
               <div className="p-3.5 flex flex-col gap-2.5">
-                {/* MELY Perk Banner */}
+                {/* FINDY Perk Banner */}
                 <div
                   className={`p-2.5 rounded-xl border flex items-center gap-2 ${
                     isLight

@@ -15,10 +15,10 @@ def packageJson = new groovy.json.JsonSlurper().parseText(rootProject.file('../p
 def ciRunNumber = System.getenv('GITHUB_RUN_NUMBER')
 
 android {
-    namespace = "app.mely.pasaporte"
+    namespace = "app.findy.pasaporte"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "app.mely.pasaporte"
+        applicationId "app.findy.pasaporte"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode ciRunNumber ? ciRunNumber.toInteger() : 1

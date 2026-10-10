@@ -1,4 +1,4 @@
-package app.mely.pasaporte;
+package app.findy.pasaporte;
 
 import com.getcapacitor.BridgeActivity;
 

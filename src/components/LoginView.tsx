@@ -149,7 +149,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onGoToRegister, onGoogleNe
 
       {/* Wordmark + one-line promise */}
       <motion.div variants={item} className="mt-2 mb-9">
-        <span className="font-wordmark text-[30px] font-bold text-[#ec4d86]">MELY</span>
+        <span className="font-wordmark text-[30px] font-bold text-[#ec4d86]">FINDY</span>
         <p className={`text-[14px] mt-2 leading-relaxed ${isLight ? 'text-[#5b6478]' : 'text-[#8a93a8]'}`}>
           Bienvenida de vuelta. Iniciá sesión para seguir tus citas y conversaciones.
         </p>

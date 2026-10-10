@@ -7,13 +7,13 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>MELY</string>
+        <string>FINDY</string>
 	<key>NSCameraUsageDescription</key>
-	<string>MELY usa la cámara para escanear el QR de check-in de tus citas y para tu selfie de verificación.</string>
+	<string>FINDY usa la cámara para escanear el QR de check-in de tus citas y para tu selfie de verificación.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>MELY necesita acceso a tus fotos para que elijas las de tu perfil o las mandes por chat.</string>
+	<string>FINDY necesita acceso a tus fotos para que elijas las de tu perfil o las mandes por chat.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>MELY usa tu ubicación para mostrarte gente cerca y confirmar el check-in de tus citas.</string>
+	<string>FINDY usa tu ubicación para mostrarte gente cerca y confirmar el check-in de tus citas.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

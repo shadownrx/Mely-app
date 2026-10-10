@@ -32,11 +32,11 @@ self.addEventListener('push', (event: PushEvent) => {
   try {
     payload = event.data?.json() ?? {};
   } catch {
-    payload = { title: 'MELY', body: event.data?.text() ?? '' };
+    payload = { title: 'FINDY', body: event.data?.text() ?? '' };
   }
 
   event.waitUntil(
-    self.registration.showNotification(payload.title || 'MELY', {
+    self.registration.showNotification(payload.title || 'FINDY', {
       body: payload.body || '',
       icon: '/icon-192.png',
       badge: '/icon-32.png',

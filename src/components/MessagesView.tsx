@@ -52,8 +52,8 @@ interface ChatThemePreset {
 const CHAT_THEME_PRESETS: ChatThemePreset[] = [
   {
     id: 'mely-cherry',
-    name: 'MELY Carmesí & Cereza',
-    description: 'El estilo original y apasionado de MELY',
+    name: 'FINDY Carmesí & Cereza',
+    description: 'El estilo original y apasionado de FINDY',
     accentColor: '#ec4d86',
     userBubbleLight: 'bg-gradient-to-r from-[#ec4d86] to-[#ff6b9e] text-white border border-[#ffa3c4]/30',
     userBubbleDark: 'bg-gradient-to-r from-[#c9366d] to-[#ec4d86] text-white border border-[#ec4d86]/40',
@@ -115,7 +115,7 @@ const CHAT_THEME_PRESETS: ChatThemePreset[] = [
 const STICKER_PACKS: { id: string; name: string; icon: string; stickers: WhatsAppSticker[] }[] = [
   {
     id: 'pack-romance',
-    name: 'MELY Romance & Café',
+    name: 'FINDY Romance & Café',
     icon: '☕',
     stickers: [
       { id: 'stk-coffee', packId: 'pack-romance', title: '¿Pinta café?', emoji: '☕', badgeText: 'CAFÉ ☕', category: 'romance' },
@@ -199,7 +199,7 @@ const SAFETY_TIPS = [
   { icon: 'groups', text: 'Elegí siempre un lugar público para la primera cita — nunca tu casa ni la de tu match.' },
   { icon: 'share_location', text: 'Contale a un amigo o familiar dónde y con quién vas a estar.' },
   { icon: 'videocam', text: 'Hacé una videollamada antes de encontrarte en persona, para confirmar que es quien dice ser.' },
-  { icon: 'qr_code_2', text: 'Usá el check-in con QR de MELY al llegar: así verificamos que la cita fue real y segura.' },
+  { icon: 'qr_code_2', text: 'Usá el check-in con QR de FINDY al llegar: así verificamos que la cita fue real y segura.' },
   { icon: 'payments', text: 'Nunca envíes dinero ni datos bancarios a alguien que conociste en la app.' },
   { icon: 'favorite', text: 'Si algo no te cierra, confiá en tu instinto — podés terminar la charla o la cita cuando quieras.' },
 ];
@@ -682,7 +682,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
     return (
       <div className="flex flex-col w-full flex-1 min-h-[320px] animate-fadeIn">
         {/* Búsqueda y filtros quedan pegados arriba mientras se scrollea la lista — sin
-            repetir el título "MELY Chat" que ya muestra el TopAppBar de la app. */}
+            repetir el título "FINDY Chat" que ya muestra el TopAppBar de la app. */}
         <div className="shrink-0 pb-3">
           <div className="relative flex items-center mb-2.5">
             <span className={`material-symbols-outlined absolute left-3.5 text-[18px] pointer-events-none ${isLight ? 'text-[#6fa8c9]' : 'text-[#ffa3c4]/50'}`}>search</span>
@@ -1175,7 +1175,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
         <div className="flex justify-center mb-1 mt-auto">
           <div className={`max-w-xs px-3 py-1.5 rounded-xl border text-center text-[10px] leading-tight shadow-elevation-sm backdrop-blur-md ${isLight ? 'bg-white/80 border-[#ffe0ec] text-[#2e5570]' : 'bg-[#131f36]/80 border-[#ec4d86]/30 text-[#ffa3c4]/80'}`}>
             <span className="inline-flex items-center gap-1 font-bold text-[#ec4d86] mb-0.5">
-              <span className="material-symbols-outlined text-[12px]">lock</span>Conexión Privada MELY
+              <span className="material-symbols-outlined text-[12px]">lock</span>Conexión Privada FINDY
             </span>
           </div>
         </div>
@@ -1424,7 +1424,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
             <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#ec4d86] to-[#ff6b9e] text-white flex items-center justify-center shadow-elevation-md group-hover:scale-105 transition-transform">
               <span className="material-symbols-outlined text-[22px]">local_cafe</span>
             </div>
-            <span className={`text-[11px] font-medium ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>Cita MELY</span>
+            <span className={`text-[11px] font-medium ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>Cita FINDY</span>
           </button>
           {onOpenIcebreaker && (
             <button onClick={() => { setShowAttachmentMenu(false); onOpenIcebreaker(partner.displayName); }} className="flex flex-col items-center gap-1 text-center group">
@@ -1741,7 +1741,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                 <p className="text-[11px] text-[#ec4d86] font-bold">{partner.city}</p>
               </div>
               <div className={`p-3 rounded-2xl border mb-4 ${isLight ? 'bg-[#fcf9f2] border-[#ffe0ec]' : 'bg-[#131f36] border-[#ec4d86]/30'}`}>
-                <span className="font-label-caps text-[9px] text-[#ec4d86] font-bold uppercase tracking-wider block mb-1">ESTADO EN MELY</span>
+                <span className="font-label-caps text-[9px] text-[#ec4d86] font-bold uppercase tracking-wider block mb-1">ESTADO EN FINDY</span>
                 <p className="text-[12.5px] italic">"{partner.bio || 'Sin bio todavía.'}"</p>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-4">
@@ -1791,7 +1791,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               </div>
 
               <div className="mb-5">
-                <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#ec4d86] block mb-2">PALETAS & TEMAS MELY</span>
+                <span className="font-label-caps text-[10px] uppercase font-bold tracking-wider text-[#ec4d86] block mb-2">PALETAS & TEMAS FINDY</span>
                 <div className="grid grid-cols-2 gap-2">
                   {CHAT_THEME_PRESETS.map((preset) => {
                     const isSelected = selectedThemeId === preset.id && !customColor;
@@ -1880,7 +1880,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
               </Button>
             </div>
             <p className={`text-[12px] mb-4 ${isLight ? 'text-[#5b6478]' : 'text-[#ffa3c4]/70'}`}>
-              Antes de encontrarte con {partner.displayName}, tené en cuenta estas recomendaciones de MELY.
+              Antes de encontrarte con {partner.displayName}, tené en cuenta estas recomendaciones de FINDY.
             </p>
             <div className="flex flex-col gap-3 mb-2">
               {SAFETY_TIPS.map((tip, i) => (

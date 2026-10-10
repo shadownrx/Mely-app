@@ -203,7 +203,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
       return;
     }
     if (!isAdult(dateOfBirth)) {
-      setStep1Error('MELY es exclusivamente para mayores de 18 años.');
+      setStep1Error('FINDY es exclusivamente para mayores de 18 años.');
       return;
     }
     if (!seeking.length) {
@@ -282,7 +282,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
   const stepTitle = step === 1 ? 'Creá tu cuenta' : step === 2 ? 'Tu foto' : 'Bio e intereses';
   const stepSubtitle =
     step === 1
-      ? 'Sumate a MELY y empezá a conocer gente real, verificada.'
+      ? 'Sumate a FINDY y empezá a conocer gente real, verificada.'
       : step === 2
       ? 'Elegí una foto clara donde se te vea bien. Podés cambiarla después.'
       : 'Contá un poco de vos para romper el hielo.';
@@ -447,7 +447,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
                 readOnly={Boolean(googleData)}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu.correo@mely.app"
+                placeholder="tu.correo@findy.app"
                 className={googleData ? 'opacity-70' : ''}
               />
             </div>
@@ -605,7 +605,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onGoToLogin, googleP
             <div className="flex flex-col gap-2.5">
               <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-[#5b6478] dark:text-[#8a93a8]">
                 <Checkbox required checked={acceptTerms} onCheckedChange={(v) => setAcceptTerms(v === true)} className="mt-0.5 shrink-0" />
-                <span>Acepto los <strong>Términos y condiciones</strong> de MELY.</span>
+                <span>Acepto los <strong>Términos y condiciones</strong> de FINDY.</span>
               </Label>
               <Label className="flex items-start gap-2.5 cursor-pointer select-none normal-case tracking-normal text-[12px] font-normal leading-relaxed text-[#5b6478] dark:text-[#8a93a8]">
                 <Checkbox required checked={acceptPrivacy} onCheckedChange={(v) => setAcceptPrivacy(v === true)} className="mt-0.5 shrink-0" />

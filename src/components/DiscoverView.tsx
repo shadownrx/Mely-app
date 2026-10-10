@@ -59,7 +59,7 @@ interface DiscoverViewProps {
 
 type StampKind = 'like' | 'pass' | 'star';
 
-// Sello de decisión con el lenguaje que Mely ya tenía (mismos colores y
+// Sello de decisión con el lenguaje que Findy ya tenía (mismos colores y
 // formas): se usa tanto en vivo durante el drag como fijo en la carta que
 // sale volando. Extraído para no duplicar el marcado 4 veces.
 const STAMP_STYLE: Record<StampKind, { box: string; icon: string; label: string }> = {
@@ -339,7 +339,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           icon="bolt"
           accent="amber"
           title="Por hoy está bien"
-          body={`Mañana hay más historias — el cupo vuelve ${quota ? new Date(quota.resetsAt).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit' }) : 'a la medianoche'}. Calidad antes que cantidad: eso también es MELY.`}
+          body={`Mañana hay más historias — el cupo vuelve ${quota ? new Date(quota.resetsAt).toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit' }) : 'a la medianoche'}. Calidad antes que cantidad: eso también es FINDY.`}
           actions={
             onOpenStore
               ? [{ label: 'Ampliar cupo en la tienda', onClick: () => onOpenStore(), icon: 'storefront' }]
@@ -859,7 +859,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
                       <span className="material-symbols-outlined text-[26px]">visibility_off</span>
                     </div>
                     <span className="font-label-caps text-[10px] uppercase tracking-widest text-amber-300 font-bold">
-                      CITA A CIEGAS MELY
+                      CITA A CIEGAS FINDY
                     </span>
                     <p className="font-body-sm text-[12px] text-white/90 mt-1 max-w-[240px] leading-snug">
                       {currentProfile.blindPrompt?.teaser || 'Conoce primero su voz y reflexiones antes de descubrir la mirada.'}

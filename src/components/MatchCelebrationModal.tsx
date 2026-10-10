@@ -14,7 +14,7 @@ interface MatchCelebrationModalProps {
   myAvatar?: string;
   onSendMessage: () => void;
   onClose: () => void;
-  /** El diferenciador MELY: del match al plan en un tap. Opcional para no romper callers. */
+  /** El diferenciador FINDY: del match al plan en un tap. Opcional para no romper callers. */
   onProposePlan?: () => void;
   /** Fragmento que originó el like (pilar 3). Opcional; si no hay, no se muestra. */
   contextLabel?: string | null;
@@ -172,7 +172,7 @@ export const MatchCelebrationModal: React.FC<MatchCelebrationModalProps> = ({
               <span className="material-symbols-outlined text-[18px]">close</span>
             </button>
 
-            <span className="text-[13px] font-bold tracking-wide text-white/80 uppercase">MELY</span>
+            <span className="text-[13px] font-bold tracking-wide text-white/80 uppercase">FINDY</span>
 
             <motion.h2
               initial={{ opacity: 0, y: 10 }}

@@ -409,7 +409,7 @@ function AppContent() {
                     ? 'Matches'
                     : currentTab === 'likes'
                       ? 'Me gusta'
-                      : 'MELY'
+                      : 'FINDY'
           }
         />
       )}

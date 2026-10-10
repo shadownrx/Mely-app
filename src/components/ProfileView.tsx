@@ -29,7 +29,7 @@ const PASSPORT_LEVELS = [
   { at: 0, name: 'Nueva historia' },
   { at: 1, name: 'Primera cita' },
   { at: 3, name: 'Exploradora' },
-  { at: 6, name: 'Habitante MELY' },
+  { at: 6, name: 'Habitante FINDY' },
   { at: 10, name: 'Leyenda' },
 ];
 
@@ -93,11 +93,11 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
   const handleInvite = async () => {
     sounds.playClick();
-    const shareText = 'Pasaporte de citas reales, no catálogo. Sumate a MELY.';
+    const shareText = 'Pasaporte de citas reales, no catálogo. Sumate a FINDY.';
     const shareUrl = window.location.origin;
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'MELY', text: shareText, url: shareUrl });
+        await navigator.share({ title: 'FINDY', text: shareText, url: shareUrl });
         return;
       }
       throw new Error('share no disponible');

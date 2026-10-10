@@ -6,7 +6,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================================
-   Mely — sistema de color de marca (azul medianoche + rosa)
+   Findy — sistema de color de marca (azul medianoche + rosa)
    Redefine las paletas nombradas de Tailwind (rose, slate, gray, amber,
    orange, yellow, emerald, sky, red, purple/violet/indigo/fuchsia) para que
    TODA la app — que ya usaba `rose` como su color de marca (shadcn
@@ -270,7 +270,7 @@
     --font-mono: 'Space Mono', monospace;
     --font-sans: 'Manrope', -apple-system, 'Segoe UI', sans-serif;
 
-    /* Lenguaje de motion MELY — una sola curva y tres duraciones para toda la
+    /* Lenguaje de motion FINDY — una sola curva y tres duraciones para toda la
        app. Entradas: suben 8-16px con spring suave (aparecer). Salidas: 160ms
        (desaparecer, nunca robar atención). Feedback (tap): 120-180ms con
        overshoot leve. Celebración: spring amplio, una sola vez. Todo respeta
@@ -408,7 +408,7 @@
 }
 
 /* Tipografía — Manrope para todo el cuerpo, Fraunces reservado para el
-   wordmark "MELY" y los títulos display (font-serif), igual que antes pero
+   wordmark "FINDY" y los títulos display (font-serif), igual que antes pero
    con la nueva pareja tipográfica. */
 .font-headline-md, .font-display-lg, .font-display-lg-mobile,
 .font-label-caps, .font-meta-data,
@@ -416,7 +416,7 @@
   font-family: 'Manrope', -apple-system, 'Segoe UI', sans-serif;
 }
 
-/* El wordmark "MELY" es el único lugar que usa la serif display (Fraunces) —
+/* El wordmark "FINDY" es el único lugar que usa la serif display (Fraunces) —
    todo lo demás (títulos de sección, nombres, ítems) se queda en Manrope. */
 .font-wordmark {
   font-family: 'Fraunces', 'Iowan Old Style', Georgia, serif;
@@ -732,7 +732,7 @@
 }
 
 /* ============================================================
-   MELY — Fundación responsive + gestos (Fase 2, solo frontend)
+   FINDY — Fundación responsive + gestos (Fase 2, solo frontend)
    Sin tocar identidad: mismos tokens, misma estética.
    ============================================================ */
 

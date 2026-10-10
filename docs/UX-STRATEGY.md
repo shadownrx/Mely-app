@@ -1,10 +1,10 @@
-# MELY — Estrategia UX: "Esto no es Tinder"
+# FINDY — Estrategia UX: "Esto no es Tinder"
 
 Fecha: 2026-09-22. Base verificada en código real (`src/`).
 
 ## 1. Product vision
 
-**MELY no es un catálogo de personas. Es el pasaporte de tus citas de verdad.**
+**FINDY no es un catálogo de personas. Es el pasaporte de tus citas de verdad.**
 
 El loop actual ya tiene la semilla correcta y casi ninguna dating app la tiene end-to-end:
 
@@ -12,7 +12,7 @@ El loop actual ya tiene la semilla correcta y casi ninguna dating app la tiene e
 
 La visión: **del match al plan en minutos, del plan al recuerdo para siempre**. Todo lo que no acerque a una cita real (scroll infinito, validación por volumen, chat eterno que muere) es fricción a eliminar. Todo lo que acerque (intención visible, lugar verificado, icebreaker con contexto, QR + sello) es identidad a amplificar.
 
-Frase de prueba: alguien abre MELY y dice *"¿qué carajo es esto? Está buenísima"* cuando ve que un perfil cuenta una historia, que el match propone un café verificado en dos taps, y que la cita deja un sello en su pasaporte.
+Frase de prueba: alguien abre FINDY y dice *"¿qué carajo es esto? Está buenísima"* cuando ve que un perfil cuenta una historia, que el match propone un café verificado en dos taps, y que la cita deja un sello en su pasaporte.
 
 ## 2. Competitive analysis (resumen operativo)
 
@@ -25,7 +25,7 @@ Frase de prueba: alguien abre MELY y dice *"¿qué carajo es esto? Está buenís
 - **Coffee Meets Bagel**: 1 bagel diario = anti-catálogo por escasez. Valida nuestro cupo diario y Persona del día.
 - **Señales 2025-26**: Thursday (solo jueves, IRL), citas con verificación de lugar, audio-bio, blind dating, fatiga del swipe.
 
-**Oportunidades abiertas para MELY**: nadie conecta match → plan verificado → recuerdo en un solo loop. Nadie explica *por qué* te muestra a alguien. Nadie convierte la seguridad en algo cálido (lugar público verificado, consentimiento progresivo, reporte en 1 tap).
+**Oportunidades abiertas para FINDY**: nadie conecta match → plan verificado → recuerdo en un solo loop. Nadie explica *por qué* te muestra a alguien. Nadie convierte la seguridad en algo cálido (lugar público verificado, consentimiento progresivo, reporte en 1 tap).
 
 ## 3. UX problems (encontrados en este repo)
 
@@ -73,9 +73,9 @@ Evolucionar, no rebrandear: coral `#FF8A65`/`#F16B48` sobre midnight `#0A1120`, 
 
 ---
 
-# Ronda 2 (2026-09-22): el loop MELY
+# Ronda 2 (2026-09-22): el loop FINDY
 
-Pregunta guía: ¿cuál es el loop que hace a MELY reconocible como MELY?
+Pregunta guía: ¿cuál es el loop que hace a FINDY reconocible como FINDY?
 
 **Respuesta: Intención → Historia → Plan → Recuerdo → Intención.**
 
@@ -85,7 +85,7 @@ Pregunta guía: ¿cuál es el loop que hace a MELY reconocible como MELY?
 - Vivo la cita verificada y me queda un sello (**recuerdo**).
 - El recuerdo alimenta la próxima intención (futuro server-side).
 
-Nada de esto es "Tinder con X": Tinder optimiza volumen de personas; MELY optimiza velocidad hacia un plan concreto con contexto.
+Nada de esto es "Tinder con X": Tinder optimiza volumen de personas; FINDY optimiza velocidad hacia un plan concreto con contexto.
 
 ## Los 3 pilares (descarte incluido)
 
@@ -142,7 +142,7 @@ Se descartó explícitamente: boosts/super-swipes pagos extra, límite de 24h ti
 
 # Ronda 3 (2026-09-22): pulido extraordinario, cero features backend
 
-Meta: que todo lo que MELY ya hace se sienta extraordinariamente bien.
+Meta: que todo lo que FINDY ya hace se sienta extraordinariamente bien.
 
 ## Lenguaje de motion
 
@@ -227,7 +227,7 @@ cada uno y el % parecía magia. En 1s se veía foto+nombre+número; en 3s, ruido
 
 ## Ronda 8 (2026-09-22): Discover que se explica solo — sin abrir el cuaderno
 
-Amenaza: si el usuario nunca abre el cuaderno, MELY parece fotos + botones.
+Amenaza: si el usuario nunca abre el cuaderno, FINDY parece fotos + botones.
 
 Cambios (cero backend): el card revela UNA pieza de historia (la pregunta, no la
 respuesta; la voz, no el audio) como nivel 3 tras motivo → afinidad → plan;
@@ -245,11 +245,11 @@ Deuda backend: expiración semanal real de intención, `fragment` persistido,
 formato de distancia para fallback de motivo. Deuda frontend: validación física
 en dispositivo.
 
-Respuesta honesta: con el cuaderno cerrado para siempre, MELY sigue siendo
+Respuesta honesta: con el cuaderno cerrado para siempre, FINDY sigue siendo
 diferente — motivo + plan sugerido + peek visible sin entrar a nada. El
 cuaderno es profundidad, ya no requisito.
 
-## Ronda 7 (2026-09-22): los primeros 90 segundos — que MELY se explique sola
+## Ronda 7 (2026-09-22): los primeros 90 segundos — que FINDY se explique sola
 
 Simulación de usuario nuevo (sin conocer intención, fragmentos ni afinidad):
 
@@ -278,7 +278,7 @@ concreto, ver por qué conectamos y proponer un plan.
 
 "Ah, ya entendí": el momento es el primer motivo sobre la foto ("café en
 común") seguido del plan sugerido — ahí el swipe deja de ser el producto.
-Mayor riesgo residual: si el usuario nunca abre el cuaderno, MELY parece fotos
+Mayor riesgo residual: si el usuario nunca abre el cuaderno, FINDY parece fotos
 con botones; la pista única y el contador del cuaderno son la única defensa, y
 son de una sola oportunidad.
 
@@ -300,7 +300,7 @@ radio el contexto): `primary` (gradiente coral = mover la historia),
 Gradientes que sobreviven (con función): legibilidad sobre fotos, CTA primario,
 rings de avatar, temas de chat elegidos por el usuario. Eliminados: 4
 burbujas same-color (= color plano disfrazado), superficies Store/stickers y 3
-pulses decorativos (badge nav, cita a ciegas, ruleta). MELY se siente viva pero
+pulses decorativos (badge nav, cita a ciegas, ruleta). FINDY se siente viva pero
 tranquila.
 
 Crítica honesta: el punto más Tinder que queda es el deck con drag físico y la
@@ -327,7 +327,7 @@ en ui/button son casi idénticos y los CTA grandes repiten el gradiente coral
 inline — unificarlos cambia el look global y merece una pasada propia de
 sistema de botones, no un apaño.
 
-## Después de cuatro rondas: ¿qué hace MELY que una app genérica no hace?
+## Después de cuatro rondas: ¿qué hace FINDY que una app genérica no hace?
 
 Sin marketing, basado en código real:
 

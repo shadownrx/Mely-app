@@ -4,7 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { sounds } from '../utils/audio';
 import { Button } from './ui/button';
 
-// Lenguaje único de estados Mely: círculo dashed + icono + título + explicación
+// Lenguaje único de estados Findy: círculo dashed + icono + título + explicación
 // + acción. Antes cada vista lo copiaba a mano con pequeñas diferencias (tamaño
 // del círculo, copy, padding); ahora es un solo componente con el mismo idioma
 // visual en Descubrir, Likes, Matches, Citas, Mensajes y errores.

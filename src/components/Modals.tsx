@@ -461,7 +461,7 @@ export const RechargeModal: React.FC<RechargeModalProps> = ({ pack, onClose, onC
             </span>
             <h3 className={`font-headline-md text-[20px] font-bold mb-1 ${isLight ? 'text-[#16223b]' : 'text-[#f5f1e8]'}`}>{pack.name}</h3>
             <p className={`font-body-sm text-[13px] mb-5 ${isLight ? 'text-[#2e5570]' : 'text-[#ffa3c4]/80'}`}>
-              Recibirás <strong className="text-[#ec4d86]">+{pack.pts} PTS</strong> en tu saldo de Mely para regalos y beneficios de conexión.
+              Recibirás <strong className="text-[#ec4d86]">+{pack.pts} PTS</strong> en tu saldo de Findy para regalos y beneficios de conexión.
             </p>
 
             <div
@@ -543,7 +543,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
         <div className="flex flex-col gap-5">
           {/* Header */}
           <div className={`pb-3.5 border-b pr-8 ${isLight ? 'border-slate-100' : 'border-white/10'}`}>
-            <h2 className="font-wordmark text-[19px] font-bold text-[#ec4d86]">MELY</h2>
+            <h2 className="font-wordmark text-[19px] font-bold text-[#ec4d86]">FINDY</h2>
           </div>
 
           {/* User mini badge — botón real (era un div con onClick: invisible
@@ -577,7 +577,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
           </button>
 
           {/* Navigation Links */}
-          <nav className="flex flex-col gap-1.5" aria-label="Secciones de Mely">
+          <nav className="flex flex-col gap-1.5" aria-label="Secciones de Findy">
             {mainLinks.map((link) => (
               <button
                 key={link.tab}

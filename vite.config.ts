@@ -18,8 +18,8 @@ export default defineConfig(() => {
         filename: 'sw.ts',
         includeAssets: ['icon-32.png', 'icon-180.png'],
         manifest: {
-          name: 'MELY — Pasaporte de Conexiones',
-          short_name: 'MELY',
+          name: 'FINDY — Pasaporte de Conexiones',
+          short_name: 'FINDY',
           description: 'Conexiones intencionales con encuentros verificados en persona.',
           theme_color: '#0A1120',
           background_color: '#0A1120',
